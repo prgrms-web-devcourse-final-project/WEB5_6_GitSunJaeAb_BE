@@ -1,11 +1,11 @@
 package com.gitsunjaeab.mapick.member.entity;
 
-import com.gitsunjaeab.mapick.bookmark.Bookmark;
-import com.gitsunjaeab.mapick.comment.Comment;
-import com.gitsunjaeab.mapick.layer.Layer;
-import com.gitsunjaeab.mapick.layer_library.LayerLibrary;
-import com.gitsunjaeab.mapick.map.Map;
-import com.gitsunjaeab.mapick.map_editor.MapEditor;
+import com.gitsunjaeab.mapick.bookmark.entity.Bookmark;
+import com.gitsunjaeab.mapick.comment.entity.Comment;
+import com.gitsunjaeab.mapick.layer.entity.Layer;
+import com.gitsunjaeab.mapick.layer_library.entity.LayerLibrary;
+import com.gitsunjaeab.mapick.roadmap.entity.Roadmap;
+import com.gitsunjaeab.mapick.roadmap_editor.entity.RoadmapEditor;
 import com.gitsunjaeab.mapick.marker.entity.Marker;
 import com.gitsunjaeab.mapick.member_interest.entity.MemberInterest;
 import com.gitsunjaeab.mapick.member_quest.entity.MemberQuest;
@@ -36,14 +36,14 @@ public class Member {
     @Id
     @Column(nullable = false, updatable = false)
     @SequenceGenerator(
-            name = "primary_sequence",
-            sequenceName = "primary_sequence",
-            allocationSize = 1,
-            initialValue = 10000
+        name = "primary_sequence",
+        sequenceName = "primary_sequence",
+        allocationSize = 1,
+        initialValue = 10000
     )
     @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
-            generator = "primary_sequence"
+        strategy = GenerationType.SEQUENCE,
+        generator = "primary_sequence"
     )
     private Long id;
 
@@ -87,13 +87,13 @@ public class Member {
     private OffsetDateTime deletedAt;
 
     @OneToMany(mappedBy = "member")
-    private Set<Map> memberMaps = new HashSet<>();
+    private Set<Roadmap> memberRoadmaps = new HashSet<>();
 
     @OneToMany(mappedBy = "member")
-    private Set<MapEditor> memberMapEditors = new HashSet<>();
+    private Set<RoadmapEditor> memberRoadmapEditors = new HashSet<>();
 
     @OneToMany(mappedBy = "invitedBy")
-    private Set<MapEditor> invitedByMapEditors = new HashSet<>();
+    private Set<RoadmapEditor> invitedByRoadmapEditors = new HashSet<>();
 
     @OneToMany(mappedBy = "member")
     private Set<Layer> memberLayers = new HashSet<>();

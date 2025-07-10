@@ -18,7 +18,7 @@ function getSchema() {
     description: yup.string().emptyToNull(),
     categoryImage: yup.string().emptyToNull().max(255),
     createdAt: yup.string().emptyToNull().offsetDateTime().required(),
-    mapCategoryRelations: yup.number().integer().emptyToNull()
+    roadmapCategoryRelations: yup.number().integer().emptyToNull()
   });
 }
 
@@ -72,7 +72,7 @@ export default function CategoryAdd() {
       <InputRow useFormResult={useFormResult} object="category" field="description" type="textarea" />
       <InputRow useFormResult={useFormResult} object="category" field="categoryImage" />
       <InputRow useFormResult={useFormResult} object="category" field="createdAt" required={true} />
-      <InputRow useFormResult={useFormResult} object="category" field="mapCategoryRelations" type="select" options={mapCategoryRelationsValues} />
+      <InputRow useFormResult={useFormResult} object="category" field="roadmapCategoryRelations" type="select" options={mapCategoryRelationsValues} />
       <input type="submit" value={t('category.add.headline')} className="inline-block text-white bg-blue-600 hover:bg-blue-700 focus:ring-blue-300  focus:ring-4 rounded px-5 py-2 mt-6" />
     </form>
   </>);

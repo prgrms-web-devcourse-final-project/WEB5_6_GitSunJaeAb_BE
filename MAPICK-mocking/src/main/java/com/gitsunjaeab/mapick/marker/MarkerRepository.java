@@ -1,6 +1,6 @@
 package com.gitsunjaeab.mapick.marker;
 
-import com.gitsunjaeab.mapick.layer.Layer;
+import com.gitsunjaeab.mapick.layer.entity.Layer;
 import com.gitsunjaeab.mapick.marker.entity.Marker;
 import com.gitsunjaeab.mapick.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;

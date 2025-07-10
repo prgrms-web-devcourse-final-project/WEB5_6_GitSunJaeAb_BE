@@ -1,9 +1,11 @@
 package com.gitsunjaeab.mapick.layer;
 
-import com.gitsunjaeab.mapick.layer_library.LayerLibrary;
+import com.gitsunjaeab.mapick.layer.dto.LayerDTO;
+import com.gitsunjaeab.mapick.layer.entity.Layer;
 import com.gitsunjaeab.mapick.layer_library.LayerLibraryRepository;
-import com.gitsunjaeab.mapick.map.Map;
-import com.gitsunjaeab.mapick.map.MapRepository;
+import com.gitsunjaeab.mapick.layer_library.entity.LayerLibrary;
+import com.gitsunjaeab.mapick.roadmap.entity.Roadmap;
+import com.gitsunjaeab.mapick.roadmap.RoadmapRepository;
 import com.gitsunjaeab.mapick.marker.entity.Marker;
 import com.gitsunjaeab.mapick.marker.MarkerRepository;
 import com.gitsunjaeab.mapick.member.entity.Member;
@@ -14,23 +16,22 @@ import java.util.List;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-
 @Service
 public class LayerService {
 
     private final LayerRepository layerRepository;
     private final MemberRepository memberRepository;
-    private final MapRepository mapRepository;
+    private final RoadmapRepository roadmapRepository;
     private final MarkerRepository markerRepository;
     private final LayerLibraryRepository layerLibraryRepository;
 
     public LayerService(final LayerRepository layerRepository,
-            final MemberRepository memberRepository, final MapRepository mapRepository,
-            final MarkerRepository markerRepository,
-            final LayerLibraryRepository layerLibraryRepository) {
+        final MemberRepository memberRepository, final RoadmapRepository roadmapRepository,
+        final MarkerRepository markerRepository,
+        final LayerLibraryRepository layerLibraryRepository) {
         this.layerRepository = layerRepository;
         this.memberRepository = memberRepository;
-        this.mapRepository = mapRepository;
+        this.roadmapRepository = roadmapRepository;
         this.markerRepository = markerRepository;
         this.layerLibraryRepository = layerLibraryRepository;
     }
@@ -38,14 +39,14 @@ public class LayerService {
     public List<LayerDTO> findAll() {
         final List<Layer> layers = layerRepository.findAll(Sort.by("id"));
         return layers.stream()
-                .map(layer -> mapToDTO(layer, new LayerDTO()))
-                .toList();
+            .map(layer -> mapToDTO(layer, new LayerDTO()))
+            .toList();
     }
 
     public LayerDTO get(final Long id) {
         return layerRepository.findById(id)
-                .map(layer -> mapToDTO(layer, new LayerDTO()))
-                .orElseThrow(NotFoundException::new);
+            .map(layer -> mapToDTO(layer, new LayerDTO()))
+            .orElseThrow(NotFoundException::new);
     }
 
     public Long create(final LayerDTO layerDTO) {
@@ -56,7 +57,7 @@ public class LayerService {
 
     public void update(final Long id, final LayerDTO layerDTO) {
         final Layer layer = layerRepository.findById(id)
-                .orElseThrow(NotFoundException::new);
+            .orElseThrow(NotFoundException::new);
         mapToEntity(layerDTO, layer);
         layerRepository.save(layer);
     }
@@ -75,7 +76,7 @@ public class LayerService {
         layerDTO.setUpdatedAt(layer.getUpdatedAt());
         layerDTO.setDeletedAt(layer.getDeletedAt());
         layerDTO.setMember(layer.getMember() == null ? null : layer.getMember().getId());
-        layerDTO.setMap(layer.getMap() == null ? null : layer.getMap().getId());
+        layerDTO.setMap(layer.getRoadmap() == null ? null : layer.getRoadmap().getId());
         return layerDTO;
     }
 
@@ -88,18 +89,18 @@ public class LayerService {
         layer.setUpdatedAt(layerDTO.getUpdatedAt());
         layer.setDeletedAt(layerDTO.getDeletedAt());
         final Member member = layerDTO.getMember() == null ? null : memberRepository.findById(layerDTO.getMember())
-                .orElseThrow(() -> new NotFoundException("member not found"));
+            .orElseThrow(() -> new NotFoundException("member not found"));
         layer.setMember(member);
-        final Map map = layerDTO.getMap() == null ? null : mapRepository.findById(layerDTO.getMap())
-                .orElseThrow(() -> new NotFoundException("map not found"));
-        layer.setMap(map);
+        final Roadmap roadmap = layerDTO.getMap() == null ? null : roadmapRepository.findById(layerDTO.getMap())
+            .orElseThrow(() -> new NotFoundException("map not found"));
+        layer.setRoadmap(roadmap);
         return layer;
     }
 
     public ReferencedWarning getReferencedWarning(final Long id) {
         final ReferencedWarning referencedWarning = new ReferencedWarning();
         final Layer layer = layerRepository.findById(id)
-                .orElseThrow(NotFoundException::new);
+            .orElseThrow(NotFoundException::new);
         final Marker layerMarker = markerRepository.findFirstByLayer(layer);
         if (layerMarker != null) {
             referencedWarning.setKey("layer.marker.layer.referenced");

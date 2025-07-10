@@ -1,7 +1,9 @@
 package com.gitsunjaeab.mapick.hashtag;
 
-import com.gitsunjaeab.mapick.map_hashtag_relation.entity.MapHashtagRelation;
-import com.gitsunjaeab.mapick.map_hashtag_relation.MapHashtagRelationRepository;
+import com.gitsunjaeab.mapick.hashtag.dto.HashtagDTO;
+import com.gitsunjaeab.mapick.hashtag.entity.Hashtag;
+import com.gitsunjaeab.mapick.roadmap_hashtag_relation.RoadmapHashtagRelationRepository;
+import com.gitsunjaeab.mapick.roadmap_hashtag_relation.entity.RoadmapHashtagRelation;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import com.gitsunjaeab.mapick.util.ReferencedWarning;
 import java.util.List;
@@ -13,12 +15,12 @@ import org.springframework.stereotype.Service;
 public class HashtagService {
 
     private final HashtagRepository hashtagRepository;
-    private final MapHashtagRelationRepository mapHashtagRelationRepository;
+    private final RoadmapHashtagRelationRepository roadmapHashtagRelationRepository;
 
     public HashtagService(final HashtagRepository hashtagRepository,
-            final MapHashtagRelationRepository mapHashtagRelationRepository) {
+            final RoadmapHashtagRelationRepository roadmapHashtagRelationRepository) {
         this.hashtagRepository = hashtagRepository;
-        this.mapHashtagRelationRepository = mapHashtagRelationRepository;
+        this.roadmapHashtagRelationRepository = roadmapHashtagRelationRepository;
     }
 
     public List<HashtagDTO> findAll() {
@@ -68,7 +70,7 @@ public class HashtagService {
         final ReferencedWarning referencedWarning = new ReferencedWarning();
         final Hashtag hashtag = hashtagRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
-        final MapHashtagRelation hashtagMapHashtagRelation = mapHashtagRelationRepository.findFirstByHashtag(hashtag);
+        final RoadmapHashtagRelation hashtagMapHashtagRelation = roadmapHashtagRelationRepository.findFirstByHashtag(hashtag);
         if (hashtagMapHashtagRelation != null) {
             referencedWarning.setKey("hashtag.mapHashtagRelation.hashtag.referenced");
             referencedWarning.addParam(hashtagMapHashtagRelation.getId());

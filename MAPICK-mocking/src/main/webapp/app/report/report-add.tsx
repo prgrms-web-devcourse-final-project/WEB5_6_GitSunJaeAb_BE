@@ -21,7 +21,7 @@ function getSchema() {
     resolvedAt: yup.string().emptyToNull().offsetDateTime(),
     reporter: yup.number().integer().emptyToNull(),
     reportedMember: yup.number().integer().emptyToNull(),
-    map: yup.number().integer().emptyToNull(),
+    roadmap: yup.number().integer().emptyToNull(),
     marker: yup.number().integer().emptyToNull(),
     quest: yup.number().integer().emptyToNull()
   });
@@ -92,7 +92,7 @@ export default function ReportAdd() {
       <InputRow useFormResult={useFormResult} object="report" field="resolvedAt" />
       <InputRow useFormResult={useFormResult} object="report" field="reporter" type="select" options={reporterValues} />
       <InputRow useFormResult={useFormResult} object="report" field="reportedMember" type="select" options={reportedMemberValues} />
-      <InputRow useFormResult={useFormResult} object="report" field="map" type="select" options={mapValues} />
+      <InputRow useFormResult={useFormResult} object="report" field="roadmap" type="select" options={mapValues} />
       <InputRow useFormResult={useFormResult} object="report" field="marker" type="select" options={markerValues} />
       <InputRow useFormResult={useFormResult} object="report" field="quest" type="select" options={questValues} />
       <input type="submit" value={t('report.add.headline')} className="inline-block text-white bg-blue-600 hover:bg-blue-700 focus:ring-blue-300  focus:ring-4 rounded px-5 py-2 mt-6" />

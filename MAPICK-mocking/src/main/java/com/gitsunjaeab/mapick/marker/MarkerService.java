@@ -1,6 +1,6 @@
 package com.gitsunjaeab.mapick.marker;
 
-import com.gitsunjaeab.mapick.layer.Layer;
+import com.gitsunjaeab.mapick.layer.entity.Layer;
 import com.gitsunjaeab.mapick.layer.LayerRepository;
 import com.gitsunjaeab.mapick.marker.dto.MarkerDTO;
 import com.gitsunjaeab.mapick.marker.entity.Marker;

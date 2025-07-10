@@ -1,6 +1,6 @@
 package com.gitsunjaeab.mapick.member_interest.entity;
 
-import com.gitsunjaeab.mapick.category.Category;
+import com.gitsunjaeab.mapick.category.entity.Category;
 import com.gitsunjaeab.mapick.member.entity.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

@@ -6,7 +6,7 @@ export class BookmarkDTO {
 
   id?: number|null;
   createdAt?: string|null;
-  map?: number|null;
+  roadmap?: number|null;
   member?: number|null;
 
 }

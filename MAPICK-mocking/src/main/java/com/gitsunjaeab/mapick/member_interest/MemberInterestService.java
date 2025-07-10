@@ -1,6 +1,6 @@
 package com.gitsunjaeab.mapick.member_interest;
 
-import com.gitsunjaeab.mapick.category.Category;
+import com.gitsunjaeab.mapick.category.entity.Category;
 import com.gitsunjaeab.mapick.category.CategoryRepository;
 import com.gitsunjaeab.mapick.member.entity.Member;
 import com.gitsunjaeab.mapick.member.MemberRepository;

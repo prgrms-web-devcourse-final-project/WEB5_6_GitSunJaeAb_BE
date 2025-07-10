@@ -59,15 +59,15 @@ export default function Header() {
                 <ul className="hidden block absolute right-0 bg-white border border-gray-300 rounded min-w-[10rem] py-2" aria-labelledby="navbarEntitiesLink">
                   <li><Link to="/members" className="inline-block w-full hover:bg-gray-200 px-4 py-1">{t('member.list.headline')}</Link></li>
                   <li><Link to="/maps" className="inline-block w-full hover:bg-gray-200 px-4 py-1">{t('map.list.headline')}</Link></li>
-                  <li><Link to="/mapEditors" className="inline-block w-full hover:bg-gray-200 px-4 py-1">{t('mapEditor.list.headline')}</Link></li>
+                  <li><Link to="/roadmapEditors" className="inline-block w-full hover:bg-gray-200 px-4 py-1">{t('mapEditor.list.headline')}</Link></li>
                   <li><Link to="/layers" className="inline-block w-full hover:bg-gray-200 px-4 py-1">{t('layer.list.headline')}</Link></li>
                   <li><Link to="/markers" className="inline-block w-full hover:bg-gray-200 px-4 py-1">{t('marker.list.headline')}</Link></li>
                   <li><Link to="/comments" className="inline-block w-full hover:bg-gray-200 px-4 py-1">{t('comment.list.headline')}</Link></li>
                   <li><Link to="/bookmarks" className="inline-block w-full hover:bg-gray-200 px-4 py-1">{t('bookmark.list.headline')}</Link></li>
                   <li><Link to="/memberInterests" className="inline-block w-full hover:bg-gray-200 px-4 py-1">{t('memberInterest.list.headline')}</Link></li>
                   <li><Link to="/categories" className="inline-block w-full hover:bg-gray-200 px-4 py-1">{t('category.list.headline')}</Link></li>
-                  <li><Link to="/mapCategoryRelations" className="inline-block w-full hover:bg-gray-200 px-4 py-1">{t('mapCategoryRelation.list.headline')}</Link></li>
-                  <li><Link to="/mapHashtagRelations" className="inline-block w-full hover:bg-gray-200 px-4 py-1">{t('mapHashtagRelation.list.headline')}</Link></li>
+                  <li><Link to="/roadmapCategoryRelations" className="inline-block w-full hover:bg-gray-200 px-4 py-1">{t('mapCategoryRelation.list.headline')}</Link></li>
+                  <li><Link to="/roadmapHashtagRelations" className="inline-block w-full hover:bg-gray-200 px-4 py-1">{t('mapHashtagRelation.list.headline')}</Link></li>
                   <li><Link to="/hashtags" className="inline-block w-full hover:bg-gray-200 px-4 py-1">{t('hashtag.list.headline')}</Link></li>
                   <li><Link to="/reports" className="inline-block w-full hover:bg-gray-200 px-4 py-1">{t('report.list.headline')}</Link></li>
                   <li><Link to="/quests" className="inline-block w-full hover:bg-gray-200 px-4 py-1">{t('quest.list.headline')}</Link></li>

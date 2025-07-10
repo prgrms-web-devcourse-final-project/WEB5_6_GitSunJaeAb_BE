@@ -1,7 +1,9 @@
 package com.gitsunjaeab.mapick.bookmark;
 
-import com.gitsunjaeab.mapick.map.Map;
-import com.gitsunjaeab.mapick.map.MapRepository;
+import com.gitsunjaeab.mapick.bookmark.dto.BookmarkDTO;
+import com.gitsunjaeab.mapick.bookmark.entity.Bookmark;
+import com.gitsunjaeab.mapick.roadmap.entity.Roadmap;
+import com.gitsunjaeab.mapick.roadmap.RoadmapRepository;
 import com.gitsunjaeab.mapick.member.entity.Member;
 import com.gitsunjaeab.mapick.member.MemberRepository;
 import com.gitsunjaeab.mapick.util.NotFoundException;
@@ -14,13 +16,13 @@ import org.springframework.stereotype.Service;
 public class BookmarkService {
 
     private final BookmarkRepository bookmarkRepository;
-    private final MapRepository mapRepository;
+    private final RoadmapRepository roadmapRepository;
     private final MemberRepository memberRepository;
 
     public BookmarkService(final BookmarkRepository bookmarkRepository,
-            final MapRepository mapRepository, final MemberRepository memberRepository) {
+            final RoadmapRepository roadmapRepository, final MemberRepository memberRepository) {
         this.bookmarkRepository = bookmarkRepository;
-        this.mapRepository = mapRepository;
+        this.roadmapRepository = roadmapRepository;
         this.memberRepository = memberRepository;
     }
 
@@ -57,16 +59,16 @@ public class BookmarkService {
     private BookmarkDTO mapToDTO(final Bookmark bookmark, final BookmarkDTO bookmarkDTO) {
         bookmarkDTO.setId(bookmark.getId());
         bookmarkDTO.setCreatedAt(bookmark.getCreatedAt());
-        bookmarkDTO.setMap(bookmark.getMap() == null ? null : bookmark.getMap().getId());
+        bookmarkDTO.setMap(bookmark.getRoadmap() == null ? null : bookmark.getRoadmap().getId());
         bookmarkDTO.setMember(bookmark.getMember() == null ? null : bookmark.getMember().getId());
         return bookmarkDTO;
     }
 
     private Bookmark mapToEntity(final BookmarkDTO bookmarkDTO, final Bookmark bookmark) {
         bookmark.setCreatedAt(bookmarkDTO.getCreatedAt());
-        final Map map = bookmarkDTO.getMap() == null ? null : mapRepository.findById(bookmarkDTO.getMap())
+        final Roadmap roadmap = bookmarkDTO.getMap() == null ? null : roadmapRepository.findById(bookmarkDTO.getMap())
                 .orElseThrow(() -> new NotFoundException("map not found"));
-        bookmark.setMap(map);
+        bookmark.setRoadmap(roadmap);
         final Member member = bookmarkDTO.getMember() == null ? null : memberRepository.findById(bookmarkDTO.getMember())
                 .orElseThrow(() -> new NotFoundException("member not found"));
         bookmark.setMember(member);

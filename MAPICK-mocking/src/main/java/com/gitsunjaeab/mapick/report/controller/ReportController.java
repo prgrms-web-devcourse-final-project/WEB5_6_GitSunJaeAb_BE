@@ -1,20 +1,13 @@
 package com.gitsunjaeab.mapick.report.controller;
 
-import com.gitsunjaeab.mapick.map.MapRepository;
-import com.gitsunjaeab.mapick.marker.entity.Marker;
+import com.gitsunjaeab.mapick.roadmap.RoadmapRepository;
 import com.gitsunjaeab.mapick.marker.MarkerRepository;
-import com.gitsunjaeab.mapick.member.entity.Member;
 import com.gitsunjaeab.mapick.member.MemberRepository;
-import com.gitsunjaeab.mapick.quest.entity.Quest;
 import com.gitsunjaeab.mapick.quest.QuestRepository;
 import com.gitsunjaeab.mapick.report.ReportService;
 import com.gitsunjaeab.mapick.report.dto.ReportDTO;
-import com.gitsunjaeab.mapick.util.CustomCollectors;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
-import java.util.List;
-import java.util.Map;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -34,16 +27,16 @@ public class ReportController {
 
     private final ReportService reportService;
     private final MemberRepository memberRepository;
-    private final MapRepository mapRepository;
+    private final RoadmapRepository roadmapRepository;
     private final MarkerRepository markerRepository;
     private final QuestRepository questRepository;
 
     public ReportController(final ReportService reportService,
-            final MemberRepository memberRepository, final MapRepository mapRepository,
+            final MemberRepository memberRepository, final RoadmapRepository roadmapRepository,
             final MarkerRepository markerRepository, final QuestRepository questRepository) {
         this.reportService = reportService;
         this.memberRepository = memberRepository;
-        this.mapRepository = mapRepository;
+        this.roadmapRepository = roadmapRepository;
         this.markerRepository = markerRepository;
         this.questRepository = questRepository;
     }

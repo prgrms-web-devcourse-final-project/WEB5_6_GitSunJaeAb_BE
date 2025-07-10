@@ -1,7 +1,6 @@
 package com.gitsunjaeab.mapick.report;
 
-import com.gitsunjaeab.mapick.map.Map;
-import com.gitsunjaeab.mapick.map.MapRepository;
+import com.gitsunjaeab.mapick.roadmap.RoadmapRepository;
 import com.gitsunjaeab.mapick.marker.entity.Marker;
 import com.gitsunjaeab.mapick.marker.MarkerRepository;
 import com.gitsunjaeab.mapick.member.entity.Member;
@@ -10,6 +9,7 @@ import com.gitsunjaeab.mapick.quest.entity.Quest;
 import com.gitsunjaeab.mapick.quest.QuestRepository;
 import com.gitsunjaeab.mapick.report.dto.ReportDTO;
 import com.gitsunjaeab.mapick.report.entity.Report;
+import com.gitsunjaeab.mapick.roadmap.entity.Roadmap;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import java.util.List;
 import org.springframework.data.domain.Sort;
@@ -21,16 +21,16 @@ public class ReportService {
 
     private final ReportRepository reportRepository;
     private final MemberRepository memberRepository;
-    private final MapRepository mapRepository;
+    private final RoadmapRepository roadmapRepository;
     private final MarkerRepository markerRepository;
     private final QuestRepository questRepository;
 
     public ReportService(final ReportRepository reportRepository,
-            final MemberRepository memberRepository, final MapRepository mapRepository,
+            final MemberRepository memberRepository, final RoadmapRepository roadmapRepository,
             final MarkerRepository markerRepository, final QuestRepository questRepository) {
         this.reportRepository = reportRepository;
         this.memberRepository = memberRepository;
-        this.mapRepository = mapRepository;
+        this.roadmapRepository = roadmapRepository;
         this.markerRepository = markerRepository;
         this.questRepository = questRepository;
     }
@@ -74,7 +74,7 @@ public class ReportService {
         reportDTO.setResolvedAt(report.getResolvedAt());
         reportDTO.setReporter(report.getReporter() == null ? null : report.getReporter().getId());
         reportDTO.setReportedMember(report.getReportedMember() == null ? null : report.getReportedMember().getId());
-        reportDTO.setMap(report.getMap() == null ? null : report.getMap().getId());
+        reportDTO.setMap(report.getRoadmap() == null ? null : report.getRoadmap().getId());
         reportDTO.setMarker(report.getMarker() == null ? null : report.getMarker().getId());
         reportDTO.setQuest(report.getQuest() == null ? null : report.getQuest().getId());
         return reportDTO;
@@ -92,9 +92,9 @@ public class ReportService {
         final Member reportedMember = reportDTO.getReportedMember() == null ? null : memberRepository.findById(reportDTO.getReportedMember())
                 .orElseThrow(() -> new NotFoundException("reportedMember not found"));
         report.setReportedMember(reportedMember);
-        final Map map = reportDTO.getMap() == null ? null : mapRepository.findById(reportDTO.getMap())
+        final Roadmap roadmap = reportDTO.getMap() == null ? null : roadmapRepository.findById(reportDTO.getMap())
                 .orElseThrow(() -> new NotFoundException("map not found"));
-        report.setMap(map);
+        report.setRoadmap(roadmap);
         final Marker marker = reportDTO.getMarker() == null ? null : markerRepository.findById(reportDTO.getMarker())
                 .orElseThrow(() -> new NotFoundException("marker not found"));
         report.setMarker(marker);

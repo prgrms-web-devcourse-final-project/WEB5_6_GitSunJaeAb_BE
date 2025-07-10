@@ -70,7 +70,7 @@ export default function BookmarkList() {
           <tr key={bookmark.id} className="odd:bg-gray-100">
             <td className="p-2">{bookmark.id}</td>
             <td className="p-2">{bookmark.createdAt}</td>
-            <td className="p-2">{bookmark.map}</td>
+            <td className="p-2">{bookmark.roadmap}</td>
             <td className="p-2">{bookmark.member}</td>
             <td className="p-2">
               <div className="float-right whitespace-nowrap">

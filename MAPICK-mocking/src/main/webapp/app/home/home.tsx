@@ -22,15 +22,15 @@ export default function Home() {
       <div className="flex flex-col border border-gray-300 rounded">
         <Link to="/members" className="w-full border-gray-300 hover:bg-gray-100 border-b rounded-t px-4 py-2">{t('member.list.headline')}</Link>
         <Link to="/maps" className="w-full border-gray-300 hover:bg-gray-100 border-b px-4 py-2">{t('map.list.headline')}</Link>
-        <Link to="/mapEditors" className="w-full border-gray-300 hover:bg-gray-100 border-b px-4 py-2">{t('mapEditor.list.headline')}</Link>
+        <Link to="/roadmapEditors" className="w-full border-gray-300 hover:bg-gray-100 border-b px-4 py-2">{t('mapEditor.list.headline')}</Link>
         <Link to="/layers" className="w-full border-gray-300 hover:bg-gray-100 border-b px-4 py-2">{t('layer.list.headline')}</Link>
         <Link to="/markers" className="w-full border-gray-300 hover:bg-gray-100 border-b px-4 py-2">{t('marker.list.headline')}</Link>
         <Link to="/comments" className="w-full border-gray-300 hover:bg-gray-100 border-b px-4 py-2">{t('comment.list.headline')}</Link>
         <Link to="/bookmarks" className="w-full border-gray-300 hover:bg-gray-100 border-b px-4 py-2">{t('bookmark.list.headline')}</Link>
         <Link to="/memberInterests" className="w-full border-gray-300 hover:bg-gray-100 border-b px-4 py-2">{t('memberInterest.list.headline')}</Link>
         <Link to="/categories" className="w-full border-gray-300 hover:bg-gray-100 border-b px-4 py-2">{t('category.list.headline')}</Link>
-        <Link to="/mapCategoryRelations" className="w-full border-gray-300 hover:bg-gray-100 border-b px-4 py-2">{t('mapCategoryRelation.list.headline')}</Link>
-        <Link to="/mapHashtagRelations" className="w-full border-gray-300 hover:bg-gray-100 border-b px-4 py-2">{t('mapHashtagRelation.list.headline')}</Link>
+        <Link to="/roadmapCategoryRelations" className="w-full border-gray-300 hover:bg-gray-100 border-b px-4 py-2">{t('mapCategoryRelation.list.headline')}</Link>
+        <Link to="/roadmapHashtagRelations" className="w-full border-gray-300 hover:bg-gray-100 border-b px-4 py-2">{t('mapHashtagRelation.list.headline')}</Link>
         <Link to="/hashtags" className="w-full border-gray-300 hover:bg-gray-100 border-b px-4 py-2">{t('hashtag.list.headline')}</Link>
         <Link to="/reports" className="w-full border-gray-300 hover:bg-gray-100 border-b px-4 py-2">{t('report.list.headline')}</Link>
         <Link to="/quests" className="w-full border-gray-300 hover:bg-gray-100 border-b px-4 py-2">{t('quest.list.headline')}</Link>

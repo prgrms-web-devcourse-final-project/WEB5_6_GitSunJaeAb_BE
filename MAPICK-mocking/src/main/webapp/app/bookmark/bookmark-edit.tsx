@@ -15,7 +15,7 @@ function getSchema() {
   setYupDefaults();
   return yup.object({
     createdAt: yup.string().emptyToNull().offsetDateTime().required(),
-    map: yup.number().integer().emptyToNull(),
+    roadmap: yup.number().integer().emptyToNull(),
     member: yup.number().integer().emptyToNull()
   });
 }
@@ -75,7 +75,7 @@ export default function BookmarkEdit() {
     <form onSubmit={useFormResult.handleSubmit(updateBookmark)} noValidate>
       <InputRow useFormResult={useFormResult} object="bookmark" field="id" disabled={true} type="number" />
       <InputRow useFormResult={useFormResult} object="bookmark" field="createdAt" required={true} />
-      <InputRow useFormResult={useFormResult} object="bookmark" field="map" type="select" options={mapValues} />
+      <InputRow useFormResult={useFormResult} object="bookmark" field="roadmap" type="select" options={mapValues} />
       <InputRow useFormResult={useFormResult} object="bookmark" field="member" type="select" options={memberValues} />
       <input type="submit" value={t('bookmark.edit.headline')} className="inline-block text-white bg-blue-600 hover:bg-blue-700 focus:ring-blue-300  focus:ring-4 rounded px-5 py-2 mt-6" />
     </form>

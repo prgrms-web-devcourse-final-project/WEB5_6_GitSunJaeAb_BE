@@ -17,7 +17,7 @@ function getSchema() {
     content: yup.string().emptyToNull().required(),
     createdAt: yup.string().emptyToNull().offsetDateTime().required(),
     updatedAt: yup.string().emptyToNull().offsetDateTime(),
-    map: yup.number().integer().emptyToNull(),
+    roadmap: yup.number().integer().emptyToNull(),
     member: yup.number().integer().emptyToNull()
   });
 }
@@ -79,7 +79,7 @@ export default function CommentEdit() {
       <InputRow useFormResult={useFormResult} object="comment" field="content" required={true} type="textarea" />
       <InputRow useFormResult={useFormResult} object="comment" field="createdAt" required={true} />
       <InputRow useFormResult={useFormResult} object="comment" field="updatedAt" />
-      <InputRow useFormResult={useFormResult} object="comment" field="map" type="select" options={mapValues} />
+      <InputRow useFormResult={useFormResult} object="comment" field="roadmap" type="select" options={mapValues} />
       <InputRow useFormResult={useFormResult} object="comment" field="member" type="select" options={memberValues} />
       <input type="submit" value={t('comment.edit.headline')} className="inline-block text-white bg-blue-600 hover:bg-blue-700 focus:ring-blue-300  focus:ring-4 rounded px-5 py-2 mt-6" />
     </form>

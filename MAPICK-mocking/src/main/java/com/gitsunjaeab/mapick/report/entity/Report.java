@@ -1,6 +1,6 @@
 package com.gitsunjaeab.mapick.report.entity;
 
-import com.gitsunjaeab.mapick.map.Map;
+import com.gitsunjaeab.mapick.roadmap.entity.Roadmap;
 import com.gitsunjaeab.mapick.marker.entity.Marker;
 import com.gitsunjaeab.mapick.member.entity.Member;
 import com.gitsunjaeab.mapick.quest.entity.Quest;
@@ -63,8 +63,8 @@ public class Report {
     private Member reportedMember;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "map_id")
-    private Map map;
+    @JoinColumn(name = "roadmap_id")
+    private Roadmap roadmap;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "marker_id")

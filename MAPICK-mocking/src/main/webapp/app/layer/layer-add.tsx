@@ -22,7 +22,7 @@ function getSchema() {
     updatedAt: yup.string().emptyToNull().offsetDateTime(),
     deletedAt: yup.string().emptyToNull().offsetDateTime(),
     member: yup.number().integer().emptyToNull(),
-    map: yup.number().integer().emptyToNull()
+    roadmap: yup.number().integer().emptyToNull()
   });
 }
 
@@ -83,7 +83,7 @@ export default function LayerAdd() {
       <InputRow useFormResult={useFormResult} object="layer" field="updatedAt" />
       <InputRow useFormResult={useFormResult} object="layer" field="deletedAt" />
       <InputRow useFormResult={useFormResult} object="layer" field="member" type="select" options={memberValues} />
-      <InputRow useFormResult={useFormResult} object="layer" field="map" type="select" options={mapValues} />
+      <InputRow useFormResult={useFormResult} object="layer" field="roadmap" type="select" options={mapValues} />
       <input type="submit" value={t('layer.add.headline')} className="inline-block text-white bg-blue-600 hover:bg-blue-700 focus:ring-blue-300  focus:ring-4 rounded px-5 py-2 mt-6" />
     </form>
   </>);

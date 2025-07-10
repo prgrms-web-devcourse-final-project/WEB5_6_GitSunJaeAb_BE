@@ -5,12 +5,12 @@ import Home from './home/home';
 import MemberList from './member/member-list';
 import MemberAdd from './member/member-add';
 import MemberEdit from './member/member-edit';
-import MapList from './map/map-list';
-import MapAdd from './map/map-add';
-import MapEdit from './map/map-edit';
-import MapEditorList from './map-editor/map-editor-list';
-import MapEditorAdd from './map-editor/map-editor-add';
-import MapEditorEdit from './map-editor/map-editor-edit';
+import RoadmapList from './roadmap/roadmap-list';
+import RoadmapAdd from './roadmap/roadmap-add';
+import RoadmapEdit from './roadmap/roadmap-edit';
+import RoadmapEditorList from './roadmap-editor/roadmap-editor-list';
+import RoadmapEditorAdd from './roadmap-editor/roadmap-editor-add';
+import RoadmapEditorEdit from './roadmap-editor/roadmap-editor-edit';
 import LayerList from './layer/layer-list';
 import LayerAdd from './layer/layer-add';
 import LayerEdit from './layer/layer-edit';
@@ -29,12 +29,12 @@ import MemberInterestEdit from './member-interest/member-interest-edit';
 import CategoryList from './category/category-list';
 import CategoryAdd from './category/category-add';
 import CategoryEdit from './category/category-edit';
-import MapCategoryRelationList from './map-category-relation/map-category-relation-list';
-import MapCategoryRelationAdd from './map-category-relation/map-category-relation-add';
-import MapCategoryRelationEdit from './map-category-relation/map-category-relation-edit';
-import MapHashtagRelationList from './map-hashtag-relation/map-hashtag-relation-list';
-import MapHashtagRelationAdd from './map-hashtag-relation/map-hashtag-relation-add';
-import MapHashtagRelationEdit from './map-hashtag-relation/map-hashtag-relation-edit';
+import RoadmapCategoryRelationList from './roadmap-category-relation/roadmap-category-relation-list';
+import RoadmapCategoryRelationAdd from './roadmap-category-relation/roadmap-category-relation-add';
+import RoadmapCategoryRelationEdit from './roadmap-category-relation/roadmap-category-relation-edit';
+import RoadmapHashtagRelationList from './roadmap-hashtag-relation/roadmap-hashtag-relation-list';
+import RoadmapHashtagRelationAdd from './roadmap-hashtag-relation/roadmap-hashtag-relation-add';
+import RoadmapHashtagRelationEdit from './roadmap-hashtag-relation/roadmap-hashtag-relation-edit';
 import HashtagList from './hashtag/hashtag-list';
 import HashtagAdd from './hashtag/hashtag-add';
 import HashtagEdit from './hashtag/hashtag-edit';
@@ -68,12 +68,12 @@ export default function AppRoutes() {
         { path: 'members', element: <MemberList /> },
         { path: 'members/add', element: <MemberAdd /> },
         { path: 'members/edit/:id', element: <MemberEdit /> },
-        { path: 'maps', element: <MapList /> },
-        { path: 'maps/add', element: <MapAdd /> },
-        { path: 'maps/edit/:id', element: <MapEdit /> },
-        { path: 'mapEditors', element: <MapEditorList /> },
-        { path: 'mapEditors/add', element: <MapEditorAdd /> },
-        { path: 'mapEditors/edit/:id', element: <MapEditorEdit /> },
+        { path: 'maps', element: <RoadmapList /> },
+        { path: 'maps/add', element: <RoadmapAdd /> },
+        { path: 'maps/edit/:id', element: <RoadmapEdit /> },
+        { path: 'mapEditors', element: <RoadmapEditorList /> },
+        { path: 'mapEditors/add', element: <RoadmapEditorAdd /> },
+        { path: 'mapEditors/edit/:id', element: <RoadmapEditorEdit /> },
         { path: 'layers', element: <LayerList /> },
         { path: 'layers/add', element: <LayerAdd /> },
         { path: 'layers/edit/:id', element: <LayerEdit /> },
@@ -92,12 +92,12 @@ export default function AppRoutes() {
         { path: 'categories', element: <CategoryList /> },
         { path: 'categories/add', element: <CategoryAdd /> },
         { path: 'categories/edit/:id', element: <CategoryEdit /> },
-        { path: 'mapCategoryRelations', element: <MapCategoryRelationList /> },
-        { path: 'mapCategoryRelations/add', element: <MapCategoryRelationAdd /> },
-        { path: 'mapCategoryRelations/edit/:id', element: <MapCategoryRelationEdit /> },
-        { path: 'mapHashtagRelations', element: <MapHashtagRelationList /> },
-        { path: 'mapHashtagRelations/add', element: <MapHashtagRelationAdd /> },
-        { path: 'mapHashtagRelations/edit/:id', element: <MapHashtagRelationEdit /> },
+        { path: 'mapCategoryRelations', element: <RoadmapCategoryRelationList /> },
+        { path: 'mapCategoryRelations/add', element: <RoadmapCategoryRelationAdd /> },
+        { path: 'mapCategoryRelations/edit/:id', element: <RoadmapCategoryRelationEdit /> },
+        { path: 'mapHashtagRelations', element: <RoadmapHashtagRelationList /> },
+        { path: 'mapHashtagRelations/add', element: <RoadmapHashtagRelationAdd /> },
+        { path: 'mapHashtagRelations/edit/:id', element: <RoadmapHashtagRelationEdit /> },
         { path: 'hashtags', element: <HashtagList /> },
         { path: 'hashtags/add', element: <HashtagAdd /> },
         { path: 'hashtags/edit/:id', element: <HashtagEdit /> },

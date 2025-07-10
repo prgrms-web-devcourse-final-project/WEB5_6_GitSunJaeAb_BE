@@ -1,10 +1,10 @@
 package com.gitsunjaeab.mapick.report;
 
-import com.gitsunjaeab.mapick.map.Map;
+import com.gitsunjaeab.mapick.report.entity.Report;
+import com.gitsunjaeab.mapick.roadmap.entity.Roadmap;
 import com.gitsunjaeab.mapick.marker.entity.Marker;
 import com.gitsunjaeab.mapick.member.entity.Member;
 import com.gitsunjaeab.mapick.quest.entity.Quest;
-import com.gitsunjaeab.mapick.report.entity.Report;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 
@@ -14,7 +14,7 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
 
     Report findFirstByReportedMember(Member member);
 
-    Report findFirstByMap(Map map);
+    Report findFirstByRoadmap(Roadmap roadmap);
 
     Report findFirstByMarker(Marker marker);
 

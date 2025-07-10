@@ -1,17 +1,17 @@
 package com.gitsunjaeab.mapick.member;
 
-import com.gitsunjaeab.mapick.bookmark.Bookmark;
+import com.gitsunjaeab.mapick.bookmark.entity.Bookmark;
 import com.gitsunjaeab.mapick.bookmark.BookmarkRepository;
-import com.gitsunjaeab.mapick.comment.Comment;
+import com.gitsunjaeab.mapick.comment.entity.Comment;
 import com.gitsunjaeab.mapick.comment.CommentRepository;
-import com.gitsunjaeab.mapick.layer.Layer;
+import com.gitsunjaeab.mapick.layer.entity.Layer;
 import com.gitsunjaeab.mapick.layer.LayerRepository;
-import com.gitsunjaeab.mapick.layer_library.LayerLibrary;
+import com.gitsunjaeab.mapick.layer_library.entity.LayerLibrary;
 import com.gitsunjaeab.mapick.layer_library.LayerLibraryRepository;
-import com.gitsunjaeab.mapick.map.Map;
-import com.gitsunjaeab.mapick.map.MapRepository;
-import com.gitsunjaeab.mapick.map_editor.MapEditor;
-import com.gitsunjaeab.mapick.map_editor.MapEditorRepository;
+import com.gitsunjaeab.mapick.roadmap.entity.Roadmap;
+import com.gitsunjaeab.mapick.roadmap.RoadmapRepository;
+import com.gitsunjaeab.mapick.roadmap_editor.entity.RoadmapEditor;
+import com.gitsunjaeab.mapick.roadmap_editor.RoadmapEditorRepository;
 import com.gitsunjaeab.mapick.marker.entity.Marker;
 import com.gitsunjaeab.mapick.marker.MarkerRepository;
 import com.gitsunjaeab.mapick.member.dto.MemberDTO;
@@ -37,8 +37,8 @@ import org.springframework.stereotype.Service;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-    private final MapRepository mapRepository;
-    private final MapEditorRepository mapEditorRepository;
+    private final RoadmapRepository roadmapRepository;
+    private final RoadmapEditorRepository roadmapEditorRepository;
     private final LayerRepository layerRepository;
     private final MarkerRepository markerRepository;
     private final CommentRepository commentRepository;
@@ -50,8 +50,8 @@ public class MemberService {
     private final QuestRankRepository questRankRepository;
     private final LayerLibraryRepository layerLibraryRepository;
 
-    public MemberService(final MemberRepository memberRepository, final MapRepository mapRepository,
-            final MapEditorRepository mapEditorRepository, final LayerRepository layerRepository,
+    public MemberService(final MemberRepository memberRepository, final RoadmapRepository roadmapRepository,
+            final RoadmapEditorRepository roadmapEditorRepository, final LayerRepository layerRepository,
             final MarkerRepository markerRepository, final CommentRepository commentRepository,
             final BookmarkRepository bookmarkRepository,
             final MemberInterestRepository memberInterestRepository,
@@ -60,8 +60,8 @@ public class MemberService {
             final QuestRankRepository questRankRepository,
             final LayerLibraryRepository layerLibraryRepository) {
         this.memberRepository = memberRepository;
-        this.mapRepository = mapRepository;
-        this.mapEditorRepository = mapEditorRepository;
+        this.roadmapRepository = roadmapRepository;
+        this.roadmapEditorRepository = roadmapEditorRepository;
         this.layerRepository = layerRepository;
         this.markerRepository = markerRepository;
         this.commentRepository = commentRepository;
@@ -147,19 +147,19 @@ public class MemberService {
         final ReferencedWarning referencedWarning = new ReferencedWarning();
         final Member member = memberRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
-        final Map memberMap = mapRepository.findFirstByMember(member);
+        final Roadmap memberMap = roadmapRepository.findFirstByMember(member);
         if (memberMap != null) {
             referencedWarning.setKey("member.map.member.referenced");
             referencedWarning.addParam(memberMap.getId());
             return referencedWarning;
         }
-        final MapEditor memberMapEditor = mapEditorRepository.findFirstByMember(member);
+        final RoadmapEditor memberMapEditor = roadmapEditorRepository.findFirstByMember(member);
         if (memberMapEditor != null) {
             referencedWarning.setKey("member.mapEditor.member.referenced");
             referencedWarning.addParam(memberMapEditor.getId());
             return referencedWarning;
         }
-        final MapEditor invitedByMapEditor = mapEditorRepository.findFirstByInvitedBy(member);
+        final RoadmapEditor invitedByMapEditor = roadmapEditorRepository.findFirstByInvitedBy(member);
         if (invitedByMapEditor != null) {
             referencedWarning.setKey("member.mapEditor.invitedBy.referenced");
             referencedWarning.addParam(invitedByMapEditor.getId());

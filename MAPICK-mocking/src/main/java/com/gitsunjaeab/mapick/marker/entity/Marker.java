@@ -1,6 +1,6 @@
 package com.gitsunjaeab.mapick.marker.entity;
 
-import com.gitsunjaeab.mapick.layer.Layer;
+import com.gitsunjaeab.mapick.layer.entity.Layer;
 import com.gitsunjaeab.mapick.member.entity.Member;
 import com.gitsunjaeab.mapick.report.entity.Report;
 import jakarta.persistence.Column;
