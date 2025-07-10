@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-@RequestMapping(value = "/maps/comments", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/roadmaps/comments", produces = MediaType.APPLICATION_JSON_VALUE)
 public class CommentController {
 
     private final CommentService commentService;

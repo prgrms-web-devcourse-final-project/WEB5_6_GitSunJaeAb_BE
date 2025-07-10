@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-@RequestMapping(value = "/maps", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/roadmaps", produces = MediaType.APPLICATION_JSON_VALUE)
 public class RoadmapController {
 
     private final RoadmapService roadmapService;
@@ -43,28 +43,28 @@ public class RoadmapController {
     // TODO 특정 회원의 지도 목록 조회
 
     // 특정 지도 상세 조회
-    @GetMapping("/{mapId}")
-    public ResponseEntity<RoadmapDTO> getMap(@PathVariable(name = "mapId") final Long mapId) {
-        return ResponseEntity.ok(roadmapService.get(mapId));
+    @GetMapping("/{roadmapId}")
+    public ResponseEntity<RoadmapDTO> getMap(@PathVariable(name = "roadmapId") final Long roadmapId) {
+        return ResponseEntity.ok(roadmapService.get(roadmapId));
     }
 
     // 지도 수정
-    @PutMapping("/{mapId}")
-    public ResponseEntity<Long> updateMap(@PathVariable(name = "mapId") final Long mapId,
+    @PutMapping("/{roadmapId}")
+    public ResponseEntity<Long> updateMap(@PathVariable(name = "roadmapId") final Long roadmapId,
             @RequestBody @Valid final RoadmapDTO roadmapDTO) {
-        roadmapService.update(mapId, roadmapDTO);
-        return ResponseEntity.ok(mapId);
+        roadmapService.update(roadmapId, roadmapDTO);
+        return ResponseEntity.ok(roadmapId);
     }
 
     // 지도 삭제
-    @DeleteMapping("/{mapId}")
+    @DeleteMapping("/{roadmapId}")
     @ApiResponse(responseCode = "204")
-    public ResponseEntity<Void> deleteMap(@PathVariable(name = "mapId") final Long mapId) {
-        final ReferencedWarning referencedWarning = roadmapService.getReferencedWarning(mapId);
+    public ResponseEntity<Void> deleteMap(@PathVariable(name = "roadmapId") final Long roadmapId) {
+        final ReferencedWarning referencedWarning = roadmapService.getReferencedWarning(roadmapId);
         if (referencedWarning != null) {
             throw new ReferencedException(referencedWarning);
         }
-        roadmapService.delete(mapId);
+        roadmapService.delete(roadmapId);
         return ResponseEntity.noContent().build();
     }
 
