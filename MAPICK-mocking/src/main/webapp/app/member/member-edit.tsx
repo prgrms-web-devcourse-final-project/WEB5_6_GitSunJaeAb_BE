@@ -51,7 +51,7 @@ export default function MemberEdit() {
 
   const prepareForm = async () => {
     try {
-      const data = (await axios.get('/api/members/' + currentId)).data;
+      const data = (await axios.get('/members/' + currentId)).data;
       useFormResult.reset(data);
     } catch (error: any) {
       handleServerError(error, navigate);
@@ -65,7 +65,7 @@ export default function MemberEdit() {
   const updateMember = async (data: MemberDTO) => {
     window.scrollTo(0, 0);
     try {
-      await axios.put('/api/members/' + currentId, data);
+      await axios.put('/members/' + currentId, data);
       navigate('/members', {
             state: {
               msgSuccess: t('member.update.success')

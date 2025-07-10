@@ -32,7 +32,7 @@ export default function LayerEdit() {
 
   const navigate = useNavigate();
   const [memberValues, setMemberValues] = useState<Map<number,string>>(new Map());
-  const [mapValues, setMapValues] = useState<Map<number,string>>(new Map());
+  const [roadmapValues, setMapValues] = useState<Map<number,string>>(new Map());
   const params = useParams();
   const currentId = +params.id!;
 
@@ -42,11 +42,11 @@ export default function LayerEdit() {
 
   const prepareForm = async () => {
     try {
-      const memberValuesResponse = await axios.get('/api/layers/memberValues');
+      const memberValuesResponse = await axios.get('/layers/memberValues');
       setMemberValues(memberValuesResponse.data);
-      const mapValuesResponse = await axios.get('/api/layers/mapValues');
+      const mapValuesResponse = await axios.get('/layers/roadmapValues');
       setMapValues(mapValuesResponse.data);
-      const data = (await axios.get('/api/layers/' + currentId)).data;
+      const data = (await axios.get('/layers/' + currentId)).data;
       useFormResult.reset(data);
     } catch (error: any) {
       handleServerError(error, navigate);
@@ -60,7 +60,7 @@ export default function LayerEdit() {
   const updateLayer = async (data: LayerDTO) => {
     window.scrollTo(0, 0);
     try {
-      await axios.put('/api/layers/' + currentId, data);
+      await axios.put('/layers/' + currentId, data);
       navigate('/layers', {
             state: {
               msgSuccess: t('layer.update.success')
@@ -88,7 +88,7 @@ export default function LayerEdit() {
       <InputRow useFormResult={useFormResult} object="layer" field="updatedAt" />
       <InputRow useFormResult={useFormResult} object="layer" field="deletedAt" />
       <InputRow useFormResult={useFormResult} object="layer" field="member" type="select" options={memberValues} />
-      <InputRow useFormResult={useFormResult} object="layer" field="roadmap" type="select" options={mapValues} />
+      <InputRow useFormResult={useFormResult} object="layer" field="roadmap" type="select" options={roadmapValues} />
       <input type="submit" value={t('layer.edit.headline')} className="inline-block text-white bg-blue-600 hover:bg-blue-700 focus:ring-blue-300  focus:ring-4 rounded px-5 py-2 mt-6" />
     </form>
   </>);

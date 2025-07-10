@@ -8,7 +8,7 @@ export class CommentDTO {
   content?: string|null;
   createdAt?: string|null;
   updatedAt?: string|null;
-  map?: number|null;
+  roadmap?: number|null;
   member?: number|null;
 
 }

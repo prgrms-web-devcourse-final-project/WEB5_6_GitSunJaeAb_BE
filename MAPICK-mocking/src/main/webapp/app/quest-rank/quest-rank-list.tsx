@@ -16,8 +16,8 @@ export default function QuestRankList() {
 
   const getAllQuestRanks = async () => {
     try {
-      const response = await axios.get('/api/questRanks');
-      setQuestRanks(response.data);
+      const response = await axios.get('/questRanks');
+      setQuestRanks(response.data.content);
     } catch (error: any) {
       handleServerError(error, navigate);
     }
@@ -28,7 +28,7 @@ export default function QuestRankList() {
       return;
     }
     try {
-      await axios.delete('/api/questRanks/' + id);
+      await axios.delete('/questRanks/' + id);
       navigate('/questRanks', {
             state: {
               msgInfo: t('questRank.delete.success')

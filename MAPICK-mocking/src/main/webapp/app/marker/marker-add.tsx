@@ -43,9 +43,9 @@ export default function MarkerAdd() {
 
   const prepareRelations = async () => {
     try {
-      const memberValuesResponse = await axios.get('/api/markers/memberValues');
+      const memberValuesResponse = await axios.get('/markers/memberValues');
       setMemberValues(memberValuesResponse.data);
-      const layerValuesResponse = await axios.get('/api/markers/layerValues');
+      const layerValuesResponse = await axios.get('/markers/layerValues');
       setLayerValues(layerValuesResponse.data);
     } catch (error: any) {
       handleServerError(error, navigate);
@@ -59,7 +59,7 @@ export default function MarkerAdd() {
   const createMarker = async (data: MarkerDTO) => {
     window.scrollTo(0, 0);
     try {
-      await axios.post('/api/markers', data);
+      await axios.post('/markers', data);
       navigate('/markers', {
             state: {
               msgSuccess: t('marker.create.success')

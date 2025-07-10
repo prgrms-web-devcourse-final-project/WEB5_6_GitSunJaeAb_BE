@@ -35,26 +35,26 @@ public class MarkerService {
     public List<MarkerDTO> findAll() {
         final List<Marker> markers = markerRepository.findAll(Sort.by("id"));
         return markers.stream()
-                .map(marker -> mapToDTO(marker, new MarkerDTO()))
+                .map(marker -> roadmapToDTO(marker, new MarkerDTO()))
                 .toList();
     }
 
     public MarkerDTO get(final Long id) {
         return markerRepository.findById(id)
-                .map(marker -> mapToDTO(marker, new MarkerDTO()))
+                .map(marker -> roadmapToDTO(marker, new MarkerDTO()))
                 .orElseThrow(NotFoundException::new);
     }
 
     public Long create(final MarkerDTO markerDTO) {
         final Marker marker = new Marker();
-        mapToEntity(markerDTO, marker);
+        roadmapToEntity(markerDTO, marker);
         return markerRepository.save(marker).getId();
     }
 
     public void update(final Long id, final MarkerDTO markerDTO) {
         final Marker marker = markerRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
-        mapToEntity(markerDTO, marker);
+        roadmapToEntity(markerDTO, marker);
         markerRepository.save(marker);
     }
 
@@ -62,7 +62,7 @@ public class MarkerService {
         markerRepository.deleteById(id);
     }
 
-    private MarkerDTO mapToDTO(final Marker marker, final MarkerDTO markerDTO) {
+    private MarkerDTO roadmapToDTO(final Marker marker, final MarkerDTO markerDTO) {
         markerDTO.setId(marker.getId());
         markerDTO.setTitle(marker.getTitle());
         markerDTO.setDescription(marker.getDescription());
@@ -79,7 +79,7 @@ public class MarkerService {
         return markerDTO;
     }
 
-    private Marker mapToEntity(final MarkerDTO markerDTO, final Marker marker) {
+    private Marker roadmapToEntity(final MarkerDTO markerDTO, final Marker marker) {
         marker.setTitle(markerDTO.getTitle());
         marker.setDescription(markerDTO.getDescription());
         marker.setLat(markerDTO.getLat());

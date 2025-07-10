@@ -40,11 +40,11 @@ export default function QuestRankEdit() {
 
   const prepareForm = async () => {
     try {
-      const questValuesResponse = await axios.get('/api/questRanks/questValues');
+      const questValuesResponse = await axios.get('/questRanks/questValues');
       setQuestValues(questValuesResponse.data);
-      const memberValuesResponse = await axios.get('/api/questRanks/memberValues');
+      const memberValuesResponse = await axios.get('/questRanks/memberValues');
       setMemberValues(memberValuesResponse.data);
-      const data = (await axios.get('/api/questRanks/' + currentId)).data;
+      const data = (await axios.get('/questRanks/' + currentId)).data;
       useFormResult.reset(data);
     } catch (error: any) {
       handleServerError(error, navigate);
@@ -58,7 +58,7 @@ export default function QuestRankEdit() {
   const updateQuestRank = async (data: QuestRankDTO) => {
     window.scrollTo(0, 0);
     try {
-      await axios.put('/api/questRanks/' + currentId, data);
+      await axios.put('/questRanks/' + currentId, data);
       navigate('/questRanks', {
             state: {
               msgSuccess: t('questRank.update.success')

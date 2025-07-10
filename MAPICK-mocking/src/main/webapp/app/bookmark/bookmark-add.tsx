@@ -25,7 +25,7 @@ export default function BookmarkAdd() {
   useDocumentTitle(t('bookmark.add.headline'));
 
   const navigate = useNavigate();
-  const [mapValues, setMapValues] = useState<Map<number,string>>(new Map());
+  const [roadmapValues, setRoadmapValues] = useState<Map<number,string>>(new Map());
   const [memberValues, setMemberValues] = useState<Map<number,string>>(new Map());
 
   const useFormResult = useForm({
@@ -34,9 +34,9 @@ export default function BookmarkAdd() {
 
   const prepareRelations = async () => {
     try {
-      const mapValuesResponse = await axios.get('/api/bookmarks/mapValues');
-      setMapValues(mapValuesResponse.data);
-      const memberValuesResponse = await axios.get('/api/bookmarks/memberValues');
+      const roadmapValuesResponse = await axios.get('/bookmarks/roadmapValues');
+      setRoadmapValues(roadmapValuesResponse.data);
+      const memberValuesResponse = await axios.get('/bookmarks/memberValues');
       setMemberValues(memberValuesResponse.data);
     } catch (error: any) {
       handleServerError(error, navigate);
@@ -50,7 +50,7 @@ export default function BookmarkAdd() {
   const createBookmark = async (data: BookmarkDTO) => {
     window.scrollTo(0, 0);
     try {
-      await axios.post('/api/bookmarks', data);
+      await axios.post('/bookmarks', data);
       navigate('/bookmarks', {
             state: {
               msgSuccess: t('bookmark.create.success')
@@ -70,7 +70,7 @@ export default function BookmarkAdd() {
     </div>
     <form onSubmit={useFormResult.handleSubmit(createBookmark)} noValidate>
       <InputRow useFormResult={useFormResult} object="bookmark" field="createdAt" required={true} />
-      <InputRow useFormResult={useFormResult} object="bookmark" field="roadmap" type="select" options={mapValues} />
+      <InputRow useFormResult={useFormResult} object="bookmark" field="roadmap" type="select" options={roadmapValues} />
       <InputRow useFormResult={useFormResult} object="bookmark" field="member" type="select" options={memberValues} />
       <input type="submit" value={t('bookmark.add.headline')} className="inline-block text-white bg-blue-600 hover:bg-blue-700 focus:ring-blue-300  focus:ring-4 rounded px-5 py-2 mt-6" />
     </form>

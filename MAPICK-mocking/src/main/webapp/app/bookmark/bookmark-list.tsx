@@ -16,8 +16,8 @@ export default function BookmarkList() {
 
   const getAllBookmarks = async () => {
     try {
-      const response = await axios.get('/api/bookmarks');
-      setBookmarks(response.data);
+      const response = await axios.get('/bookmarks');
+      setBookmarks(response.data.content);
     } catch (error: any) {
       handleServerError(error, navigate);
     }
@@ -28,7 +28,7 @@ export default function BookmarkList() {
       return;
     }
     try {
-      await axios.delete('/api/bookmarks/' + id);
+      await axios.delete('/bookmarks/' + id);
       navigate('/bookmarks', {
             state: {
               msgInfo: t('bookmark.delete.success')
@@ -60,7 +60,7 @@ export default function BookmarkList() {
           <tr>
             <th scope="col" className="text-left p-2">{t('bookmark.id.label')}</th>
             <th scope="col" className="text-left p-2">{t('bookmark.createdAt.label')}</th>
-            <th scope="col" className="text-left p-2">{t('bookmark.map.label')}</th>
+            <th scope="col" className="text-left p-2">{t('bookmark.roadmap.label')}</th>
             <th scope="col" className="text-left p-2">{t('bookmark.member.label')}</th>
             <th></th>
           </tr>

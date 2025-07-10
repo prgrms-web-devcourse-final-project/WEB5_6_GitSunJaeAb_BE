@@ -1,6 +1,6 @@
-export class MapEditorDTO {
+export class RoadmapEditorDTO {
 
-  constructor(data:Partial<MapEditorDTO>) {
+  constructor(data:Partial<RoadmapEditorDTO>) {
     Object.assign(this, data);
   }
 
@@ -9,7 +9,7 @@ export class MapEditorDTO {
   createdAt?: string|null;
   updatedAt?: string|null;
   deletedAt?: string|null;
-  map?: number|null;
+  roadmap?: number|null;
   member?: number|null;
   invitedBy?: number|null;
 

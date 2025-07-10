@@ -32,7 +32,7 @@ export default function RoadmapCategoryRelationAdd() {
 
   const prepareRelations = async () => {
     try {
-      const mapValuesResponse = await axios.get('/api/roadmapCategoryRelations/mapValues');
+      const mapValuesResponse = await axios.get('/roadmapCategoryRelations/mapValues');
       setMapValues(mapValuesResponse.data);
     } catch (error: any) {
       handleServerError(error, navigate);
@@ -46,7 +46,7 @@ export default function RoadmapCategoryRelationAdd() {
   const createMapCategoryRelation = async (data: RoadMapCategoryRelationDTO) => {
     window.scrollTo(0, 0);
     try {
-      await axios.post('/api/roadmapCategoryRelations', data);
+      await axios.post('/roadmapCategoryRelations', data);
       navigate('/roadmapCategoryRelations', {
             state: {
               msgSuccess: t('roadmapCategoryRelation.create.success')

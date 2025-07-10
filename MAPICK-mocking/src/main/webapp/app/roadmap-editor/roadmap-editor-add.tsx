@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router';
 import { handleServerError, setYupDefaults } from 'app/common/utils';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { MapEditorDTO } from 'app/roadmap-editor/roadmap-editor-model';
+import { RoadmapEditorDTO } from 'app/roadmap-editor/roadmap-editor-model';
 import axios from 'axios';
 import InputRow from 'app/common/input-row/input-row';
 import useDocumentTitle from 'app/common/use-document-title';
@@ -39,11 +39,11 @@ export default function RoadmapEditorAdd() {
 
   const prepareRelations = async () => {
     try {
-      const mapValuesResponse = await axios.get('/api/roadmapEditors/mapValues');
+      const mapValuesResponse = await axios.get('/roadmapEditors/mapValues');
       setMapValues(mapValuesResponse.data);
-      const memberValuesResponse = await axios.get('/api/roadmapEditors/memberValues');
+      const memberValuesResponse = await axios.get('/roadmapEditors/memberValues');
       setMemberValues(memberValuesResponse.data);
-      const invitedByValuesResponse = await axios.get('/api/roadmapEditors/invitedByValues');
+      const invitedByValuesResponse = await axios.get('/roadmapEditors/invitedByValues');
       setInvitedByValues(invitedByValuesResponse.data);
     } catch (error: any) {
       handleServerError(error, navigate);
@@ -54,10 +54,10 @@ export default function RoadmapEditorAdd() {
     prepareRelations();
   }, []);
 
-  const createMapEditor = async (data: MapEditorDTO) => {
+  const createMapEditor = async (data: RoadmapEditorDTO) => {
     window.scrollTo(0, 0);
     try {
-      await axios.post('/api/roadmapEditors', data);
+      await axios.post('/roadmapEditors', data);
       navigate('/roadmapEditors', {
             state: {
               msgSuccess: t('roadmapEditor.create.success')

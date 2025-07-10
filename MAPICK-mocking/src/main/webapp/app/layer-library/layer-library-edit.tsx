@@ -36,11 +36,11 @@ export default function LayerLibraryEdit() {
 
   const prepareForm = async () => {
     try {
-      const memberValuesResponse = await axios.get('/api/layerLibraries/memberValues');
+      const memberValuesResponse = await axios.get('/layerLibraries/memberValues');
       setMemberValues(memberValuesResponse.data);
-      const layerValuesResponse = await axios.get('/api/layerLibraries/layerValues');
+      const layerValuesResponse = await axios.get('/layerLibraries/layerValues');
       setLayerValues(layerValuesResponse.data);
-      const data = (await axios.get('/api/layerLibraries/' + currentId)).data;
+      const data = (await axios.get('/layerLibraries/' + currentId)).data;
       useFormResult.reset(data);
     } catch (error: any) {
       handleServerError(error, navigate);
@@ -54,7 +54,7 @@ export default function LayerLibraryEdit() {
   const updateLayerLibrary = async (data: LayerLibraryDTO) => {
     window.scrollTo(0, 0);
     try {
-      await axios.put('/api/layerLibraries/' + currentId, data);
+      await axios.put('/layerLibraries/' + currentId, data);
       navigate('/layerLibraries', {
             state: {
               msgSuccess: t('layerLibrary.update.success')

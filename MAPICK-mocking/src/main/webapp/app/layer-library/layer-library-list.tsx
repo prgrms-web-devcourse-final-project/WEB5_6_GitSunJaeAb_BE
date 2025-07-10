@@ -16,8 +16,8 @@ export default function LayerLibraryList() {
 
   const getAllLayerLibraries = async () => {
     try {
-      const response = await axios.get('/api/layerLibraries');
-      setLayerLibraries(response.data);
+      const response = await axios.get('/layerLibraries');
+      setLayerLibraries(response.data.content);
     } catch (error: any) {
       handleServerError(error, navigate);
     }
@@ -28,7 +28,7 @@ export default function LayerLibraryList() {
       return;
     }
     try {
-      await axios.delete('/api/layerLibraries/' + id);
+      await axios.delete('/layerLibraries/' + id);
       navigate('/layerLibraries', {
             state: {
               msgInfo: t('layerLibrary.delete.success')

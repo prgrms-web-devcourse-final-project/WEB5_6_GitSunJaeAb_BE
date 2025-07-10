@@ -9,6 +9,6 @@ export class CategoryDTO {
   description?: string|null;
   categoryImage?: string|null;
   createdAt?: string|null;
-  mapCategoryRelations?: number|null;
+  roadmapCategoryRelations?: number|null;
 
 }

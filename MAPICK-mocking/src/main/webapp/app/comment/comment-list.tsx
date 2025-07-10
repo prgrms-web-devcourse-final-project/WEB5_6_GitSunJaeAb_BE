@@ -16,8 +16,8 @@ export default function CommentList() {
 
   const getAllComments = async () => {
     try {
-      const response = await axios.get('/api/comments');
-      setComments(response.data);
+      const response = await axios.get('/comments');
+      setComments(response.data.content);
     } catch (error: any) {
       handleServerError(error, navigate);
     }
@@ -28,7 +28,7 @@ export default function CommentList() {
       return;
     }
     try {
-      await axios.delete('/api/comments/' + id);
+      await axios.delete('/comments/' + id);
       navigate('/comments', {
             state: {
               msgInfo: t('comment.delete.success')
@@ -61,7 +61,7 @@ export default function CommentList() {
             <th scope="col" className="text-left p-2">{t('comment.id.label')}</th>
             <th scope="col" className="text-left p-2">{t('comment.createdAt.label')}</th>
             <th scope="col" className="text-left p-2">{t('comment.updatedAt.label')}</th>
-            <th scope="col" className="text-left p-2">{t('comment.map.label')}</th>
+            <th scope="col" className="text-left p-2">{t('comment.roadmap.label')}</th>
             <th scope="col" className="text-left p-2">{t('comment.member.label')}</th>
             <th></th>
           </tr>
@@ -72,7 +72,7 @@ export default function CommentList() {
             <td className="p-2">{comment.id}</td>
             <td className="p-2">{comment.createdAt}</td>
             <td className="p-2">{comment.updatedAt}</td>
-            <td className="p-2">{comment.map}</td>
+            <td className="p-2">{comment.roadmap}</td>
             <td className="p-2">{comment.member}</td>
             <td className="p-2">
               <div className="float-right whitespace-nowrap">

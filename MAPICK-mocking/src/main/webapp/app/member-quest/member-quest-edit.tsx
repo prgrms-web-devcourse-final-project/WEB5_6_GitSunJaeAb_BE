@@ -42,11 +42,11 @@ export default function MemberQuestEdit() {
 
   const prepareForm = async () => {
     try {
-      const memberValuesResponse = await axios.get('/api/memberQuests/memberValues');
+      const memberValuesResponse = await axios.get('/memberQuests/memberValues');
       setMemberValues(memberValuesResponse.data);
-      const questValuesResponse = await axios.get('/api/memberQuests/questValues');
+      const questValuesResponse = await axios.get('/memberQuests/questValues');
       setQuestValues(questValuesResponse.data);
-      const data = (await axios.get('/api/memberQuests/' + currentId)).data;
+      const data = (await axios.get('/memberQuests/' + currentId)).data;
       useFormResult.reset(data);
     } catch (error: any) {
       handleServerError(error, navigate);
@@ -60,7 +60,7 @@ export default function MemberQuestEdit() {
   const updateMemberQuest = async (data: MemberQuestDTO) => {
     window.scrollTo(0, 0);
     try {
-      await axios.put('/api/memberQuests/' + currentId, data);
+      await axios.put('/memberQuests/' + currentId, data);
       navigate('/memberQuests', {
             state: {
               msgSuccess: t('memberQuest.update.success')

@@ -34,7 +34,7 @@ export default function ReportAdd() {
   const navigate = useNavigate();
   const [reporterValues, setReporterValues] = useState<Map<number,string>>(new Map());
   const [reportedMemberValues, setReportedMemberValues] = useState<Map<number,string>>(new Map());
-  const [mapValues, setMapValues] = useState<Map<number,string>>(new Map());
+  const [mapValues, setRoadmapValues] = useState<Map<number,string>>(new Map());
   const [markerValues, setMarkerValues] = useState<Map<number,string>>(new Map());
   const [questValues, setQuestValues] = useState<Map<number,string>>(new Map());
 
@@ -44,15 +44,15 @@ export default function ReportAdd() {
 
   const prepareRelations = async () => {
     try {
-      const reporterValuesResponse = await axios.get('/api/reports/reporterValues');
+      const reporterValuesResponse = await axios.get('/reports/reporterValues');
       setReporterValues(reporterValuesResponse.data);
-      const reportedMemberValuesResponse = await axios.get('/api/reports/reportedMemberValues');
+      const reportedMemberValuesResponse = await axios.get('/reports/reportedMemberValues');
       setReportedMemberValues(reportedMemberValuesResponse.data);
-      const mapValuesResponse = await axios.get('/api/reports/mapValues');
-      setMapValues(mapValuesResponse.data);
-      const markerValuesResponse = await axios.get('/api/reports/markerValues');
+      const roadmapValuesResponse = await axios.get('/reports/roadmapValues');
+      setRoadmapValues(roadmapValuesResponse.data);
+      const markerValuesResponse = await axios.get('/reports/markerValues');
       setMarkerValues(markerValuesResponse.data);
-      const questValuesResponse = await axios.get('/api/reports/questValues');
+      const questValuesResponse = await axios.get('/reports/questValues');
       setQuestValues(questValuesResponse.data);
     } catch (error: any) {
       handleServerError(error, navigate);
@@ -66,7 +66,7 @@ export default function ReportAdd() {
   const createReport = async (data: ReportDTO) => {
     window.scrollTo(0, 0);
     try {
-      await axios.post('/api/reports', data);
+      await axios.post('/reports', data);
       navigate('/reports', {
             state: {
               msgSuccess: t('report.create.success')

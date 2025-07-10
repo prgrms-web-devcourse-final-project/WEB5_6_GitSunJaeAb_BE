@@ -34,9 +34,9 @@ export default function LayerLibraryAdd() {
 
   const prepareRelations = async () => {
     try {
-      const memberValuesResponse = await axios.get('/api/layerLibraries/memberValues');
+      const memberValuesResponse = await axios.get('/layerLibraries/memberValues');
       setMemberValues(memberValuesResponse.data);
-      const layerValuesResponse = await axios.get('/api/layerLibraries/layerValues');
+      const layerValuesResponse = await axios.get('/layerLibraries/layerValues');
       setLayerValues(layerValuesResponse.data);
     } catch (error: any) {
       handleServerError(error, navigate);
@@ -50,7 +50,7 @@ export default function LayerLibraryAdd() {
   const createLayerLibrary = async (data: LayerLibraryDTO) => {
     window.scrollTo(0, 0);
     try {
-      await axios.post('/api/layerLibraries', data);
+      await axios.post('/layerLibraries', data);
       navigate('/layerLibraries', {
             state: {
               msgSuccess: t('layerLibrary.create.success')

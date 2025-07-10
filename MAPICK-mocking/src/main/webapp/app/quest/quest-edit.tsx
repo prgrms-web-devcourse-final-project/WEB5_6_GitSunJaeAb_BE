@@ -41,9 +41,9 @@ export default function QuestEdit() {
 
   const prepareForm = async () => {
     try {
-      const memberValuesResponse = await axios.get('/api/quests/memberValues');
+      const memberValuesResponse = await axios.get('/quests/memberValues');
       setMemberValues(memberValuesResponse.data);
-      const data = (await axios.get('/api/quests/' + currentId)).data;
+      const data = (await axios.get('/quests/' + currentId)).data;
       useFormResult.reset(data);
     } catch (error: any) {
       handleServerError(error, navigate);
@@ -57,7 +57,7 @@ export default function QuestEdit() {
   const updateQuest = async (data: QuestDTO) => {
     window.scrollTo(0, 0);
     try {
-      await axios.put('/api/quests/' + currentId, data);
+      await axios.put('/quests/' + currentId, data);
       navigate('/quests', {
             state: {
               msgSuccess: t('quest.update.success')

@@ -34,7 +34,7 @@ export default function ReportEdit() {
   const navigate = useNavigate();
   const [reporterValues, setReporterValues] = useState<Map<number,string>>(new Map());
   const [reportedMemberValues, setReportedMemberValues] = useState<Map<number,string>>(new Map());
-  const [mapValues, setMapValues] = useState<Map<number,string>>(new Map());
+  const [roadmapValues, setRoadmapValues] = useState<Map<number,string>>(new Map());
   const [markerValues, setMarkerValues] = useState<Map<number,string>>(new Map());
   const [questValues, setQuestValues] = useState<Map<number,string>>(new Map());
   const params = useParams();
@@ -46,17 +46,17 @@ export default function ReportEdit() {
 
   const prepareForm = async () => {
     try {
-      const reporterValuesResponse = await axios.get('/api/reports/reporterValues');
+      const reporterValuesResponse = await axios.get('/reports/reporterValues');
       setReporterValues(reporterValuesResponse.data);
-      const reportedMemberValuesResponse = await axios.get('/api/reports/reportedMemberValues');
+      const reportedMemberValuesResponse = await axios.get('/reports/reportedMemberValues');
       setReportedMemberValues(reportedMemberValuesResponse.data);
-      const mapValuesResponse = await axios.get('/api/reports/mapValues');
-      setMapValues(mapValuesResponse.data);
-      const markerValuesResponse = await axios.get('/api/reports/markerValues');
+      const mapValuesResponse = await axios.get('/reports/roadmapValues');
+      setRoadmapValues(mapValuesResponse.data);
+      const markerValuesResponse = await axios.get('/reports/markerValues');
       setMarkerValues(markerValuesResponse.data);
-      const questValuesResponse = await axios.get('/api/reports/questValues');
+      const questValuesResponse = await axios.get('/reports/questValues');
       setQuestValues(questValuesResponse.data);
-      const data = (await axios.get('/api/reports/' + currentId)).data;
+      const data = (await axios.get('/reports/' + currentId)).data;
       useFormResult.reset(data);
     } catch (error: any) {
       handleServerError(error, navigate);
@@ -70,7 +70,7 @@ export default function ReportEdit() {
   const updateReport = async (data: ReportDTO) => {
     window.scrollTo(0, 0);
     try {
-      await axios.put('/api/reports/' + currentId, data);
+      await axios.put('/reports/' + currentId, data);
       navigate('/reports', {
             state: {
               msgSuccess: t('report.update.success')
@@ -98,7 +98,7 @@ export default function ReportEdit() {
       <InputRow useFormResult={useFormResult} object="report" field="resolvedAt" />
       <InputRow useFormResult={useFormResult} object="report" field="reporter" type="select" options={reporterValues} />
       <InputRow useFormResult={useFormResult} object="report" field="reportedMember" type="select" options={reportedMemberValues} />
-      <InputRow useFormResult={useFormResult} object="report" field="roadmap" type="select" options={mapValues} />
+      <InputRow useFormResult={useFormResult} object="report" field="roadmap" type="select" options={roadmapValues} />
       <InputRow useFormResult={useFormResult} object="report" field="marker" type="select" options={markerValues} />
       <InputRow useFormResult={useFormResult} object="report" field="quest" type="select" options={questValues} />
       <input type="submit" value={t('report.edit.headline')} className="inline-block text-white bg-blue-600 hover:bg-blue-700 focus:ring-blue-300  focus:ring-4 rounded px-5 py-2 mt-6" />

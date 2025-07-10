@@ -16,8 +16,8 @@ export default function MemberQuestList() {
 
   const getAllMemberQuests = async () => {
     try {
-      const response = await axios.get('/api/memberQuests');
-      setMemberQuests(response.data);
+      const response = await axios.get('/memberQuests');
+      setMemberQuests(response.data.content);
     } catch (error: any) {
       handleServerError(error, navigate);
     }
@@ -28,7 +28,7 @@ export default function MemberQuestList() {
       return;
     }
     try {
-      await axios.delete('/api/memberQuests/' + id);
+      await axios.delete('/memberQuests/' + id);
       navigate('/memberQuests', {
             state: {
               msgInfo: t('memberQuest.delete.success')

@@ -1,12 +1,12 @@
-export class MapHashtagRelationDTO {
+export class RoadmapHashtagRelationDTO {
 
-  constructor(data:Partial<MapHashtagRelationDTO>) {
+  constructor(data:Partial<RoadmapHashtagRelationDTO>) {
     Object.assign(this, data);
   }
 
   id?: number|null;
   createdAt?: string|null;
   hashtag?: number|null;
-  map?: number|null;
+  roadmap?: number|null;
 
 }

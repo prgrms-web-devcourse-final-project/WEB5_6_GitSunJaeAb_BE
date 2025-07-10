@@ -16,8 +16,8 @@ export default function QuestList() {
 
   const getAllQuests = async () => {
     try {
-      const response = await axios.get('/api/quests');
-      setQuests(response.data);
+      const response = await axios.get('/quests');
+      setQuests(response.data.content);
     } catch (error: any) {
       handleServerError(error, navigate);
     }
@@ -28,7 +28,7 @@ export default function QuestList() {
       return;
     }
     try {
-      await axios.delete('/api/quests/' + id);
+      await axios.delete('/quests/' + id);
       navigate('/quests', {
             state: {
               msgInfo: t('quest.delete.success')

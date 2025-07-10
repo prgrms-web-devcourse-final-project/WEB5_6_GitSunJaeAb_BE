@@ -32,7 +32,7 @@ export default function LayerAdd() {
 
   const navigate = useNavigate();
   const [memberValues, setMemberValues] = useState<Map<number,string>>(new Map());
-  const [mapValues, setMapValues] = useState<Map<number,string>>(new Map());
+  const [roadmapValues, setRoadmapValues] = useState<Map<number,string>>(new Map());
 
   const useFormResult = useForm({
     resolver: yupResolver(getSchema()),
@@ -40,10 +40,10 @@ export default function LayerAdd() {
 
   const prepareRelations = async () => {
     try {
-      const memberValuesResponse = await axios.get('/api/layers/memberValues');
+      const memberValuesResponse = await axios.get('/layers/memberValues');
       setMemberValues(memberValuesResponse.data);
-      const mapValuesResponse = await axios.get('/api/layers/mapValues');
-      setMapValues(mapValuesResponse.data);
+      const roadmapValuesResponse = await axios.get('/layers/roadroadmapValues');
+      setRoadmapValues(roadmapValuesResponse.data);
     } catch (error: any) {
       handleServerError(error, navigate);
     }
@@ -56,7 +56,7 @@ export default function LayerAdd() {
   const createLayer = async (data: LayerDTO) => {
     window.scrollTo(0, 0);
     try {
-      await axios.post('/api/layers', data);
+      await axios.post('/layers', data);
       navigate('/layers', {
             state: {
               msgSuccess: t('layer.create.success')
@@ -83,7 +83,7 @@ export default function LayerAdd() {
       <InputRow useFormResult={useFormResult} object="layer" field="updatedAt" />
       <InputRow useFormResult={useFormResult} object="layer" field="deletedAt" />
       <InputRow useFormResult={useFormResult} object="layer" field="member" type="select" options={memberValues} />
-      <InputRow useFormResult={useFormResult} object="layer" field="roadmap" type="select" options={mapValues} />
+      <InputRow useFormResult={useFormResult} object="layer" field="roadmap" type="select" options={roadmapValues} />
       <input type="submit" value={t('layer.add.headline')} className="inline-block text-white bg-blue-600 hover:bg-blue-700 focus:ring-blue-300  focus:ring-4 rounded px-5 py-2 mt-6" />
     </form>
   </>);

@@ -36,11 +36,11 @@ export default function MemberInterestEdit() {
 
   const prepareForm = async () => {
     try {
-      const interestValuesResponse = await axios.get('/api/memberInterests/interestValues');
+      const interestValuesResponse = await axios.get('/memberInterests/interestValues');
       setInterestValues(interestValuesResponse.data);
-      const memberValuesResponse = await axios.get('/api/memberInterests/memberValues');
+      const memberValuesResponse = await axios.get('/memberInterests/memberValues');
       setMemberValues(memberValuesResponse.data);
-      const data = (await axios.get('/api/memberInterests/' + currentId)).data;
+      const data = (await axios.get('/memberInterests/' + currentId)).data;
       useFormResult.reset(data);
     } catch (error: any) {
       handleServerError(error, navigate);
@@ -54,7 +54,7 @@ export default function MemberInterestEdit() {
   const updateMemberInterest = async (data: MemberInterestDTO) => {
     window.scrollTo(0, 0);
     try {
-      await axios.put('/api/memberInterests/' + currentId, data);
+      await axios.put('/memberInterests/' + currentId, data);
       navigate('/memberInterests', {
             state: {
               msgSuccess: t('memberInterest.update.success')

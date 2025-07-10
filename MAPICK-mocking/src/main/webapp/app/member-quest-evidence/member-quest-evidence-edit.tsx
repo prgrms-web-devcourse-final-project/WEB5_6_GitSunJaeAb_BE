@@ -38,9 +38,9 @@ export default function MemberQuestEvidenceEdit() {
 
   const prepareForm = async () => {
     try {
-      const memberQuestValuesResponse = await axios.get('/api/memberQuestEvidences/memberQuestValues');
+      const memberQuestValuesResponse = await axios.get('/memberQuestEvidences/memberQuestValues');
       setMemberQuestValues(memberQuestValuesResponse.data);
-      const data = (await axios.get('/api/memberQuestEvidences/' + currentId)).data;
+      const data = (await axios.get('/memberQuestEvidences/' + currentId)).data;
       useFormResult.reset(data);
     } catch (error: any) {
       handleServerError(error, navigate);
@@ -54,7 +54,7 @@ export default function MemberQuestEvidenceEdit() {
   const updateMemberQuestEvidence = async (data: MemberQuestEvidenceDTO) => {
     window.scrollTo(0, 0);
     try {
-      await axios.put('/api/memberQuestEvidences/' + currentId, data);
+      await axios.put('/memberQuestEvidences/' + currentId, data);
       navigate('/memberQuestEvidences', {
             state: {
               msgSuccess: t('memberQuestEvidence.update.success')

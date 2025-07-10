@@ -45,11 +45,11 @@ export default function MarkerEdit() {
 
   const prepareForm = async () => {
     try {
-      const memberValuesResponse = await axios.get('/api/markers/memberValues');
+      const memberValuesResponse = await axios.get('/markers/memberValues');
       setMemberValues(memberValuesResponse.data);
-      const layerValuesResponse = await axios.get('/api/markers/layerValues');
+      const layerValuesResponse = await axios.get('/markers/layerValues');
       setLayerValues(layerValuesResponse.data);
-      const data = (await axios.get('/api/markers/' + currentId)).data;
+      const data = (await axios.get('/markers/' + currentId)).data;
       useFormResult.reset(data);
     } catch (error: any) {
       handleServerError(error, navigate);
@@ -63,7 +63,7 @@ export default function MarkerEdit() {
   const updateMarker = async (data: MarkerDTO) => {
     window.scrollTo(0, 0);
     try {
-      await axios.put('/api/markers/' + currentId, data);
+      await axios.put('/markers/' + currentId, data);
       navigate('/markers', {
             state: {
               msgSuccess: t('marker.update.success')

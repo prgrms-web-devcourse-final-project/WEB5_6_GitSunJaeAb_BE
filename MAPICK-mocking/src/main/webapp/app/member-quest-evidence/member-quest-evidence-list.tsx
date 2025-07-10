@@ -16,8 +16,8 @@ export default function MemberQuestEvidenceList() {
 
   const getAllMemberQuestEvidences = async () => {
     try {
-      const response = await axios.get('/api/memberQuestEvidences');
-      setMemberQuestEvidences(response.data);
+      const response = await axios.get('/memberQuestEvidences');
+      setMemberQuestEvidences(response.data.content);
     } catch (error: any) {
       handleServerError(error, navigate);
     }
@@ -28,7 +28,7 @@ export default function MemberQuestEvidenceList() {
       return;
     }
     try {
-      await axios.delete('/api/memberQuestEvidences/' + id);
+      await axios.delete('/memberQuestEvidences/' + id);
       navigate('/memberQuestEvidences', {
             state: {
               msgInfo: t('memberQuestEvidence.delete.success')

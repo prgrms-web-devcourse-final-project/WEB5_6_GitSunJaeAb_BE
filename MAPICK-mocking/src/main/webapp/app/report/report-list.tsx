@@ -16,8 +16,8 @@ export default function ReportList() {
 
   const getAllReports = async () => {
     try {
-      const response = await axios.get('/api/reports');
-      setReports(response.data);
+      const response = await axios.get('/reports');
+      setReports(response.data.content);
     } catch (error: any) {
       handleServerError(error, navigate);
     }
@@ -28,7 +28,7 @@ export default function ReportList() {
       return;
     }
     try {
-      await axios.delete('/api/reports/' + id);
+      await axios.delete('/reports/' + id);
       navigate('/reports', {
             state: {
               msgInfo: t('report.delete.success')
@@ -65,7 +65,7 @@ export default function ReportList() {
             <th scope="col" className="text-left p-2">{t('report.resolvedAt.label')}</th>
             <th scope="col" className="text-left p-2">{t('report.reporter.label')}</th>
             <th scope="col" className="text-left p-2">{t('report.reportedMember.label')}</th>
-            <th scope="col" className="text-left p-2">{t('report.map.label')}</th>
+            <th scope="col" className="text-left p-2">{t('report.roadmap.label')}</th>
             <th></th>
           </tr>
         </thead>
@@ -79,7 +79,7 @@ export default function ReportList() {
             <td className="p-2">{report.resolvedAt}</td>
             <td className="p-2">{report.reporter}</td>
             <td className="p-2">{report.reportedMember}</td>
-            <td className="p-2">{report.map}</td>
+            <td className="p-2">{report.roadmap}</td>
             <td className="p-2">
               <div className="float-right whitespace-nowrap">
                 <Link to={'/reports/edit/' + report.id} className="inline-block text-white bg-gray-500 hover:bg-gray-600 focus:ring-gray-200 focus:ring-3 rounded px-2.5 py-1.5 text-sm">{t('report.list.edit')}</Link>

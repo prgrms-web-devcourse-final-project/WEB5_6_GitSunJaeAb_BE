@@ -16,8 +16,8 @@ export default function LayerList() {
 
   const getAllLayers = async () => {
     try {
-      const response = await axios.get('/api/layers');
-      setLayers(response.data);
+      const response = await axios.get('/layers');
+      setLayers(response.data.content);
     } catch (error: any) {
       handleServerError(error, navigate);
     }
@@ -28,7 +28,7 @@ export default function LayerList() {
       return;
     }
     try {
-      await axios.delete('/api/layers/' + id);
+      await axios.delete('/layers/' + id);
       navigate('/layers', {
             state: {
               msgInfo: t('layer.delete.success')

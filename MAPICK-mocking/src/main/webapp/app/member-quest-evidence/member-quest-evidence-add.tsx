@@ -36,7 +36,7 @@ export default function MemberQuestEvidenceAdd() {
 
   const prepareRelations = async () => {
     try {
-      const memberQuestValuesResponse = await axios.get('/api/memberQuestEvidences/memberQuestValues');
+      const memberQuestValuesResponse = await axios.get('/memberQuestEvidences/memberQuestValues');
       setMemberQuestValues(memberQuestValuesResponse.data);
     } catch (error: any) {
       handleServerError(error, navigate);
@@ -50,7 +50,7 @@ export default function MemberQuestEvidenceAdd() {
   const createMemberQuestEvidence = async (data: MemberQuestEvidenceDTO) => {
     window.scrollTo(0, 0);
     try {
-      await axios.post('/api/memberQuestEvidences', data);
+      await axios.post('/memberQuestEvidences', data);
       navigate('/memberQuestEvidences', {
             state: {
               msgSuccess: t('memberQuestEvidence.create.success')

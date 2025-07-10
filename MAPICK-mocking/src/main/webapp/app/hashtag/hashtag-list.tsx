@@ -16,8 +16,8 @@ export default function HashtagList() {
 
   const getAllHashtags = async () => {
     try {
-      const response = await axios.get('/api/hashtags');
-      setHashtags(response.data);
+      const response = await axios.get('/hashtags');
+      setHashtags(response.data.content);
     } catch (error: any) {
       handleServerError(error, navigate);
     }
@@ -28,7 +28,7 @@ export default function HashtagList() {
       return;
     }
     try {
-      await axios.delete('/api/hashtags/' + id);
+      await axios.delete('/hashtags/' + id);
       navigate('/hashtags', {
             state: {
               msgInfo: t('hashtag.delete.success')

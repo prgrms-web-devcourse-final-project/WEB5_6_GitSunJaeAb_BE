@@ -39,7 +39,7 @@ export default function QuestAdd() {
 
   const prepareRelations = async () => {
     try {
-      const memberValuesResponse = await axios.get('/api/quests/memberValues');
+      const memberValuesResponse = await axios.get('/quests/memberValues');
       setMemberValues(memberValuesResponse.data);
     } catch (error: any) {
       handleServerError(error, navigate);
@@ -53,7 +53,7 @@ export default function QuestAdd() {
   const createQuest = async (data: QuestDTO) => {
     window.scrollTo(0, 0);
     try {
-      await axios.post('/api/quests', data);
+      await axios.post('/quests', data);
       navigate('/quests', {
             state: {
               msgSuccess: t('quest.create.success')

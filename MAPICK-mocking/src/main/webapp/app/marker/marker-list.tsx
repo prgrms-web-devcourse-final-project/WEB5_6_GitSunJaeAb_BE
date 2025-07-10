@@ -16,8 +16,8 @@ export default function MarkerList() {
 
   const getAllMarkers = async () => {
     try {
-      const response = await axios.get('/api/markers');
-      setMarkers(response.data);
+      const response = await axios.get('/markers');
+      setMarkers(response.data.content);
     } catch (error: any) {
       handleServerError(error, navigate);
     }
@@ -28,7 +28,7 @@ export default function MarkerList() {
       return;
     }
     try {
-      await axios.delete('/api/markers/' + id);
+      await axios.delete('/markers/' + id);
       navigate('/markers', {
             state: {
               msgInfo: t('marker.delete.success')

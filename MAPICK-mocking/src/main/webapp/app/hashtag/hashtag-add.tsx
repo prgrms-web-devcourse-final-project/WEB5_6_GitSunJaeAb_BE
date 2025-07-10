@@ -32,7 +32,7 @@ export default function HashtagAdd() {
   const createHashtag = async (data: HashtagDTO) => {
     window.scrollTo(0, 0);
     try {
-      await axios.post('/api/hashtags', data);
+      await axios.post('/hashtags', data);
       navigate('/hashtags', {
             state: {
               msgSuccess: t('hashtag.create.success')

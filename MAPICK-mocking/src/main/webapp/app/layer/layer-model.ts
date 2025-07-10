@@ -13,6 +13,6 @@ export class LayerDTO {
   updatedAt?: string|null;
   deletedAt?: string|null;
   member?: number|null;
-  map?: number|null;
+  roadmap?: number|null;
 
 }

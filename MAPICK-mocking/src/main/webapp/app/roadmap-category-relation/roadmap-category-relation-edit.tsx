@@ -34,9 +34,9 @@ export default function RoadmapCategoryRelationEdit() {
 
   const prepareForm = async () => {
     try {
-      const mapValuesResponse = await axios.get('/api/roadmapCategoryRelations/mapValues');
+      const mapValuesResponse = await axios.get('/roadmapCategoryRelations/mapValues');
       setMapValues(mapValuesResponse.data);
-      const data = (await axios.get('/api/roadmapCategoryRelations/' + currentId)).data;
+      const data = (await axios.get('/roadmapCategoryRelations/' + currentId)).data;
       useFormResult.reset(data);
     } catch (error: any) {
       handleServerError(error, navigate);
@@ -50,7 +50,7 @@ export default function RoadmapCategoryRelationEdit() {
   const updateMapCategoryRelation = async (data: RoadMapCategoryRelationDTO) => {
     window.scrollTo(0, 0);
     try {
-      await axios.put('/api/roadmapCategoryRelations/' + currentId, data);
+      await axios.put('/roadmapCategoryRelations/' + currentId, data);
       navigate('/roadmapCategoryRelations', {
             state: {
               msgSuccess: t('roadmapCategoryRelation.update.success')

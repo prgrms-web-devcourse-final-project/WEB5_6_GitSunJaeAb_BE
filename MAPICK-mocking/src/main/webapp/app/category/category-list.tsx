@@ -16,8 +16,8 @@ export default function CategoryList() {
 
   const getAllCategories = async () => {
     try {
-      const response = await axios.get('/api/categories');
-      setCategories(response.data);
+      const response = await axios.get('/categories');
+      setCategories(response.data.content);
     } catch (error: any) {
       handleServerError(error, navigate);
     }
@@ -28,7 +28,7 @@ export default function CategoryList() {
       return;
     }
     try {
-      await axios.delete('/api/categories/' + id);
+      await axios.delete('/categories/' + id);
       navigate('/categories', {
             state: {
               msgInfo: t('category.delete.success')
@@ -71,7 +71,7 @@ export default function CategoryList() {
             <th scope="col" className="text-left p-2">{t('category.name.label')}</th>
             <th scope="col" className="text-left p-2">{t('category.categoryImage.label')}</th>
             <th scope="col" className="text-left p-2">{t('category.createdAt.label')}</th>
-            <th scope="col" className="text-left p-2">{t('category.mapCategoryRelations.label')}</th>
+            <th scope="col" className="text-left p-2">{t('category.roadmapCategoryRelations.label')}</th>
             <th></th>
           </tr>
         </thead>
@@ -82,7 +82,7 @@ export default function CategoryList() {
             <td className="p-2">{category.name}</td>
             <td className="p-2">{category.categoryImage}</td>
             <td className="p-2">{category.createdAt}</td>
-            <td className="p-2">{category.mapCategoryRelations}</td>
+            <td className="p-2">{category.roadmapCategoryRelations}</td>
             <td className="p-2">
               <div className="float-right whitespace-nowrap">
                 <Link to={'/categories/edit/' + category.id} className="inline-block text-white bg-gray-500 hover:bg-gray-600 focus:ring-gray-200 focus:ring-3 rounded px-2.5 py-1.5 text-sm">{t('category.list.edit')}</Link>

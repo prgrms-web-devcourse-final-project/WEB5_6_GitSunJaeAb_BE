@@ -12,7 +12,7 @@ export class ReportDTO {
   resolvedAt?: string|null;
   reporter?: number|null;
   reportedMember?: number|null;
-  map?: number|null;
+  roadmap?: number|null;
   marker?: number|null;
   quest?: number|null;
 

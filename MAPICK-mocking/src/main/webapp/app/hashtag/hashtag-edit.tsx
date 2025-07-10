@@ -33,7 +33,7 @@ export default function HashtagEdit() {
 
   const prepareForm = async () => {
     try {
-      const data = (await axios.get('/api/hashtags/' + currentId)).data;
+      const data = (await axios.get('/hashtags/' + currentId)).data;
       useFormResult.reset(data);
     } catch (error: any) {
       handleServerError(error, navigate);
@@ -47,7 +47,7 @@ export default function HashtagEdit() {
   const updateHashtag = async (data: HashtagDTO) => {
     window.scrollTo(0, 0);
     try {
-      await axios.put('/api/hashtags/' + currentId, data);
+      await axios.put('/hashtags/' + currentId, data);
       navigate('/hashtags', {
             state: {
               msgSuccess: t('hashtag.update.success')

@@ -38,9 +38,9 @@ export default function QuestRankAdd() {
 
   const prepareRelations = async () => {
     try {
-      const questValuesResponse = await axios.get('/api/questRanks/questValues');
+      const questValuesResponse = await axios.get('/questRanks/questValues');
       setQuestValues(questValuesResponse.data);
-      const memberValuesResponse = await axios.get('/api/questRanks/memberValues');
+      const memberValuesResponse = await axios.get('/questRanks/memberValues');
       setMemberValues(memberValuesResponse.data);
     } catch (error: any) {
       handleServerError(error, navigate);
@@ -54,7 +54,7 @@ export default function QuestRankAdd() {
   const createQuestRank = async (data: QuestRankDTO) => {
     window.scrollTo(0, 0);
     try {
-      await axios.post('/api/questRanks', data);
+      await axios.post('/questRanks', data);
       navigate('/questRanks', {
             state: {
               msgSuccess: t('questRank.create.success')

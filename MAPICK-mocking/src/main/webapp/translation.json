@@ -82,17 +82,17 @@
       "headline": "Edit Member",
       "back": "Back to list"
     },
-    "map": {
+    "roadmap": {
       "member": {
-        "referenced": "This entity is still referenced by Map {{id}} via field Member."
+        "referenced": "This entity is still referenced by Roadmap {{id}} via field Member."
       }
     },
-    "mapEditor": {
+    "roadmapEditor": {
       "member": {
-        "referenced": "This entity is still referenced by Map Editor {{id}} via field Member."
+        "referenced": "This entity is still referenced by Roadmap Editor {{id}} via field Member."
       },
       "invitedBy": {
-        "referenced": "This entity is still referenced by Map Editor {{id}} via field Invited By."
+        "referenced": "This entity is still referenced by Roadmap Editor {{id}} via field Invited By."
       }
     },
     "layer": {
@@ -158,16 +158,16 @@
       "success": "Member was removed successfully."
     }
   },
-  "map": {
+  "roadmap": {
     "list": {
-      "headline": "Maps",
-      "createNew": "Create new Map",
-      "empty": "No Maps could be found.",
+      "headline": "Roadmaps",
+      "createNew": "Create new Roadmap",
+      "empty": "No Roadmaps could be found.",
       "edit": "Edit",
       "delete": "Delete"
     },
     "add": {
-      "headline": "Add Map",
+      "headline": "Add Roadmap",
       "back": "Back to list"
     },
     "id": {
@@ -194,8 +194,8 @@
     "viewCount": {
       "label": "View Count"
     },
-    "mapType": {
-      "label": "Map Type"
+    "roadmapType": {
+      "label": "Roadmap Type"
     },
     "createdAt": {
       "label": "Created At"
@@ -209,73 +209,73 @@
     "member": {
       "label": "Member"
     },
-    "originalMap": {
-      "label": "Original Map"
+    "originalRoadmap": {
+      "label": "Original Roadmap"
     },
     "edit": {
-      "headline": "Edit Map",
+      "headline": "Edit Roadmap",
       "back": "Back to list"
     },
-    "map": {
-      "originalMap": {
-        "referenced": "This entity is still referenced by Map {{id}} via field Original Map."
+    "roadmap": {
+      "originalRoadmap": {
+        "referenced": "This entity is still referenced by Roadmap {{id}} via field Original Roadmap."
       }
     },
-    "mapEditor": {
-      "map": {
-        "referenced": "This entity is still referenced by Map Editor {{id}} via field Map."
+    "roadmapEditor": {
+      "roadmap": {
+        "referenced": "This entity is still referenced by Roadmap Editor {{id}} via field Roadmap."
       }
     },
     "layer": {
-      "map": {
-        "referenced": "This entity is still referenced by Layer {{id}} via field Map."
+      "roadmap": {
+        "referenced": "This entity is still referenced by Layer {{id}} via field Roadmap."
       }
     },
     "comment": {
-      "map": {
-        "referenced": "This entity is still referenced by Comment {{id}} via field Map."
+      "roadmap": {
+        "referenced": "This entity is still referenced by Comment {{id}} via field Roadmap."
       }
     },
     "bookmark": {
-      "map": {
-        "referenced": "This entity is still referenced by Bookmark {{id}} via field Map."
+      "roadmap": {
+        "referenced": "This entity is still referenced by Bookmark {{id}} via field Roadmap."
       }
     },
-    "mapCategoryRelation": {
-      "map": {
-        "referenced": "This entity is still referenced by Map Category Relation {{id}} via field Map."
+    "roadmapCategoryRelation": {
+      "roadmap": {
+        "referenced": "This entity is still referenced by Roadmap Category Relation {{id}} via field Roadmap."
       }
     },
-    "mapHashtagRelation": {
-      "map": {
-        "referenced": "This entity is still referenced by Map Hashtag Relation {{id}} via field Map."
+    "roadmapHashtagRelation": {
+      "roadmap": {
+        "referenced": "This entity is still referenced by Roadmap Hashtag Relation {{id}} via field Roadmap."
       }
     },
     "report": {
-      "map": {
-        "referenced": "This entity is still referenced by Report {{id}} via field Map."
+      "roadmap": {
+        "referenced": "This entity is still referenced by Report {{id}} via field Roadmap."
       }
     },
     "create": {
-      "success": "Map was created successfully."
+      "success": "Roadmap was created successfully."
     },
     "update": {
-      "success": "Map was updated successfully."
+      "success": "Roadmap was updated successfully."
     },
     "delete": {
-      "success": "Map was removed successfully."
+      "success": "Roadmap was removed successfully."
     }
   },
-  "mapEditor": {
+  "roadmapEditor": {
     "list": {
-      "headline": "Map Editors",
-      "createNew": "Create new Map Editor",
-      "empty": "No Map Editors could be found.",
+      "headline": "Roadmap Editors",
+      "createNew": "Create new Roadmap Editor",
+      "empty": "No Roadmap Editors could be found.",
       "edit": "Edit",
       "delete": "Delete"
     },
     "add": {
-      "headline": "Add Map Editor",
+      "headline": "Add Roadmap Editor",
       "back": "Back to list"
     },
     "id": {
@@ -293,8 +293,8 @@
     "deletedAt": {
       "label": "Deleted At"
     },
-    "map": {
-      "label": "Map"
+    "roadmap": {
+      "label": "Roadmap"
     },
     "member": {
       "label": "Member"
@@ -303,17 +303,17 @@
       "label": "Invited By"
     },
     "edit": {
-      "headline": "Edit Map Editor",
+      "headline": "Edit Roadmap Editor",
       "back": "Back to list"
     },
     "create": {
-      "success": "Map Editor was created successfully."
+      "success": "Roadmap Editor was created successfully."
     },
     "update": {
-      "success": "Map Editor was updated successfully."
+      "success": "Roadmap Editor was updated successfully."
     },
     "delete": {
-      "success": "Map Editor was removed successfully."
+      "success": "Roadmap Editor was removed successfully."
     }
   },
   "layer": {
@@ -355,8 +355,8 @@
     "member": {
       "label": "Member"
     },
-    "map": {
-      "label": "Map"
+    "roadmap": {
+      "label": "Roadmap"
     },
     "edit": {
       "headline": "Edit Layer",
@@ -476,8 +476,8 @@
     "updatedAt": {
       "label": "Updated At"
     },
-    "map": {
-      "label": "Map"
+    "roadmap": {
+      "label": "Roadmap"
     },
     "member": {
       "label": "Member"
@@ -514,8 +514,8 @@
     "createdAt": {
       "label": "Created At"
     },
-    "map": {
-      "label": "Map"
+    "roadmap": {
+      "label": "Roadmap"
     },
     "member": {
       "label": "Member"
@@ -599,8 +599,8 @@
     "createdAt": {
       "label": "Created At"
     },
-    "mapCategoryRelations": {
-      "label": "Map Category Relations"
+    "roadmapCategoryRelations": {
+      "label": "Roadmap Category Relations"
     },
     "edit": {
       "headline": "Edit Category",
@@ -621,16 +621,16 @@
       "success": "Category was removed successfully."
     }
   },
-  "mapCategoryRelation": {
+  "roadmapCategoryRelation": {
     "list": {
-      "headline": "Map Category Relations",
-      "createNew": "Create new Map Category Relation",
-      "empty": "No Map Category Relations could be found.",
+      "headline": "Roadmap Category Relations",
+      "createNew": "Create new Roadmap Category Relation",
+      "empty": "No Roadmap Category Relations could be found.",
       "edit": "Edit",
       "delete": "Delete"
     },
     "add": {
-      "headline": "Add Map Category Relation",
+      "headline": "Add Roadmap Category Relation",
       "back": "Back to list"
     },
     "id": {
@@ -639,38 +639,38 @@
     "createdAt": {
       "label": "Created At"
     },
-    "map": {
-      "label": "Map"
+    "roadmap": {
+      "label": "Roadmap"
     },
     "edit": {
-      "headline": "Edit Map Category Relation",
+      "headline": "Edit Roadmap Category Relation",
       "back": "Back to list"
     },
     "category": {
-      "mapCategoryRelations": {
-        "referenced": "This entity is still referenced by Category {{id}} via field Map Category Relations."
+      "roadmapCategoryRelations": {
+        "referenced": "This entity is still referenced by Category {{id}} via field Roadmap Category Relations."
       }
     },
     "create": {
-      "success": "Map Category Relation was created successfully."
+      "success": "Roadmap Category Relation was created successfully."
     },
     "update": {
-      "success": "Map Category Relation was updated successfully."
+      "success": "Roadmap Category Relation was updated successfully."
     },
     "delete": {
-      "success": "Map Category Relation was removed successfully."
+      "success": "Roadmap Category Relation was removed successfully."
     }
   },
-  "mapHashtagRelation": {
+  "roadmapHashtagRelation": {
     "list": {
-      "headline": "Map Hashtag Relations",
-      "createNew": "Create new Map Hashtag Relation",
-      "empty": "No Map Hashtag Relations could be found.",
+      "headline": "Roadmap Hashtag Relations",
+      "createNew": "Create new Roadmap Hashtag Relation",
+      "empty": "No Roadmap Hashtag Relations could be found.",
       "edit": "Edit",
       "delete": "Delete"
     },
     "add": {
-      "headline": "Add Map Hashtag Relation",
+      "headline": "Add Roadmap Hashtag Relation",
       "back": "Back to list"
     },
     "id": {
@@ -682,21 +682,21 @@
     "hashtag": {
       "label": "Hashtag"
     },
-    "map": {
-      "label": "Map"
+    "roadmap": {
+      "label": "Roadmap"
     },
     "edit": {
-      "headline": "Edit Map Hashtag Relation",
+      "headline": "Edit Roadmap Hashtag Relation",
       "back": "Back to list"
     },
     "create": {
-      "success": "Map Hashtag Relation was created successfully."
+      "success": "Roadmap Hashtag Relation was created successfully."
     },
     "update": {
-      "success": "Map Hashtag Relation was updated successfully."
+      "success": "Roadmap Hashtag Relation was updated successfully."
     },
     "delete": {
-      "success": "Map Hashtag Relation was removed successfully."
+      "success": "Roadmap Hashtag Relation was removed successfully."
     }
   },
   "hashtag": {
@@ -724,9 +724,9 @@
       "headline": "Edit Hashtag",
       "back": "Back to list"
     },
-    "mapHashtagRelation": {
+    "roadmapHashtagRelation": {
       "hashtag": {
-        "referenced": "This entity is still referenced by Map Hashtag Relation {{id}} via field Hashtag."
+        "referenced": "This entity is still referenced by Roadmap Hashtag Relation {{id}} via field Hashtag."
       }
     },
     "create": {
@@ -775,8 +775,8 @@
     "reportedMember": {
       "label": "Reported Member"
     },
-    "map": {
-      "label": "Map"
+    "roadmap": {
+      "label": "Roadmap"
     },
     "marker": {
       "label": "Marker"

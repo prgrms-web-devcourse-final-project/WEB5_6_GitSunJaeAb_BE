@@ -1,6 +1,6 @@
-export class MapDTO {
+export class RoadmapDTO {
 
-  constructor(data:Partial<MapDTO>) {
+  constructor(data:Partial<RoadmapDTO>) {
     Object.assign(this, data);
   }
 
@@ -12,11 +12,11 @@ export class MapDTO {
   isAnimated?: boolean|null;
   likeCount?: number|null;
   viewCount?: number|null;
-  mapType?: string|null;
+  roadmapType?: string|null;
   createdAt?: string|null;
   updatedAt?: string|null;
   deletedAt?: string|null;
   member?: number|null;
-  originalMap?: number|null;
+  originalRoadmap?: number|null;
 
 }

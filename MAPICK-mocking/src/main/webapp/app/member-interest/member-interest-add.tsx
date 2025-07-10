@@ -34,9 +34,9 @@ export default function MemberInterestAdd() {
 
   const prepareRelations = async () => {
     try {
-      const interestValuesResponse = await axios.get('/api/memberInterests/interestValues');
+      const interestValuesResponse = await axios.get('/memberInterests/interestValues');
       setInterestValues(interestValuesResponse.data);
-      const memberValuesResponse = await axios.get('/api/memberInterests/memberValues');
+      const memberValuesResponse = await axios.get('/memberInterests/memberValues');
       setMemberValues(memberValuesResponse.data);
     } catch (error: any) {
       handleServerError(error, navigate);
@@ -50,7 +50,7 @@ export default function MemberInterestAdd() {
   const createMemberInterest = async (data: MemberInterestDTO) => {
     window.scrollTo(0, 0);
     try {
-      await axios.post('/api/memberInterests', data);
+      await axios.post('/memberInterests', data);
       navigate('/memberInterests', {
             state: {
               msgSuccess: t('memberInterest.create.success')

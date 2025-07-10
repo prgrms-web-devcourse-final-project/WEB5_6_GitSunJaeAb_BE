@@ -50,7 +50,7 @@ export default function MemberAdd() {
   const createMember = async (data: MemberDTO) => {
     window.scrollTo(0, 0);
     try {
-      await axios.post('/api/members', data);
+      await axios.post('/members', data);
       navigate('/members', {
             state: {
               msgSuccess: t('member.create.success')

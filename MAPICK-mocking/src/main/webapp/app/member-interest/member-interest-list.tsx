@@ -16,8 +16,8 @@ export default function MemberInterestList() {
 
   const getAllMemberInterests = async () => {
     try {
-      const response = await axios.get('/api/memberInterests');
-      setMemberInterests(response.data);
+      const response = await axios.get('/memberInterests');
+      setMemberInterests(response.data.content);
     } catch (error: any) {
       handleServerError(error, navigate);
     }
@@ -28,7 +28,7 @@ export default function MemberInterestList() {
       return;
     }
     try {
-      await axios.delete('/api/memberInterests/' + id);
+      await axios.delete('/memberInterests/' + id);
       navigate('/memberInterests', {
             state: {
               msgInfo: t('memberInterest.delete.success')

@@ -27,7 +27,7 @@ export default function CommentEdit() {
   useDocumentTitle(t('comment.edit.headline'));
 
   const navigate = useNavigate();
-  const [mapValues, setMapValues] = useState<Map<number,string>>(new Map());
+  const [roadmapValues, setRoadmapValues] = useState<Map<number,string>>(new Map());
   const [memberValues, setMemberValues] = useState<Map<number,string>>(new Map());
   const params = useParams();
   const currentId = +params.id!;
@@ -38,11 +38,11 @@ export default function CommentEdit() {
 
   const prepareForm = async () => {
     try {
-      const mapValuesResponse = await axios.get('/api/comments/mapValues');
-      setMapValues(mapValuesResponse.data);
-      const memberValuesResponse = await axios.get('/api/comments/memberValues');
+      const mapValuesResponse = await axios.get('/comments/roadmapValues');
+      setRoadmapValues(mapValuesResponse.data);
+      const memberValuesResponse = await axios.get('/comments/memberValues');
       setMemberValues(memberValuesResponse.data);
-      const data = (await axios.get('/api/comments/' + currentId)).data;
+      const data = (await axios.get('/comments/' + currentId)).data;
       useFormResult.reset(data);
     } catch (error: any) {
       handleServerError(error, navigate);
@@ -56,7 +56,7 @@ export default function CommentEdit() {
   const updateComment = async (data: CommentDTO) => {
     window.scrollTo(0, 0);
     try {
-      await axios.put('/api/comments/' + currentId, data);
+      await axios.put('/comments/' + currentId, data);
       navigate('/comments', {
             state: {
               msgSuccess: t('comment.update.success')
@@ -79,7 +79,7 @@ export default function CommentEdit() {
       <InputRow useFormResult={useFormResult} object="comment" field="content" required={true} type="textarea" />
       <InputRow useFormResult={useFormResult} object="comment" field="createdAt" required={true} />
       <InputRow useFormResult={useFormResult} object="comment" field="updatedAt" />
-      <InputRow useFormResult={useFormResult} object="comment" field="roadmap" type="select" options={mapValues} />
+      <InputRow useFormResult={useFormResult} object="comment" field="roadmap" type="select" options={roadmapValues} />
       <InputRow useFormResult={useFormResult} object="comment" field="member" type="select" options={memberValues} />
       <input type="submit" value={t('comment.edit.headline')} className="inline-block text-white bg-blue-600 hover:bg-blue-700 focus:ring-blue-300  focus:ring-4 rounded px-5 py-2 mt-6" />
     </form>
