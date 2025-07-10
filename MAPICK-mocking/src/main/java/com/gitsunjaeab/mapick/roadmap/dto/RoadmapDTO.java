@@ -37,7 +37,7 @@ public class RoadmapDTO {
 
     @NotNull
     @Size(max = 255)
-    private String mapType;
+    private String roadmapType;
 
     @NotNull
     private OffsetDateTime createdAt;
@@ -48,6 +48,6 @@ public class RoadmapDTO {
 
     private Long member;
 
-    private Long originalMap;
+    private Long originalRoadmap;
 
 }

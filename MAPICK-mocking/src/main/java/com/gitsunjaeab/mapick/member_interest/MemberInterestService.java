@@ -29,26 +29,26 @@ public class MemberInterestService {
     public List<MemberInterestDTO> findAll() {
         final List<MemberInterest> memberInterests = memberInterestRepository.findAll(Sort.by("id"));
         return memberInterests.stream()
-                .map(memberInterest -> mapToDTO(memberInterest, new MemberInterestDTO()))
+                .map(memberInterest -> roadmapToDTO(memberInterest, new MemberInterestDTO()))
                 .toList();
     }
 
     public MemberInterestDTO get(final Long id) {
         return memberInterestRepository.findById(id)
-                .map(memberInterest -> mapToDTO(memberInterest, new MemberInterestDTO()))
+                .map(memberInterest -> roadmapToDTO(memberInterest, new MemberInterestDTO()))
                 .orElseThrow(NotFoundException::new);
     }
 
     public Long create(final MemberInterestDTO memberInterestDTO) {
         final MemberInterest memberInterest = new MemberInterest();
-        mapToEntity(memberInterestDTO, memberInterest);
+        roadmapToEntity(memberInterestDTO, memberInterest);
         return memberInterestRepository.save(memberInterest).getId();
     }
 
     public void update(final Long id, final MemberInterestDTO memberInterestDTO) {
         final MemberInterest memberInterest = memberInterestRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
-        mapToEntity(memberInterestDTO, memberInterest);
+        roadmapToEntity(memberInterestDTO, memberInterest);
         memberInterestRepository.save(memberInterest);
     }
 
@@ -56,7 +56,7 @@ public class MemberInterestService {
         memberInterestRepository.deleteById(id);
     }
 
-    private MemberInterestDTO mapToDTO(final MemberInterest memberInterest,
+    private MemberInterestDTO roadmapToDTO(final MemberInterest memberInterest,
             final MemberInterestDTO memberInterestDTO) {
         memberInterestDTO.setId(memberInterest.getId());
         memberInterestDTO.setCreatedAt(memberInterest.getCreatedAt());
@@ -65,7 +65,7 @@ public class MemberInterestService {
         return memberInterestDTO;
     }
 
-    private MemberInterest mapToEntity(final MemberInterestDTO memberInterestDTO,
+    private MemberInterest roadmapToEntity(final MemberInterestDTO memberInterestDTO,
             final MemberInterest memberInterest) {
         memberInterest.setCreatedAt(memberInterestDTO.getCreatedAt());
         final Category interest = memberInterestDTO.getInterest() == null ? null : categoryRepository.findById(memberInterestDTO.getInterest())

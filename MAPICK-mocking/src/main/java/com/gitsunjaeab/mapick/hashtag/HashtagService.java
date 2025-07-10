@@ -26,26 +26,26 @@ public class HashtagService {
     public List<HashtagDTO> findAll() {
         final List<Hashtag> hashtags = hashtagRepository.findAll(Sort.by("id"));
         return hashtags.stream()
-                .map(hashtag -> mapToDTO(hashtag, new HashtagDTO()))
+                .map(hashtag -> roadmapToDTO(hashtag, new HashtagDTO()))
                 .toList();
     }
 
     public HashtagDTO get(final Long id) {
         return hashtagRepository.findById(id)
-                .map(hashtag -> mapToDTO(hashtag, new HashtagDTO()))
+                .map(hashtag -> roadmapToDTO(hashtag, new HashtagDTO()))
                 .orElseThrow(NotFoundException::new);
     }
 
     public Long create(final HashtagDTO hashtagDTO) {
         final Hashtag hashtag = new Hashtag();
-        mapToEntity(hashtagDTO, hashtag);
+        roadmapToEntity(hashtagDTO, hashtag);
         return hashtagRepository.save(hashtag).getId();
     }
 
     public void update(final Long id, final HashtagDTO hashtagDTO) {
         final Hashtag hashtag = hashtagRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
-        mapToEntity(hashtagDTO, hashtag);
+        roadmapToEntity(hashtagDTO, hashtag);
         hashtagRepository.save(hashtag);
     }
 
@@ -53,14 +53,14 @@ public class HashtagService {
         hashtagRepository.deleteById(id);
     }
 
-    private HashtagDTO mapToDTO(final Hashtag hashtag, final HashtagDTO hashtagDTO) {
+    private HashtagDTO roadmapToDTO(final Hashtag hashtag, final HashtagDTO hashtagDTO) {
         hashtagDTO.setId(hashtag.getId());
         hashtagDTO.setName(hashtag.getName());
         hashtagDTO.setCreatedAt(hashtag.getCreatedAt());
         return hashtagDTO;
     }
 
-    private Hashtag mapToEntity(final HashtagDTO hashtagDTO, final Hashtag hashtag) {
+    private Hashtag roadmapToEntity(final HashtagDTO hashtagDTO, final Hashtag hashtag) {
         hashtag.setName(hashtagDTO.getName());
         hashtag.setCreatedAt(hashtagDTO.getCreatedAt());
         return hashtag;

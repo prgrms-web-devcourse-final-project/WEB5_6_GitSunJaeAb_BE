@@ -31,26 +31,26 @@ public class CategoryService {
     public List<CategoryDTO> findAll() {
         final List<Category> categories = categoryRepository.findAll(Sort.by("id"));
         return categories.stream()
-                .map(category -> mapToDTO(category, new CategoryDTO()))
+                .map(category -> roadmapToDTO(category, new CategoryDTO()))
                 .toList();
     }
 
 //    public CategoryDTO get(final Long id) {
 //        return categoryRepository.findById(id)
-//                .map(category -> mapToDTO(category, new CategoryDTO()))
+//                .map(category -> roadmapToDTO(category, new CategoryDTO()))
 //                .orElseThrow(NotFoundException::new);
 //    }
 //
 //    public Long create(final CategoryDTO categoryDTO) {
 //        final Category category = new Category();
-//        mapToEntity(categoryDTO, category);
+//        roadmapToEntity(categoryDTO, category);
 //        return categoryRepository.save(category).getId();
 //    }
 //
 //    public void update(final Long id, final CategoryDTO categoryDTO) {
 //        final Category category = categoryRepository.findById(id)
 //                .orElseThrow(NotFoundException::new);
-//        mapToEntity(categoryDTO, category);
+//        roadmapToEntity(categoryDTO, category);
 //        categoryRepository.save(category);
 //    }
 //
@@ -58,22 +58,22 @@ public class CategoryService {
 //        categoryRepository.deleteById(id);
 //    }
 //
-    private CategoryDTO mapToDTO(final Category category, final CategoryDTO categoryDTO) {
+    private CategoryDTO roadmapToDTO(final Category category, final CategoryDTO categoryDTO) {
         categoryDTO.setId(category.getId());
         categoryDTO.setName(category.getName());
         categoryDTO.setDescription(category.getDescription());
         categoryDTO.setCategoryImage(category.getCategoryImage());
         categoryDTO.setCreatedAt(category.getCreatedAt());
-//        categoryDTO.setMapCategoryRelations(category.getRoadmapCategoryRelations() == null ? null : category.getRoadmapCategoryRelations().getId());
+//        categoryDTO.setRoadmapCategoryRelations(category.getRoadmapCategoryRelations() == null ? null : category.getRoadmapCategoryRelations().getId());
         return categoryDTO;
     }
 //
-//    private Category mapToEntity(final CategoryDTO categoryDTO, final Category category) {
+//    private Category roadmapToEntity(final CategoryDTO categoryDTO, final Category category) {
 //        category.setName(categoryDTO.getName());
 //        category.setDescription(categoryDTO.getDescription());
 //        category.setCategoryImage(categoryDTO.getCategoryImage());
 //        category.setCreatedAt(categoryDTO.getCreatedAt());
-//        final RoadmapCategoryRelation roadmapCategoryRelations = categoryDTO.getMapCategoryRelations() == null ? null : roadmapCategoryRelationRepository.findById(categoryDTO.getMapCategoryRelations())
+//        final RoadmapCategoryRelation roadmapCategoryRelations = categoryDTO.getRoadmapCategoryRelations() == null ? null : roadmapCategoryRelationRepository.findById(categoryDTO.getRoadmapCategoryRelations())
 //                .orElseThrow(() -> new NotFoundException("mapCategoryRelations not found"));
 //        category.setRoadmapCategoryRelations(roadmapCategoryRelations);
 //        return category;

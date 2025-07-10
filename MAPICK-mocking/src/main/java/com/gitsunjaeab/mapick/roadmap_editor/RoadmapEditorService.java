@@ -29,26 +29,26 @@ public class RoadmapEditorService {
     public List<RoadmapEditorDTO> findAll() {
         final List<RoadmapEditor> roadmapEditors = roadmapEditorRepository.findAll(Sort.by("id"));
         return roadmapEditors.stream()
-                .map(roadmapEditor -> mapToDTO(roadmapEditor, new RoadmapEditorDTO()))
+                .map(roadmapEditor -> roadmapToDTO(roadmapEditor, new RoadmapEditorDTO()))
                 .toList();
     }
 
     public RoadmapEditorDTO get(final Long id) {
         return roadmapEditorRepository.findById(id)
-                .map(roadmapEditor -> mapToDTO(roadmapEditor, new RoadmapEditorDTO()))
+                .map(roadmapEditor -> roadmapToDTO(roadmapEditor, new RoadmapEditorDTO()))
                 .orElseThrow(NotFoundException::new);
     }
 
     public Long create(final RoadmapEditorDTO roadmapEditorDTO) {
         final RoadmapEditor roadmapEditor = new RoadmapEditor();
-        mapToEntity(roadmapEditorDTO, roadmapEditor);
+        roadmapToEntity(roadmapEditorDTO, roadmapEditor);
         return roadmapEditorRepository.save(roadmapEditor).getId();
     }
 
     public void update(final Long id, final RoadmapEditorDTO roadmapEditorDTO) {
         final RoadmapEditor roadmapEditor = roadmapEditorRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
-        mapToEntity(roadmapEditorDTO, roadmapEditor);
+        roadmapToEntity(roadmapEditorDTO, roadmapEditor);
         roadmapEditorRepository.save(roadmapEditor);
     }
 
@@ -56,31 +56,31 @@ public class RoadmapEditorService {
         roadmapEditorRepository.deleteById(id);
     }
 
-    private RoadmapEditorDTO mapToDTO(final RoadmapEditor roadmapEditor, final RoadmapEditorDTO mapEditorDTO) {
-        mapEditorDTO.setId(roadmapEditor.getId());
-        mapEditorDTO.setPermission(roadmapEditor.getPermission());
-        mapEditorDTO.setCreatedAt(roadmapEditor.getCreatedAt());
-        mapEditorDTO.setUpdatedAt(roadmapEditor.getUpdatedAt());
-        mapEditorDTO.setDeletedAt(roadmapEditor.getDeletedAt());
-        mapEditorDTO.setMap(roadmapEditor.getRoadmap() == null ? null : roadmapEditor.getRoadmap().getId());
-        mapEditorDTO.setMember(roadmapEditor.getMember() == null ? null : roadmapEditor.getMember().getId());
-        mapEditorDTO.setInvitedBy(
+    private RoadmapEditorDTO roadmapToDTO(final RoadmapEditor roadmapEditor, final RoadmapEditorDTO roadmapEditorDTO) {
+        roadmapEditorDTO.setId(roadmapEditor.getId());
+        roadmapEditorDTO.setPermission(roadmapEditor.getPermission());
+        roadmapEditorDTO.setCreatedAt(roadmapEditor.getCreatedAt());
+        roadmapEditorDTO.setUpdatedAt(roadmapEditor.getUpdatedAt());
+        roadmapEditorDTO.setDeletedAt(roadmapEditor.getDeletedAt());
+        roadmapEditorDTO.setRoadmap(roadmapEditor.getRoadmap() == null ? null : roadmapEditor.getRoadmap().getId());
+        roadmapEditorDTO.setMember(roadmapEditor.getMember() == null ? null : roadmapEditor.getMember().getId());
+        roadmapEditorDTO.setInvitedBy(
             roadmapEditor.getInvitedBy() == null ? null : roadmapEditor.getInvitedBy().getId());
-        return mapEditorDTO;
+        return roadmapEditorDTO;
     }
 
-    private RoadmapEditor mapToEntity(final RoadmapEditorDTO mapEditorDTO, final RoadmapEditor roadmapEditor) {
-        roadmapEditor.setPermission(mapEditorDTO.getPermission());
-        roadmapEditor.setCreatedAt(mapEditorDTO.getCreatedAt());
-        roadmapEditor.setUpdatedAt(mapEditorDTO.getUpdatedAt());
-        roadmapEditor.setDeletedAt(mapEditorDTO.getDeletedAt());
-        final Roadmap roadmap = mapEditorDTO.getMap() == null ? null : roadmapRepository.findById(mapEditorDTO.getMap())
+    private RoadmapEditor roadmapToEntity(final RoadmapEditorDTO roadmapEditorDTO, final RoadmapEditor roadmapEditor) {
+        roadmapEditor.setPermission(roadmapEditorDTO.getPermission());
+        roadmapEditor.setCreatedAt(roadmapEditorDTO.getCreatedAt());
+        roadmapEditor.setUpdatedAt(roadmapEditorDTO.getUpdatedAt());
+        roadmapEditor.setDeletedAt(roadmapEditorDTO.getDeletedAt());
+        final Roadmap roadmap = roadmapEditorDTO.getRoadmap() == null ? null : roadmapRepository.findById(roadmapEditorDTO.getRoadmap())
                 .orElseThrow(() -> new NotFoundException("map not found"));
         roadmapEditor.setRoadmap(roadmap);
-        final Member member = mapEditorDTO.getMember() == null ? null : memberRepository.findById(mapEditorDTO.getMember())
+        final Member member = roadmapEditorDTO.getMember() == null ? null : memberRepository.findById(roadmapEditorDTO.getMember())
                 .orElseThrow(() -> new NotFoundException("member not found"));
         roadmapEditor.setMember(member);
-        final Member invitedBy = mapEditorDTO.getInvitedBy() == null ? null : memberRepository.findById(mapEditorDTO.getInvitedBy())
+        final Member invitedBy = roadmapEditorDTO.getInvitedBy() == null ? null : memberRepository.findById(roadmapEditorDTO.getInvitedBy())
                 .orElseThrow(() -> new NotFoundException("invitedBy not found"));
         roadmapEditor.setInvitedBy(invitedBy);
         return roadmapEditor;

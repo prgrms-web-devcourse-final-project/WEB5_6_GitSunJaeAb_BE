@@ -16,7 +16,7 @@ public class CustomCollectors {
      * @param valueMapper a mapping function to produce values
      * @return a Collector to collect values in a sorted map
      */
-    public static <T, K, U> Collector<T, ?, Map<K, U>> toSortedMap(
+    public static <T, K, U> Collector<T, ?, Map<K, U>> toSortedRoadmap(
             Function<? super T, ? extends K> keyMapper,
             Function<? super T, ? extends U> valueMapper) {
         return Collectors.toMap(keyMapper,

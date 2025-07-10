@@ -39,26 +39,26 @@ public class LayerService {
     public List<LayerDTO> findAll() {
         final List<Layer> layers = layerRepository.findAll(Sort.by("id"));
         return layers.stream()
-            .map(layer -> mapToDTO(layer, new LayerDTO()))
+            .map(layer -> roadmapToDTO(layer, new LayerDTO()))
             .toList();
     }
 
     public LayerDTO get(final Long id) {
         return layerRepository.findById(id)
-            .map(layer -> mapToDTO(layer, new LayerDTO()))
+            .map(layer -> roadmapToDTO(layer, new LayerDTO()))
             .orElseThrow(NotFoundException::new);
     }
 
     public Long create(final LayerDTO layerDTO) {
         final Layer layer = new Layer();
-        mapToEntity(layerDTO, layer);
+        roadmapToEntity(layerDTO, layer);
         return layerRepository.save(layer).getId();
     }
 
     public void update(final Long id, final LayerDTO layerDTO) {
         final Layer layer = layerRepository.findById(id)
             .orElseThrow(NotFoundException::new);
-        mapToEntity(layerDTO, layer);
+        roadmapToEntity(layerDTO, layer);
         layerRepository.save(layer);
     }
 
@@ -66,7 +66,7 @@ public class LayerService {
         layerRepository.deleteById(id);
     }
 
-    private LayerDTO mapToDTO(final Layer layer, final LayerDTO layerDTO) {
+    private LayerDTO roadmapToDTO(final Layer layer, final LayerDTO layerDTO) {
         layerDTO.setId(layer.getId());
         layerDTO.setName(layer.getName());
         layerDTO.setDescription(layer.getDescription());
@@ -76,11 +76,11 @@ public class LayerService {
         layerDTO.setUpdatedAt(layer.getUpdatedAt());
         layerDTO.setDeletedAt(layer.getDeletedAt());
         layerDTO.setMember(layer.getMember() == null ? null : layer.getMember().getId());
-        layerDTO.setMap(layer.getRoadmap() == null ? null : layer.getRoadmap().getId());
+        layerDTO.setRoadmap(layer.getRoadmap() == null ? null : layer.getRoadmap().getId());
         return layerDTO;
     }
 
-    private Layer mapToEntity(final LayerDTO layerDTO, final Layer layer) {
+    private Layer roadmapToEntity(final LayerDTO layerDTO, final Layer layer) {
         layer.setName(layerDTO.getName());
         layer.setDescription(layerDTO.getDescription());
         layer.setLayerSeq(layerDTO.getLayerSeq());
@@ -91,7 +91,7 @@ public class LayerService {
         final Member member = layerDTO.getMember() == null ? null : memberRepository.findById(layerDTO.getMember())
             .orElseThrow(() -> new NotFoundException("member not found"));
         layer.setMember(member);
-        final Roadmap roadmap = layerDTO.getMap() == null ? null : roadmapRepository.findById(layerDTO.getMap())
+        final Roadmap roadmap = layerDTO.getRoadmap() == null ? null : roadmapRepository.findById(layerDTO.getRoadmap())
             .orElseThrow(() -> new NotFoundException("map not found"));
         layer.setRoadmap(roadmap);
         return layer;

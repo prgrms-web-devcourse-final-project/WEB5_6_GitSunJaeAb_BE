@@ -33,6 +33,6 @@ public class LayerDTO {
 
     private Long member;
 
-    private Long map;
+    private Long roadmap;
 
 }

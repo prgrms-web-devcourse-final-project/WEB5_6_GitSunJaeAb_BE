@@ -23,7 +23,7 @@ public class RoadmapEditorRequestDTO {
 //
 //    private OffsetDateTime deletedAt;
 //
-//    private Long map;
+//    private Long roadmap;
 //
 //    private Long member;
 

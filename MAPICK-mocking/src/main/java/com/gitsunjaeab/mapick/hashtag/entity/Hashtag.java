@@ -43,6 +43,6 @@ public class Hashtag {
     private OffsetDateTime createdAt;
 
     @OneToMany(mappedBy = "hashtag")
-    private Set<RoadmapHashtagRelation> hashtagMapHashtags = new HashSet<>();
+    private Set<RoadmapHashtagRelation> RoadmapHashtags = new HashSet<>();
 
 }

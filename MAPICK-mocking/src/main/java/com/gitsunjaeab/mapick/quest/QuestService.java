@@ -40,26 +40,26 @@ public class QuestService {
     public List<QuestDTO> findAll() {
         final List<Quest> quests = questRepository.findAll(Sort.by("id"));
         return quests.stream()
-                .map(quest -> mapToDTO(quest, new QuestDTO()))
+                .map(quest -> roadmapToDTO(quest, new QuestDTO()))
                 .toList();
     }
 
     public QuestDTO get(final Long id) {
         return questRepository.findById(id)
-                .map(quest -> mapToDTO(quest, new QuestDTO()))
+                .map(quest -> roadmapToDTO(quest, new QuestDTO()))
                 .orElseThrow(NotFoundException::new);
     }
 
     public Long create(final QuestDTO questDTO) {
         final Quest quest = new Quest();
-        mapToEntity(questDTO, quest);
+        roadmapToEntity(questDTO, quest);
         return questRepository.save(quest).getId();
     }
 
     public void update(final Long id, final QuestDTO questDTO) {
         final Quest quest = questRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
-        mapToEntity(questDTO, quest);
+        roadmapToEntity(questDTO, quest);
         questRepository.save(quest);
     }
 
@@ -67,7 +67,7 @@ public class QuestService {
         questRepository.deleteById(id);
     }
 
-    private QuestDTO mapToDTO(final Quest quest, final QuestDTO questDTO) {
+    private QuestDTO roadmapToDTO(final Quest quest, final QuestDTO questDTO) {
         questDTO.setId(quest.getId());
         questDTO.setTitle(quest.getTitle());
         questDTO.setQuestImage(quest.getQuestImage());
@@ -81,7 +81,7 @@ public class QuestService {
         return questDTO;
     }
 
-    private Quest mapToEntity(final QuestDTO questDTO, final Quest quest) {
+    private Quest roadmapToEntity(final QuestDTO questDTO, final Quest quest) {
         quest.setTitle(questDTO.getTitle());
         quest.setQuestImage(questDTO.getQuestImage());
         quest.setDescription(questDTO.getDescription());

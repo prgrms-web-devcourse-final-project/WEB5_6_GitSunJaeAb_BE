@@ -25,6 +25,6 @@ public class CategoryResponseDTO {
     @NotNull
     private OffsetDateTime createdAt;
 
-    private Long mapCategoryRelations;
+    private Long roadmapCategoryRelations;
 
 }

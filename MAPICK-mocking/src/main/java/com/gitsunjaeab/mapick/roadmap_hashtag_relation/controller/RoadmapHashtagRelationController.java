@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-@RequestMapping(value = "/api/mapHashtagRelations", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/roadmapHashtagRelations", produces = MediaType.APPLICATION_JSON_VALUE)
 public class RoadmapHashtagRelationController {
 
     private final RoadmapHashtagRelationService roadmapHashtagRelationService;
@@ -41,26 +41,26 @@ public class RoadmapHashtagRelationController {
     }
 
     @GetMapping
-    public ResponseEntity<List<RoadmapHashtagRelationDTO>> getAllMapHashtagRelations() {
+    public ResponseEntity<List<RoadmapHashtagRelationDTO>> getAllRoadmapHashtagRelations() {
         return ResponseEntity.ok(roadmapHashtagRelationService.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<RoadmapHashtagRelationDTO> getMapHashtagRelation(
+    public ResponseEntity<RoadmapHashtagRelationDTO> getRoadmapHashtagRelation(
             @PathVariable(name = "id") final Long id) {
         return ResponseEntity.ok(roadmapHashtagRelationService.get(id));
     }
 
     @PostMapping
     @ApiResponse(responseCode = "201")
-    public ResponseEntity<Long> createMapHashtagRelation(
+    public ResponseEntity<Long> createRoadmapHashtagRelation(
             @RequestBody @Valid final RoadmapHashtagRelationDTO roadmapHashtagRelationDTO) {
         final Long createdId = roadmapHashtagRelationService.create(roadmapHashtagRelationDTO);
         return new ResponseEntity<>(createdId, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Long> updateMapHashtagRelation(@PathVariable(name = "id") final Long id,
+    public ResponseEntity<Long> updateRoadmapHashtagRelation(@PathVariable(name = "id") final Long id,
             @RequestBody @Valid final RoadmapHashtagRelationDTO roadmapHashtagRelationDTO) {
         roadmapHashtagRelationService.update(id, roadmapHashtagRelationDTO);
         return ResponseEntity.ok(id);
@@ -68,7 +68,7 @@ public class RoadmapHashtagRelationController {
 
     @DeleteMapping("/{id}")
     @ApiResponse(responseCode = "204")
-    public ResponseEntity<Void> deleteMapHashtagRelation(@PathVariable(name = "id") final Long id) {
+    public ResponseEntity<Void> deleteRoadmapHashtagRelation(@PathVariable(name = "id") final Long id) {
         roadmapHashtagRelationService.delete(id);
         return ResponseEntity.noContent().build();
     }
@@ -77,14 +77,14 @@ public class RoadmapHashtagRelationController {
     public ResponseEntity<Map<Long, String>> getHashtagValues() {
         return ResponseEntity.ok(hashtagRepository.findAll(Sort.by("id"))
                 .stream()
-                .collect(CustomCollectors.toSortedMap(Hashtag::getId, Hashtag::getName)));
+                .collect(CustomCollectors.toSortedRoadmap(Hashtag::getId, Hashtag::getName)));
     }
 
     @GetMapping("/mapValues")
-    public ResponseEntity<Map<Long, String>> getMapValues() {
+    public ResponseEntity<Map<Long, String>> getRoadmapValues() {
         return ResponseEntity.ok(roadmapRepository.findAll(Sort.by("id"))
                 .stream()
-                .collect(CustomCollectors.toSortedMap(Roadmap::getId, Roadmap::getTitle)));
+                .collect(CustomCollectors.toSortedRoadmap(Roadmap::getId, Roadmap::getTitle)));
     }
 
 }

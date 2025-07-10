@@ -31,26 +31,26 @@ public class RoadmapCategoryRelationService {
     public List<RoadmapCategoryRelationDTO> findAll() {
         final List<RoadmapCategoryRelation> roadmapCategoryRelations = roadmapCategoryRelationRepository.findAll(Sort.by("id"));
         return roadmapCategoryRelations.stream()
-                .map(mapCategoryRelation -> roadmapToDTO(mapCategoryRelation, new RoadmapCategoryRelationDTO()))
+                .map(roadmapCategoryRelation -> roadmapToDTO(roadmapCategoryRelation, new RoadmapCategoryRelationDTO()))
                 .toList();
     }
 
     public RoadmapCategoryRelationDTO get(final Long id) {
         return roadmapCategoryRelationRepository.findById(id)
-                .map(mapCategoryRelation -> roadmapToDTO(mapCategoryRelation, new RoadmapCategoryRelationDTO()))
+                .map(roadmapCategoryRelation -> roadmapToDTO(roadmapCategoryRelation, new RoadmapCategoryRelationDTO()))
                 .orElseThrow(NotFoundException::new);
     }
 
     public Long create(final RoadmapCategoryRelationDTO roadmapCategoryRelationDTO) {
         final RoadmapCategoryRelation roadmapCategoryRelation = new RoadmapCategoryRelation();
-        mapToEntity(roadmapCategoryRelationDTO, roadmapCategoryRelation);
+        roadmapToEntity(roadmapCategoryRelationDTO, roadmapCategoryRelation);
         return roadmapCategoryRelationRepository.save(roadmapCategoryRelation).getId();
     }
 
     public void update(final Long id, final RoadmapCategoryRelationDTO roadmapCategoryRelationDTO) {
         final RoadmapCategoryRelation roadmapCategoryRelation = roadmapCategoryRelationRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
-        mapToEntity(roadmapCategoryRelationDTO, roadmapCategoryRelation);
+        roadmapToEntity(roadmapCategoryRelationDTO, roadmapCategoryRelation);
         roadmapCategoryRelationRepository.save(roadmapCategoryRelation);
     }
 
@@ -68,12 +68,12 @@ public class RoadmapCategoryRelationService {
         return roadmapCategoryRelationDTO;
     }
 
-    private RoadmapCategoryRelation mapToEntity(final RoadmapCategoryRelationDTO roadmapCategoryRelationDTO,
+    private RoadmapCategoryRelation roadmapToEntity(final RoadmapCategoryRelationDTO roadmapCategoryRelationDTO,
             final RoadmapCategoryRelation roadmapCategoryRelation) {
         roadmapCategoryRelation.setCreatedAt(roadmapCategoryRelationDTO.getCreatedAt());
         final Roadmap roadmap = roadmapCategoryRelationDTO.getRoadmap() == null ? null : roadmapRepository.findById(
                 roadmapCategoryRelationDTO.getRoadmap())
-                .orElseThrow(() -> new NotFoundException("map not found"));
+                .orElseThrow(() -> new NotFoundException("roadmap not found"));
         roadmapCategoryRelation.setRoadmap(roadmap);
         return roadmapCategoryRelation;
     }
@@ -82,11 +82,11 @@ public class RoadmapCategoryRelationService {
         final ReferencedWarning referencedWarning = new ReferencedWarning();
         final RoadmapCategoryRelation roadmapCategoryRelation = roadmapCategoryRelationRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
-        final Category mapCategoryRelationsCategory = categoryRepository.findFirstByRoadmapCategoryRelations(
+        final Category roadmapCategoryRelationsCategory = categoryRepository.findFirstByRoadmapCategoryRelations(
             roadmapCategoryRelation);
-        if (mapCategoryRelationsCategory != null) {
-            referencedWarning.setKey("mapCategoryRelation.category.mapCategoryRelations.referenced");
-            referencedWarning.addParam(mapCategoryRelationsCategory.getId());
+        if (roadmapCategoryRelationsCategory != null) {
+            referencedWarning.setKey("roadmapCategoryRelation.category.roadmapCategoryRelations.referenced");
+            referencedWarning.addParam(roadmapCategoryRelationsCategory.getId());
             return referencedWarning;
         }
         return null;

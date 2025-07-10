@@ -30,7 +30,7 @@ public class ReportResponseDTO {
 
     private Long reportedMember;
 
-    private Long map;
+    private Long roadmap;
 
     private Long marker;
 

@@ -77,26 +77,26 @@ public class MemberService {
     public List<MemberDTO> findAll() {
         final List<Member> members = memberRepository.findAll(Sort.by("id"));
         return members.stream()
-                .map(member -> mapToDTO(member, new MemberDTO()))
+                .map(member -> roadmapToDTO(member, new MemberDTO()))
                 .toList();
     }
 
     public MemberDTO get(final Long id) {
         return memberRepository.findById(id)
-                .map(member -> mapToDTO(member, new MemberDTO()))
+                .map(member -> roadmapToDTO(member, new MemberDTO()))
                 .orElseThrow(NotFoundException::new);
     }
 
     public Long create(final MemberDTO memberDTO) {
         final Member member = new Member();
-        mapToEntity(memberDTO, member);
+        roadmapToEntity(memberDTO, member);
         return memberRepository.save(member).getId();
     }
 
     public void update(final Long id, final MemberDTO memberDTO) {
         final Member member = memberRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
-        mapToEntity(memberDTO, member);
+        roadmapToEntity(memberDTO, member);
         memberRepository.save(member);
     }
 
@@ -104,7 +104,7 @@ public class MemberService {
         memberRepository.deleteById(id);
     }
 
-    private MemberDTO mapToDTO(final Member member, final MemberDTO memberDTO) {
+    private MemberDTO roadmapToDTO(final Member member, final MemberDTO memberDTO) {
         memberDTO.setId(member.getId());
         memberDTO.setName(member.getName());
         memberDTO.setNickname(member.getNickname());
@@ -122,7 +122,7 @@ public class MemberService {
         return memberDTO;
     }
 
-    private Member mapToEntity(final MemberDTO memberDTO, final Member member) {
+    private Member roadmapToEntity(final MemberDTO memberDTO, final Member member) {
         member.setName(memberDTO.getName());
         member.setNickname(memberDTO.getNickname());
         member.setEmail(memberDTO.getEmail());

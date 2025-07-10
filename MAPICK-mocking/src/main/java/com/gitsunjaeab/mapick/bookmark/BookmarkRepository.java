@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
 
-    Bookmark findFirstByRoadmap(Roadmap map);
+    Bookmark findFirstByRoadmap(Roadmap roadmap);
 
     Bookmark findFirstByMember(Member member);
 

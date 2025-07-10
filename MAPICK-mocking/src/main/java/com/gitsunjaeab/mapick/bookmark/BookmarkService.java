@@ -29,26 +29,26 @@ public class BookmarkService {
     public List<BookmarkDTO> findAll() {
         final List<Bookmark> bookmarks = bookmarkRepository.findAll(Sort.by("id"));
         return bookmarks.stream()
-                .map(bookmark -> mapToDTO(bookmark, new BookmarkDTO()))
+                .map(bookmark -> roadmapToDTO(bookmark, new BookmarkDTO()))
                 .toList();
     }
 
     public BookmarkDTO get(final Long id) {
         return bookmarkRepository.findById(id)
-                .map(bookmark -> mapToDTO(bookmark, new BookmarkDTO()))
+                .map(bookmark -> roadmapToDTO(bookmark, new BookmarkDTO()))
                 .orElseThrow(NotFoundException::new);
     }
 
     public Long create(final BookmarkDTO bookmarkDTO) {
         final Bookmark bookmark = new Bookmark();
-        mapToEntity(bookmarkDTO, bookmark);
+        roadmapToEntity(bookmarkDTO, bookmark);
         return bookmarkRepository.save(bookmark).getId();
     }
 
     public void update(final Long id, final BookmarkDTO bookmarkDTO) {
         final Bookmark bookmark = bookmarkRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
-        mapToEntity(bookmarkDTO, bookmark);
+        roadmapToEntity(bookmarkDTO, bookmark);
         bookmarkRepository.save(bookmark);
     }
 
@@ -56,18 +56,18 @@ public class BookmarkService {
         bookmarkRepository.deleteById(id);
     }
 
-    private BookmarkDTO mapToDTO(final Bookmark bookmark, final BookmarkDTO bookmarkDTO) {
+    private BookmarkDTO roadmapToDTO(final Bookmark bookmark, final BookmarkDTO bookmarkDTO) {
         bookmarkDTO.setId(bookmark.getId());
         bookmarkDTO.setCreatedAt(bookmark.getCreatedAt());
-        bookmarkDTO.setMap(bookmark.getRoadmap() == null ? null : bookmark.getRoadmap().getId());
+        bookmarkDTO.setRoadmap(bookmark.getRoadmap() == null ? null : bookmark.getRoadmap().getId());
         bookmarkDTO.setMember(bookmark.getMember() == null ? null : bookmark.getMember().getId());
         return bookmarkDTO;
     }
 
-    private Bookmark mapToEntity(final BookmarkDTO bookmarkDTO, final Bookmark bookmark) {
+    private Bookmark roadmapToEntity(final BookmarkDTO bookmarkDTO, final Bookmark bookmark) {
         bookmark.setCreatedAt(bookmarkDTO.getCreatedAt());
-        final Roadmap roadmap = bookmarkDTO.getMap() == null ? null : roadmapRepository.findById(bookmarkDTO.getMap())
-                .orElseThrow(() -> new NotFoundException("map not found"));
+        final Roadmap roadmap = bookmarkDTO.getRoadmap() == null ? null : roadmapRepository.findById(bookmarkDTO.getRoadmap())
+                .orElseThrow(() -> new NotFoundException("roadmap not found"));
         bookmark.setRoadmap(roadmap);
         final Member member = bookmarkDTO.getMember() == null ? null : memberRepository.findById(bookmarkDTO.getMember())
                 .orElseThrow(() -> new NotFoundException("member not found"));

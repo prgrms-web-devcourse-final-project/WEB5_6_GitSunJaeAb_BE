@@ -11,6 +11,6 @@ public class RoadmapCategoryRelationResponseDTO {
 
     private Long id;
     private OffsetDateTime createdAt;
-    private Long map;
+    private Long roadmap;
 
 }

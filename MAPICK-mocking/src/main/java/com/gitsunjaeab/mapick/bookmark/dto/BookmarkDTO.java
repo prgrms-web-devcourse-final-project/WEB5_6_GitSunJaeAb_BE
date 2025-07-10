@@ -15,7 +15,7 @@ public class BookmarkDTO {
     @NotNull
     private OffsetDateTime createdAt;
 
-    private Long map;
+    private Long roadmap;
 
     private Long member;
 

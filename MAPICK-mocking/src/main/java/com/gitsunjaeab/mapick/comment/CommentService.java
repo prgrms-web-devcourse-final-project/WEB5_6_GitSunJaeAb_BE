@@ -29,26 +29,26 @@ public class CommentService {
     public List<CommentDTO> findAll() {
         final List<Comment> comments = commentRepository.findAll(Sort.by("id"));
         return comments.stream()
-                .map(comment -> mapToDTO(comment, new CommentDTO()))
+                .map(comment -> roadmapToDTO(comment, new CommentDTO()))
                 .toList();
     }
 
     public CommentDTO get(final Long id) {
         return commentRepository.findById(id)
-                .map(comment -> mapToDTO(comment, new CommentDTO()))
+                .map(comment -> roadmapToDTO(comment, new CommentDTO()))
                 .orElseThrow(NotFoundException::new);
     }
 
     public Long create(final CommentDTO commentDTO) {
         final Comment comment = new Comment();
-        mapToEntity(commentDTO, comment);
+        roadmapToEntity(commentDTO, comment);
         return commentRepository.save(comment).getId();
     }
 
     public void update(final Long id, final CommentDTO commentDTO) {
         final Comment comment = commentRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
-        mapToEntity(commentDTO, comment);
+        roadmapToEntity(commentDTO, comment);
         commentRepository.save(comment);
     }
 
@@ -56,7 +56,7 @@ public class CommentService {
         commentRepository.deleteById(id);
     }
 
-    private CommentDTO mapToDTO(final Comment comment, final CommentDTO commentDTO) {
+    private CommentDTO roadmapToDTO(final Comment comment, final CommentDTO commentDTO) {
         commentDTO.setId(comment.getId());
         commentDTO.setContent(comment.getContent());
         commentDTO.setCreatedAt(comment.getCreatedAt());
@@ -66,7 +66,7 @@ public class CommentService {
         return commentDTO;
     }
 
-    private Comment mapToEntity(final CommentDTO commentDTO, final Comment comment) {
+    private Comment roadmapToEntity(final CommentDTO commentDTO, final Comment comment) {
         comment.setContent(commentDTO.getContent());
         comment.setCreatedAt(commentDTO.getCreatedAt());
         comment.setUpdatedAt(commentDTO.getUpdatedAt());

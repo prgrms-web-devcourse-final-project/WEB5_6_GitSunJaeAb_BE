@@ -12,6 +12,6 @@ public class RoadmapHashtagRelationDTO {
     private Long id;
     private OffsetDateTime createdAt;
     private Long hashtag;
-    private Long map;
+    private Long roadmap;
 
 }

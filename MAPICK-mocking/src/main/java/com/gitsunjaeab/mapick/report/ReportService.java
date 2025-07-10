@@ -38,26 +38,26 @@ public class ReportService {
     public List<ReportDTO> findAll() {
         final List<Report> reports = reportRepository.findAll(Sort.by("id"));
         return reports.stream()
-                .map(report -> mapToDTO(report, new ReportDTO()))
+                .map(report -> roadmapToDTO(report, new ReportDTO()))
                 .toList();
     }
 
     public ReportDTO get(final Long id) {
         return reportRepository.findById(id)
-                .map(report -> mapToDTO(report, new ReportDTO()))
+                .map(report -> roadmapToDTO(report, new ReportDTO()))
                 .orElseThrow(NotFoundException::new);
     }
 
     public Long create(final ReportDTO reportDTO) {
         final Report report = new Report();
-        mapToEntity(reportDTO, report);
+        roadmapToEntity(reportDTO, report);
         return reportRepository.save(report).getId();
     }
 
     public void update(final Long id, final ReportDTO reportDTO) {
         final Report report = reportRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
-        mapToEntity(reportDTO, report);
+        roadmapToEntity(reportDTO, report);
         reportRepository.save(report);
     }
 
@@ -65,7 +65,7 @@ public class ReportService {
         reportRepository.deleteById(id);
     }
 
-    private ReportDTO mapToDTO(final Report report, final ReportDTO reportDTO) {
+    private ReportDTO roadmapToDTO(final Report report, final ReportDTO reportDTO) {
         reportDTO.setId(report.getId());
         reportDTO.setReportType(report.getReportType());
         reportDTO.setDescription(report.getDescription());
@@ -74,13 +74,13 @@ public class ReportService {
         reportDTO.setResolvedAt(report.getResolvedAt());
         reportDTO.setReporter(report.getReporter() == null ? null : report.getReporter().getId());
         reportDTO.setReportedMember(report.getReportedMember() == null ? null : report.getReportedMember().getId());
-        reportDTO.setMap(report.getRoadmap() == null ? null : report.getRoadmap().getId());
+        reportDTO.setRoadmap(report.getRoadmap() == null ? null : report.getRoadmap().getId());
         reportDTO.setMarker(report.getMarker() == null ? null : report.getMarker().getId());
         reportDTO.setQuest(report.getQuest() == null ? null : report.getQuest().getId());
         return reportDTO;
     }
 
-    private Report mapToEntity(final ReportDTO reportDTO, final Report report) {
+    private Report roadmapToEntity(final ReportDTO reportDTO, final Report report) {
         report.setReportType(reportDTO.getReportType());
         report.setDescription(reportDTO.getDescription());
         report.setStatus(reportDTO.getStatus());
@@ -92,7 +92,7 @@ public class ReportService {
         final Member reportedMember = reportDTO.getReportedMember() == null ? null : memberRepository.findById(reportDTO.getReportedMember())
                 .orElseThrow(() -> new NotFoundException("reportedMember not found"));
         report.setReportedMember(reportedMember);
-        final Roadmap roadmap = reportDTO.getMap() == null ? null : roadmapRepository.findById(reportDTO.getMap())
+        final Roadmap roadmap = reportDTO.getRoadmap() == null ? null : roadmapRepository.findById(reportDTO.getRoadmap())
                 .orElseThrow(() -> new NotFoundException("map not found"));
         report.setRoadmap(roadmap);
         final Marker marker = reportDTO.getMarker() == null ? null : markerRepository.findById(reportDTO.getMarker())

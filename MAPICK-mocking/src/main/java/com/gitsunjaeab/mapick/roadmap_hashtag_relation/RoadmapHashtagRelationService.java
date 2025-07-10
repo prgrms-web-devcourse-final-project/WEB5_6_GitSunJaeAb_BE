@@ -30,26 +30,26 @@ public class RoadmapHashtagRelationService {
     public List<RoadmapHashtagRelationDTO> findAll() {
         final List<RoadmapHashtagRelation> roadmapHashtagRelations = roadmapHashtagRelationRepository.findAll(Sort.by("id"));
         return roadmapHashtagRelations.stream()
-                .map(roadmapHashtagRelation -> mapToDTO(roadmapHashtagRelation, new RoadmapHashtagRelationDTO()))
+                .map(roadmapHashtagRelation -> roadmapToDTO(roadmapHashtagRelation, new RoadmapHashtagRelationDTO()))
                 .toList();
     }
 
     public RoadmapHashtagRelationDTO get(final Long id) {
         return roadmapHashtagRelationRepository.findById(id)
-                .map(mapHashtagRelation -> mapToDTO(mapHashtagRelation, new RoadmapHashtagRelationDTO()))
+                .map(mapHashtagRelation -> roadmapToDTO(mapHashtagRelation, new RoadmapHashtagRelationDTO()))
                 .orElseThrow(NotFoundException::new);
     }
 
     public Long create(final RoadmapHashtagRelationDTO roadmapHashtagRelationDTO) {
         final RoadmapHashtagRelation roadmapHashtagRelation = new RoadmapHashtagRelation();
-        mapToEntity(roadmapHashtagRelationDTO, roadmapHashtagRelation);
+        roadmapToEntity(roadmapHashtagRelationDTO, roadmapHashtagRelation);
         return roadmapHashtagRelationRepository.save(roadmapHashtagRelation).getId();
     }
 
     public void update(final Long id, final RoadmapHashtagRelationDTO roadmapHashtagRelationDTO) {
         final RoadmapHashtagRelation roadmapHashtagRelation = roadmapHashtagRelationRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
-        mapToEntity(roadmapHashtagRelationDTO, roadmapHashtagRelation);
+        roadmapToEntity(roadmapHashtagRelationDTO, roadmapHashtagRelation);
         roadmapHashtagRelationRepository.save(roadmapHashtagRelation);
     }
 
@@ -57,27 +57,27 @@ public class RoadmapHashtagRelationService {
         roadmapHashtagRelationRepository.deleteById(id);
     }
 
-    private RoadmapHashtagRelationDTO mapToDTO(final RoadmapHashtagRelation roadmapHashtagRelation,
+    private RoadmapHashtagRelationDTO roadmapToDTO(final RoadmapHashtagRelation roadmapHashtagRelation,
             final RoadmapHashtagRelationDTO roadmapHashtagRelationDTO) {
         roadmapHashtagRelationDTO.setId(roadmapHashtagRelation.getId());
         roadmapHashtagRelationDTO.setCreatedAt(roadmapHashtagRelation.getCreatedAt());
         roadmapHashtagRelationDTO.setHashtag(
             roadmapHashtagRelation.getHashtag() == null ? null : roadmapHashtagRelation.getHashtag().getId());
-        roadmapHashtagRelationDTO.setMap(
+        roadmapHashtagRelationDTO.setRoadmap(
             roadmapHashtagRelation.getRoadmap() == null ? null : roadmapHashtagRelation.getRoadmap().getId());
         return roadmapHashtagRelationDTO;
     }
 
-    private RoadmapHashtagRelation mapToEntity(final RoadmapHashtagRelationDTO roadmapHashtagRelationDTO,
+    private RoadmapHashtagRelation roadmapToEntity(final RoadmapHashtagRelationDTO roadmapHashtagRelationDTO,
             final RoadmapHashtagRelation roadmapHashtagRelation) {
         roadmapHashtagRelation.setCreatedAt(roadmapHashtagRelationDTO.getCreatedAt());
         final Hashtag hashtag = roadmapHashtagRelationDTO.getHashtag() == null ? null : hashtagRepository.findById(
                 roadmapHashtagRelationDTO.getHashtag())
                 .orElseThrow(() -> new NotFoundException("hashtag not found"));
         roadmapHashtagRelation.setHashtag(hashtag);
-        final Roadmap roadmap = roadmapHashtagRelationDTO.getMap() == null ? null : roadmapRepository.findById(
-                roadmapHashtagRelationDTO.getMap())
-                .orElseThrow(() -> new NotFoundException("map not found"));
+        final Roadmap roadmap = roadmapHashtagRelationDTO.getRoadmap() == null ? null : roadmapRepository.findById(
+                roadmapHashtagRelationDTO.getRoadmap())
+                .orElseThrow(() -> new NotFoundException("roadmap not found"));
         roadmapHashtagRelation.setRoadmap(roadmap);
         return roadmapHashtagRelation;
     }

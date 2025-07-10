@@ -24,7 +24,7 @@ public class RoadmapEditorResponseDTO {
 
     private OffsetDateTime deletedAt;
 
-    private Long map;
+    private Long roadmap;
 
     private Long member;
 

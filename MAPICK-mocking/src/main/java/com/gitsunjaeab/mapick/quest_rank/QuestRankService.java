@@ -29,26 +29,26 @@ public class QuestRankService {
     public List<QuestRankDTO> findAll() {
         final List<QuestRank> questRanks = questRankRepository.findAll(Sort.by("id"));
         return questRanks.stream()
-                .map(questRank -> mapToDTO(questRank, new QuestRankDTO()))
+                .map(questRank -> roadmapToDTO(questRank, new QuestRankDTO()))
                 .toList();
     }
 
     public QuestRankDTO get(final Long id) {
         return questRankRepository.findById(id)
-                .map(questRank -> mapToDTO(questRank, new QuestRankDTO()))
+                .map(questRank -> roadmapToDTO(questRank, new QuestRankDTO()))
                 .orElseThrow(NotFoundException::new);
     }
 
     public Long create(final QuestRankDTO questRankDTO) {
         final QuestRank questRank = new QuestRank();
-        mapToEntity(questRankDTO, questRank);
+        roadmapToEntity(questRankDTO, questRank);
         return questRankRepository.save(questRank).getId();
     }
 
     public void update(final Long id, final QuestRankDTO questRankDTO) {
         final QuestRank questRank = questRankRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
-        mapToEntity(questRankDTO, questRank);
+        roadmapToEntity(questRankDTO, questRank);
         questRankRepository.save(questRank);
     }
 
@@ -56,7 +56,7 @@ public class QuestRankService {
         questRankRepository.deleteById(id);
     }
 
-    private QuestRankDTO mapToDTO(final QuestRank questRank, final QuestRankDTO questRankDTO) {
+    private QuestRankDTO roadmapToDTO(final QuestRank questRank, final QuestRankDTO questRankDTO) {
         questRankDTO.setId(questRank.getId());
         questRankDTO.setRank(questRank.getRank());
         questRankDTO.setCompletedAt(questRank.getCompletedAt());
@@ -68,7 +68,7 @@ public class QuestRankService {
         return questRankDTO;
     }
 
-    private QuestRank mapToEntity(final QuestRankDTO questRankDTO, final QuestRank questRank) {
+    private QuestRank roadmapToEntity(final QuestRankDTO questRankDTO, final QuestRank questRank) {
         questRank.setRank(questRankDTO.getRank());
         questRank.setCompletedAt(questRankDTO.getCompletedAt());
         questRank.setCreatedAt(questRankDTO.getCreatedAt());

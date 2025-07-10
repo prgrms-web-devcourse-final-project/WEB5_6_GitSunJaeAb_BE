@@ -58,26 +58,26 @@ public class RoadmapService {
     public List<RoadmapDTO> findAll() {
         final List<Roadmap> roadmaps = roadmapRepository.findAll(Sort.by("id"));
         return roadmaps.stream()
-                .map(map -> mapToDTO(map, new RoadmapDTO()))
+                .map(map -> roadmapToDTO(map, new RoadmapDTO()))
                 .toList();
     }
 
     public RoadmapDTO get(final Long id) {
         return roadmapRepository.findById(id)
-                .map(map -> mapToDTO(map, new RoadmapDTO()))
+                .map(map -> roadmapToDTO(map, new RoadmapDTO()))
                 .orElseThrow(NotFoundException::new);
     }
 
     public Long create(final RoadmapDTO roadmapDTO) {
         final Roadmap roadmap =  new Roadmap();
-        mapToEntity(roadmapDTO, roadmap);
+        roadmapToEntity(roadmapDTO, roadmap);
         return roadmapRepository.save(roadmap).getId();
     }
 
     public void update(final Long id, final RoadmapDTO roadmapDTO) {
         final Roadmap roadmap = roadmapRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
-        mapToEntity(roadmapDTO, roadmap);
+        roadmapToEntity(roadmapDTO, roadmap);
         roadmapRepository.save(roadmap);
     }
 
@@ -85,7 +85,7 @@ public class RoadmapService {
         roadmapRepository.deleteById(id);
     }
 
-    private RoadmapDTO mapToDTO(final Roadmap roadmap, final RoadmapDTO roadmapDTO) {
+    private RoadmapDTO roadmapToDTO(final Roadmap roadmap, final RoadmapDTO roadmapDTO) {
         roadmapDTO.setId(roadmap.getId());
         roadmapDTO.setTitle(roadmap.getTitle());
         roadmapDTO.setDescription(roadmap.getDescription());
@@ -94,16 +94,16 @@ public class RoadmapService {
         roadmapDTO.setIsAnimated(roadmap.getIsAnimated());
         roadmapDTO.setLikeCount(roadmap.getLikeCount());
         roadmapDTO.setViewCount(roadmap.getViewCount());
-        roadmapDTO.setMapType(roadmap.getMapType());
+        roadmapDTO.setRoadmapType(roadmap.getRoadmapType());
         roadmapDTO.setCreatedAt(roadmap.getCreatedAt());
         roadmapDTO.setUpdatedAt(roadmap.getUpdatedAt());
         roadmapDTO.setDeletedAt(roadmap.getDeletedAt());
         roadmapDTO.setMember(roadmap.getMember() == null ? null : roadmap.getMember().getId());
-        roadmapDTO.setOriginalMap(roadmap.getOriginalRoadmap() == null ? null : roadmap.getOriginalRoadmap().getId());
+        roadmapDTO.setOriginalRoadmap(roadmap.getOriginalRoadmap() == null ? null : roadmap.getOriginalRoadmap().getId());
         return roadmapDTO;
     }
 
-    private Roadmap mapToEntity(final RoadmapDTO roadmapDTO, final Roadmap roadmap) {
+    private Roadmap roadmapToEntity(final RoadmapDTO roadmapDTO, final Roadmap roadmap) {
         roadmap.setTitle(roadmapDTO.getTitle());
         roadmap.setDescription(roadmapDTO.getDescription());
         roadmap.setThumbnail(roadmapDTO.getThumbnail());
@@ -111,7 +111,7 @@ public class RoadmapService {
         roadmap.setIsAnimated(roadmapDTO.getIsAnimated());
         roadmap.setLikeCount(roadmapDTO.getLikeCount());
         roadmap.setViewCount(roadmapDTO.getViewCount());
-        roadmap.setMapType(roadmapDTO.getMapType());
+        roadmap.setRoadmapType(roadmapDTO.getRoadmapType());
         roadmap.setCreatedAt(roadmapDTO.getCreatedAt());
         roadmap.setUpdatedAt(roadmapDTO.getUpdatedAt());
         roadmap.setDeletedAt(roadmapDTO.getDeletedAt());
@@ -119,8 +119,8 @@ public class RoadmapService {
                 roadmapDTO.getMember())
                 .orElseThrow(() -> new NotFoundException("member not found"));
         roadmap.setMember(member);
-        final Roadmap originalMap = roadmapDTO.getOriginalMap() == null ? null : roadmapRepository.findById(
-                roadmapDTO.getOriginalMap())
+        final Roadmap originalMap = roadmapDTO.getOriginalRoadmap() == null ? null : roadmapRepository.findById(
+                roadmapDTO.getOriginalRoadmap())
                 .orElseThrow(() -> new NotFoundException("originalMap not found"));
         roadmap.setOriginalRoadmap(originalMap);
         return roadmap;

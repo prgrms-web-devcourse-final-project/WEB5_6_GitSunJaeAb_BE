@@ -20,7 +20,7 @@ public class CommentResponseDTO {
 
     private OffsetDateTime updatedAt;
 
-    private Long map;
+    private Long roadmap;
 
     private Long member;
 

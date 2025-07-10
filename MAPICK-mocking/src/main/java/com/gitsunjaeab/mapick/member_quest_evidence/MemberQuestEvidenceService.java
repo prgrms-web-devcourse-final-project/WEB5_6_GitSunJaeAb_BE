@@ -26,26 +26,26 @@ public class MemberQuestEvidenceService {
     public List<MemberQuestEvidenceDTO> findAll() {
         final List<MemberQuestEvidence> memberQuestEvidences = memberQuestEvidenceRepository.findAll(Sort.by("id"));
         return memberQuestEvidences.stream()
-                .map(memberQuestEvidence -> mapToDTO(memberQuestEvidence, new MemberQuestEvidenceDTO()))
+                .map(memberQuestEvidence -> roadmapToDTO(memberQuestEvidence, new MemberQuestEvidenceDTO()))
                 .toList();
     }
 
     public MemberQuestEvidenceDTO get(final Long id) {
         return memberQuestEvidenceRepository.findById(id)
-                .map(memberQuestEvidence -> mapToDTO(memberQuestEvidence, new MemberQuestEvidenceDTO()))
+                .map(memberQuestEvidence -> roadmapToDTO(memberQuestEvidence, new MemberQuestEvidenceDTO()))
                 .orElseThrow(NotFoundException::new);
     }
 
     public Long create(final MemberQuestEvidenceDTO memberQuestEvidenceDTO) {
         final MemberQuestEvidence memberQuestEvidence = new MemberQuestEvidence();
-        mapToEntity(memberQuestEvidenceDTO, memberQuestEvidence);
+        roadmapToEntity(memberQuestEvidenceDTO, memberQuestEvidence);
         return memberQuestEvidenceRepository.save(memberQuestEvidence).getId();
     }
 
     public void update(final Long id, final MemberQuestEvidenceDTO memberQuestEvidenceDTO) {
         final MemberQuestEvidence memberQuestEvidence = memberQuestEvidenceRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
-        mapToEntity(memberQuestEvidenceDTO, memberQuestEvidence);
+        roadmapToEntity(memberQuestEvidenceDTO, memberQuestEvidence);
         memberQuestEvidenceRepository.save(memberQuestEvidence);
     }
 
@@ -53,7 +53,7 @@ public class MemberQuestEvidenceService {
         memberQuestEvidenceRepository.deleteById(id);
     }
 
-    private MemberQuestEvidenceDTO mapToDTO(final MemberQuestEvidence memberQuestEvidence,
+    private MemberQuestEvidenceDTO roadmapToDTO(final MemberQuestEvidence memberQuestEvidence,
             final MemberQuestEvidenceDTO memberQuestEvidenceDTO) {
         memberQuestEvidenceDTO.setId(memberQuestEvidence.getId());
         memberQuestEvidenceDTO.setImageUrl(memberQuestEvidence.getImageUrl());
@@ -65,7 +65,7 @@ public class MemberQuestEvidenceService {
         return memberQuestEvidenceDTO;
     }
 
-    private MemberQuestEvidence mapToEntity(final MemberQuestEvidenceDTO memberQuestEvidenceDTO,
+    private MemberQuestEvidence roadmapToEntity(final MemberQuestEvidenceDTO memberQuestEvidenceDTO,
             final MemberQuestEvidence memberQuestEvidence) {
         memberQuestEvidence.setImageUrl(memberQuestEvidenceDTO.getImageUrl());
         memberQuestEvidence.setDescription(memberQuestEvidenceDTO.getDescription());

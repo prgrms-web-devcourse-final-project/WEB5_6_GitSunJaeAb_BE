@@ -68,7 +68,7 @@ public class Roadmap {
     private Integer viewCount;
 
     @Column(nullable = false)
-    private String mapType;
+    private String roadmapType;
 
     @Column(nullable = false)
     private OffsetDateTime createdAt;
@@ -88,27 +88,27 @@ public class Roadmap {
     private Roadmap originalRoadmap;
 
     @OneToMany(mappedBy = "originalRoadmap")
-    private Set<Roadmap> originalMapRoadmaps = new HashSet<>();
+    private Set<Roadmap> originalRoadmaps = new HashSet<>();
 
     @OneToMany(mappedBy = "roadmap")
-    private Set<RoadmapEditor> mapRoadmapEditors = new HashSet<>();
+    private Set<RoadmapEditor> roadmapEditors = new HashSet<>();
 
     @OneToMany(mappedBy = "roadmap")
-    private Set<Layer> mapLayers = new HashSet<>();
+    private Set<Layer> roadmapLayers = new HashSet<>();
 
     @OneToMany(mappedBy = "roadmap")
-    private Set<Comment> mapComments = new HashSet<>();
+    private Set<Comment> roadmapComments = new HashSet<>();
 
     @OneToMany(mappedBy = "roadmap")
-    private Set<Bookmark> mapLikes = new HashSet<>();
+    private Set<Bookmark> roadmapLikes = new HashSet<>();
 
     @OneToMany(mappedBy = "roadmap")
-    private Set<RoadmapCategoryRelation> mapMapCategoryRelations = new HashSet<>();
+    private Set<RoadmapCategoryRelation> roadmapMapCategoryRelations = new HashSet<>();
 
     @OneToMany(mappedBy = "roadmap")
-    private Set<RoadmapHashtagRelation> mapMapHashtags = new HashSet<>();
+    private Set<RoadmapHashtagRelation> roadmapMapHashtags = new HashSet<>();
 
     @OneToMany(mappedBy = "roadmap")
-    private Set<Report> mapReports = new HashSet<>();
+    private Set<Report> roadmapReports = new HashSet<>();
 
 }

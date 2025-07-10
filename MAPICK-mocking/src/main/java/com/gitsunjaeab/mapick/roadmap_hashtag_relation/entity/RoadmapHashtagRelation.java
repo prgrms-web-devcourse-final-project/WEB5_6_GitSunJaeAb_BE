@@ -18,7 +18,7 @@ import lombok.Setter;
 
 
 @Entity
-@Table(name = "MapHashtagRelations")
+@Table(name = "RoadmapHashtagRelations")
 @Getter
 @Setter
 public class RoadmapHashtagRelation {

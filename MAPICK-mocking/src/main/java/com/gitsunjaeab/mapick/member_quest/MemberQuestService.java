@@ -35,26 +35,26 @@ public class MemberQuestService {
     public List<MemberQuestDTO> findAll() {
         final List<MemberQuest> memberQuests = memberQuestRepository.findAll(Sort.by("id"));
         return memberQuests.stream()
-                .map(memberQuest -> mapToDTO(memberQuest, new MemberQuestDTO()))
+                .map(memberQuest -> roadmapToDTO(memberQuest, new MemberQuestDTO()))
                 .toList();
     }
 
     public MemberQuestDTO get(final Long id) {
         return memberQuestRepository.findById(id)
-                .map(memberQuest -> mapToDTO(memberQuest, new MemberQuestDTO()))
+                .map(memberQuest -> roadmapToDTO(memberQuest, new MemberQuestDTO()))
                 .orElseThrow(NotFoundException::new);
     }
 
     public Long create(final MemberQuestDTO memberQuestDTO) {
         final MemberQuest memberQuest = new MemberQuest();
-        mapToEntity(memberQuestDTO, memberQuest);
+        roadmapToEntity(memberQuestDTO, memberQuest);
         return memberQuestRepository.save(memberQuest).getId();
     }
 
     public void update(final Long id, final MemberQuestDTO memberQuestDTO) {
         final MemberQuest memberQuest = memberQuestRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
-        mapToEntity(memberQuestDTO, memberQuest);
+        roadmapToEntity(memberQuestDTO, memberQuest);
         memberQuestRepository.save(memberQuest);
     }
 
@@ -62,7 +62,7 @@ public class MemberQuestService {
         memberQuestRepository.deleteById(id);
     }
 
-    private MemberQuestDTO mapToDTO(final MemberQuest memberQuest,
+    private MemberQuestDTO roadmapToDTO(final MemberQuest memberQuest,
             final MemberQuestDTO memberQuestDTO) {
         memberQuestDTO.setId(memberQuest.getId());
         memberQuestDTO.setStatus(memberQuest.getStatus());
@@ -77,7 +77,7 @@ public class MemberQuestService {
         return memberQuestDTO;
     }
 
-    private MemberQuest mapToEntity(final MemberQuestDTO memberQuestDTO,
+    private MemberQuest roadmapToEntity(final MemberQuestDTO memberQuestDTO,
             final MemberQuest memberQuest) {
         memberQuest.setStatus(memberQuestDTO.getStatus());
         memberQuest.setAnswer(memberQuestDTO.getAnswer());
