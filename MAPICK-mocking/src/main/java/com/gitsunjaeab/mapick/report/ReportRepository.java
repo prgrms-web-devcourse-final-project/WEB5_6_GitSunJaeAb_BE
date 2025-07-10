@@ -1,9 +1,10 @@
 package com.gitsunjaeab.mapick.report;
 
 import com.gitsunjaeab.mapick.map.Map;
-import com.gitsunjaeab.mapick.marker.Marker;
-import com.gitsunjaeab.mapick.member.Member;
-import com.gitsunjaeab.mapick.quest.Quest;
+import com.gitsunjaeab.mapick.marker.entity.Marker;
+import com.gitsunjaeab.mapick.member.entity.Member;
+import com.gitsunjaeab.mapick.quest.entity.Quest;
+import com.gitsunjaeab.mapick.report.entity.Report;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 

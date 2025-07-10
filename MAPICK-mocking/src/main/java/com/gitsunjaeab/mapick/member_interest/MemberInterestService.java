@@ -2,8 +2,10 @@ package com.gitsunjaeab.mapick.member_interest;
 
 import com.gitsunjaeab.mapick.category.Category;
 import com.gitsunjaeab.mapick.category.CategoryRepository;
-import com.gitsunjaeab.mapick.member.Member;
+import com.gitsunjaeab.mapick.member.entity.Member;
 import com.gitsunjaeab.mapick.member.MemberRepository;
+import com.gitsunjaeab.mapick.member_interest.dto.MemberInterestDTO;
+import com.gitsunjaeab.mapick.member_interest.entity.MemberInterest;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import java.util.List;
 import org.springframework.data.domain.Sort;

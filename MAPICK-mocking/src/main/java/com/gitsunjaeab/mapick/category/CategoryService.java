@@ -2,7 +2,7 @@ package com.gitsunjaeab.mapick.category;
 
 import com.gitsunjaeab.mapick.map_category_relation.MapCategoryRelation;
 import com.gitsunjaeab.mapick.map_category_relation.MapCategoryRelationRepository;
-import com.gitsunjaeab.mapick.member_interest.MemberInterest;
+import com.gitsunjaeab.mapick.member_interest.entity.MemberInterest;
 import com.gitsunjaeab.mapick.member_interest.MemberInterestRepository;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import com.gitsunjaeab.mapick.util.ReferencedWarning;

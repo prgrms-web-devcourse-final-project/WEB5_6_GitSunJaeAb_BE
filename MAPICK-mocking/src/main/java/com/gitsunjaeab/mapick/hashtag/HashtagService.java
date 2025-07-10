@@ -1,6 +1,6 @@
 package com.gitsunjaeab.mapick.hashtag;
 
-import com.gitsunjaeab.mapick.map_hashtag_relation.MapHashtagRelation;
+import com.gitsunjaeab.mapick.map_hashtag_relation.entity.MapHashtagRelation;
 import com.gitsunjaeab.mapick.map_hashtag_relation.MapHashtagRelationRepository;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import com.gitsunjaeab.mapick.util.ReferencedWarning;

@@ -1,7 +1,9 @@
 package com.gitsunjaeab.mapick.member_quest_evidence;
 
-import com.gitsunjaeab.mapick.member_quest.MemberQuest;
+import com.gitsunjaeab.mapick.member_quest.entity.MemberQuest;
 import com.gitsunjaeab.mapick.member_quest.MemberQuestRepository;
+import com.gitsunjaeab.mapick.member_quest_evidence.dto.MemberQuestEvidenceDTO;
+import com.gitsunjaeab.mapick.member_quest_evidence.entity.MemberQuestEvidence;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import java.util.List;
 import org.springframework.data.domain.Sort;

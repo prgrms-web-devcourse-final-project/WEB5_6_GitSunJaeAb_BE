@@ -2,6 +2,7 @@ package com.gitsunjaeab.mapick.map_hashtag_relation;
 
 import com.gitsunjaeab.mapick.hashtag.Hashtag;
 import com.gitsunjaeab.mapick.map.Map;
+import com.gitsunjaeab.mapick.map_hashtag_relation.entity.MapHashtagRelation;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 

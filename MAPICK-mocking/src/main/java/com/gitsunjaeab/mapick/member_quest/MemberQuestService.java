@@ -1,10 +1,12 @@
 package com.gitsunjaeab.mapick.member_quest;
 
-import com.gitsunjaeab.mapick.member.Member;
+import com.gitsunjaeab.mapick.member.entity.Member;
 import com.gitsunjaeab.mapick.member.MemberRepository;
-import com.gitsunjaeab.mapick.member_quest_evidence.MemberQuestEvidence;
+import com.gitsunjaeab.mapick.member_quest.dto.MemberQuestDTO;
+import com.gitsunjaeab.mapick.member_quest.entity.MemberQuest;
+import com.gitsunjaeab.mapick.member_quest_evidence.entity.MemberQuestEvidence;
 import com.gitsunjaeab.mapick.member_quest_evidence.MemberQuestEvidenceRepository;
-import com.gitsunjaeab.mapick.quest.Quest;
+import com.gitsunjaeab.mapick.quest.entity.Quest;
 import com.gitsunjaeab.mapick.quest.QuestRepository;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import com.gitsunjaeab.mapick.util.ReferencedWarning;

@@ -1,9 +1,11 @@
 package com.gitsunjaeab.mapick.quest_rank;
 
-import com.gitsunjaeab.mapick.member.Member;
+import com.gitsunjaeab.mapick.member.entity.Member;
 import com.gitsunjaeab.mapick.member.MemberRepository;
-import com.gitsunjaeab.mapick.quest.Quest;
+import com.gitsunjaeab.mapick.quest.entity.Quest;
 import com.gitsunjaeab.mapick.quest.QuestRepository;
+import com.gitsunjaeab.mapick.quest_rank.dto.QuestRankDTO;
+import com.gitsunjaeab.mapick.quest_rank.entity.QuestRank;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import java.util.List;
 import org.springframework.data.domain.Sort;

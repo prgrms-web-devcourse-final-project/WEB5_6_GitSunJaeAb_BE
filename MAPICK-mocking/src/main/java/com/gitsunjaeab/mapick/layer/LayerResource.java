@@ -1,7 +1,7 @@
 package com.gitsunjaeab.mapick.layer;
 
 import com.gitsunjaeab.mapick.map.MapRepository;
-import com.gitsunjaeab.mapick.member.Member;
+import com.gitsunjaeab.mapick.member.entity.Member;
 import com.gitsunjaeab.mapick.member.MemberRepository;
 import com.gitsunjaeab.mapick.util.CustomCollectors;
 import com.gitsunjaeab.mapick.util.ReferencedException;

@@ -1,7 +1,8 @@
 package com.gitsunjaeab.mapick.member_interest;
 
 import com.gitsunjaeab.mapick.category.Category;
-import com.gitsunjaeab.mapick.member.Member;
+import com.gitsunjaeab.mapick.member.entity.Member;
+import com.gitsunjaeab.mapick.member_interest.entity.MemberInterest;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 

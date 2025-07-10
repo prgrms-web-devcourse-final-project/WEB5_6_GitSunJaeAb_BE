@@ -2,8 +2,8 @@ package com.gitsunjaeab.mapick.layer;
 
 import com.gitsunjaeab.mapick.layer_library.LayerLibrary;
 import com.gitsunjaeab.mapick.map.Map;
-import com.gitsunjaeab.mapick.marker.Marker;
-import com.gitsunjaeab.mapick.member.Member;
+import com.gitsunjaeab.mapick.marker.entity.Marker;
+import com.gitsunjaeab.mapick.member.entity.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;

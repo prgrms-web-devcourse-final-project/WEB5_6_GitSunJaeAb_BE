@@ -4,6 +4,8 @@ import com.gitsunjaeab.mapick.hashtag.Hashtag;
 import com.gitsunjaeab.mapick.hashtag.HashtagRepository;
 import com.gitsunjaeab.mapick.map.Map;
 import com.gitsunjaeab.mapick.map.MapRepository;
+import com.gitsunjaeab.mapick.map_hashtag_relation.dto.MapHashtagRelationDTO;
+import com.gitsunjaeab.mapick.map_hashtag_relation.entity.MapHashtagRelation;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import java.util.List;
 import org.springframework.data.domain.Sort;

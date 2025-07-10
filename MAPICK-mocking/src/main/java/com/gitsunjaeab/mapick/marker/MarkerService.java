@@ -2,9 +2,11 @@ package com.gitsunjaeab.mapick.marker;
 
 import com.gitsunjaeab.mapick.layer.Layer;
 import com.gitsunjaeab.mapick.layer.LayerRepository;
-import com.gitsunjaeab.mapick.member.Member;
+import com.gitsunjaeab.mapick.marker.dto.MarkerDTO;
+import com.gitsunjaeab.mapick.marker.entity.Marker;
+import com.gitsunjaeab.mapick.member.entity.Member;
 import com.gitsunjaeab.mapick.member.MemberRepository;
-import com.gitsunjaeab.mapick.report.Report;
+import com.gitsunjaeab.mapick.report.entity.Report;
 import com.gitsunjaeab.mapick.report.ReportRepository;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import com.gitsunjaeab.mapick.util.ReferencedWarning;

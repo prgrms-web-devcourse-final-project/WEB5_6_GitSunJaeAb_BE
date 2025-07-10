@@ -2,7 +2,7 @@ package com.gitsunjaeab.mapick.layer_library;
 
 import com.gitsunjaeab.mapick.layer.Layer;
 import com.gitsunjaeab.mapick.layer.LayerRepository;
-import com.gitsunjaeab.mapick.member.Member;
+import com.gitsunjaeab.mapick.member.entity.Member;
 import com.gitsunjaeab.mapick.member.MemberRepository;
 import com.gitsunjaeab.mapick.util.CustomCollectors;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

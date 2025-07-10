@@ -1,6 +1,6 @@
 package com.gitsunjaeab.mapick.map;
 
-import com.gitsunjaeab.mapick.member.Member;
+import com.gitsunjaeab.mapick.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 

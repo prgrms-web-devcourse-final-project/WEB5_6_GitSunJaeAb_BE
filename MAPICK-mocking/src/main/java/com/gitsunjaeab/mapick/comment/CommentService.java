@@ -2,7 +2,7 @@ package com.gitsunjaeab.mapick.comment;
 
 import com.gitsunjaeab.mapick.map.Map;
 import com.gitsunjaeab.mapick.map.MapRepository;
-import com.gitsunjaeab.mapick.member.Member;
+import com.gitsunjaeab.mapick.member.entity.Member;
 import com.gitsunjaeab.mapick.member.MemberRepository;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import java.util.List;
