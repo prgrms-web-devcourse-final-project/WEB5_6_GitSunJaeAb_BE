@@ -8,7 +8,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class QuestRankDTO {
+public class QuestRankResponseDTO {
 
     private Long id;
 

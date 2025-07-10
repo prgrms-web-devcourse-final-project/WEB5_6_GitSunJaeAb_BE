@@ -7,7 +7,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class MapCategoryRelationDTO {
+public class MapCategoryRelationResponseDTO {
 
     private Long id;
     private OffsetDateTime createdAt;

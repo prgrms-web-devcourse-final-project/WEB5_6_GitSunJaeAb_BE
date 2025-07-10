@@ -9,9 +9,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class MemberQuestDTO {
+public class MemberQuestRequestDTO {
 
-    private Long id;
+//    private Long id;
 
     @NotNull
     @Size(max = 255)
@@ -25,16 +25,16 @@ public class MemberQuestDTO {
     @Size(max = 255)
     private String isRecognized;
 
-    private OffsetDateTime createdAt;
-
-    private OffsetDateTime completedAt;
-
-    private OffsetDateTime updatedAt;
-
-    private OffsetDateTime deletedAt;
-
-    private Long member;
-
-    private Long quest;
+//    private OffsetDateTime createdAt;
+//
+//    private OffsetDateTime completedAt;
+//
+//    private OffsetDateTime updatedAt;
+//
+//    private OffsetDateTime deletedAt;
+//
+//    private Long member;
+//
+//    private Long quest;
 
 }

@@ -9,7 +9,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class MapEditorDTO {
+public class MapEditorResponseDTO {
 
     private Long id;
 

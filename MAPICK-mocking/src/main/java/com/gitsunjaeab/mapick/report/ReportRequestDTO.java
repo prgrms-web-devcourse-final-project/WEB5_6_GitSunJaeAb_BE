@@ -9,9 +9,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ReportDTO {
+public class ReportRequestDTO {
 
-    private Long id;
+//    private Long id;
 
     @Size(max = 255)
     private String reportType;
@@ -22,18 +22,18 @@ public class ReportDTO {
     @Size(max = 255)
     private String status;
 
-    private OffsetDateTime createdAt;
-
-    private OffsetDateTime resolvedAt;
+//    private OffsetDateTime createdAt;
+//
+//    private OffsetDateTime resolvedAt;
 
     private Long reporter;
 
     private Long reportedMember;
 
-    private Long map;
-
-    private Long marker;
-
-    private Long quest;
+//    private Long map;
+//
+//    private Long marker;
+//
+//    private Long quest;
 
 }

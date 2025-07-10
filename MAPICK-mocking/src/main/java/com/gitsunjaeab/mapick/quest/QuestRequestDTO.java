@@ -10,9 +10,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class QuestDTO {
+public class QuestRequestDTO {
 
-    private Long id;
+//    private Long id;
 
     @NotNull
     @Size(max = 255)
@@ -24,18 +24,18 @@ public class QuestDTO {
 
     private String description;
 
-    @NotNull
-    @JsonProperty("isActive")
-    private Boolean isActive;
-
-    private OffsetDateTime createdAt;
-
-    private OffsetDateTime completedAt;
-
-    private OffsetDateTime updatedAt;
-
-    private OffsetDateTime deletedAt;
-
-    private Long member;
+//    @NotNull
+//    @JsonProperty("isActive")
+//    private Boolean isActive;
+//
+//    private OffsetDateTime createdAt;
+//
+//    private OffsetDateTime completedAt;
+//
+//    private OffsetDateTime updatedAt;
+//
+//    private OffsetDateTime deletedAt;
+//
+//    private Long member;
 
 }

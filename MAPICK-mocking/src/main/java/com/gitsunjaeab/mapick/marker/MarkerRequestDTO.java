@@ -9,9 +9,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class MarkerDTO {
+public class MarkerRequestDTO {
 
-    private Long id;
+//    private Long id;
 
     @Size(max = 255)
     private String title;
@@ -32,15 +32,15 @@ public class MarkerDTO {
 
     private Integer markerSeq;
 
-    @NotNull
-    private OffsetDateTime createdAt;
-
-    private OffsetDateTime updatedAt;
-
-    private OffsetDateTime deletedAt;
-
-    private Long member;
-
-    private Long layer;
+//    @NotNull
+//    private OffsetDateTime createdAt;
+//
+//    private OffsetDateTime updatedAt;
+//
+//    private OffsetDateTime deletedAt;
+//
+//    private Long member;
+//
+//    private Long layer;
 
 }

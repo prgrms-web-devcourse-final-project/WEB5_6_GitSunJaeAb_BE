@@ -9,7 +9,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ReportDTO {
+public class ReportResponseDTO {
 
     private Long id;
 

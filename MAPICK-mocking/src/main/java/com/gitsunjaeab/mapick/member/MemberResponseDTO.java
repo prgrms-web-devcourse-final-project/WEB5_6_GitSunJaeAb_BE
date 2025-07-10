@@ -9,7 +9,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class MemberDTO {
+public class MemberResponseDTO {
 
     private Long id;
 

@@ -7,7 +7,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class MapHashtagRelationDTO {
+public class MapHashtagRelationResponseDTO {
 
     private Long id;
     private OffsetDateTime createdAt;

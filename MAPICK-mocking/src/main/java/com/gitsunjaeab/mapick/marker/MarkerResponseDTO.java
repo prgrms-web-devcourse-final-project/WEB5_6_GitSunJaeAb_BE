@@ -9,7 +9,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class MarkerDTO {
+public class MarkerResponseDTO {
 
     private Long id;
 

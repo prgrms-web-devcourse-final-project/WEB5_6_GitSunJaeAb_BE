@@ -8,15 +8,15 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class MemberInterestResponseDTO {
+public class MemberInterestRequestDTO {
 
-    private Long id;
+//    private Long id;
 
-    @NotNull
-    private OffsetDateTime createdAt;
+//    @NotNull
+//    private OffsetDateTime createdAt;
 
     private Long interest;
 
-    private Long member;
+//    private Long member;
 
 }

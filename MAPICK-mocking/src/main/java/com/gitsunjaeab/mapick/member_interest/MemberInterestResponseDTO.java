@@ -8,7 +8,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class MemberInterestDTO {
+public class MemberInterestResponseDTO {
 
     private Long id;
 

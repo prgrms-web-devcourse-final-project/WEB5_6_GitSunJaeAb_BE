@@ -9,9 +9,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class MemberQuestEvidenceDTO {
+public class MemberQuestEvidenceRequestDTO {
 
-    private Long id;
+//    private Long id;
 
     @NotNull
     @Size(max = 255)
@@ -19,12 +19,12 @@ public class MemberQuestEvidenceDTO {
 
     private String description;
 
-    private OffsetDateTime createdAt;
-
-    private OffsetDateTime updatedAt;
-
-    private OffsetDateTime deletedAt;
-
-    private Long memberQuest;
+//    private OffsetDateTime createdAt;
+//
+//    private OffsetDateTime updatedAt;
+//
+//    private OffsetDateTime deletedAt;
+//
+//    private Long memberQuest;
 
 }

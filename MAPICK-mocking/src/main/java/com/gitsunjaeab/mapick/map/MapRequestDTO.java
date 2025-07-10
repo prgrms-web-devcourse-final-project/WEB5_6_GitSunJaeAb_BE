@@ -10,7 +10,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class MapDTO {
+public class MapRequestDTO {
 
     private Long id;
 

@@ -10,7 +10,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class QuestDTO {
+public class QuestResponseDTO {
 
     private Long id;
 

@@ -10,9 +10,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class MapDTO {
+public class MapResponseDTO {
 
-    private Long id;
+//    private Long id;
 
     @NotNull
     @Size(max = 255)
@@ -35,19 +35,19 @@ public class MapDTO {
 
     private Integer viewCount;
 
-    @NotNull
-    @Size(max = 255)
-    private String mapType;
-
-    @NotNull
-    private OffsetDateTime createdAt;
-
-    private OffsetDateTime updatedAt;
-
-    private OffsetDateTime deletedAt;
-
-    private Long member;
-
-    private Long originalMap;
+//    @NotNull
+//    @Size(max = 255)
+//    private String mapType;
+//
+//    @NotNull
+//    private OffsetDateTime createdAt;
+//
+//    private OffsetDateTime updatedAt;
+//
+//    private OffsetDateTime deletedAt;
+//
+//    private Long member;
+//
+//    private Long originalMap;
 
 }

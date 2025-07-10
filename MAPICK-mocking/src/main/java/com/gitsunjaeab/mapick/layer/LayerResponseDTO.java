@@ -10,7 +10,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class LayerRequestDTO {
+public class LayerResponseDTO {
 
     private Long id;
 

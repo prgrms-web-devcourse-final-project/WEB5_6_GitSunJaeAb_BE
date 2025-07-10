@@ -9,25 +9,25 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class MapEditorResponseDTO {
+public class MapEditorRequestDTO {
 
-    private Long id;
+//    private Long id;
 
     @NotNull
     @Size(max = 255)
     private String permission;
 
-    @NotNull
-    private OffsetDateTime createdAt;
+//    @NotNull
+//    private OffsetDateTime createdAt;
+//
+//    private OffsetDateTime updatedAt;
+//
+//    private OffsetDateTime deletedAt;
+//
+//    private Long map;
+//
+//    private Long member;
 
-    private OffsetDateTime updatedAt;
-
-    private OffsetDateTime deletedAt;
-
-    private Long map;
-
-    private Long member;
-
-    private Long invitedBy;
+//    private Long invitedBy;
 
 }

@@ -9,9 +9,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class MemberDTO {
+public class MemberRequestDTO {
 
-    private Long id;
+//    private Long id;
 
     @Size(max = 255)
     private String name;
@@ -34,23 +34,23 @@ public class MemberDTO {
     @Size(max = 255)
     private String provider;
 
-    @NotNull
-    @Size(max = 255)
-    private String role;
-
-    @Size(max = 255)
-    private String status;
+//    @NotNull
+//    @Size(max = 255)
+//    private String role;
+//
+//    @Size(max = 255)
+//    private String status;
 
     @Size(max = 255)
     private String profileImage;
 
-    private OffsetDateTime lastLogin;
-
-    @NotNull
-    private OffsetDateTime createdAt;
-
-    private OffsetDateTime updatedAt;
-
-    private OffsetDateTime deletedAt;
+//    private OffsetDateTime lastLogin;
+//
+//    @NotNull
+//    private OffsetDateTime createdAt;
+//
+//    private OffsetDateTime updatedAt;
+//
+//    private OffsetDateTime deletedAt;
 
 }
