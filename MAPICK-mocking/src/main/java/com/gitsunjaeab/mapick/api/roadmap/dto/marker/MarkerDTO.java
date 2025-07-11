@@ -1,4 +1,4 @@
-package com.gitsunjaeab.mapick.api.roadmap.dto;
+package com.gitsunjaeab.mapick.api.roadmap.dto.marker;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -9,7 +9,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class MarkerResponse {
+public class MarkerDTO {
 
     private Long id;
 

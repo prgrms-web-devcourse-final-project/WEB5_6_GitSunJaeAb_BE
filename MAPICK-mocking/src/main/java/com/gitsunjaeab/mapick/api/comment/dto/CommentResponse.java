@@ -1,7 +1,6 @@
-package com.gitsunjaeab.mapick.api.roadmap.dto;
+package com.gitsunjaeab.mapick.api.comment.dto;
 
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import java.time.OffsetDateTime;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,14 +8,20 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class HashtagDTO {
+public class CommentResponse {
 
     private Long id;
 
     @NotNull
-    @Size(max = 255)
-    private String name;
+    private String content;
 
+    @NotNull
     private OffsetDateTime createdAt;
+
+    private OffsetDateTime updatedAt;
+
+    private Long roadmap;
+
+    private Long member;
 
 }

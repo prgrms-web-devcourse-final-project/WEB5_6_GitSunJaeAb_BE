@@ -1,6 +1,6 @@
 package com.gitsunjaeab.mapick.application.roadmap;
 
-import com.gitsunjaeab.mapick.api.roadmap.dto.BookmarkDTO;
+import com.gitsunjaeab.mapick.api.roadmap.dto.bookmark.BookmarkDTO;
 import com.gitsunjaeab.mapick.domain.roadmap.BookmarkRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.Bookmark;
 import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;

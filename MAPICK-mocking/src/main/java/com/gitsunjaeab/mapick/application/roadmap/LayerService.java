@@ -1,6 +1,6 @@
 package com.gitsunjaeab.mapick.application.roadmap;
 
-import com.gitsunjaeab.mapick.api.roadmap.dto.LayerDTO;
+import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerDTO;
 import com.gitsunjaeab.mapick.domain.roadmap.Layer;
 import com.gitsunjaeab.mapick.domain.roadmap.LayerRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.LayerLibraryRepository;

@@ -1,4 +1,4 @@
-package com.gitsunjaeab.mapick.api.roadmap.dto;
+package com.gitsunjaeab.mapick.api.comment.dto;
 
 import jakarta.validation.constraints.NotNull;
 import java.time.OffsetDateTime;
@@ -8,7 +8,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class CommentResponse {
+public class CommentDTO {
 
     private Long id;
 

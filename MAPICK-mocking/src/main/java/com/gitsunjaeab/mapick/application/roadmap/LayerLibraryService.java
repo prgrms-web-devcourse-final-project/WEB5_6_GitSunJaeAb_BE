@@ -1,13 +1,8 @@
 package com.gitsunjaeab.mapick.application.roadmap;
 
-import com.gitsunjaeab.mapick.domain.roadmap.Layer;
 import com.gitsunjaeab.mapick.domain.roadmap.LayerLibraryRepository;
-import com.gitsunjaeab.mapick.domain.roadmap.LayerRepository;
-import com.gitsunjaeab.mapick.api.roadmap.dto.LayerLibraryDTO;
+import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerLibraryDTO;
 import com.gitsunjaeab.mapick.domain.roadmap.LayerLibrary;
-import com.gitsunjaeab.mapick.domain.member.Member;
-import com.gitsunjaeab.mapick.domain.member.MemberRepository;
-import com.gitsunjaeab.mapick.util.NotFoundException;
 import java.util.List;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;

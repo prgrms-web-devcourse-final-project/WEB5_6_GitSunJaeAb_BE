@@ -1,4 +1,4 @@
-package com.gitsunjaeab.mapick.api.roadmap.dto;
+package com.gitsunjaeab.mapick.api.roadmap.dto.layer;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -8,28 +8,19 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class MarkerRequest {
+public class LayerRequest {
 
 //    private Long id;
 
+    @NotNull
     @Size(max = 255)
-    private String title;
+    private String name;
 
     private String description;
 
-    @NotNull
-    private Double lat;
+    private Integer layerSeq;
 
-    @NotNull
-    private Double lng;
-
-    @Size(max = 255)
-    private String color;
-
-    @Size(max = 255)
-    private String imageUrl;
-
-    private Integer markerSeq;
+//    private LocalDate layerTime;
 
 //    @NotNull
 //    private OffsetDateTime createdAt;
@@ -40,6 +31,6 @@ public class MarkerRequest {
 //
 //    private Long member;
 //
-//    private Long layer;
+//    private Long map;
 
 }

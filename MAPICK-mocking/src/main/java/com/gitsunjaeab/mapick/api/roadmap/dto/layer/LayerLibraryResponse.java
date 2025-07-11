@@ -1,6 +1,5 @@
-package com.gitsunjaeab.mapick.api.roadmap.dto;
+package com.gitsunjaeab.mapick.api.roadmap.dto.layer;
 
-import jakarta.validation.constraints.NotNull;
 import java.time.OffsetDateTime;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,15 +7,11 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class BookmarkResponse {
+public class LayerLibraryResponse {
 
     private Long id;
-
-    @NotNull
     private OffsetDateTime createdAt;
-
-    private Long roadmap;
-
     private Long member;
+    private Long layer;
 
 }

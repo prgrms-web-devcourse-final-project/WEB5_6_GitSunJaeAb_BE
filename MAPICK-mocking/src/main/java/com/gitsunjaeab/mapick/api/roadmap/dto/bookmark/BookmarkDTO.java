@@ -1,4 +1,4 @@
-package com.gitsunjaeab.mapick.api.roadmap.dto;
+package com.gitsunjaeab.mapick.api.roadmap.dto.bookmark;
 
 import jakarta.validation.constraints.NotNull;
 import java.time.OffsetDateTime;

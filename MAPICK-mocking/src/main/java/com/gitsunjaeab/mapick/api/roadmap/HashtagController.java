@@ -1,7 +1,7 @@
 package com.gitsunjaeab.mapick.api.roadmap;
 
 import com.gitsunjaeab.mapick.application.roadmap.HashtagService;
-import com.gitsunjaeab.mapick.api.roadmap.dto.HashtagDTO;
+import com.gitsunjaeab.mapick.api.roadmap.dto.hashtag.HashtagDTO;
 import com.gitsunjaeab.mapick.util.ReferencedException;
 import com.gitsunjaeab.mapick.util.ReferencedWarning;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

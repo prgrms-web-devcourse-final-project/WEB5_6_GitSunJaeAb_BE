@@ -1,7 +1,7 @@
-package com.gitsunjaeab.mapick.api.roadmap;
+package com.gitsunjaeab.mapick.api.comment;
 
+import com.gitsunjaeab.mapick.api.comment.dto.CommentDTO;
 import com.gitsunjaeab.mapick.application.roadmap.CommentService;
-import com.gitsunjaeab.mapick.api.roadmap.dto.CommentDTO;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

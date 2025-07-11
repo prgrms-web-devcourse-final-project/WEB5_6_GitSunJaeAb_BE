@@ -1,7 +1,7 @@
 package com.gitsunjaeab.mapick.api.roadmap;
 
 import com.gitsunjaeab.mapick.application.roadmap.LayerService;
-import com.gitsunjaeab.mapick.api.roadmap.dto.LayerDTO;
+import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerDTO;
 import com.gitsunjaeab.mapick.application.roadmap.LayerLibraryService;
 import com.gitsunjaeab.mapick.util.ReferencedException;
 import com.gitsunjaeab.mapick.util.ReferencedWarning;

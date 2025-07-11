@@ -1,4 +1,4 @@
-package com.gitsunjaeab.mapick.api.roadmap.dto;
+package com.gitsunjaeab.mapick.api.comment.dto;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;

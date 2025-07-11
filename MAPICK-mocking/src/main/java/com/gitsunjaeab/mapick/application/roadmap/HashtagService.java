@@ -1,6 +1,6 @@
 package com.gitsunjaeab.mapick.application.roadmap;
 
-import com.gitsunjaeab.mapick.api.roadmap.dto.HashtagDTO;
+import com.gitsunjaeab.mapick.api.roadmap.dto.hashtag.HashtagDTO;
 import com.gitsunjaeab.mapick.domain.roadmap.Hashtag;
 import com.gitsunjaeab.mapick.domain.roadmap.HashtagRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapHashtagRelationRepository;

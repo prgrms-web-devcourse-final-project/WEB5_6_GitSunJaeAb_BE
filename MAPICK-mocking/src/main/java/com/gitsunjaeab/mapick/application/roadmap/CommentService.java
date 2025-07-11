@@ -1,7 +1,7 @@
 package com.gitsunjaeab.mapick.application.roadmap;
 
 import com.gitsunjaeab.mapick.domain.roadmap.CommentRepository;
-import com.gitsunjaeab.mapick.api.roadmap.dto.CommentDTO;
+import com.gitsunjaeab.mapick.api.comment.dto.CommentDTO;
 import com.gitsunjaeab.mapick.domain.roadmap.Comment;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
 import com.gitsunjaeab.mapick.domain.member.Member;

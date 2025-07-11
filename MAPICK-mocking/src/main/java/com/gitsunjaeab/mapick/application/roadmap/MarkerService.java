@@ -2,7 +2,7 @@ package com.gitsunjaeab.mapick.application.roadmap;
 
 import com.gitsunjaeab.mapick.domain.roadmap.Layer;
 import com.gitsunjaeab.mapick.domain.roadmap.LayerRepository;
-import com.gitsunjaeab.mapick.api.roadmap.dto.MarkerDTO;
+import com.gitsunjaeab.mapick.api.roadmap.dto.marker.MarkerDTO;
 import com.gitsunjaeab.mapick.domain.roadmap.Marker;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;

@@ -1,4 +1,4 @@
-package com.gitsunjaeab.mapick.api.roadmap.dto;
+package com.gitsunjaeab.mapick.api.roadmap.dto.bookmark;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -6,11 +6,15 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class LayerLibraryRequest {
+public class BookmarkRequest {
 
 //    private Long id;
+
+//    @NotNull
 //    private OffsetDateTime createdAt;
+//
+//    private Long roadmap;
+//
 //    private Long member;
-//    private Long layer;
 
 }
