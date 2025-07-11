@@ -6,17 +6,19 @@ import lombok.Getter;
 import lombok.Setter;
 
 
-@Getter
-@Setter
-public class BookmarkResponse {
+// NOTE 아직 사용되는 곳 없음 >> 개발 도중 필요없으면 삭제
 
-    private Long id;
-
-    @NotNull
-    private OffsetDateTime createdAt;
-
-    private Long roadmap;
-
-    private Long member;
-
-}
+//@Getter
+//@Setter
+//public class BookmarkResponse {
+//
+//    private Long id;
+//
+//    @NotNull
+//    private OffsetDateTime createdAt;
+//
+//    private Long roadmap;
+//
+//    private Long member;
+//
+//}
