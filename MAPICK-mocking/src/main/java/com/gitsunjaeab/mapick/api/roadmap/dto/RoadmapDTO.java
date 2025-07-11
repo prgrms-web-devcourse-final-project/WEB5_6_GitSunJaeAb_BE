@@ -1,11 +1,10 @@
 package com.gitsunjaeab.mapick.api.roadmap.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.gitsunjaeab.mapick.api.roadmap.dto.hashtag.HashtagDTO;
+import com.gitsunjaeab.mapick.domain.roadmap.RoadmapType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.OffsetDateTime;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -48,7 +47,7 @@ public class RoadmapDTO {
 
     @NotNull
     @Size(max = 255)
-    private String roadmapType;
+    private RoadmapType roadmapType;
 
     @NotNull
     private OffsetDateTime createdAt;
