@@ -1,18 +1,11 @@
 package com.gitsunjaeab.mapick.api.roadmap;
 
+import com.gitsunjaeab.mapick.api.common.ApiResponse;
+import com.gitsunjaeab.mapick.api.common.ResponseCode;
 import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapListResponse;
 import com.gitsunjaeab.mapick.api.roadmap.dto.bookmark.BookmarkDTO;
 import com.gitsunjaeab.mapick.application.roadmap.BookmarkService;
-import com.gitsunjaeab.mapick.domain.roadmap.LayerLibraryRepository;
-import com.gitsunjaeab.mapick.domain.roadmap.LayerLibraryRepository.RoadmapCitationProjection;
-import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import jakarta.validation.Valid;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,57 +15,48 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
 @RestController
 @RequestMapping(value = "/bookmarks", produces = MediaType.APPLICATION_JSON_VALUE)
 public class BookmarkController {
 
     private final BookmarkService bookmarkService;
-    private final LayerLibraryRepository layerLibraryRepository;
 
-    public BookmarkController(final BookmarkService bookmarkService,
-        final LayerLibraryRepository layerLibraryRepository) {
+    public BookmarkController(final BookmarkService bookmarkService){
         this.bookmarkService = bookmarkService;
-        this.layerLibraryRepository = layerLibraryRepository;
     }
 
-     // 로드맵 좋아요
-    @PostMapping
-    @ApiResponse(responseCode = "201")
-    public ResponseEntity<Long> createBookmark(@RequestBody @Valid final BookmarkDTO bookmarkDTO) {
-        final Long createdId = bookmarkService.create(bookmarkDTO);
-        return new ResponseEntity<>(createdId, HttpStatus.CREATED);
+    // 북마크 전체 조회 >> NOTE 프론트 데이터 확인용 (추후 삭제예정)
+    @GetMapping
+    public ResponseEntity<List<BookmarkDTO>> getAllBookmarks() {
+        List<BookmarkDTO> bookmarkDTOS = bookmarkService.findAll();
+        return ResponseEntity.ok(bookmarkDTOS);
     }
 
-    // 로드맵 좋아요 해제
+     // 로드맵 북마크
+    @PostMapping("/{roadmapId}")
+    public ResponseEntity<ApiResponse> createBookmark(@PathVariable(name = "roadmapId") final Long roadmapId) {
+        // TODO: JWT 에서 memberId 추출
+        Long memberId = 1L;
+
+        bookmarkService.create(roadmapId, memberId);
+
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "북마크 등록 완료"));
+    }
+
+    // 로드맵 북마크 해제
     @DeleteMapping("/{likeId}")
-    @ApiResponse(responseCode = "204")
-    public ResponseEntity<Void> deleteBookmark(@PathVariable(name = "likeId") final Long likeId) {
+    public ResponseEntity<ApiResponse> deleteBookmark(@PathVariable(name = "likeId") final Long likeId) {
         bookmarkService.delete(likeId);
-        return ResponseEntity.noContent().build();
+
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "북마크 해제 완료"));
     }
 
-    // 로드맵 좋아요 목록 조회 (마이페이지)
+    // 사용자 북마크 목록 조회 (마이페이지)
     @GetMapping("/bookmarkedRoadmaps")
     public ResponseEntity<RoadmapListResponse> getMyBookmarkedRoadmaps() {
         // TODO: JWT 에서 memberId 추출
-        Long memberId = 1L; // memberId = 1
+        Long memberId = 1L;
 
-        List<Roadmap> roadmaps = bookmarkService.getBookmarkedRoadmaps(memberId);
-
-        // 로드맵 별 인용수 조회
-        List<Long> roadmapIds = roadmaps.stream()
-            .map(Roadmap::getId)
-            .collect(Collectors.toList());
-
-        List<RoadmapCitationProjection> projections = layerLibraryRepository.countDistinctMemberByRoadmapIds(roadmapIds);
-
-        Map<Long, Long> citationCountMap = projections.stream() // 로드맵 ID (key), 인용수 (value)
-            .collect(Collectors.toMap(
-                RoadmapCitationProjection::getRoadmapId,
-                RoadmapCitationProjection::getCitationCount
-            ));
-
-        return ResponseEntity.ok(RoadmapListResponse.of(roadmaps, citationCountMap));
+        return ResponseEntity.ok(bookmarkService.getBookmarkedRoadmaps(memberId));
     }
 }

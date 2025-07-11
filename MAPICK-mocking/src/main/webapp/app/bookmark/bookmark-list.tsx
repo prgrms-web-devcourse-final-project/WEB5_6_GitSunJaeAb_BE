@@ -17,7 +17,7 @@ export default function BookmarkList() {
   const getAllBookmarks = async () => {
     try {
       const response = await axios.get('/bookmarks');
-      setBookmarks(response.data.content);
+      setBookmarks(response.data);
     } catch (error: any) {
       handleServerError(error, navigate);
     }

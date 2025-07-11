@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Link, useNavigate } from 'react-router';
-import { handleServerError, setYupDefaults } from 'app/common/utils';
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { BookmarkDTO } from 'app/bookmark/bookmark-model';
+import React from 'react';
+import {useTranslation} from 'react-i18next';
+import {Link, useNavigate} from 'react-router';
+import {handleServerError, setYupDefaults} from 'app/common/utils';
+import {useForm} from 'react-hook-form';
+import {yupResolver} from '@hookform/resolvers/yup';
+import {BookmarkDTO} from 'app/bookmark/bookmark-model';
 import axios from 'axios';
 import InputRow from 'app/common/input-row/input-row';
 import useDocumentTitle from 'app/common/use-document-title';
@@ -14,9 +14,7 @@ import * as yup from 'yup';
 function getSchema() {
   setYupDefaults();
   return yup.object({
-    createdAt: yup.string().emptyToNull().offsetDateTime().required(),
     roadmap: yup.number().integer().emptyToNull(),
-    member: yup.number().integer().emptyToNull()
   });
 }
 
@@ -25,37 +23,36 @@ export default function BookmarkAdd() {
   useDocumentTitle(t('bookmark.add.headline'));
 
   const navigate = useNavigate();
-  const [roadmapValues, setRoadmapValues] = useState<Map<number,string>>(new Map());
-  const [memberValues, setMemberValues] = useState<Map<number,string>>(new Map());
 
   const useFormResult = useForm({
     resolver: yupResolver(getSchema()),
   });
 
-  const prepareRelations = async () => {
-    try {
-      const roadmapValuesResponse = await axios.get('/bookmarks/roadmapValues');
-      setRoadmapValues(roadmapValuesResponse.data);
-      const memberValuesResponse = await axios.get('/bookmarks/memberValues');
-      setMemberValues(memberValuesResponse.data);
-    } catch (error: any) {
-      handleServerError(error, navigate);
-    }
-  };
+  // const prepareRelations = async () => {
+  //   try {
+  //     const roadmapValuesResponse = await axios.get('/bookmarks/roadmapValues');
+  //     setRoadmapValues(roadmapValuesResponse.data);
+  //     const memberValuesResponse = await axios.get('/bookmarks/memberValues');
+  //     setMemberValues(memberValuesResponse.data);
+  //   } catch (error: any) {
+  //     handleServerError(error, navigate);
+  //   }
+  // };
 
-  useEffect(() => {
-    prepareRelations();
-  }, []);
+  // useEffect(() => {
+  //   prepareRelations();
+  // }, []);
 
   const createBookmark = async (data: BookmarkDTO) => {
     window.scrollTo(0, 0);
     try {
-      await axios.post('/bookmarks', data);
+      const roadmapId = data.roadmap;
+      await axios.post(`/bookmarks/${roadmapId}`);
       navigate('/bookmarks', {
-            state: {
-              msgSuccess: t('bookmark.create.success')
-            }
-          });
+        state: {
+          msgSuccess: t('bookmark.create.success')
+        }
+      });
     } catch (error: any) {
       handleServerError(error, navigate, useFormResult.setError, t);
     }
@@ -69,9 +66,7 @@ export default function BookmarkAdd() {
       </div>
     </div>
     <form onSubmit={useFormResult.handleSubmit(createBookmark)} noValidate>
-      <InputRow useFormResult={useFormResult} object="bookmark" field="createdAt" required={true} />
-      <InputRow useFormResult={useFormResult} object="bookmark" field="roadmap" type="select" options={roadmapValues} />
-      <InputRow useFormResult={useFormResult} object="bookmark" field="member" type="select" options={memberValues} />
+      <InputRow useFormResult={useFormResult} object="bookmark" field="roadmap"/>
       <input type="submit" value={t('bookmark.add.headline')} className="inline-block text-white bg-blue-600 hover:bg-blue-700 focus:ring-blue-300  focus:ring-4 rounded px-5 py-2 mt-6" />
     </form>
   </>);
