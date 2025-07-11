@@ -53,7 +53,7 @@ public class Layer {
     private LocalDate layerTime;
 
     @Column(nullable = false)
-    private OffsetDateTime createdAt;
+    private OffsetDateTime createdAt = OffsetDateTime.now();
 
     @Column
     private OffsetDateTime updatedAt;

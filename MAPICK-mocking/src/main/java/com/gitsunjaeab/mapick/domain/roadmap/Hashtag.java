@@ -38,8 +38,8 @@ public class Hashtag {
     @Column(nullable = false)
     private String name;
 
-    @Column
-    private OffsetDateTime createdAt;
+    @Column(nullable = false)
+    private OffsetDateTime createdAt = OffsetDateTime.now();
 
     @OneToMany(mappedBy = "hashtag")
     private Set<RoadmapHashtagRelation> RoadmapHashtags = new HashSet<>();

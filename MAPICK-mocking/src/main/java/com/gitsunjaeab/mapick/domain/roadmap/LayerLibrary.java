@@ -36,8 +36,8 @@ public class LayerLibrary {
     )
     private Long id;
 
-    @Column
-    private OffsetDateTime createdAt;
+    @Column(nullable = false)
+    private OffsetDateTime createdAt = OffsetDateTime.now();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")

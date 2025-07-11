@@ -62,7 +62,7 @@ public class Marker {
     private Integer markerSeq;
 
     @Column(nullable = false)
-    private OffsetDateTime createdAt;
+    private OffsetDateTime createdAt = OffsetDateTime.now();
 
     @Column
     private OffsetDateTime updatedAt;

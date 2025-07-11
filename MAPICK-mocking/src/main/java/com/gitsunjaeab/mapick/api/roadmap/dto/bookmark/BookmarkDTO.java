@@ -12,9 +12,9 @@ public class BookmarkDTO {
 
     private Long id;
 
-    @NotNull
     private OffsetDateTime createdAt;
 
+    @NotNull
     private Long roadmap;
 
     private Long member;
