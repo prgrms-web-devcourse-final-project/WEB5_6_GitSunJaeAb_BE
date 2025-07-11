@@ -1,8 +1,14 @@
 spring:
   datasource:
-    url: ${JDBC_DATABASE_URL}
-    username: ${JDBC_DATABASE_USERNAME}
-    password: ${JDBC_DATABASE_PASSWORD}
+    # Supabase 설정 (주석처리)
+    # url: ${JDBC_DATABASE_URL:jdbc:postgresql://localhost:5432/mapick}
+    # username: ${JDBC_DATABASE_USERNAME:postgres}
+    # password: ${JDBC_DATABASE_PASSWORD:password}
+    
+    # 로컬 PostgreSQL 설정
+    url: jdbc:postgresql://localhost:5432/mapick
+    username: postgres
+    password: password
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 5
@@ -16,11 +22,20 @@ spring:
     open-in-view: false
     properties:
       hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
         jdbc:
           lob:
             non_contextual_creation: true
         id:
           new_generator_mappings: true
+  web:
+    resources:
+      static-locations: classpath:/static/,file:${user.dir}/uploads/
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB     # 전체 요청 최대 크기
+      enabled: true
 error:
   handling:
     http-status-in-json-response: true
@@ -32,3 +47,6 @@ error:
       MemberEmailUnique: MEMBER_EMAIL_UNIQUE
 springdoc:
   pathsToMatch: /**
+
+file:
+  upload-dir: ${user.dir}/uploads

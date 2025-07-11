@@ -83,6 +83,9 @@ export default function InputRow({ useFormResult, object, field, type = 'text',
         ) : type === 'textarea' ? (
         <textarea id={field} {...register(field)} disabled={disabled}
             className={'w-full xl:w-3/4 border-gray-300 rounded ' + getInputClasses()}></textarea>
+        ) : type === 'file' ? (
+        <input id={field} {...register(field)} type="file" accept="image/*" disabled={disabled}
+            className={'w-full xl:w-3/4 border-gray-300 rounded ' + getInputClasses()} />
         ) : type === 'select' || type === 'multiselect' ? (
         <select id={field} {...register(field)} multiple={type === 'multiselect'} disabled={disabled}
             className={'w-full xl:w-3/4 border-gray-300 rounded ' + getInputClasses()}>

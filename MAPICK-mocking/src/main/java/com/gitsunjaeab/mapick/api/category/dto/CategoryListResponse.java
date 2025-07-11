@@ -3,7 +3,6 @@ package com.gitsunjaeab.mapick.api.category.dto;
 import com.gitsunjaeab.mapick.api.common.BaseApiResponse;
 import com.gitsunjaeab.mapick.api.common.ResponseCode;
 import com.gitsunjaeab.mapick.domain.category.Category;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -39,7 +38,9 @@ public class CategoryListResponse implements BaseApiResponse {
             .map(c -> new CategoryListItem(
                 c.getId(),
                 c.getName(),
-                c.getCategoryImage()
+                c.getCategoryImage(),
+                c.getDescription(),
+                c.getCreatedAt()
             ))
             .collect(Collectors.toList());
 
@@ -54,9 +55,12 @@ public class CategoryListResponse implements BaseApiResponse {
     @Getter
     @AllArgsConstructor
     public static class CategoryListItem {
+
         private Long id;
         private String name;
         private String categoryImage;
+        private String description;
+        private OffsetDateTime createdAt;
     }
 
     // 데이터 없이 메시지만 반환할 때
