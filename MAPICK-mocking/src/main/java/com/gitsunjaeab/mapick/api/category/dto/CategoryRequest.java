@@ -1,7 +1,10 @@
 package com.gitsunjaeab.mapick.api.category.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import java.time.OffsetDateTime;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,7 +13,7 @@ import lombok.Setter;
 @Setter
 public class CategoryRequest {
 
-//    private Long id;
+    private Long id;
 
     @NotNull
     @Size(max = 255)
@@ -21,9 +24,10 @@ public class CategoryRequest {
     @Size(max = 255)
     private String categoryImage;
 
-//    @NotNull
-//    private OffsetDateTime createdAt;
-//
-//    private Long mapCategoryRelations;
+    @NotNull
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private OffsetDateTime createdAt = OffsetDateTime.now(); // 기본값 자동처리
+
+    private Long roadmapCategoryRelations;
 
 }

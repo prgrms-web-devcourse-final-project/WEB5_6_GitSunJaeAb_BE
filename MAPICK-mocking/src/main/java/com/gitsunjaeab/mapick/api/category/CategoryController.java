@@ -1,11 +1,21 @@
 package com.gitsunjaeab.mapick.api.category;
 
+import com.gitsunjaeab.mapick.api.category.dto.CategoryListResponse;
+import com.gitsunjaeab.mapick.api.category.dto.CategoryRequest;
+import com.gitsunjaeab.mapick.api.category.dto.CategoryResponse;
+import com.gitsunjaeab.mapick.api.common.ResponseCode;
 import com.gitsunjaeab.mapick.application.category.CategoryService;
 import com.gitsunjaeab.mapick.api.category.dto.CategoryDTO;
+import com.gitsunjaeab.mapick.domain.roadmap.RoadmapCategoryRelationRepository;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.springframework.web.bind.annotation.RequestBody;
+import jakarta.persistence.Id;
 import jakarta.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -22,30 +32,54 @@ import org.springframework.web.bind.annotation.RestController;
 public class CategoryController {
 
     private final CategoryService categoryService;
+    private final RoadmapCategoryRelationRepository roadmapCategoryRelationRepository;
 
-    public CategoryController(CategoryService categoryService) {
+    public CategoryController(CategoryService categoryService,
+        RoadmapCategoryRelationRepository roadmapCategoryRelationRepository) {
         this.categoryService = categoryService;
+        this.roadmapCategoryRelationRepository = roadmapCategoryRelationRepository;
     }
 
     // 전체 카테고리 조회
     @GetMapping
-    public ResponseEntity<List<CategoryDTO>> getAllCategories() {
+//    @GetMapping("/list")
+    public ResponseEntity<CategoryListResponse> getCategoryList() {
         return ResponseEntity.ok(categoryService.findAll());
+    }
+
+    // 특정 카테고리 조회
+    @GetMapping("/{categoryId}")
+    public ResponseEntity<CategoryResponse> getCategory(@PathVariable Long categoryId) {
+        return ResponseEntity.ok((categoryService.findById(categoryId)));
     }
 
     // 카테고리 생성 (관리자)
     @PostMapping
     @ApiResponse(responseCode = "201")
-    public ResponseEntity<Long> createCategory(@RequestBody @Valid final CategoryDTO categoryDTO) {
-        final Long createdId = categoryService.create(categoryDTO);
-        return new ResponseEntity<>(createdId, HttpStatus.CREATED);
+    public ResponseEntity<CategoryResponse> createCategory(@RequestBody @Valid final CategoryRequest request) {
+        Category savedCategory = categoryService.create(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(CategoryResponse.of(savedCategory));
     }
 
     // 카테고리 수정 (관리자)
-    @PutMapping("/{id}")
-    public ResponseEntity<Long> updateCategory(@PathVariable(name = "id") final Long id,
-        @RequestBody @Valid final CategoryDTO categoryDTO) {
-        categoryService.update(id, categoryDTO);
-        return ResponseEntity.ok(id);
+    @PutMapping("/{categoryId}")
+    public ResponseEntity<CategoryResponse> updateCategory(
+        @PathVariable(name = "categoryId") Long categoryId,
+        @RequestBody @Valid CategoryRequest request
+    ) {
+        Category updated = categoryService.update(categoryId, request);
+        return ResponseEntity.ok(CategoryResponse.of(updated));
+    }
+
+    // 카테고리 삭제는 구현하지않음 (카테고리 삭제 시 연관된 로드맵 처리 문제 발생)
+
+
+    // 드롭박스
+    @GetMapping(value = "/roadmapCategoryRelationsValuesResponse", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Map<String, String>> getRoadmapCategoryRelations() {
+        Map<String, String> map = new HashMap<>();
+        map.put("1", "Backend");
+        map.put("2", "Frontend");
+        return ResponseEntity.ok(map);
     }
 }

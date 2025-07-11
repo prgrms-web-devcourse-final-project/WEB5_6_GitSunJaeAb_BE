@@ -1,16 +1,24 @@
 package com.gitsunjaeab.mapick.api.category.dto;
 
+import com.gitsunjaeab.mapick.api.common.BaseApiResponse;
+import com.gitsunjaeab.mapick.api.common.ResponseCode;
+import com.gitsunjaeab.mapick.domain.category.Category;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import lombok.Getter;
-import lombok.Setter;
 
 
 @Getter
-@Setter
-public class CategoryResponse {
+public class CategoryResponse implements BaseApiResponse {
 
+    private String code;
+    private String message;
+    private LocalDateTime timestamp;
+
+
+    // 단건 조회용
     private Long id;
 
     @NotNull
@@ -25,6 +33,45 @@ public class CategoryResponse {
     @NotNull
     private OffsetDateTime createdAt;
 
-    private Long roadmapCategoryRelations;
+    private Integer roadmapCategoryRelations;
 
+
+    public CategoryResponse(String code, String message, LocalDateTime timestamp,
+        Long id, String name, String description, String categoryImage,
+        OffsetDateTime createdAt, Integer roadmapCategoryRelations) {
+        this.code = code;
+        this.message = message;
+        this.timestamp = timestamp;
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.categoryImage = categoryImage;
+        this.createdAt = createdAt;
+        this.roadmapCategoryRelations = roadmapCategoryRelations;
+    }
+
+    // 데이터를 같이 반환하는 경우 - 단건
+    public static CategoryResponse of(Category c) {
+        return new CategoryResponse(
+            ResponseCode.OK.getCode(),
+            "카테고리 조회 성공.",
+            LocalDateTime.now(),
+            c.getId(),
+            c.getName(),
+            c.getDescription(),
+            c.getCategoryImage(),
+            c.getCreatedAt(),
+            (c.getRoadmapCategoryRelations() != null) ? c.getRoadmapCategoryRelations().size() : 0
+        );
+    }
+
+    // 데이터 없이 메시지만 반환할 때
+    public static CategoryResponse withoutData(ResponseCode responseCode, String message) {
+        return new CategoryResponse(
+            responseCode.getCode(),
+            message,
+            LocalDateTime.now(),
+            null, null, null, null, null, null
+        );
+    }
 }

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router';
 import { handleServerError } from 'app/common/utils';
-import { CategoryDTO } from 'app/category/category-model';
+// import { CategoryDTO } from 'app/category/category-model';
 import axios from 'axios';
 import useDocumentTitle from 'app/common/use-document-title';
 
@@ -11,13 +11,21 @@ export default function CategoryList() {
   const { t } = useTranslation();
   useDocumentTitle(t('category.list.headline'));
 
-  const [categories, setCategories] = useState<CategoryDTO[]>([]);
+  type CategoryRequest = {
+    id: number;
+    name: string;
+    categoryImage?: string;
+    createdAt: string;
+    roadmapCategoryRelations?: string;
+  };
+
+  const [categories, setCategories] = useState<CategoryRequest[]>([]);
   const navigate = useNavigate();
 
   const getAllCategories = async () => {
     try {
       const response = await axios.get('/categories');
-      setCategories(response.data.content);
+      setCategories(response.data.categories);
     } catch (error: any) {
       handleServerError(error, navigate);
     }

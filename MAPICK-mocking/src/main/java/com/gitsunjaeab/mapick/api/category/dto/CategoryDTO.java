@@ -24,4 +24,5 @@ public class CategoryDTO {
 
     @NotNull
     private OffsetDateTime createdAt;
+
 }

@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router';
 import { handleServerError, setYupDefaults } from 'app/common/utils';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { CategoryDTO } from 'app/category/category-model';
+// import { CategoryDTO } from 'app/category/category-model';
 import axios from 'axios';
 import InputRow from 'app/common/input-row/input-row';
 import useDocumentTitle from 'app/common/use-document-title';
@@ -14,10 +14,9 @@ import * as yup from 'yup';
 function getSchema() {
   setYupDefaults();
   return yup.object({
-    name: yup.string().emptyToNull().max(255).required(),
+    name: yup.string().max(255).required(),
     description: yup.string().emptyToNull(),
     categoryImage: yup.string().emptyToNull().max(255),
-    createdAt: yup.string().emptyToNull().offsetDateTime().required(),
     roadmapCategoryRelations: yup.number().integer().emptyToNull()
   });
 }
@@ -46,7 +45,14 @@ export default function CategoryAdd() {
     prepareRelations();
   }, []);
 
-  const createCategory = async (data: CategoryDTO) => {
+  type CategoryRequest = {
+    name: string;
+    description?: string | null;
+    categoryImage?: string | null;
+    roadmapCategoryRelations?: number | null;
+  };
+
+  const createCategory = async (data: CategoryRequest) => {
     window.scrollTo(0, 0);
     try {
       await axios.post('/categories', data);
@@ -71,7 +77,6 @@ export default function CategoryAdd() {
       <InputRow useFormResult={useFormResult} object="category" field="name" required={true} />
       <InputRow useFormResult={useFormResult} object="category" field="description" type="textarea" />
       <InputRow useFormResult={useFormResult} object="category" field="categoryImage" />
-      <InputRow useFormResult={useFormResult} object="category" field="createdAt" required={true} />
       <InputRow useFormResult={useFormResult} object="category" field="roadmapCategoryRelations" type="select" options={roadmapCategoryRelationsValuesResponse} />
       <input type="submit" value={t('category.add.headline')} className="inline-block text-white bg-blue-600 hover:bg-blue-700 focus:ring-blue-300  focus:ring-4 rounded px-5 py-2 mt-6" />
     </form>
