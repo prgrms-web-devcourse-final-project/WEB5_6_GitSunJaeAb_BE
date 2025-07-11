@@ -28,4 +28,4 @@ error:
     codes:
       MemberEmailUnique: MEMBER_EMAIL_UNIQUE
 springdoc:
-  pathsToMatch: /api/**
+  pathsToMatch: /**
