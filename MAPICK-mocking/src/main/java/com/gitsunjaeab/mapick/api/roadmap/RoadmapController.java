@@ -1,14 +1,15 @@
 package com.gitsunjaeab.mapick.api.roadmap;
 
 import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapDTO;
+import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapListResponse;
 import com.gitsunjaeab.mapick.application.roadmap.RoadmapService;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
+import com.gitsunjaeab.mapick.domain.roadmap.LayerLibraryRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
 import com.gitsunjaeab.mapick.util.ReferencedException;
 import com.gitsunjaeab.mapick.util.ReferencedWarning;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
-import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -29,19 +30,37 @@ public class RoadmapController {
     private final RoadmapService roadmapService;
     private final MemberRepository memberRepository;
     private final RoadmapRepository roadmapRepository;
+    private final LayerLibraryRepository layerLibraryRepository;
 
     public RoadmapController(final RoadmapService roadmapService,
         final MemberRepository memberRepository,
-        final RoadmapRepository roadmapRepository) {
+        final RoadmapRepository roadmapRepository,
+        final LayerLibraryRepository layerLibraryRepository) {
         this.roadmapService = roadmapService;
         this.memberRepository = memberRepository;
         this.roadmapRepository = roadmapRepository;
+        this.layerLibraryRepository = layerLibraryRepository;
     }
 
-    // 전체 로드맵 조회
+    // 전체 조회 (로드맵, 공유지도) >> NOTE 프론트 데이터 확인용 (추후 삭제예정)
     @GetMapping
-    public ResponseEntity<List<RoadmapDTO>> getAllRoadmaps() {
-        return ResponseEntity.ok(roadmapService.findAll());
+    public ResponseEntity<RoadmapListResponse> getAllRoadmaps() {
+        RoadmapListResponse response = roadmapService.getAllRoadmaps();
+        return ResponseEntity.ok(response);
+    }
+
+    // 전체 로드맵(PERSONAL) 조회
+    @GetMapping("/personal")
+    public ResponseEntity<RoadmapListResponse> getAllPersonalRoadmaps() {
+        RoadmapListResponse response = roadmapService.getAllPersonalRoadmapsWithCitation();
+        return ResponseEntity.ok(response);
+    }
+
+    // 전체 공유지도 조회
+    @GetMapping("/shared")
+    public ResponseEntity<RoadmapListResponse> getAllSharedRoadmaps() {
+        RoadmapListResponse response = roadmapService.getAllSharedRoadmapsWithCitation();
+        return ResponseEntity.ok(response);
     }
 
     // TODO 카테고리에 따른 로드맵 조회 >> {categoryId} 활용??

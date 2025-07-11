@@ -1,22 +1,23 @@
-export class RoadmapDTO {
+import {HashtagDTO} from "../hashtag/hashtag-model";
 
-  constructor(data:Partial<RoadmapDTO>) {
+export class RoadmapDTO {
+  constructor(data: Partial<RoadmapDTO>) {
     Object.assign(this, data);
   }
 
-  id?: number|null;
-  title?: string|null;
-  description?: string|null;
-  thumbnail?: string|null;
-  isPublic?: boolean|null;
-  isAnimated?: boolean|null;
-  likeCount?: number|null;
-  viewCount?: number|null;
-  roadmapType?: string|null;
-  createdAt?: string|null;
-  updatedAt?: string|null;
-  deletedAt?: string|null;
-  member?: number|null;
-  originalRoadmap?: number|null;
-
+  id?: number | null;
+  categoryName?: string | null;
+  title?: string | null;
+  description?: string | null;
+  thumbnail?: string | null;
+  isPublic?: boolean | null;
+  hashtags?: HashtagDTO[] | null;
+  likeCount?: number | null;
+  viewCount?: number | null;
+  roadmapType?: string | null;
+  createdAt?: string | null;
+  updatedAt?: string | null;
+  deletedAt?: string | null;
+  member?: number | null;
 }
+

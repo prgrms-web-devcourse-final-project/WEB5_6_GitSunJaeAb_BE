@@ -26,6 +26,7 @@ public class RoadmapListResponse implements BaseApiResponse {
     public static RoadmapListResponse of(List<Roadmap> roadmapEntities, Map<Long, Long> citationCountMap) {
         List<RoadmapListDTO> roadmapDtos = roadmapEntities.stream()
             .map(r -> new RoadmapListDTO(
+                r.getId(),
                 r.getCategory().getName(),
                 r.getTitle(),
                 r.getDescription(),
@@ -34,6 +35,7 @@ public class RoadmapListResponse implements BaseApiResponse {
                     .map(h -> new HashtagDTO(h.getHashtag().getId(), h.getHashtag().getName()))
                     .collect(Collectors.toList()),
                 r.getIsPublic(),
+                r.getRoadmapType(),
                 r.getLikeCount(),
                 r.getViewCount(),
                 citationCountMap.getOrDefault(r.getId(), 0L).intValue()
@@ -45,16 +47,6 @@ public class RoadmapListResponse implements BaseApiResponse {
             "로드맵 목록 조회 성공",
             LocalDateTime.now(),
             roadmapDtos
-        );
-    }
-
-    // 데이터 없이 메시지만 반환
-    public static RoadmapListResponse withoutData(ResponseCode responseCode, String message) {
-        return new RoadmapListResponse(
-            responseCode.getCode(),
-            message,
-            LocalDateTime.now(),
-            null
         );
     }
 }

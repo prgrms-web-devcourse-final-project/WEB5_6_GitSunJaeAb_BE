@@ -1,6 +1,7 @@
 package com.gitsunjaeab.mapick.application.roadmap;
 
 import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapDTO;
+import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapListResponse;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
 import com.gitsunjaeab.mapick.domain.report.Report;
@@ -11,6 +12,7 @@ import com.gitsunjaeab.mapick.domain.roadmap.Comment;
 import com.gitsunjaeab.mapick.domain.roadmap.CommentRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.Layer;
 import com.gitsunjaeab.mapick.domain.roadmap.LayerLibraryRepository;
+import com.gitsunjaeab.mapick.domain.roadmap.LayerLibraryRepository.RoadmapCitationProjection;
 import com.gitsunjaeab.mapick.domain.roadmap.LayerRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapEditor;
@@ -18,6 +20,7 @@ import com.gitsunjaeab.mapick.domain.roadmap.RoadmapEditorRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapHashtagRelation;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapHashtagRelationRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
+import com.gitsunjaeab.mapick.domain.roadmap.RoadmapType;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import com.gitsunjaeab.mapick.util.ReferencedWarning;
 import java.util.List;
@@ -26,6 +29,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
@@ -58,31 +62,41 @@ public class RoadmapService {
         this.reportRepository = reportRepository;
     }
 
-    public List<RoadmapDTO> findAll() {
-        final List<Roadmap> roadmaps = roadmapRepository.findAll(Sort.by("id"));
+    @Transactional(readOnly = true)
+    public RoadmapListResponse getAllRoadmaps() {
+        List<Roadmap> roadmaps = roadmapRepository.findAll();
+        return buildRoadmapListResponse(roadmaps);
+    }
 
-        // 1. ID 목록 추출
+    @Transactional(readOnly = true)
+    public RoadmapListResponse getAllPersonalRoadmapsWithCitation() {
+        List<Roadmap> roadmaps = roadmapRepository.findAllByIsPublicTrueAndRoadmapType(RoadmapType.PERSONAL);
+        return buildRoadmapListResponse(roadmaps);
+    }
+
+    @Transactional(readOnly = true)
+    public RoadmapListResponse getAllSharedRoadmapsWithCitation() {
+        List<Roadmap> roadmaps = roadmapRepository.findAllByIsPublicTrueAndRoadmapType(RoadmapType.SHARED);
+        return buildRoadmapListResponse(roadmaps);
+    }
+
+    @Transactional(readOnly = true)
+    public RoadmapListResponse buildRoadmapListResponse(List<Roadmap> roadmaps) {
         List<Long> roadmapIds = roadmaps.stream()
             .map(Roadmap::getId)
-            .toList();
+            .collect(Collectors.toList());
 
-        // 2. 인용 수 Map 조회
-        Map<Long, Long> citationCountMap = layerLibraryRepository
-            .countDistinctMemberByRoadmapIds(roadmapIds)
-            .stream()
+        List<RoadmapCitationProjection> projections =
+            layerLibraryRepository.countDistinctMemberByRoadmapIds(roadmapIds);
+
+        // 로드맵 ID (key), 인용수 (value)
+        Map<Long, Long> citationCountMap = projections.stream()
             .collect(Collectors.toMap(
-                LayerLibraryRepository.RoadmapCitationProjection::getRoadmapId,
-                LayerLibraryRepository.RoadmapCitationProjection::getCitationCount
+                RoadmapCitationProjection::getRoadmapId,
+                RoadmapCitationProjection::getCitationCount
             ));
 
-        // 3. DTO로 변환하면서 citationCount 포함
-        return roadmaps.stream()
-            .map(map -> {
-                RoadmapDTO dto = roadmapToDTO(map, new RoadmapDTO());
-                dto.setCitationCount(citationCountMap.getOrDefault(map.getId(), 0L).intValue());
-                return dto;
-            })
-            .toList();
+        return RoadmapListResponse.of(roadmaps, citationCountMap);
     }
 
     public RoadmapDTO get(final Long id) {
