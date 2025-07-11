@@ -49,7 +49,7 @@ public class Category {
     @Column(nullable = false)
     private OffsetDateTime createdAt;
 
-    @OneToMany(mappedBy = "interest")
+    @OneToMany(mappedBy = "category")
     private Set<MemberInterest> interestMemberInterests = new HashSet<>();
 
     @OneToMany(mappedBy = "category")

@@ -1,6 +1,5 @@
 package com.gitsunjaeab.mapick.api.category.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -24,10 +23,7 @@ public class CategoryRequest {
     @Size(max = 255)
     private String categoryImage;
 
-    @NotNull
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private OffsetDateTime createdAt = OffsetDateTime.now(); // 기본값 자동처리
 
-    private Long roadmapCategoryRelations;
 
 }

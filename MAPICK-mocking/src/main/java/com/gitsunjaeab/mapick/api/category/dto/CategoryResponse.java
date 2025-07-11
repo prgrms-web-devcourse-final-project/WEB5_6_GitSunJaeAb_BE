@@ -33,12 +33,11 @@ public class CategoryResponse implements BaseApiResponse {
     @NotNull
     private OffsetDateTime createdAt;
 
-    private Integer roadmapCategoryRelations;
 
 
     public CategoryResponse(String code, String message, LocalDateTime timestamp,
         Long id, String name, String description, String categoryImage,
-        OffsetDateTime createdAt, Integer roadmapCategoryRelations) {
+        OffsetDateTime createdAt) {
         this.code = code;
         this.message = message;
         this.timestamp = timestamp;
@@ -47,7 +46,6 @@ public class CategoryResponse implements BaseApiResponse {
         this.description = description;
         this.categoryImage = categoryImage;
         this.createdAt = createdAt;
-        this.roadmapCategoryRelations = roadmapCategoryRelations;
     }
 
     // 데이터를 같이 반환하는 경우 - 단건
@@ -60,18 +58,17 @@ public class CategoryResponse implements BaseApiResponse {
             c.getName(),
             c.getDescription(),
             c.getCategoryImage(),
-            c.getCreatedAt(),
-            (c.getRoadmapCategoryRelations() != null) ? c.getRoadmapCategoryRelations().size() : 0
+            c.getCreatedAt()
         );
     }
 
     // 데이터 없이 메시지만 반환할 때
-    public static CategoryResponse withoutData(ResponseCode responseCode, String message) {
-        return new CategoryResponse(
-            responseCode.getCode(),
-            message,
-            LocalDateTime.now(),
-            null, null, null, null, null, null
-        );
-    }
+//    public static CategoryResponse withoutData(ResponseCode responseCode, String message) {
+//        return new CategoryResponse(
+//            responseCode.getCode(),
+//            message,
+//            LocalDateTime.now(),
+//            null, null, null, null, null
+//        );
+//    }
 }
