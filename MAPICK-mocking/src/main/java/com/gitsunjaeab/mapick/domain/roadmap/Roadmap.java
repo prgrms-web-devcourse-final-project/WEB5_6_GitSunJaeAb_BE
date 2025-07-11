@@ -1,5 +1,6 @@
 package com.gitsunjaeab.mapick.domain.roadmap;
 
+import com.gitsunjaeab.mapick.domain.category.Category;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.report.Report;
 import jakarta.persistence.Column;
@@ -39,6 +40,10 @@ public class Roadmap {
             generator = "primary_sequence"
     )
     private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
 
     @Column(nullable = false)
     private String title;
@@ -95,9 +100,6 @@ public class Roadmap {
 
     @OneToMany(mappedBy = "roadmap")
     private Set<Bookmark> roadmapLikes = new HashSet<>();
-
-    @OneToMany(mappedBy = "roadmap")
-    private Set<RoadmapCategoryRelation> roadmapMapCategoryRelations = new HashSet<>();
 
     @OneToMany(mappedBy = "roadmap")
     private Set<RoadmapHashtagRelation> roadmapMapHashtags = new HashSet<>();

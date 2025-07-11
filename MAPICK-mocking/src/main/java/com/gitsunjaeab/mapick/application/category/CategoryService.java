@@ -3,7 +3,6 @@ package com.gitsunjaeab.mapick.application.category;
 import com.gitsunjaeab.mapick.api.category.dto.CategoryDTO;
 import com.gitsunjaeab.mapick.domain.category.CategoryRepository;
 import com.gitsunjaeab.mapick.domain.category.Category;
-import com.gitsunjaeab.mapick.domain.roadmap.RoadmapCategoryRelationRepository;
 import com.gitsunjaeab.mapick.domain.member.MemberInterestRepository;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import java.util.List;
@@ -15,14 +14,11 @@ import org.springframework.stereotype.Service;
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
-    private final RoadmapCategoryRelationRepository roadmapCategoryRelationRepository;
     private final MemberInterestRepository memberInterestRepository;
 
     public CategoryService(final CategoryRepository categoryRepository,
-            final RoadmapCategoryRelationRepository roadmapCategoryRelationRepository,
             final MemberInterestRepository memberInterestRepository) {
         this.categoryRepository = categoryRepository;
-        this.roadmapCategoryRelationRepository = roadmapCategoryRelationRepository;
         this.memberInterestRepository = memberInterestRepository;
     }
 

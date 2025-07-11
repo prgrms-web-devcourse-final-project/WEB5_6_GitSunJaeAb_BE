@@ -2,7 +2,6 @@ package com.gitsunjaeab.mapick.api.category;
 
 import com.gitsunjaeab.mapick.application.category.CategoryService;
 import com.gitsunjaeab.mapick.api.category.dto.CategoryDTO;
-import com.gitsunjaeab.mapick.domain.roadmap.RoadmapCategoryRelationRepository;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
@@ -23,12 +22,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class CategoryController {
 
     private final CategoryService categoryService;
-    private final RoadmapCategoryRelationRepository roadmapCategoryRelationRepository;
 
-    public CategoryController(CategoryService categoryService,
-        RoadmapCategoryRelationRepository roadmapCategoryRelationRepository) {
+    public CategoryController(CategoryService categoryService) {
         this.categoryService = categoryService;
-        this.roadmapCategoryRelationRepository = roadmapCategoryRelationRepository;
     }
 
     // 전체 카테고리 조회

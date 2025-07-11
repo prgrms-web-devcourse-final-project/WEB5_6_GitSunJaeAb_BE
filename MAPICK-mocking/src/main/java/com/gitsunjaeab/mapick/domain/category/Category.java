@@ -1,7 +1,7 @@
 package com.gitsunjaeab.mapick.domain.category;
 
-import com.gitsunjaeab.mapick.domain.roadmap.RoadmapCategoryRelation;
 import com.gitsunjaeab.mapick.domain.member.MemberInterest;
+import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -53,6 +53,6 @@ public class Category {
     private Set<MemberInterest> interestMemberInterests = new HashSet<>();
 
     @OneToMany(mappedBy = "category")
-    private Set<RoadmapCategoryRelation> roadmapCategoryRelations = new HashSet<>();
+    private Set<Roadmap> roadmaps = new HashSet<>();
 
 }
