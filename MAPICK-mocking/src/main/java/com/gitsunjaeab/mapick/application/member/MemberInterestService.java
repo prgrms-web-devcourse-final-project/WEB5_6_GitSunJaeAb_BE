@@ -61,7 +61,7 @@ public class MemberInterestService {
             final MemberInterestDTO memberInterestDTO) {
         memberInterestDTO.setId(memberInterest.getId());
         memberInterestDTO.setCreatedAt(memberInterest.getCreatedAt());
-        memberInterestDTO.setInterest(memberInterest.getInterest() == null ? null : memberInterest.getInterest().getId());
+        memberInterestDTO.setCategory(memberInterest.getCategory() == null ? null : memberInterest.getCategory().getId());
         memberInterestDTO.setMember(memberInterest.getMember() == null ? null : memberInterest.getMember().getId());
         return memberInterestDTO;
     }
@@ -69,9 +69,9 @@ public class MemberInterestService {
     private MemberInterest roadmapToEntity(final MemberInterestDTO memberInterestDTO,
             final MemberInterest memberInterest) {
         memberInterest.setCreatedAt(memberInterestDTO.getCreatedAt());
-        final Category interest = memberInterestDTO.getInterest() == null ? null : categoryRepository.findById(memberInterestDTO.getInterest())
+        final Category interest = memberInterestDTO.getCategory() == null ? null : categoryRepository.findById(memberInterestDTO.getCategory())
                 .orElseThrow(() -> new NotFoundException("interest not found"));
-        memberInterest.setInterest(interest);
+        memberInterest.setCategory(interest);
         final Member member = memberInterestDTO.getMember() == null ? null : memberRepository.findById(memberInterestDTO.getMember())
                 .orElseThrow(() -> new NotFoundException("member not found"));
         memberInterest.setMember(member);

@@ -15,7 +15,7 @@ public class MemberInterestDTO {
     @NotNull
     private OffsetDateTime createdAt;
 
-    private Long interest;
+    private Long category;
 
     private Long member;
 

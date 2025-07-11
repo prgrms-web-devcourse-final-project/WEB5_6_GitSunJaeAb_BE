@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MemberInterestRepository extends JpaRepository<MemberInterest, Long> {
 
-    MemberInterest findFirstByInterest(Category category);
+    MemberInterest findFirstByCategory(Category category);
 
     MemberInterest findFirstByMember(Member member);
 
