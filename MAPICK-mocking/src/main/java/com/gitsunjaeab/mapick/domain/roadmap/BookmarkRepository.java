@@ -1,6 +1,7 @@
 package com.gitsunjaeab.mapick.domain.roadmap;
 
 import com.gitsunjaeab.mapick.domain.member.Member;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 
@@ -10,4 +11,5 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
 
     Bookmark findFirstByMember(Member member);
 
+    List<Bookmark> findByMemberId(Long memberId);
 }

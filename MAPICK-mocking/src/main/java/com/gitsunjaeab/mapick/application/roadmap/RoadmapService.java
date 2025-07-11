@@ -1,27 +1,29 @@
 package com.gitsunjaeab.mapick.application.roadmap;
 
+import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapDTO;
+import com.gitsunjaeab.mapick.domain.member.Member;
+import com.gitsunjaeab.mapick.domain.member.MemberRepository;
+import com.gitsunjaeab.mapick.domain.report.Report;
+import com.gitsunjaeab.mapick.domain.report.ReportRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.Bookmark;
 import com.gitsunjaeab.mapick.domain.roadmap.BookmarkRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.Comment;
 import com.gitsunjaeab.mapick.domain.roadmap.CommentRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.Layer;
+import com.gitsunjaeab.mapick.domain.roadmap.LayerLibraryRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.LayerRepository;
-import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
-import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapDTO;
 import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
-import com.gitsunjaeab.mapick.domain.roadmap.RoadmapCategoryRelation;
-import com.gitsunjaeab.mapick.domain.roadmap.RoadmapCategoryRelationRepository;
-import com.gitsunjaeab.mapick.domain.roadmap.RoadmapEditorRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapEditor;
+import com.gitsunjaeab.mapick.domain.roadmap.RoadmapEditorRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapHashtagRelation;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapHashtagRelationRepository;
-import com.gitsunjaeab.mapick.domain.member.Member;
-import com.gitsunjaeab.mapick.domain.member.MemberRepository;
-import com.gitsunjaeab.mapick.domain.report.Report;
-import com.gitsunjaeab.mapick.domain.report.ReportRepository;
+import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import com.gitsunjaeab.mapick.util.ReferencedWarning;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -29,20 +31,21 @@ import org.springframework.stereotype.Service;
 @Service
 public class RoadmapService {
 
+
     private final RoadmapRepository roadmapRepository;
     private final MemberRepository memberRepository;
     private final RoadmapEditorRepository roadmapEditorRepository;
     private final LayerRepository layerRepository;
     private final CommentRepository commentRepository;
     private final BookmarkRepository bookmarkRepository;
-    private final RoadmapCategoryRelationRepository roadmapCategoryRelationRepository;
     private final RoadmapHashtagRelationRepository roadmapHashtagRelationRepository;
     private final ReportRepository reportRepository;
+    @Autowired
+    private LayerLibraryRepository layerLibraryRepository;
 
     public RoadmapService(final RoadmapRepository roadmapRepository, final MemberRepository memberRepository,
             final RoadmapEditorRepository roadmapEditorRepository, final LayerRepository layerRepository,
             final CommentRepository commentRepository, final BookmarkRepository bookmarkRepository,
-            final RoadmapCategoryRelationRepository roadmapCategoryRelationRepository,
             final RoadmapHashtagRelationRepository roadmapHashtagRelationRepository,
             final ReportRepository reportRepository) {
         this.roadmapRepository = roadmapRepository;
@@ -51,16 +54,35 @@ public class RoadmapService {
         this.layerRepository = layerRepository;
         this.commentRepository = commentRepository;
         this.bookmarkRepository = bookmarkRepository;
-        this.roadmapCategoryRelationRepository = roadmapCategoryRelationRepository;
         this.roadmapHashtagRelationRepository = roadmapHashtagRelationRepository;
         this.reportRepository = reportRepository;
     }
 
     public List<RoadmapDTO> findAll() {
         final List<Roadmap> roadmaps = roadmapRepository.findAll(Sort.by("id"));
+
+        // 1. ID 목록 추출
+        List<Long> roadmapIds = roadmaps.stream()
+            .map(Roadmap::getId)
+            .toList();
+
+        // 2. 인용 수 Map 조회
+        Map<Long, Long> citationCountMap = layerLibraryRepository
+            .countDistinctMemberByRoadmapIds(roadmapIds)
+            .stream()
+            .collect(Collectors.toMap(
+                LayerLibraryRepository.RoadmapCitationProjection::getRoadmapId,
+                LayerLibraryRepository.RoadmapCitationProjection::getCitationCount
+            ));
+
+        // 3. DTO로 변환하면서 citationCount 포함
         return roadmaps.stream()
-                .map(map -> roadmapToDTO(map, new RoadmapDTO()))
-                .toList();
+            .map(map -> {
+                RoadmapDTO dto = roadmapToDTO(map, new RoadmapDTO());
+                dto.setCitationCount(citationCountMap.getOrDefault(map.getId(), 0L).intValue());
+                return dto;
+            })
+            .toList();
     }
 
     public RoadmapDTO get(final Long id) {
@@ -161,12 +183,6 @@ public class RoadmapService {
             referencedWarning.addParam(mapBookmark.getId());
             return referencedWarning;
         }
-        final RoadmapCategoryRelation mapRoadmapCategoryRelation = roadmapCategoryRelationRepository.findFirstByRoadmap(roadmap);
-        if (mapRoadmapCategoryRelation != null) {
-            referencedWarning.setKey("roadmap.mapCategoryRelation.roadmap.referenced");
-            referencedWarning.addParam(mapRoadmapCategoryRelation.getId());
-            return referencedWarning;
-        }
         final RoadmapHashtagRelation mapRoadmapHashtagRelation = roadmapHashtagRelationRepository.findFirstByRoadmap(roadmap);
         if (mapRoadmapHashtagRelation != null) {
             referencedWarning.setKey("roadmap.mapHashtagRelation.roadmap.referenced");
@@ -181,5 +197,4 @@ public class RoadmapService {
         }
         return null;
     }
-
 }

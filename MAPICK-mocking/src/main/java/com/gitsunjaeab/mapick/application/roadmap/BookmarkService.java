@@ -9,6 +9,7 @@ import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -76,4 +77,10 @@ public class BookmarkService {
         return bookmark;
     }
 
+    public List<Roadmap> getBookmarkedRoadmaps(Long memberId) {
+        List<Bookmark> bookmarks = bookmarkRepository.findByMemberId(memberId);
+        return bookmarks.stream()
+            .map(Bookmark::getRoadmap)
+            .collect(Collectors.toList());
+    }
 }

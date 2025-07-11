@@ -4,11 +4,13 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.OffsetDateTime;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class HashtagDTO {
 
     private Long id;
@@ -18,5 +20,10 @@ public class HashtagDTO {
     private String name;
 
     private OffsetDateTime createdAt;
+
+    public HashtagDTO(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 
 }
