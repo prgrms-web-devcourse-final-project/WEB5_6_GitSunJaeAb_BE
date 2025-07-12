@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -37,18 +38,30 @@ public class RoadmapController {
         return ResponseEntity.ok(response);
     }
 
-    // 전체 로드맵(PERSONAL) 조회
+    // 로드맵(PERSONAL) 조회
     @GetMapping("/personal")
-    public ResponseEntity<RoadmapListResponse> getAllPersonalRoadmaps() {
-        RoadmapListResponse response = roadmapService.getAllPersonalRoadmapsWithCitation();
-        return ResponseEntity.ok(response);
+    public ResponseEntity<RoadmapListResponse> getPersonalRoadmaps(
+        @RequestParam(required = false) Long categoryId) {
+        if (categoryId == null) {
+            // 전체 조회
+            return ResponseEntity.ok(roadmapService.getAllPersonalRoadmapsWithCitation());
+        } else {
+            // 카테고리별 조회
+            return ResponseEntity.ok(roadmapService.getPersonalRoadmapsByCategory(categoryId));
+        }
     }
 
-    // 전체 공유지도 조회
+    // 공유지도(SHARED) 조회
     @GetMapping("/shared")
-    public ResponseEntity<RoadmapListResponse> getAllSharedRoadmaps() {
-        RoadmapListResponse response = roadmapService.getAllSharedRoadmapsWithCitation();
-        return ResponseEntity.ok(response);
+    public ResponseEntity<RoadmapListResponse> getSharedRoadmaps(
+        @RequestParam(required = false) Long categoryId) {
+        if (categoryId == null) {
+            // 전체 조회
+            return ResponseEntity.ok(roadmapService.getAllSharedRoadmapsWithCitation());
+        } else {
+            // 카테고리별 조회
+            return ResponseEntity.ok(roadmapService.getSharedRoadmapsByCategory(categoryId));
+        }
     }
 
     // TODO 카테고리에 따른 로드맵 조회 >> {categoryId} 활용??

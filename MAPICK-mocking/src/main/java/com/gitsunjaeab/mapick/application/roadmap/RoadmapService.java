@@ -75,8 +75,20 @@ public class RoadmapService {
     }
 
     @Transactional(readOnly = true)
+    public RoadmapListResponse getPersonalRoadmapsByCategory(Long categoryId) {
+        List<Roadmap> roadmaps = roadmapRepository.findAllByIsPublicTrueAndRoadmapTypeAndCategoryId(RoadmapType.PERSONAL, categoryId);
+        return buildRoadmapListResponse(roadmaps);
+    }
+
+    @Transactional(readOnly = true)
     public RoadmapListResponse getAllSharedRoadmapsWithCitation() {
         List<Roadmap> roadmaps = roadmapRepository.findAllByIsPublicTrueAndRoadmapType(RoadmapType.SHARED);
+        return buildRoadmapListResponse(roadmaps);
+    }
+
+    @Transactional(readOnly = true)
+    public RoadmapListResponse getSharedRoadmapsByCategory(Long categoryId) {
+        List<Roadmap> roadmaps = roadmapRepository.findAllByIsPublicTrueAndRoadmapTypeAndCategoryId(RoadmapType.SHARED, categoryId);
         return buildRoadmapListResponse(roadmaps);
     }
 
@@ -211,4 +223,5 @@ public class RoadmapService {
         }
         return null;
     }
+
 }
