@@ -1,7 +1,7 @@
 package com.gitsunjaeab.mapick.api.report.dto;
 
 import com.fasterxml.jackson.databind.ser.Serializers.Base;
-import com.gitsunjaeab.mapick.api.member.dto.MemberListDTO;
+import com.gitsunjaeab.mapick.api.member.dto.MemberList;
 import com.gitsunjaeab.mapick.api.member.dto.MemberListResponse;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;

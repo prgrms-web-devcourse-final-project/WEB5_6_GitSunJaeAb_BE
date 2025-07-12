@@ -30,6 +30,7 @@ import com.gitsunjaeab.mapick.domain.report.Report;
 import com.gitsunjaeab.mapick.domain.report.ReportRepository;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import com.gitsunjaeab.mapick.util.ReferencedWarning;
+import java.time.OffsetDateTime;
 import java.util.List;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -232,6 +233,80 @@ public class MemberService {
             return referencedWarning;
         }
         return null;
+    }
+
+    // 마이페이지 - 회원 정보 조회
+    public Member getMemberProfile(Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
+    }
+
+    // 마이페이지 - 회원 정보 수정
+    public Member updateMemberProfile(Long memberId, String nickname, String profileImage, String intro, String phone) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
+
+        if (nickname != null && !nickname.trim().isEmpty()) {
+            member.setNickname(nickname);
+        }
+        if (profileImage != null) {
+            member.setProfileImage(profileImage);
+        }
+        if (intro != null) {
+            member.setIntro(intro);
+        }
+        if (phone != null) {
+            member.setPhone(phone);
+        }
+
+        member.updateTimestamp();
+        return memberRepository.save(member);
+    }
+
+    // 마이페이지 - 비밀번호 확인
+    public boolean verifyPassword(Long memberId, String currentPassword) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
+        
+        // 실제 구현에서는 암호화된 비밀번호와 비교해야 함
+        return member.getPassword().equals(currentPassword);
+    }
+
+    // 마이페이지 - 비밀번호 수정
+    public void updatePassword(Long memberId, String newPassword) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
+
+        // 실제 구현에서는 비밀번호를 암호화해야 함
+        member.setPassword(newPassword);
+        member.updateTimestamp();
+        memberRepository.save(member);
+    }
+
+    // 마이페이지 - 회원 탈퇴
+    public void withdrawMember(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
+
+        member.setDeletedAt(OffsetDateTime.now());
+        member.setStatus("WITHDRAWN");
+        memberRepository.save(member);
+    }
+
+    // 마이페이지 - 회원 지도 목록 조회
+    public List<Roadmap> getMemberRoadmaps(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
+
+        return roadmapRepository.findByMember(member);
+    }
+
+    // 마이페이지 - 회원 레이어 목록 조회
+    public List<LayerLibrary> getMemberLayers(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
+
+        return layerLibraryRepository.findByMember(member);
     }
 
 }

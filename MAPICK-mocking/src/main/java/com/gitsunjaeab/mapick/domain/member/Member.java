@@ -76,6 +76,12 @@ public class Member {
     @Column
     private String profileImage;
 
+    @Column(columnDefinition = "text")
+    private String intro;
+
+    @Column
+    private String phone;
+
     @Column
     private OffsetDateTime lastLogin;
 
@@ -87,6 +93,17 @@ public class Member {
 
     @Column
     private OffsetDateTime deletedAt;
+
+    // 생성자에서 기본값 설정
+    public Member() {
+        this.createdAt = OffsetDateTime.now();
+        this.isBlacklisted = false;
+    }
+
+    // 업데이트 시간 설정
+    public void updateTimestamp() {
+        this.updatedAt = OffsetDateTime.now();
+    }
 
     @OneToMany(mappedBy = "member")
     private Set<Roadmap> memberRoadmaps = new HashSet<>();

@@ -11,6 +11,7 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
 
     Bookmark findFirstByMember(Member member);
 
+    // 마이페이지 - 회원별 북마크 조회용
     List<Bookmark> findByMemberId(Long memberId);
 
     List<Bookmark> findAllWithAllRoadmapRelationsByMemberId(Long memberId);

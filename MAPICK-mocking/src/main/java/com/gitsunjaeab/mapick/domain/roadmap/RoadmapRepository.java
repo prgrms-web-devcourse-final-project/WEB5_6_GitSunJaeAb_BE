@@ -11,6 +11,9 @@ public interface RoadmapRepository extends JpaRepository<Roadmap, Long> {
 
     Roadmap findFirstByMember(Member member);
 
+    // 마이페이지 - 회원별 지도 조회용
+    List<Roadmap> findByMember(Member member);
+
     Roadmap findFirstByOriginalRoadmapAndIdNot(
         Roadmap roadmap, final Long id);
 

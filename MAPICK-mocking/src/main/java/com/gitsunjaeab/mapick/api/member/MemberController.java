@@ -1,27 +1,29 @@
 package com.gitsunjaeab.mapick.api.member;
 
-import com.gitsunjaeab.mapick.api.member.dto.MemberListResponse;
+import com.gitsunjaeab.mapick.api.member.dto.*;
 import com.gitsunjaeab.mapick.application.member.MemberService;
-import com.gitsunjaeab.mapick.api.member.dto.MemberDTO;
 import com.gitsunjaeab.mapick.application.member.MemberInterestService;
+import com.gitsunjaeab.mapick.domain.member.Member;
+import com.gitsunjaeab.mapick.domain.member.MemberInterest;
+import com.gitsunjaeab.mapick.domain.roadmap.LayerLibrary;
+import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
 import com.gitsunjaeab.mapick.util.ReferencedException;
 import com.gitsunjaeab.mapick.util.ReferencedWarning;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import java.util.List;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @RestController
 @RequestMapping(value = "/members", produces = MediaType.APPLICATION_JSON_VALUE)
+@Tag(name = "회원 관리 API", description = "회원 관리 및 마이페이지 관련 API")
 public class MemberController {
 
     private final MemberService memberService;
@@ -33,28 +35,57 @@ public class MemberController {
         this.memberInterestService = memberInterestService;
     }
 
-    // 전체 회원 조회 (관리자)
-    // NOTE 일반 사용자, 관리자, 블랙리스트 사용자
+    // ===== 관리자 전용 API (ADMIN 권한 필요) =====
+    
+    
+    // 전체 회원 조회 (관리자 전용)
     @GetMapping
+    @Operation(summary = "전체 회원 조회 (관리자)", description = "[관리자 전용] 관리자만 접근 가능한 전체 회원 목록 조회")
     public ResponseEntity<MemberListResponse> getAllMembers() {
         MemberListResponse response = memberService.findAll();
-
         return ResponseEntity.ok(response);
     }
 
+    // 특정 회원 조회 (관리자 전용)
     @GetMapping("/{membersId}")
-    public ResponseEntity<MemberDTO> getMember(@PathVariable(name = "membersId") final Long membersId) {
-        return ResponseEntity.ok(memberService.get(membersId));
+    @Operation(summary = "회원 조회 (관리자)", description = "[관리자 전용] 관리자만 접근 가능한 특정 회원 정보 조회")
+    public ResponseEntity<MemberResponse> getMember(@PathVariable(name = "membersId") final Long membersId) {
+        MemberDTO memberDTO = memberService.get(membersId);
+        // TODO: MemberService를 수정하여 직접 Member 엔티티를 반환하도록 개선 필요
+        Member member = memberService.getMemberProfile(membersId); 
+        return ResponseEntity.ok(MemberResponse.of(member));
     }
 
+    // 회원 정보 수정 (관리자 전용)
     @PutMapping("/{membersId}")
+    @Operation(summary = "회원 정보 수정 (관리자)", description = "[관리자 전용] 관리자만 접근 가능한 회원 정보 수정")
     public ResponseEntity<Long> updateMember(@PathVariable(name = "membersId") final Long membersId,
-            @RequestBody @Valid final MemberDTO memberDTO) {
+            @RequestBody @Valid final MemberUpdateRequest memberUpdateRequest) {
+        // TODO: MemberService를 수정하여 MemberUpdateRequest를 직접 받도록 개선 필요
+        MemberDTO memberDTO = convertToMemberDTO(memberUpdateRequest);
         memberService.update(membersId, memberDTO);
         return ResponseEntity.ok(membersId);
     }
 
+    // 임시 변환 메서드 (TODO: 서비스 레이어 개선 후 제거)
+    private MemberDTO convertToMemberDTO(MemberUpdateRequest request) {
+        MemberDTO dto = new MemberDTO();
+        dto.setBlacklisted(request.isBlacklisted());
+        dto.setName(request.getName());
+        dto.setNickname(request.getNickname());
+        dto.setEmail(request.getEmail());
+        dto.setPassword(request.getPassword());
+        dto.setLoginType(request.getLoginType());
+        dto.setProvider(request.getProvider());
+        dto.setRole(request.getRole());
+        dto.setStatus(request.getStatus());
+        dto.setProfileImage(request.getProfileImage());
+        return dto;
+    }
+
+    // 회원 삭제 (관리자 전용)
     @DeleteMapping("/{membersId}")
+    @Operation(summary = "회원 삭제 (관리자)", description = "[관리자 전용] 관리자만 접근 가능한 회원 삭제")
     @ApiResponse(responseCode = "204")
     public ResponseEntity<Void> deleteMember(@PathVariable(name = "membersId") final Long membersId) {
         final ReferencedWarning referencedWarning = memberService.getReferencedWarning(membersId);
@@ -65,22 +96,148 @@ public class MemberController {
         return ResponseEntity.noContent().build();
     }
 
-    // TODO 회원 관심분야 선택 (POST)
-//    @PostMapping("/interests")
-//    @ApiResponse(responseCode = "201")
-//    public ResponseEntity<Long> createMemberInterest(
-//        @RequestBody @Valid final MemberInterestDTO memberInterestDTO) {
-//        final Long createdId = memberInterestService.create(memberInterestDTO);
-//        return new ResponseEntity<>(createdId, HttpStatus.CREATED);
-//    }
+    // ===== 사용자 전용 API (본인만 접근 가능) =====
 
-    // TODO 회원 관심분야 수정 (PUT)
-//    @PutMapping("/{memberId}")
-//    public ResponseEntity<Long> updateMemberInterest(@PathVariable(name = "memberInterestsId") final Long memberInterestsId,
-//        @RequestBody @Valid final MemberInterestDTO memberInterestDTO) {
-//        memberInterestService.update(memberInterestsId, memberInterestDTO);
-//        return ResponseEntity.ok(memberInterestsId);
-//    }
+    // 마이페이지 - 회원 프로필 조회 (본인만)
+    @GetMapping("/{memberId}/profile")
+    @Operation(summary = "회원 프로필 조회", description = "[사용자 전용] 본인 또는 관리자만 접근 가능한 프로필 조회")
+    public ResponseEntity<MemberProfileResponse> getMemberProfile(
+            @Parameter(description = "회원 ID") @PathVariable Long memberId) {
+        
+        Member member = memberService.getMemberProfile(memberId);
+        MemberProfileResponse response = MemberProfileResponse.of(member);
+        
+        return ResponseEntity.ok(response);
+    }
 
+    // 마이페이지 - 회원 정보 수정 (본인만)
+    @PutMapping("/{memberId}/profile")
+    @Operation(summary = "회원 정보 수정", description = "[사용자 전용] 본인만 접근 가능한 프로필 정보 수정")
+    public ResponseEntity<MemberProfileUpdateResponse> updateMemberProfile(
+            @Parameter(description = "회원 ID") @PathVariable Long memberId,
+            @Valid @RequestBody MemberProfileUpdateRequest request) {
+        
+        Member updatedMember = memberService.updateMemberProfile(
+            memberId, 
+            request.getNickname(), 
+            request.getProfileImage(),
+            request.getIntro(),
+            request.getPhone()
+        );
+        
+        MemberProfileUpdateResponse response = MemberProfileUpdateResponse.of(updatedMember);
+        return ResponseEntity.ok(response);
+    }
+
+    // 마이페이지 - 비밀번호 확인 (본인만)
+    @PostMapping("/{memberId}/password/verify")
+    @Operation(summary = "비밀번호 확인", description = "[사용자 전용] 본인만 접근 가능한 비밀번호 확인")
+    public ResponseEntity<SimpleMessageResponse> verifyPassword(
+            @Parameter(description = "회원 ID") @PathVariable Long memberId,
+            @Valid @RequestBody PasswordVerifyRequest request) {
+        
+        boolean isValid = memberService.verifyPassword(memberId, request.getCurrentPassword());
+        
+        if (isValid) {
+            return ResponseEntity.ok(SimpleMessageResponse.of("비밀번호가 일치합니다."));
+        } else {
+            return ResponseEntity.badRequest().body(SimpleMessageResponse.of("비밀번호가 일치하지 않습니다."));
+        }
+    }
+
+    // 마이페이지 - 비밀번호 수정 (본인만)
+    @PutMapping("/{memberId}/password")
+    @Operation(summary = "비밀번호 수정", description = "[사용자 전용] 본인만 접근 가능한 비밀번호 변경")
+    public ResponseEntity<SimpleMessageResponse> updatePassword(
+            @Parameter(description = "회원 ID") @PathVariable Long memberId,
+            @Valid @RequestBody PasswordUpdateRequest request) {
+        
+        memberService.updatePassword(memberId, request.getNewPassword());
+        
+        return ResponseEntity.ok(SimpleMessageResponse.of("비밀번호가 성공적으로 변경되었습니다."));
+    }
+
+    // 마이페이지 - 회원 탈퇴 (본인만)
+    @DeleteMapping("/{memberId}/withdraw")
+    @Operation(summary = "회원 탈퇴", description = "[사용자 전용] 본인만 접근 가능한 회원 탈퇴")
+    public ResponseEntity<SimpleMessageResponse> withdrawMember(
+            @Parameter(description = "회원 ID") @PathVariable Long memberId) {
+        
+        memberService.withdrawMember(memberId);
+        
+        return ResponseEntity.ok(SimpleMessageResponse.of("회원 탈퇴가 완료되었습니다."));
+    }
+
+    // 마이페이지 - 회원 레이어 조회 (본인만)
+    @GetMapping("/{memberId}/layers")
+    @Operation(summary = "회원 레이어 조회", description = "[사용자 전용] 본인만 접근 가능한 레이어 라이브러리 조회")
+    public ResponseEntity<MemberLayersResponse> getMemberLayers(
+            @Parameter(description = "회원 ID") @PathVariable Long memberId) {
+        
+        List<LayerLibrary> layerLibraries = memberService.getMemberLayers(memberId);
+        MemberLayersResponse response = MemberLayersResponse.of(layerLibraries);
+        
+        return ResponseEntity.ok(response);
+    }
+
+    // =====  제한적 공개 API =====
+
+    // 마이페이지 - 회원 지도 목록 조회 (공개 지도는 누구나, 비공개는 본인만)
+    @GetMapping("/{memberId}/maps")
+    @Operation(summary = "회원 지도 목록 조회", description = "[제한적 공개] 공개 지도는 누구나 조회 가능, 비공개 지도는 본인만 조회 가능")
+    public ResponseEntity<MemberMapsResponse> getMemberMaps(
+            @Parameter(description = "회원 ID") @PathVariable Long memberId) {
+        
+        // TODO: 서비스에서 권한에 따라 필터링 처리 필요
+        List<Roadmap> roadmaps = memberService.getMemberRoadmaps(memberId);
+        MemberMapsResponse response = MemberMapsResponse.of(roadmaps);
+        
+        return ResponseEntity.ok(response);
+    }
+
+    // ===== 회원 관심분야 관리 API =====
+
+    // 회원 관심분야 선택 (본인만)
+    @PostMapping("/interests")
+    @Operation(summary = "회원 관심분야 선택", description = "[사용자 전용] 본인만 접근 가능한 관심분야 선택")
+    @ApiResponse(responseCode = "201")
+    public ResponseEntity<MemberInterestResponse> createMemberInterest(
+            @Valid @RequestBody MemberInterestRequest request) {
+        
+        // Request를 DTO로 변환
+        MemberInterestDTO memberInterestDTO = convertToMemberInterestDTO(request);
+        
+        // 관심분야 생성 후 엔티티 반환
+        MemberInterest createdInterest = memberInterestService.createAndReturnEntity(memberInterestDTO);
+        MemberInterestResponse response = MemberInterestResponse.of(createdInterest);
+        
+        return ResponseEntity.status(201).body(response);
+    }
+
+    // 회원 관심분야 수정 (본인만)
+    @PutMapping("/interests/{memberInterestId}")
+    @Operation(summary = "회원 관심분야 수정", description = "[사용자 전용] 본인만 접근 가능한 관심분야 수정")
+    public ResponseEntity<MemberInterestResponse> updateMemberInterest(
+            @Parameter(description = "관심분야 ID") @PathVariable Long memberInterestId,
+            @Valid @RequestBody MemberInterestRequest request) {
+        
+        // Request를 DTO로 변환
+        MemberInterestDTO memberInterestDTO = convertToMemberInterestDTO(request);
+        
+        // 관심분야 수정 후 엔티티 반환
+        MemberInterest updatedInterest = memberInterestService.updateAndReturnEntity(memberInterestId, memberInterestDTO);
+        MemberInterestResponse response = MemberInterestResponse.of(updatedInterest);
+        
+        return ResponseEntity.ok(response);
+    }
+
+    // Request를 DTO로 변환하는 임시 메서드
+    private MemberInterestDTO convertToMemberInterestDTO(MemberInterestRequest request) {
+        MemberInterestDTO dto = new MemberInterestDTO();
+        dto.setCategory(request.getCategoryId());
+        dto.setMember(request.getMemberId());
+        dto.setCreatedAt(java.time.OffsetDateTime.now()); // 현재 시간으로 설정
+        return dto;
+    }
 
 }

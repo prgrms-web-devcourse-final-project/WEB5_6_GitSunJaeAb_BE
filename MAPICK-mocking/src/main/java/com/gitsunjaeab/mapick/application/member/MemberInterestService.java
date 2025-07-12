@@ -46,6 +46,21 @@ public class MemberInterestService {
         return memberInterestRepository.save(memberInterest).getId();
     }
 
+    // 마이페이지 - 관심분야 생성 후 엔티티 반환
+    public MemberInterest createAndReturnEntity(final MemberInterestDTO memberInterestDTO) {
+        final MemberInterest memberInterest = new MemberInterest();
+        roadmapToEntity(memberInterestDTO, memberInterest);
+        return memberInterestRepository.save(memberInterest);
+    }
+
+    // 마이페이지 - 관심분야 수정 후 엔티티 반환
+    public MemberInterest updateAndReturnEntity(final Long id, final MemberInterestDTO memberInterestDTO) {
+        final MemberInterest memberInterest = memberInterestRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("관심분야를 찾을 수 없습니다."));
+        roadmapToEntity(memberInterestDTO, memberInterest);
+        return memberInterestRepository.save(memberInterest);
+    }
+
     public void update(final Long id, final MemberInterestDTO memberInterestDTO) {
         final MemberInterest memberInterest = memberInterestRepository.findById(id)
                 .orElseThrow(NotFoundException::new);

@@ -13,6 +13,9 @@ public interface LayerLibraryRepository extends JpaRepository<LayerLibrary, Long
 
     LayerLibrary findFirstByLayer(Layer layer);
 
+    // 마이페이지 - 회원별 레이어 라이브러리 조회용
+    List<LayerLibrary> findByMember(Member member);
+
     // 인용수 조회
     @Query("""
         SELECT l.layer.roadmap.id AS roadmapId, COUNT(DISTINCT l.member.id) AS citationCount

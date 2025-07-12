@@ -1,56 +1,53 @@
 package com.gitsunjaeab.mapick.api.member.dto;
 
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-import java.time.OffsetDateTime;
+import com.gitsunjaeab.mapick.domain.member.Member;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.OffsetDateTime;
 
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class MemberResponse {
 
     private Long id;
-
-    @Size(max = 255)
+    private boolean isBlacklisted;
     private String name;
-
-    @NotNull
-    @Size(max = 255)
     private String nickname;
-
-    @Size(max = 255)
-    @MemberEmailUnique
     private String email;
-
-    @Size(max = 255)
     private String password;
-
-    @NotNull
-    @Size(max = 255)
     private String loginType;
-
-    @Size(max = 255)
     private String provider;
-
-    @NotNull
-    @Size(max = 255)
     private String role;
-
-    @Size(max = 255)
     private String status;
-
-    @Size(max = 255)
     private String profileImage;
-
     private OffsetDateTime lastLogin;
-
-    @NotNull
     private OffsetDateTime createdAt;
-
     private OffsetDateTime updatedAt;
-
     private OffsetDateTime deletedAt;
 
+    public MemberResponse(Member member) {
+        this.id = member.getId();
+        this.isBlacklisted = member.getIsBlacklisted();
+        this.name = member.getName();
+        this.nickname = member.getNickname();
+        this.email = member.getEmail();
+        this.password = member.getPassword();
+        this.loginType = member.getLoginType();
+        this.provider = member.getProvider();
+        this.role = member.getRole();
+        this.status = member.getStatus();
+        this.profileImage = member.getProfileImage();
+        this.lastLogin = member.getLastLogin();
+        this.createdAt = member.getCreatedAt();
+        this.updatedAt = member.getUpdatedAt();
+        this.deletedAt = member.getDeletedAt();
+    }
+
+    public static MemberResponse of(Member member) {
+        return new MemberResponse(member);
+    }
 }
