@@ -3,9 +3,6 @@ package com.gitsunjaeab.mapick.api.roadmap;
 import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapListResponse;
 import com.gitsunjaeab.mapick.application.roadmap.RoadmapService;
-import com.gitsunjaeab.mapick.domain.member.MemberRepository;
-import com.gitsunjaeab.mapick.domain.roadmap.LayerLibraryRepository;
-import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
 import com.gitsunjaeab.mapick.util.ReferencedException;
 import com.gitsunjaeab.mapick.util.ReferencedWarning;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -28,18 +25,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class RoadmapController {
 
     private final RoadmapService roadmapService;
-    private final MemberRepository memberRepository;
-    private final RoadmapRepository roadmapRepository;
-    private final LayerLibraryRepository layerLibraryRepository;
 
-    public RoadmapController(final RoadmapService roadmapService,
-        final MemberRepository memberRepository,
-        final RoadmapRepository roadmapRepository,
-        final LayerLibraryRepository layerLibraryRepository) {
+    public RoadmapController(final RoadmapService roadmapService) {
         this.roadmapService = roadmapService;
-        this.memberRepository = memberRepository;
-        this.roadmapRepository = roadmapRepository;
-        this.layerLibraryRepository = layerLibraryRepository;
     }
 
     // 전체 조회 (로드맵, 공유지도) >> NOTE 프론트 데이터 확인용 (추후 삭제예정)
