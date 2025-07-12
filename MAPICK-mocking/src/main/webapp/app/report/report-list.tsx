@@ -16,8 +16,8 @@ export default function ReportList() {
 
   const getAllReports = async () => {
     try {
-      const response = await axios.get('/reports');
-      setReports(response.data.content);
+      const response = await axios.get('admin/reports');
+      setReports(response.data.reports);
     } catch (error: any) {
       handleServerError(error, navigate);
     }
@@ -28,7 +28,7 @@ export default function ReportList() {
       return;
     }
     try {
-      await axios.delete('/reports/' + id);
+      await axios.delete('/admin/reports' + id);
       navigate('/reports', {
             state: {
               msgInfo: t('report.delete.success')
@@ -59,13 +59,14 @@ export default function ReportList() {
         <thead>
           <tr>
             <th scope="col" className="text-left p-2">{t('report.id.label')}</th>
-            <th scope="col" className="text-left p-2">{t('report.reportType.label')}</th>
             <th scope="col" className="text-left p-2">{t('report.status.label')}</th>
             <th scope="col" className="text-left p-2">{t('report.createdAt.label')}</th>
             <th scope="col" className="text-left p-2">{t('report.resolvedAt.label')}</th>
             <th scope="col" className="text-left p-2">{t('report.reporter.label')}</th>
             <th scope="col" className="text-left p-2">{t('report.reportedMember.label')}</th>
             <th scope="col" className="text-left p-2">{t('report.roadmap.label')}</th>
+            <th scope="col" className="text-left p-2">{t('report.marker.label')}</th>
+            <th scope="col" className="text-left p-2">{t('report.quest.label')}</th>
             <th></th>
           </tr>
         </thead>
@@ -73,13 +74,14 @@ export default function ReportList() {
           {reports.map((report) => (
           <tr key={report.id} className="odd:bg-gray-100">
             <td className="p-2">{report.id}</td>
-            <td className="p-2">{report.reportType}</td>
             <td className="p-2">{report.status}</td>
             <td className="p-2">{report.createdAt}</td>
             <td className="p-2">{report.resolvedAt}</td>
             <td className="p-2">{report.reporter}</td>
             <td className="p-2">{report.reportedMember}</td>
             <td className="p-2">{report.roadmap}</td>
+            <td className="p-2">{report.marker}</td>
+            <td className="p-2">{report.quest}</td>
             <td className="p-2">
               <div className="float-right whitespace-nowrap">
                 <Link to={'/reports/edit/' + report.id} className="inline-block text-white bg-gray-500 hover:bg-gray-600 focus:ring-gray-200 focus:ring-3 rounded px-2.5 py-1.5 text-sm">{t('report.list.edit')}</Link>

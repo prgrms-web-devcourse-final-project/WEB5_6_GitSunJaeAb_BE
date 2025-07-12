@@ -1,5 +1,7 @@
 package com.gitsunjaeab.mapick.application.report;
 
+import com.gitsunjaeab.mapick.api.member.dto.MemberListResponse;
+import com.gitsunjaeab.mapick.api.report.dto.ReportListResponse;
 import com.gitsunjaeab.mapick.domain.report.ReportRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.Marker;
@@ -36,11 +38,9 @@ public class ReportService {
         this.questRepository = questRepository;
     }
 
-    public List<ReportDTO> findAll() {
+    public ReportListResponse findAll() {
         final List<Report> reports = reportRepository.findAll(Sort.by("id"));
-        return reports.stream()
-                .map(report -> roadmapToDTO(report, new ReportDTO()))
-                .toList();
+        return ReportListResponse.of(reports);
     }
 
     public ReportDTO get(final Long id) {
@@ -68,7 +68,7 @@ public class ReportService {
 
     private ReportDTO roadmapToDTO(final Report report, final ReportDTO reportDTO) {
         reportDTO.setId(report.getId());
-        reportDTO.setReportType(report.getReportType());
+//        reportDTO.setReportType(report.getReportType());
         reportDTO.setDescription(report.getDescription());
         reportDTO.setStatus(report.getStatus());
         reportDTO.setCreatedAt(report.getCreatedAt());
@@ -82,7 +82,7 @@ public class ReportService {
     }
 
     private Report roadmapToEntity(final ReportDTO reportDTO, final Report report) {
-        report.setReportType(reportDTO.getReportType());
+//        report.setReportType(reportDTO.getReportType());
         report.setDescription(reportDTO.getDescription());
         report.setStatus(reportDTO.getStatus());
         report.setCreatedAt(reportDTO.getCreatedAt());
