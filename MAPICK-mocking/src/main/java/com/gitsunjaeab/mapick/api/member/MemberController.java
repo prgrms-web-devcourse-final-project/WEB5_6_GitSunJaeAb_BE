@@ -39,11 +39,6 @@ public class MemberController {
 //        return new ResponseEntity<>(createdId, HttpStatus.CREATED);
 //    }
 //
-    // TODO : ADMIN Controller 로 가야될듯 (전체회원조회, /admin/members/list)
-    @GetMapping
-    public ResponseEntity<List<MemberDTO>> getAllMembers() {
-        return ResponseEntity.ok(memberService.findAll());
-    }
 
     @GetMapping("/{membersId}")
     public ResponseEntity<MemberDTO> getMember(@PathVariable(name = "membersId") final Long membersId) {

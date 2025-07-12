@@ -1,5 +1,6 @@
 package com.gitsunjaeab.mapick.application.member;
 
+import com.gitsunjaeab.mapick.api.member.dto.MemberListResponse;
 import com.gitsunjaeab.mapick.domain.roadmap.Bookmark;
 import com.gitsunjaeab.mapick.domain.roadmap.BookmarkRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.Comment;
@@ -75,11 +76,9 @@ public class MemberService {
         this.layerLibraryRepository = layerLibraryRepository;
     }
 
-    public List<MemberDTO> findAll() {
+    public MemberListResponse findAll() {
         final List<Member> members = memberRepository.findAll(Sort.by("id"));
-        return members.stream()
-                .map(member -> roadmapToDTO(member, new MemberDTO()))
-                .toList();
+        return MemberListResponse.of(members);
     }
 
     public MemberDTO get(final Long id) {
