@@ -41,7 +41,7 @@ public class RoadmapController {
 
     // 로드맵(PERSONAL) 조회
     @GetMapping("/personal")
-    public ResponseEntity<RoadmapListResponse> getPersonalRoadmaps(
+    public ResponseEntity<RoadmapListResponse> getRoadmaps(
         @RequestParam(required = false) Long categoryId) {
         if (categoryId == null) {
             // 전체 조회
@@ -65,19 +65,38 @@ public class RoadmapController {
         }
     }
 
-    // TODO 해시태그로 로드맵 조회 >> {hashtagId} 활용??
+    // TODO 해시태그로 로드맵 검색 >> {hashtagId} 활용??
 
     // 로드맵 생성
     @PostMapping("/personal")
-    public ResponseEntity<ApiResponse> createPersonalRoadmap(@RequestBody @Valid final RoadmapRequest request) {
+    public ResponseEntity<ApiResponse> createRoadmap(@RequestBody @Valid final RoadmapRequest request) {
 //        final Long createdId = roadmapService.create(request);
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "로드맵 생성 완료"));
     }
 
+    // 공유지도 생성
     @PostMapping("/shared")
     public ResponseEntity<ApiResponse> createSharedRoadmap(@RequestBody @Valid final RoadmapRequest request) {
 //        final Long createdId = roadmapService.create(request);
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "공유지도 생성 완료"));
+    }
+
+    // 로드맵 수정
+    @PutMapping("/personal/{roadmapId}")
+    public ResponseEntity<ApiResponse> updateRoadmap(
+        @PathVariable(name = "roadmapId") final Long roadmapId,
+        @RequestBody @Valid final RoadmapRequest request) {
+//        roadmapService.update(roadmapId, request);
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "로드맵 수정 완료"));
+    }
+
+    // 공유지도 수정
+    @PutMapping("/shared/{roadmapId}")
+    public ResponseEntity<ApiResponse> updateSharedRoadmap(
+        @PathVariable(name = "roadmapId") final Long roadmapId,
+        @RequestBody @Valid final RoadmapRequest request) {
+//        roadmapService.update(roadmapId, request);
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "공유지도 수정 완료"));
     }
 
     // TODO 특정 회원의 지도 목록 조회
@@ -89,24 +108,15 @@ public class RoadmapController {
         return ResponseEntity.ok(roadmapService.get(roadmapId));
     }
 
-    // 지도 수정
-    @PutMapping("/{roadmapId}")
-    public ResponseEntity<Long> updateRoadmap(
-        @PathVariable(name = "roadmapId") final Long roadmapId,
-        @RequestBody @Valid final RoadmapRequest request) {
-//        roadmapService.update(roadmapId, request);
-        return ResponseEntity.ok(roadmapId);
-    }
-
-    // 지도 삭제
+    // 로드맵/공유지도 삭제
     @DeleteMapping("/{roadmapId}")
-    public ResponseEntity<Void> deleteRoadmap(
+    public ResponseEntity<ApiResponse> deleteRoadmap(
         @PathVariable(name = "roadmapId") final Long roadmapId) {
-        final ReferencedWarning referencedWarning = roadmapService.getReferencedWarning(roadmapId);
-        if (referencedWarning != null) {
-            throw new ReferencedException(referencedWarning);
-        }
-        roadmapService.delete(roadmapId);
-        return ResponseEntity.noContent().build();
+//        final ReferencedWarning referencedWarning = roadmapService.getReferencedWarning(roadmapId);
+//        if (referencedWarning != null) {
+//            throw new ReferencedException(referencedWarning);
+//        }
+//        roadmapService.delete(roadmapId);
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "삭제 완료"));
     }
 }
