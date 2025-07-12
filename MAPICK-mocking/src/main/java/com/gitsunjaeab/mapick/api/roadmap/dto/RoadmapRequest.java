@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 public class RoadmapRequest {
 
-    private Long category;
+    private Long categoryId;
 
     @NotNull
     @Size(max = 255)

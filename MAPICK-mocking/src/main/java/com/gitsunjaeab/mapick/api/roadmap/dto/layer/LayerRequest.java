@@ -10,27 +10,14 @@ import lombok.Setter;
 @Setter
 public class LayerRequest {
 
-//    private Long id;
-
     @NotNull
     @Size(max = 255)
     private String name;
 
-    private String description;
+//    private String description;
 
     private Integer layerSeq;
 
-//    private LocalDate layerTime;
-
-//    @NotNull
-//    private OffsetDateTime createdAt;
-//
-//    private OffsetDateTime updatedAt;
-//
-//    private OffsetDateTime deletedAt;
-//
-//    private Long member;
-//
-//    private Long map;
+    private Long roadmapId;
 
 }
