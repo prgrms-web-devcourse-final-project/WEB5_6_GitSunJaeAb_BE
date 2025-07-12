@@ -46,6 +46,9 @@ public class Member {
     )
     private Long id;
 
+    @Column(nullable = false)
+    private Boolean isBlacklisted = false;
+
     @Column
     private String name;
 

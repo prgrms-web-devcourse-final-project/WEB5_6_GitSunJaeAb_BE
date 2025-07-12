@@ -13,6 +13,9 @@ public class MemberDTO {
 
     private Long id;
 
+    @NotNull
+    private boolean isBlacklisted;
+
     @Size(max = 255)
     private String name;
 
@@ -52,5 +55,4 @@ public class MemberDTO {
     private OffsetDateTime updatedAt;
 
     private OffsetDateTime deletedAt;
-
 }
