@@ -42,7 +42,7 @@ public class MemberQuest {
     @Column(nullable = false)
     private String status;
 
-    @Column(nullable = false)
+    @Column(nullable = true)  // 참여 신청 시에는 답변이 없어도 됨
     private String answer;
 
     @Column(nullable = false)

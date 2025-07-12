@@ -1,39 +1,18 @@
 package com.gitsunjaeab.mapick.api.quest.dto;
 
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
-
 
 @Getter
 @Setter
 public class MemberQuestRequest {
-
-//    private Long id;
-
+    
+    // 참여할 퀘스트 ID
     @NotNull
-    @Size(max = 255)
-    private String status;
-
+    private Long quest;
+    
+    // 참여하는 멤버 ID
     @NotNull
-    @Size(max = 255)
-    private String answer;
-
-    @NotNull
-    @Size(max = 255)
-    private String isRecognized;
-
-//    private OffsetDateTime createdAt;
-//
-//    private OffsetDateTime completedAt;
-//
-//    private OffsetDateTime updatedAt;
-//
-//    private OffsetDateTime deletedAt;
-//
-//    private Long member;
-//
-//    private Long quest;
-
+    private Long member;
 }

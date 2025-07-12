@@ -22,6 +22,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.gitsunjaeab.mapick.api.quest.dto.QuestRequest;
+import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestRequest;
+import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestResponse;
+import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestEvidenceRequest;
+import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestEvidenceResponse;
+import com.gitsunjaeab.mapick.api.quest.dto.QuestRankResponse;
+import java.util.List;
 
 
 @RestController
@@ -80,32 +86,55 @@ public class QuestController {
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "퀘스트 삭제 완료"));
     }
 
-    // TODO Quest 정답 순서 >> QuestRank GET
-//    @GetMapping("/ ")
-//    public ResponseEntity<List<QuestRankDTO>> getAllQuestRanks() {
-//        return ResponseEntity.ok(questRankService.findAll());
-//    }
+    // 퀘스트 랭킹 조회 (특정 퀘스트의 랭킹)
+    @GetMapping("/{questId}/rankings")
+    public ResponseEntity<List<QuestRankResponse>> getQuestRankings(@PathVariable(name = "questId") final Long questId) {
+        return ResponseEntity.ok(questRankService.findByQuestId(questId));
+    }
 
-    // TODO MemberQuest >> 참여 누른 사람들 GET (전체 참여자 조회)
-//    @GetMapping("/ ")
-//    public ResponseEntity<List<MemberQuestDTO>> getAllMemberQuests() {
-//        return ResponseEntity.ok(memberQuestService.findAll());
-//    }
+    // 퀘스트 참여자 목록 조회 (특정 퀘스트의 참여자들)
+    @GetMapping("/{questId}/memberQuest")
+    public ResponseEntity<List<MemberQuestResponse>> getQuestParticipants(@PathVariable(name = "questId") final Long questId) {
+        return ResponseEntity.ok(memberQuestService.findByQuestId(questId));
+    }
 
-    // TODO 퀘스트 참여하기 (증거제출)
-    // TODO 1. MemberQuest >> 참여자 POST (테이블에 참여자 명단 들어가고)
-    // TODO 2. MemberQuestEvidence >> 참여하기 POST (테이블에 참여자가 제출한 증거자료 들어감)
-//    @PostMapping("/ ")
-//    public ResponseEntity<Long> createMemberQuest(
-//        @RequestBody @Valid final MemberQuestDTO memberQuestDTO) {
-//        final Long createdId = memberQuestService.create(memberQuestDTO);
-//        return new ResponseEntity<>(createdId, HttpStatus.CREATED);
-//    }
+    // 퀘스트 참여 신청
+    @PostMapping("/{questId}/memberQuest")
+    public ResponseEntity<ApiResponse> participateInQuest(@PathVariable(name = "questId") final Long questId,
+            @RequestBody @Valid final MemberQuestRequest memberQuestRequest) {
+        // questId를 request에 설정
+        memberQuestRequest.setQuest(questId);
+        memberQuestService.create(memberQuestRequest);
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "퀘스트 참여 신청 완료"));
+    }
 
-    // TODO 참여자 답안 조회 (전체, 정답, 오답)
-//    @GetMapping("/ ")
-//    public ResponseEntity<List<MemberQuestEvidenceDTO>> getAllMemberQuestEvidences() {
-//        return ResponseEntity.ok(memberQuestEvidenceService.findAll());
-//    }
+    // 증빙 자료 제출
+    @PostMapping("/memberQuest/{memberQuestId}/evidence")
+    public ResponseEntity<ApiResponse> submitEvidence(@PathVariable(name = "memberQuestId") final Long memberQuestId,
+            @RequestBody @Valid final MemberQuestEvidenceRequest evidenceRequest) {
+        // memberQuestId를 request에 설정
+        evidenceRequest.setMemberQuest(memberQuestId);
+        memberQuestEvidenceService.create(evidenceRequest);
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "증빙 자료 제출 완료"));
+    }
+
+    // 특정 참여자의 증빙 자료 조회
+    @GetMapping("/memberQuest/{memberQuestId}/evidence")
+    public ResponseEntity<List<MemberQuestEvidenceResponse>> getParticipantEvidence(@PathVariable(name = "memberQuestId") final Long memberQuestId) {
+        return ResponseEntity.ok(memberQuestEvidenceService.findByMemberQuestId(memberQuestId));
+    }
+
+    // 전체 참여자 답안 조회 (관리자용)
+    @GetMapping("/evidence")
+    public ResponseEntity<List<MemberQuestEvidenceResponse>> getAllEvidence() {
+        return ResponseEntity.ok(memberQuestEvidenceService.findAll());
+    }
+
+    // 증빙 자료 삭제
+    @DeleteMapping("/evidence/{evidenceId}")
+    public ResponseEntity<ApiResponse> deleteEvidence(@PathVariable(name = "evidenceId") final Long evidenceId) {
+        memberQuestEvidenceService.delete(evidenceId);
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "증빙 자료 삭제 완료"));
+    }
 
 }

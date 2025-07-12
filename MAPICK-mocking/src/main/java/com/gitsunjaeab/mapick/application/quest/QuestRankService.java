@@ -1,87 +1,60 @@
 package com.gitsunjaeab.mapick.application.quest;
 
-import com.gitsunjaeab.mapick.domain.member.Member;
-import com.gitsunjaeab.mapick.domain.member.MemberRepository;
-import com.gitsunjaeab.mapick.domain.quest.Quest;
 import com.gitsunjaeab.mapick.domain.quest.QuestRankRepository;
-import com.gitsunjaeab.mapick.domain.quest.QuestRepository;
-import com.gitsunjaeab.mapick.api.quest.dto.QuestRankDTO;
+import com.gitsunjaeab.mapick.api.quest.dto.QuestRankResponse;
 import com.gitsunjaeab.mapick.domain.quest.QuestRank;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import java.util.List;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-
 @Service
 public class QuestRankService {
 
     private final QuestRankRepository questRankRepository;
-    private final QuestRepository questRepository;
-    private final MemberRepository memberRepository;
 
-    public QuestRankService(final QuestRankRepository questRankRepository,
-            final QuestRepository questRepository, final MemberRepository memberRepository) {
+    public QuestRankService(final QuestRankRepository questRankRepository) {
         this.questRankRepository = questRankRepository;
-        this.questRepository = questRepository;
-        this.memberRepository = memberRepository;
     }
 
-    public List<QuestRankDTO> findAll() {
-        final List<QuestRank> questRanks = questRankRepository.findAll(Sort.by("id"));
+    // 전체 랭킹 조회
+    public List<QuestRankResponse> findAll() {
+        final List<QuestRank> questRanks = questRankRepository.findAll(Sort.by("rank"));
         return questRanks.stream()
-                .map(questRank -> roadmapToDTO(questRank, new QuestRankDTO()))
+                .map(this::toResponse)
                 .toList();
     }
 
-    public QuestRankDTO get(final Long id) {
+    // 특정 퀘스트의 랭킹 조회
+    public List<QuestRankResponse> findByQuestId(final Long questId) {
+        final List<QuestRank> questRanks = questRankRepository.findByQuestIdOrderByRank(questId);
+        return questRanks.stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    // 단일 랭킹 조회
+    public QuestRankResponse get(final Long id) {
         return questRankRepository.findById(id)
-                .map(questRank -> roadmapToDTO(questRank, new QuestRankDTO()))
+                .map(this::toResponse)
                 .orElseThrow(NotFoundException::new);
     }
 
-    public Long create(final QuestRankDTO questRankDTO) {
-        final QuestRank questRank = new QuestRank();
-        roadmapToEntity(questRankDTO, questRank);
-        return questRankRepository.save(questRank).getId();
-    }
-
-    public void update(final Long id, final QuestRankDTO questRankDTO) {
-        final QuestRank questRank = questRankRepository.findById(id)
-                .orElseThrow(NotFoundException::new);
-        roadmapToEntity(questRankDTO, questRank);
-        questRankRepository.save(questRank);
-    }
-
+    // 랭킹 삭제
     public void delete(final Long id) {
         questRankRepository.deleteById(id);
     }
 
-    private QuestRankDTO roadmapToDTO(final QuestRank questRank, final QuestRankDTO questRankDTO) {
-        questRankDTO.setId(questRank.getId());
-        questRankDTO.setRank(questRank.getRank());
-        questRankDTO.setCompletedAt(questRank.getCompletedAt());
-        questRankDTO.setCreatedAt(questRank.getCreatedAt());
-        questRankDTO.setUpdatedAt(questRank.getUpdatedAt());
-        questRankDTO.setDeletedAt(questRank.getDeletedAt());
-        questRankDTO.setQuest(questRank.getQuest() == null ? null : questRank.getQuest().getId());
-        questRankDTO.setMember(questRank.getMember() == null ? null : questRank.getMember().getId());
-        return questRankDTO;
+    // Entity → Response 변환
+    private QuestRankResponse toResponse(final QuestRank questRank) {
+        QuestRankResponse response = new QuestRankResponse();
+        response.setId(questRank.getId());
+        response.setRank(questRank.getRank());
+        response.setScore(null); // QuestRank 엔티티에 score 필드가 없음
+        response.setCreatedAt(questRank.getCreatedAt());
+        response.setUpdatedAt(questRank.getUpdatedAt());
+        response.setQuest(questRank.getQuest() == null ? null : questRank.getQuest().getId());
+        response.setMember(questRank.getMember() == null ? null : questRank.getMember().getId());
+        return response;
     }
-
-    private QuestRank roadmapToEntity(final QuestRankDTO questRankDTO, final QuestRank questRank) {
-        questRank.setRank(questRankDTO.getRank());
-        questRank.setCompletedAt(questRankDTO.getCompletedAt());
-        questRank.setCreatedAt(questRankDTO.getCreatedAt());
-        questRank.setUpdatedAt(questRankDTO.getUpdatedAt());
-        questRank.setDeletedAt(questRankDTO.getDeletedAt());
-        final Quest quest = questRankDTO.getQuest() == null ? null : questRepository.findById(questRankDTO.getQuest())
-                .orElseThrow(() -> new NotFoundException("quest not found"));
-        questRank.setQuest(quest);
-        final Member member = questRankDTO.getMember() == null ? null : memberRepository.findById(questRankDTO.getMember())
-                .orElseThrow(() -> new NotFoundException("member not found"));
-        questRank.setMember(member);
-        return questRank;
-    }
-
 }
