@@ -3,7 +3,6 @@ package com.gitsunjaeab.mapick.api.roadmap.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import java.time.OffsetDateTime;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,7 +11,7 @@ import lombok.Setter;
 @Setter
 public class RoadmapRequest {
 
-    private Long id;
+    private Long category;
 
     @NotNull
     @Size(max = 255)
@@ -27,27 +26,25 @@ public class RoadmapRequest {
     @JsonProperty("isPublic")
     private Boolean isPublic;
 
-    @NotNull
-    @JsonProperty("isAnimated")
-    private Boolean isAnimated;
+//    @NotNull
+//    @JsonProperty("isAnimated")
+//    private Boolean isAnimated;
 
-    private Integer likeCount;
+//    private Integer likeCount;
+//
+//    private Integer viewCount;
 
-    private Integer viewCount;
+    // 아래 항목은 전부 로직에서 자동 처리
+//    @NotNull
+//    @Size(max = 255)
+//    private String roadmapType;
 
-    @NotNull
-    @Size(max = 255)
-    private String roadmapType;
+//    @NotNull
+//    private OffsetDateTime createdAt;
+//
+//    private OffsetDateTime updatedAt;
+//
+//    private OffsetDateTime deletedAt;
 
-    @NotNull
-    private OffsetDateTime createdAt;
-
-    private OffsetDateTime updatedAt;
-
-    private OffsetDateTime deletedAt;
-
-    private Long member;
-
-    private Long originalRoadmap;
-
+//    private Long member;
 }

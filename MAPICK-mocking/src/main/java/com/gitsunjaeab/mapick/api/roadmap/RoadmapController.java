@@ -2,12 +2,13 @@ package com.gitsunjaeab.mapick.api.roadmap;
 
 import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapListResponse;
+import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapRequest;
 import com.gitsunjaeab.mapick.application.roadmap.RoadmapService;
+import com.gitsunjaeab.mapick.common.response.ApiResponse;
+import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.util.ReferencedException;
 import com.gitsunjaeab.mapick.util.ReferencedWarning;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -64,21 +65,20 @@ public class RoadmapController {
         }
     }
 
-    // TODO 카테고리에 따른 로드맵 조회 >> {categoryId} 활용??
-
     // TODO 해시태그로 로드맵 조회 >> {hashtagId} 활용??
 
     // 로드맵 생성
-    @PostMapping
-    @ApiResponse(responseCode = "201")
-    public ResponseEntity<Long> createRoadmaps(@RequestBody @Valid final RoadmapDTO mapDTO) {
-        final Long createdId = roadmapService.create(mapDTO); // TODO 해시태그 설정 추가
-        return new ResponseEntity<>(createdId, HttpStatus.CREATED);
+    @PostMapping("/personal")
+    public ResponseEntity<ApiResponse> createPersonalRoadmap(@RequestBody @Valid final RoadmapRequest request) {
+//        final Long createdId = roadmapService.create(request);
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "로드맵 생성 완료"));
     }
 
-    // TODO 개인 지도 생성 >> /personal
-
-    // TODO 공유 지도 생성 >> /shared
+    @PostMapping("/shared")
+    public ResponseEntity<ApiResponse> createSharedRoadmap(@RequestBody @Valid final RoadmapRequest request) {
+//        final Long createdId = roadmapService.create(request);
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "공유지도 생성 완료"));
+    }
 
     // TODO 특정 회원의 지도 목록 조회
 
@@ -93,14 +93,13 @@ public class RoadmapController {
     @PutMapping("/{roadmapId}")
     public ResponseEntity<Long> updateRoadmap(
         @PathVariable(name = "roadmapId") final Long roadmapId,
-        @RequestBody @Valid final RoadmapDTO roadmapDTO) {
-        roadmapService.update(roadmapId, roadmapDTO);
+        @RequestBody @Valid final RoadmapRequest request) {
+//        roadmapService.update(roadmapId, request);
         return ResponseEntity.ok(roadmapId);
     }
 
     // 지도 삭제
     @DeleteMapping("/{roadmapId}")
-    @ApiResponse(responseCode = "204")
     public ResponseEntity<Void> deleteRoadmap(
         @PathVariable(name = "roadmapId") final Long roadmapId) {
         final ReferencedWarning referencedWarning = roadmapService.getReferencedWarning(roadmapId);
