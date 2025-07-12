@@ -65,7 +65,7 @@ public class MarkerService {
 
     private MarkerDTO roadmapToDTO(final Marker marker, final MarkerDTO markerDTO) {
         markerDTO.setId(marker.getId());
-        markerDTO.setTitle(marker.getTitle());
+        markerDTO.setName(marker.getName());
         markerDTO.setDescription(marker.getDescription());
         markerDTO.setLat(marker.getLat());
         markerDTO.setLng(marker.getLng());
@@ -81,7 +81,7 @@ public class MarkerService {
     }
 
     private Marker roadmapToEntity(final MarkerDTO markerDTO, final Marker marker) {
-        marker.setTitle(markerDTO.getTitle());
+        marker.setName(markerDTO.getName());
         marker.setDescription(markerDTO.getDescription());
         marker.setLat(markerDTO.getLat());
         marker.setLng(markerDTO.getLng());

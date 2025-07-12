@@ -1,12 +1,15 @@
 package com.gitsunjaeab.mapick.api.admin;
 
 import com.gitsunjaeab.mapick.api.member.dto.MemberListResponse;
+import com.gitsunjaeab.mapick.api.report.dto.ReportDetailDTO;
+import com.gitsunjaeab.mapick.api.report.dto.ReportDetailResponse;
 import com.gitsunjaeab.mapick.api.report.dto.ReportListResponse;
 import com.gitsunjaeab.mapick.application.member.MemberService;
 import com.gitsunjaeab.mapick.application.report.ReportService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,6 +30,7 @@ public class AdminController {
     @GetMapping("/members")
     public ResponseEntity<MemberListResponse> getAllMembers() {
         MemberListResponse response = memberService.findAll();
+
         return ResponseEntity.ok(response);
     }
 
@@ -34,8 +38,15 @@ public class AdminController {
     @GetMapping("/reports")
     public ResponseEntity<ReportListResponse> getAllReports() {
         ReportListResponse response = reportService.findAll();
+
         return ResponseEntity.ok(response);
     }
 
+    // 특정 신고 상세 조회
+    @GetMapping("/{reportId}")
+    public ResponseEntity<ReportDetailResponse> createBookmark(@PathVariable(name = "reportId") final Long roadmapId) {
+        ReportDetailResponse response = reportService.getReportDetail(roadmapId);
 
+        return ResponseEntity.ok(response);
+    }
 }

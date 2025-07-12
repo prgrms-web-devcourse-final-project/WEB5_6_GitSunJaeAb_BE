@@ -53,10 +53,10 @@ public class ReportController {
 //        return ResponseEntity.ok(reportService.findAll());
 //    }
 
-    @GetMapping("/{reportsId}")
-    public ResponseEntity<ReportDTO> getReport(@PathVariable(name = "reportsId") final Long reportsId) {
-        return ResponseEntity.ok(reportService.get(reportsId));
-    }
+//    @GetMapping("/{reportsId}")
+//    public ResponseEntity<ReportDTO> getReport(@PathVariable(name = "reportsId") final Long reportsId) {
+//        return ResponseEntity.ok(reportService.get(reportsId));
+//    }
 
     @PutMapping("/{reportsId}")
     public ResponseEntity<Long> updateReport(@PathVariable(name = "reportsId") final Long reportsId,

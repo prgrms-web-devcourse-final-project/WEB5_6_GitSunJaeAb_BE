@@ -13,8 +13,8 @@ public class ReportResponse {
 
     private Long id;
 
-    @Size(max = 255)
-    private String reportType;
+//    @Size(max = 255)
+//    private String reportType;
 
     private String description;
 

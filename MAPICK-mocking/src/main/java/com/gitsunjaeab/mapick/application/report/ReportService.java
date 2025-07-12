@@ -1,7 +1,12 @@
 package com.gitsunjaeab.mapick.application.report;
 
-import com.gitsunjaeab.mapick.api.member.dto.MemberListResponse;
+import com.gitsunjaeab.mapick.api.member.dto.MemberDTO;
+import com.gitsunjaeab.mapick.api.quest.dto.QuestDTO;
+import com.gitsunjaeab.mapick.api.report.dto.ReportDetailDTO;
+import com.gitsunjaeab.mapick.api.report.dto.ReportDetailResponse;
 import com.gitsunjaeab.mapick.api.report.dto.ReportListResponse;
+import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapDTO;
+import com.gitsunjaeab.mapick.api.roadmap.dto.marker.MarkerDTO;
 import com.gitsunjaeab.mapick.domain.report.ReportRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.Marker;
@@ -17,6 +22,7 @@ import com.gitsunjaeab.mapick.util.NotFoundException;
 import java.util.List;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
@@ -43,11 +49,34 @@ public class ReportService {
         return ReportListResponse.of(reports);
     }
 
-    public ReportDTO get(final Long id) {
-        return reportRepository.findById(id)
-                .map(report -> roadmapToDTO(report, new ReportDTO()))
-                .orElseThrow(NotFoundException::new);
+    @Transactional(readOnly = true)
+    public ReportDetailResponse getReportDetail(Long id) {
+        Report report = reportRepository.findById(id)
+            .orElseThrow(NotFoundException::new);
+
+        // 지연 로딩 방지 - 연관 객체 접근
+        Member reporter = report.getReporter();
+        Member reported = report.getReportedMember();
+        Roadmap roadmap = report.getRoadmap();
+        Marker marker = report.getMarker();
+        Quest quest = report.getQuest();
+
+        ReportDetailDTO dto = new ReportDetailDTO(
+            report.getId(),
+            report.getDescription(),
+            report.getStatus().name(),
+            report.getCreatedAt(),
+            report.getResolvedAt(),
+            reporter != null ? new MemberDTO(reporter) : null,
+            reported != null ? new MemberDTO(reported) : null,
+            roadmap != null ? new RoadmapDTO(roadmap) : null,
+            marker != null ? new MarkerDTO(marker) : null,
+            quest != null ? new QuestDTO(quest) : null
+        );
+
+        return ReportDetailResponse.of(dto);
     }
+
 
     public Long create(final ReportDTO reportDTO) {
         final Report report = new Report();

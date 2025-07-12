@@ -41,7 +41,7 @@ public class Marker {
     private Long id;
 
     @Column
-    private String title;
+    private String name;
 
     @Column(columnDefinition = "text")
     private String description;

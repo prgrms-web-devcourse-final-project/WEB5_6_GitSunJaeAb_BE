@@ -13,7 +13,7 @@ public class MarkerRequest {
 //    private Long id;
 
     @Size(max = 255)
-    private String title;
+    private String name;
 
     private String description;
 
