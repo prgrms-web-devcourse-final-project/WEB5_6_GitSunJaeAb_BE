@@ -1,16 +1,16 @@
 package com.gitsunjaeab.mapick.api.quest;
 
-import com.gitsunjaeab.mapick.api.quest.dto.QuestDTO;
+import com.gitsunjaeab.mapick.api.quest.dto.QuestResponse;
 import com.gitsunjaeab.mapick.application.quest.MemberQuestService;
 import com.gitsunjaeab.mapick.application.quest.QuestRankService;
 import com.gitsunjaeab.mapick.application.quest.QuestService;
 import com.gitsunjaeab.mapick.application.quest.MemberQuestEvidenceService;
 import com.gitsunjaeab.mapick.util.ReferencedException;
 import com.gitsunjaeab.mapick.util.ReferencedWarning;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import com.gitsunjaeab.mapick.common.response.ApiResponse;
+import com.gitsunjaeab.mapick.common.response.ResponseCode;
+import com.gitsunjaeab.mapick.api.quest.dto.QuestListResponse;
 import jakarta.validation.Valid;
-import java.util.List;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.gitsunjaeab.mapick.api.quest.dto.QuestRequest;
 
 
 @RestController
@@ -41,40 +42,42 @@ public class QuestController {
         this.memberQuestEvidenceService = memberQuestEvidenceService;
     }
 
+    // 퀘스트 생성
     @PostMapping
-    @ApiResponse(responseCode = "201")
-    public ResponseEntity<Long> createQuest(@RequestBody @Valid final QuestDTO questDTO) {
-        final Long createdId = questService.create(questDTO);
-        return new ResponseEntity<>(createdId, HttpStatus.CREATED);
+    public ResponseEntity<ApiResponse> createQuest(@RequestBody @Valid final QuestRequest questRequest) {
+        questService.create(questRequest);  // 서비스도 Request 받도록 수정 필요
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "퀘스트 생성 완료"));
     }
 
     // 전체 퀘스트 조회
     @GetMapping
-    public ResponseEntity<List<QuestDTO>> getAllQuests() {
-        return ResponseEntity.ok(questService.findAll());
+    public ResponseEntity<QuestListResponse> getAllQuests() {
+        return ResponseEntity.ok(QuestListResponse.of(questService.findAll()));
     }
 
+    // 단일 퀘스트 조회
     @GetMapping("/{questsId}")
-    public ResponseEntity<QuestDTO> getQuest(@PathVariable(name = "questsId") final Long questsId) {
+    public ResponseEntity<QuestResponse> getQuest(@PathVariable(name = "questsId") final Long questsId) {
         return ResponseEntity.ok(questService.get(questsId));
     }
 
+    // 퀘스트 수정
     @PutMapping("/{questsId}")
-    public ResponseEntity<Long> updateQuest(@PathVariable(name = "questsId") final Long questsId,
-        @RequestBody @Valid final QuestDTO questDTO) {
-        questService.update(questsId, questDTO);
-        return ResponseEntity.ok(questsId);
+    public ResponseEntity<ApiResponse> updateQuest(@PathVariable(name = "questsId") final Long questsId,
+        @RequestBody @Valid final QuestRequest questRequest) {
+        questService.update(questsId, questRequest);
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "퀘스트 수정 완료"));
     }
 
+    // 퀘스트 삭제
     @DeleteMapping("/{questsId}")
-    @ApiResponse(responseCode = "204")
-    public ResponseEntity<Void> deleteQuest(@PathVariable(name = "questsId") final Long questsId) {
+    public ResponseEntity<ApiResponse> deleteQuest(@PathVariable(name = "questsId") final Long questsId) {
         final ReferencedWarning referencedWarning = questService.getReferencedWarning(questsId);
         if (referencedWarning != null) {
             throw new ReferencedException(referencedWarning);
         }
         questService.delete(questsId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "퀘스트 삭제 완료"));
     }
 
     // TODO Quest 정답 순서 >> QuestRank GET
@@ -93,7 +96,6 @@ public class QuestController {
     // TODO 1. MemberQuest >> 참여자 POST (테이블에 참여자 명단 들어가고)
     // TODO 2. MemberQuestEvidence >> 참여하기 POST (테이블에 참여자가 제출한 증거자료 들어감)
 //    @PostMapping("/ ")
-//    @ApiResponse(responseCode = "201")
 //    public ResponseEntity<Long> createMemberQuest(
 //        @RequestBody @Valid final MemberQuestDTO memberQuestDTO) {
 //        final Long createdId = memberQuestService.create(memberQuestDTO);

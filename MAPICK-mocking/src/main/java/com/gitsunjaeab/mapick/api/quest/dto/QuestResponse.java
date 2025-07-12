@@ -38,4 +38,20 @@ public class QuestResponse {
 
     private Long member;
 
+    // QuestDTO를 QuestResponse로 변환하는 정적 메서드
+    public static QuestResponse of(QuestDTO questDTO) {
+        QuestResponse response = new QuestResponse();
+        response.setId(questDTO.getId());
+        response.setTitle(questDTO.getTitle());
+        response.setQuestImage(questDTO.getQuestImage());
+        response.setDescription(questDTO.getDescription());
+        response.setIsActive(questDTO.getIsActive());
+        response.setCreatedAt(questDTO.getCreatedAt());
+        response.setCompletedAt(questDTO.getCompletedAt());
+        response.setUpdatedAt(questDTO.getUpdatedAt());
+        response.setDeletedAt(questDTO.getDeletedAt());
+        response.setMember(questDTO.getMember());
+        return response;
+    }
+
 }

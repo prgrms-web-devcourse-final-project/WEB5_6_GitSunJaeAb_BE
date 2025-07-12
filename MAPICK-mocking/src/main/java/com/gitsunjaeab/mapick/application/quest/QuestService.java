@@ -5,7 +5,8 @@ import com.gitsunjaeab.mapick.domain.member.MemberRepository;
 import com.gitsunjaeab.mapick.domain.quest.QuestRepository;
 import com.gitsunjaeab.mapick.domain.quest.MemberQuest;
 import com.gitsunjaeab.mapick.domain.quest.MemberQuestRepository;
-import com.gitsunjaeab.mapick.api.quest.dto.QuestDTO;
+import com.gitsunjaeab.mapick.api.quest.dto.QuestRequest;
+import com.gitsunjaeab.mapick.api.quest.dto.QuestResponse;
 import com.gitsunjaeab.mapick.domain.quest.Quest;
 import com.gitsunjaeab.mapick.domain.quest.QuestRank;
 import com.gitsunjaeab.mapick.domain.quest.QuestRankRepository;
@@ -38,29 +39,29 @@ public class QuestService {
         this.questRankRepository = questRankRepository;
     }
 
-    public List<QuestDTO> findAll() {
+    public List<QuestResponse> findAll() {
         final List<Quest> quests = questRepository.findAll(Sort.by("id"));
         return quests.stream()
-                .map(quest -> roadmapToDTO(quest, new QuestDTO()))
+                .map(quest -> questToResponse(quest))
                 .toList();
     }
 
-    public QuestDTO get(final Long id) {
+    public QuestResponse get(final Long id) {
         return questRepository.findById(id)
-                .map(quest -> roadmapToDTO(quest, new QuestDTO()))
+                .map(quest -> questToResponse(quest))
                 .orElseThrow(NotFoundException::new);
     }
 
-    public Long create(final QuestDTO questDTO) {
+    public Long create(final QuestRequest questRequest) {
         final Quest quest = new Quest();
-        roadmapToEntity(questDTO, quest);
+        requestToEntity(questRequest, quest);
         return questRepository.save(quest).getId();
     }
 
-    public void update(final Long id, final QuestDTO questDTO) {
+    public void update(final Long id, final QuestRequest questRequest) {
         final Quest quest = questRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
-        roadmapToEntity(questDTO, quest);
+        requestToEntity(questRequest, quest);
         questRepository.save(quest);
     }
 
@@ -68,32 +69,26 @@ public class QuestService {
         questRepository.deleteById(id);
     }
 
-    private QuestDTO roadmapToDTO(final Quest quest, final QuestDTO questDTO) {
-        questDTO.setId(quest.getId());
-        questDTO.setTitle(quest.getTitle());
-        questDTO.setQuestImage(quest.getQuestImage());
-        questDTO.setDescription(quest.getDescription());
-        questDTO.setIsActive(quest.getIsActive());
-        questDTO.setCreatedAt(quest.getCreatedAt());
-        questDTO.setCompletedAt(quest.getCompletedAt());
-        questDTO.setUpdatedAt(quest.getUpdatedAt());
-        questDTO.setDeletedAt(quest.getDeletedAt());
-        questDTO.setMember(quest.getMember() == null ? null : quest.getMember().getId());
-        return questDTO;
+    private QuestResponse questToResponse(final Quest quest) {
+        QuestResponse questResponse = new QuestResponse();
+        questResponse.setId(quest.getId());
+        questResponse.setTitle(quest.getTitle());
+        questResponse.setQuestImage(quest.getQuestImage());
+        questResponse.setDescription(quest.getDescription());
+        questResponse.setIsActive(quest.getIsActive());
+        questResponse.setCreatedAt(quest.getCreatedAt());
+        questResponse.setCompletedAt(quest.getCompletedAt());
+        questResponse.setUpdatedAt(quest.getUpdatedAt());
+        questResponse.setDeletedAt(quest.getDeletedAt());
+        questResponse.setMember(quest.getMember() == null ? null : quest.getMember().getId());
+        return questResponse;
     }
 
-    private Quest roadmapToEntity(final QuestDTO questDTO, final Quest quest) {
-        quest.setTitle(questDTO.getTitle());
-        quest.setQuestImage(questDTO.getQuestImage());
-        quest.setDescription(questDTO.getDescription());
-        quest.setIsActive(questDTO.getIsActive());
-        quest.setCreatedAt(questDTO.getCreatedAt());
-        quest.setCompletedAt(questDTO.getCompletedAt());
-        quest.setUpdatedAt(questDTO.getUpdatedAt());
-        quest.setDeletedAt(questDTO.getDeletedAt());
-        final Member member = questDTO.getMember() == null ? null : memberRepository.findById(questDTO.getMember())
-                .orElseThrow(() -> new NotFoundException("member not found"));
-        quest.setMember(member);
+    private Quest requestToEntity(final QuestRequest questRequest, final Quest quest) {
+        quest.setTitle(questRequest.getTitle());
+        quest.setQuestImage(questRequest.getQuestImage());
+        quest.setDescription(questRequest.getDescription());
+        quest.setIsActive(questRequest.getIsActive() != null ? questRequest.getIsActive() : true);
         return quest;
     }
 
