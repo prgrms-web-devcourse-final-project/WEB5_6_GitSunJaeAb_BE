@@ -24,10 +24,10 @@ public class MemberListResponse implements BaseApiResponse {
             .map(m -> new MemberListDTO(
                 m.getId(),
                 m.getIsBlacklisted(),
-                m.getRole(),
                 m.getName(),
                 m.getNickname(),
-                m.getEmail()
+                m.getEmail(),
+                m.getRole()
             )).toList();
 
         return new MemberListResponse(
