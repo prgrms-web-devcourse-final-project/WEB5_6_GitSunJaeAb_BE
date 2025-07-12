@@ -1,5 +1,7 @@
 package com.gitsunjaeab.mapick.api.report;
 
+import com.gitsunjaeab.mapick.api.report.dto.ReportDetailResponse;
+import com.gitsunjaeab.mapick.api.report.dto.ReportListResponse;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.MarkerRepository;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
@@ -26,19 +28,25 @@ import org.springframework.web.bind.annotation.RestController;
 public class ReportController {
 
     private final ReportService reportService;
-    private final MemberRepository memberRepository;
-    private final RoadmapRepository roadmapRepository;
-    private final MarkerRepository markerRepository;
-    private final QuestRepository questRepository;
 
-    public ReportController(final ReportService reportService,
-            final MemberRepository memberRepository, final RoadmapRepository roadmapRepository,
-            final MarkerRepository markerRepository, final QuestRepository questRepository) {
+    public ReportController(ReportService reportService) {
         this.reportService = reportService;
-        this.memberRepository = memberRepository;
-        this.roadmapRepository = roadmapRepository;
-        this.markerRepository = markerRepository;
-        this.questRepository = questRepository;
+    }
+
+    // 전체 신고 조회 (관리자)
+    @GetMapping
+    public ResponseEntity<ReportListResponse> getAllReports() {
+        ReportListResponse response = reportService.findAll();
+
+        return ResponseEntity.ok(response);
+    }
+
+    // 특정 신고 상세 조회 (관리자)
+    @GetMapping("/{reportId}")
+    public ResponseEntity<ReportDetailResponse> getReport(@PathVariable(name = "reportId") final Long roadmapId) {
+        ReportDetailResponse response = reportService.getReportDetail(roadmapId);
+
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping
@@ -47,16 +55,6 @@ public class ReportController {
         final Long createdId = reportService.create(reportDTO);
         return new ResponseEntity<>(createdId, HttpStatus.CREATED);
     }
-
-//    @GetMapping
-//    public ResponseEntity<List<ReportDTO>> getAllReports() {
-//        return ResponseEntity.ok(reportService.findAll());
-//    }
-
-//    @GetMapping("/{reportsId}")
-//    public ResponseEntity<ReportDTO> getReport(@PathVariable(name = "reportsId") final Long reportsId) {
-//        return ResponseEntity.ok(reportService.get(reportsId));
-//    }
 
     @PutMapping("/{reportsId}")
     public ResponseEntity<Long> updateReport(@PathVariable(name = "reportsId") final Long reportsId,
@@ -72,39 +70,5 @@ public class ReportController {
         return ResponseEntity.noContent().build();
     }
 
-//    @GetMapping("/reporterValues")
-//    public ResponseEntity<Map<Long, String>> getReporterValues() {
-//        return ResponseEntity.ok(memberRepository.findAll(Sort.by("id"))
-//                .stream()
-//                .collect(CustomCollectors.toSortedMap(Member::getId, Member::getNickname)));
-//    }
-//
-//    @GetMapping("/reportedMemberValues")
-//    public ResponseEntity<Map<Long, String>> getReportedMemberValues() {
-//        return ResponseEntity.ok(memberRepository.findAll(Sort.by("id"))
-//                .stream()
-//                .collect(CustomCollectors.toSortedMap(Member::getId, Member::getNickname)));
-//    }
-//
-//    @GetMapping("/mapValues")
-//    public ResponseEntity<Map<Long, String>> getMapValues() {
-//        return ResponseEntity.ok(mapRepository.findAll(Sort.by("id"))
-//                .stream()
-//                .collect(CustomCollectors.toSortedMap(com.gitsunjaeab.mapick.map.Map::getId, com.gitsunjaeab.mapick.map.Map::getTitle)));
-//    }
-//
-//    @GetMapping("/markerValues")
-//    public ResponseEntity<Map<Long, Long>> getMarkerValues() {
-//        return ResponseEntity.ok(markerRepository.findAll(Sort.by("id"))
-//                .stream()
-//                .collect(CustomCollectors.toSortedMap(Marker::getId, Marker::getId)));
-//    }
-//
-//    @GetMapping("/questValues")
-//    public ResponseEntity<Map<Long, String>> getQuestValues() {
-//        return ResponseEntity.ok(questRepository.findAll(Sort.by("id"))
-//                .stream()
-//                .collect(CustomCollectors.toSortedMap(Quest::getId, Quest::getTitle)));
-//    }
-
 }
+

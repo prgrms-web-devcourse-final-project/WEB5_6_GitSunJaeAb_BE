@@ -16,7 +16,7 @@ export default function ReportList() {
 
   const getAllReports = async () => {
     try {
-      const response = await axios.get('admin/reports');
+      const response = await axios.get('/reports');
       setReports(response.data.reports);
     } catch (error: any) {
       handleServerError(error, navigate);
@@ -28,7 +28,7 @@ export default function ReportList() {
       return;
     }
     try {
-      await axios.delete('/admin/reports' + id);
+      await axios.delete('/reports' + id);
       navigate('/reports', {
             state: {
               msgInfo: t('report.delete.success')

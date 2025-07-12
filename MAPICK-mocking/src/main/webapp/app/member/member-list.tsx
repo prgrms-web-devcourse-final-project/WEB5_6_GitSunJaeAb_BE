@@ -16,7 +16,7 @@ export default function MemberList() {
 
   const getAllMembers = async () => {
     try {
-      const response = await axios.get('/admin/members');
+      const response = await axios.get('/members');
       setMembers(response.data.members);
     } catch (error: any) {
       handleServerError(error, navigate);
@@ -28,7 +28,7 @@ export default function MemberList() {
       return;
     }
     try {
-      await axios.delete('/admin/members' + id);
+      await axios.delete('/members' + id);
       navigate('/members', {
             state: {
               msgInfo: t('member.delete.success')

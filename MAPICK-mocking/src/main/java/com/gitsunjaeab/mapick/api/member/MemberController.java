@@ -1,5 +1,6 @@
 package com.gitsunjaeab.mapick.api.member;
 
+import com.gitsunjaeab.mapick.api.member.dto.MemberListResponse;
 import com.gitsunjaeab.mapick.application.member.MemberService;
 import com.gitsunjaeab.mapick.api.member.dto.MemberDTO;
 import com.gitsunjaeab.mapick.application.member.MemberInterestService;
@@ -32,13 +33,14 @@ public class MemberController {
         this.memberInterestService = memberInterestService;
     }
 
-//    @PostMapping
-//    @ApiResponse(responseCode = "201")
-//    public ResponseEntity<Long> createMember(@RequestBody @Valid final MemberDTO memberDTO) {
-//        final Long createdId = memberService.create(memberDTO);
-//        return new ResponseEntity<>(createdId, HttpStatus.CREATED);
-//    }
-//
+    // 전체 회원 조회 (관리자)
+    // NOTE 일반 사용자, 관리자, 블랙리스트 사용자
+    @GetMapping
+    public ResponseEntity<MemberListResponse> getAllMembers() {
+        MemberListResponse response = memberService.findAll();
+
+        return ResponseEntity.ok(response);
+    }
 
     @GetMapping("/{membersId}")
     public ResponseEntity<MemberDTO> getMember(@PathVariable(name = "membersId") final Long membersId) {

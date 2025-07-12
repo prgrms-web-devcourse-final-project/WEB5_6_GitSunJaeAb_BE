@@ -46,7 +46,7 @@ public class CategoryListResponse implements BaseApiResponse {
 
         return new CategoryListResponse(
             ResponseCode.OK.getCode(),
-            "관심분야 조회 성공",
+            "카테고리 조회 성공",
             LocalDateTime.now(),
             list
         );

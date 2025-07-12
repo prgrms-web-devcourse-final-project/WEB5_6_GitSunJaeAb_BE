@@ -17,7 +17,6 @@ public class CategoryResponse implements BaseApiResponse {
     private String message;
     private LocalDateTime timestamp;
 
-
     // 단건 조회용
     private Long id;
 
@@ -32,7 +31,6 @@ public class CategoryResponse implements BaseApiResponse {
 
     @NotNull
     private OffsetDateTime createdAt;
-
 
 
     public CategoryResponse(String code, String message, LocalDateTime timestamp,
