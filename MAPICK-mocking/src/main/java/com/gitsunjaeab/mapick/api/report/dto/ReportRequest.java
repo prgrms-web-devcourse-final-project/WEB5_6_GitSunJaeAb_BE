@@ -18,7 +18,6 @@ public class ReportRequest {
     private String description;
 
     @NotNull
-    @Size(max = 255)
     private String status;
 
 //    private OffsetDateTime createdAt;

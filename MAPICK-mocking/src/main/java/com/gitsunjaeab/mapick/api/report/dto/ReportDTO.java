@@ -38,7 +38,6 @@ public class ReportDTO {
     private Long quest;
 
     @NotNull
-    @Size(max = 255)
     @Enumerated(EnumType.STRING)
     private ReportStatus status; // 상태
 

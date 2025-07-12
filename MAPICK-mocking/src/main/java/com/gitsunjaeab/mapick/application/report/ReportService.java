@@ -19,6 +19,7 @@ import com.gitsunjaeab.mapick.api.report.dto.ReportDTO;
 import com.gitsunjaeab.mapick.domain.report.Report;
 import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
 import com.gitsunjaeab.mapick.util.NotFoundException;
+import java.time.OffsetDateTime;
 import java.util.List;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -81,13 +82,25 @@ public class ReportService {
     public Long create(final ReportDTO reportDTO) {
         final Report report = new Report();
         roadmapToEntity(reportDTO, report);
+        // 생성 시간이 설정되지 않은 경우 현재 시간으로 설정
+        if (report.getCreatedAt() == null) {
+            report.setCreatedAt(OffsetDateTime.now());
+        }
         return reportRepository.save(report).getId();
     }
 
     public void update(final Long id, final ReportDTO reportDTO) {
         final Report report = reportRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
+        
+        // 기존 생성 시간 백업
+        final OffsetDateTime originalCreatedAt = report.getCreatedAt();
+        
         roadmapToEntity(reportDTO, report);
+        
+        // 생성 시간은 업데이트하지 않고 기존 값 유지
+        report.setCreatedAt(originalCreatedAt);
+        
         reportRepository.save(report);
     }
 

@@ -64,10 +64,9 @@ public class ReportController {
     }
 
     @DeleteMapping("/{reportsId}")
-    @ApiResponse(responseCode = "204")
-    public ResponseEntity<Void> deleteReport(@PathVariable(name = "reportsId") final Long reportsId) {
+    public ResponseEntity<com.gitsunjaeab.mapick.common.response.ApiResponse> deleteReport(@PathVariable(name = "reportsId") final Long reportsId) {
         reportService.delete(reportsId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(com.gitsunjaeab.mapick.common.response.ApiResponse.of(com.gitsunjaeab.mapick.common.response.ResponseCode.OK, "신고가 성공적으로 삭제되었습니다."));
     }
 
 }
