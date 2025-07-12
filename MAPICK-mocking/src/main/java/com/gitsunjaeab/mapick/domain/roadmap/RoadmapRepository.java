@@ -14,4 +14,5 @@ public interface RoadmapRepository extends JpaRepository<Roadmap, Long> {
     Roadmap findFirstByOriginalRoadmapAndIdNot(
         Roadmap roadmap, final Long id);
 
+    List<Roadmap> findAllByIsPublicTrueAndRoadmapTypeAndCategoryId(RoadmapType roadmapType, Long categoryId);
 }

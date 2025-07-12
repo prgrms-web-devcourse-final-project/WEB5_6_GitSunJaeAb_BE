@@ -2,12 +2,13 @@ package com.gitsunjaeab.mapick.api.roadmap;
 
 import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapListResponse;
+import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapRequest;
 import com.gitsunjaeab.mapick.application.roadmap.RoadmapService;
+import com.gitsunjaeab.mapick.common.response.ApiResponse;
+import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.util.ReferencedException;
 import com.gitsunjaeab.mapick.util.ReferencedWarning;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -37,35 +39,65 @@ public class RoadmapController {
         return ResponseEntity.ok(response);
     }
 
-    // 전체 로드맵(PERSONAL) 조회
+    // 로드맵(PERSONAL) 조회
     @GetMapping("/personal")
-    public ResponseEntity<RoadmapListResponse> getAllPersonalRoadmaps() {
-        RoadmapListResponse response = roadmapService.getAllPersonalRoadmapsWithCitation();
-        return ResponseEntity.ok(response);
+    public ResponseEntity<RoadmapListResponse> getRoadmaps(
+        @RequestParam(required = false) Long categoryId) {
+        if (categoryId == null) {
+            // 전체 조회
+            return ResponseEntity.ok(roadmapService.getAllPersonalRoadmapsWithCitation());
+        } else {
+            // 카테고리별 조회
+            return ResponseEntity.ok(roadmapService.getPersonalRoadmapsByCategory(categoryId));
+        }
     }
 
-    // 전체 공유지도 조회
+    // 공유지도(SHARED) 조회
     @GetMapping("/shared")
-    public ResponseEntity<RoadmapListResponse> getAllSharedRoadmaps() {
-        RoadmapListResponse response = roadmapService.getAllSharedRoadmapsWithCitation();
-        return ResponseEntity.ok(response);
+    public ResponseEntity<RoadmapListResponse> getSharedRoadmaps(
+        @RequestParam(required = false) Long categoryId) {
+        if (categoryId == null) {
+            // 전체 조회
+            return ResponseEntity.ok(roadmapService.getAllSharedRoadmapsWithCitation());
+        } else {
+            // 카테고리별 조회
+            return ResponseEntity.ok(roadmapService.getSharedRoadmapsByCategory(categoryId));
+        }
     }
 
-    // TODO 카테고리에 따른 로드맵 조회 >> {categoryId} 활용??
-
-    // TODO 해시태그로 로드맵 조회 >> {hashtagId} 활용??
+    // TODO 해시태그로 로드맵 검색 >> {hashtagId} 활용??
 
     // 로드맵 생성
-    @PostMapping
-    @ApiResponse(responseCode = "201")
-    public ResponseEntity<Long> createRoadmaps(@RequestBody @Valid final RoadmapDTO mapDTO) {
-        final Long createdId = roadmapService.create(mapDTO); // TODO 해시태그 설정 추가
-        return new ResponseEntity<>(createdId, HttpStatus.CREATED);
+    @PostMapping("/personal")
+    public ResponseEntity<ApiResponse> createRoadmap(@RequestBody @Valid final RoadmapRequest request) {
+//        final Long createdId = roadmapService.create(request);
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "로드맵 생성 완료"));
     }
 
-    // TODO 개인 지도 생성 >> /personal
+    // 공유지도 생성
+    @PostMapping("/shared")
+    public ResponseEntity<ApiResponse> createSharedRoadmap(@RequestBody @Valid final RoadmapRequest request) {
+//        final Long createdId = roadmapService.create(request);
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "공유지도 생성 완료"));
+    }
 
-    // TODO 공유 지도 생성 >> /shared
+    // 로드맵 수정
+    @PutMapping("/personal/{roadmapId}")
+    public ResponseEntity<ApiResponse> updateRoadmap(
+        @PathVariable(name = "roadmapId") final Long roadmapId,
+        @RequestBody @Valid final RoadmapRequest request) {
+//        roadmapService.update(roadmapId, request);
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "로드맵 수정 완료"));
+    }
+
+    // 공유지도 수정
+    @PutMapping("/shared/{roadmapId}")
+    public ResponseEntity<ApiResponse> updateSharedRoadmap(
+        @PathVariable(name = "roadmapId") final Long roadmapId,
+        @RequestBody @Valid final RoadmapRequest request) {
+//        roadmapService.update(roadmapId, request);
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "공유지도 수정 완료"));
+    }
 
     // TODO 특정 회원의 지도 목록 조회
 
@@ -76,25 +108,15 @@ public class RoadmapController {
         return ResponseEntity.ok(roadmapService.get(roadmapId));
     }
 
-    // 지도 수정
-    @PutMapping("/{roadmapId}")
-    public ResponseEntity<Long> updateRoadmap(
-        @PathVariable(name = "roadmapId") final Long roadmapId,
-        @RequestBody @Valid final RoadmapDTO roadmapDTO) {
-        roadmapService.update(roadmapId, roadmapDTO);
-        return ResponseEntity.ok(roadmapId);
-    }
-
-    // 지도 삭제
+    // 로드맵/공유지도 삭제
     @DeleteMapping("/{roadmapId}")
-    @ApiResponse(responseCode = "204")
-    public ResponseEntity<Void> deleteRoadmap(
+    public ResponseEntity<ApiResponse> deleteRoadmap(
         @PathVariable(name = "roadmapId") final Long roadmapId) {
-        final ReferencedWarning referencedWarning = roadmapService.getReferencedWarning(roadmapId);
-        if (referencedWarning != null) {
-            throw new ReferencedException(referencedWarning);
-        }
-        roadmapService.delete(roadmapId);
-        return ResponseEntity.noContent().build();
+//        final ReferencedWarning referencedWarning = roadmapService.getReferencedWarning(roadmapId);
+//        if (referencedWarning != null) {
+//            throw new ReferencedException(referencedWarning);
+//        }
+//        roadmapService.delete(roadmapId);
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "삭제 완료"));
     }
 }

@@ -2,7 +2,6 @@ package com.gitsunjaeab.mapick.application.roadmap;
 
 import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapListResponse;
-import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
 import com.gitsunjaeab.mapick.domain.report.Report;
 import com.gitsunjaeab.mapick.domain.report.ReportRepository;
@@ -27,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -75,8 +73,20 @@ public class RoadmapService {
     }
 
     @Transactional(readOnly = true)
+    public RoadmapListResponse getPersonalRoadmapsByCategory(Long categoryId) {
+        List<Roadmap> roadmaps = roadmapRepository.findAllByIsPublicTrueAndRoadmapTypeAndCategoryId(RoadmapType.PERSONAL, categoryId);
+        return buildRoadmapListResponse(roadmaps);
+    }
+
+    @Transactional(readOnly = true)
     public RoadmapListResponse getAllSharedRoadmapsWithCitation() {
         List<Roadmap> roadmaps = roadmapRepository.findAllByIsPublicTrueAndRoadmapType(RoadmapType.SHARED);
+        return buildRoadmapListResponse(roadmaps);
+    }
+
+    @Transactional(readOnly = true)
+    public RoadmapListResponse getSharedRoadmapsByCategory(Long categoryId) {
+        List<Roadmap> roadmaps = roadmapRepository.findAllByIsPublicTrueAndRoadmapTypeAndCategoryId(RoadmapType.SHARED, categoryId);
         return buildRoadmapListResponse(roadmaps);
     }
 
@@ -99,24 +109,26 @@ public class RoadmapService {
         return RoadmapListResponse.of(roadmaps, citationCountMap);
     }
 
+//    @Transactional
+//    public Long create(final RoadmapRequest request) {
+//        final Roadmap roadmap =  new Roadmap();
+//        roadmapToEntity(request, roadmap);
+//        return roadmapRepository.save(roadmap).getId();
+//    }
+
     public RoadmapDTO get(final Long id) {
         return roadmapRepository.findById(id)
                 .map(map -> roadmapToDTO(map, new RoadmapDTO()))
                 .orElseThrow(NotFoundException::new);
     }
 
-    public Long create(final RoadmapDTO roadmapDTO) {
-        final Roadmap roadmap =  new Roadmap();
-        roadmapToEntity(roadmapDTO, roadmap);
-        return roadmapRepository.save(roadmap).getId();
-    }
 
-    public void update(final Long id, final RoadmapDTO roadmapDTO) {
-        final Roadmap roadmap = roadmapRepository.findById(id)
-                .orElseThrow(NotFoundException::new);
-        roadmapToEntity(roadmapDTO, roadmap);
-        roadmapRepository.save(roadmap);
-    }
+//    public void update(final Long id, final RoadmapRequest request) {
+//        final Roadmap roadmap = roadmapRepository.findById(id)
+//                .orElseThrow(NotFoundException::new);
+//        roadmapToEntity(request, roadmap);
+//        roadmapRepository.save(roadmap);
+//    }
 
     public void delete(final Long id) {
         roadmapRepository.deleteById(id);
@@ -140,28 +152,41 @@ public class RoadmapService {
         return roadmapDTO;
     }
 
-    private Roadmap roadmapToEntity(final RoadmapDTO roadmapDTO, final Roadmap roadmap) {
-        roadmap.setTitle(roadmapDTO.getTitle());
-        roadmap.setDescription(roadmapDTO.getDescription());
-        roadmap.setThumbnail(roadmapDTO.getThumbnail());
-        roadmap.setIsPublic(roadmapDTO.getIsPublic());
-        roadmap.setIsAnimated(roadmapDTO.getIsAnimated());
-        roadmap.setLikeCount(roadmapDTO.getLikeCount());
-        roadmap.setViewCount(roadmapDTO.getViewCount());
-        roadmap.setRoadmapType(roadmapDTO.getRoadmapType());
-        roadmap.setCreatedAt(roadmapDTO.getCreatedAt());
-        roadmap.setUpdatedAt(roadmapDTO.getUpdatedAt());
-        roadmap.setDeletedAt(roadmapDTO.getDeletedAt());
-        final Member member = roadmapDTO.getMember() == null ? null : memberRepository.findById(
-                roadmapDTO.getMember())
-                .orElseThrow(() -> new NotFoundException("member not found"));
-        roadmap.setMember(member);
-        final Roadmap originalMap = roadmapDTO.getOriginalRoadmap() == null ? null : roadmapRepository.findById(
-                roadmapDTO.getOriginalRoadmap())
-                .orElseThrow(() -> new NotFoundException("originalMap not found"));
-        roadmap.setOriginalRoadmap(originalMap);
-        return roadmap;
-    }
+//    private Roadmap roadmapToEntity(final RoadmapRequest request, final Roadmap roadmap) {
+//        roadmap.setTitle(request.getTitle());
+//        roadmap.setDescription(request.getDescription());
+//        roadmap.setThumbnail(request.getThumbnail());
+//        roadmap.setIsPublic(request.getIsPublic());
+//
+//        Set<RoadmapHashtagRelation> relations = request.getHashtags().stream()
+//            .map(hashtagDTO -> {
+//                RoadmapHashtagRelation relation = new RoadmapHashtagRelation();
+//                relation.setHashtag(new Hashtag(hashtagDTO.getId()));
+//                relation.setRoadmap(roadmap);
+//                return relation;
+//            })
+//            .collect(Collectors.toSet());
+//        roadmap.setRoadmapMapHashtags(relations);
+//
+//        roadmap.setIsAnimated(request.getIsAnimated());
+//        roadmap.setLikeCount(request.getLikeCount());
+//        roadmap.setViewCount(request.getViewCount());
+//        roadmap.setRoadmapType(RoadmapType.valueOf(request.getRoadmapType()));
+//        roadmap.setCreatedAt(request.getCreatedAt());
+//        roadmap.setUpdatedAt(request.getUpdatedAt());
+//        roadmap.setDeletedAt(request.getDeletedAt());
+//
+//        final Member member = request.getMember() == null ? null : memberRepository.findById(request.getMember())
+//            .orElseThrow(() -> new NotFoundException("member not found"));
+//        roadmap.setMember(member);
+//
+//        final Roadmap originalMap = request.getOriginalRoadmap() == null ? null : roadmapRepository.findById(request.getOriginalRoadmap())
+//            .orElseThrow(() -> new NotFoundException("originalMap not found"));
+//        roadmap.setOriginalRoadmap(originalMap);
+//
+//        return roadmap;
+//    }
+
 
     public ReferencedWarning getReferencedWarning(final Long id) {
         final ReferencedWarning referencedWarning = new ReferencedWarning();
@@ -211,4 +236,5 @@ public class RoadmapService {
         }
         return null;
     }
+
 }

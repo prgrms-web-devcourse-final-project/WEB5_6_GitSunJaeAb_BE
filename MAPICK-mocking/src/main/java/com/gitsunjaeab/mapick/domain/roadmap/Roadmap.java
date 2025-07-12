@@ -89,9 +89,6 @@ public class Roadmap {
     @JoinColumn(name = "original_roadmap_id")
     private Roadmap originalRoadmap;
 
-    @OneToMany(mappedBy = "originalRoadmap")
-    private Set<Roadmap> originalRoadmaps = new HashSet<>();
-
     @OneToMany(mappedBy = "roadmap")
     private Set<RoadmapEditor> roadmapEditors = new HashSet<>();
 
@@ -109,5 +106,4 @@ public class Roadmap {
 
     @OneToMany(mappedBy = "roadmap")
     private Set<Report> roadmapReports = new HashSet<>();
-
 }
