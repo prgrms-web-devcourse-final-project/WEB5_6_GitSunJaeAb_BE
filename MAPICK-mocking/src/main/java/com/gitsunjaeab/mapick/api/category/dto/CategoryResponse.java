@@ -1,7 +1,7 @@
 package com.gitsunjaeab.mapick.api.category.dto;
 
-import com.gitsunjaeab.mapick.api.common.BaseApiResponse;
-import com.gitsunjaeab.mapick.api.common.ResponseCode;
+import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
+import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.category.Category;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

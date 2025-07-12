@@ -1,4 +1,4 @@
-package com.gitsunjaeab.mapick.api.common;
+package com.gitsunjaeab.mapick.common.response;
 
 import java.time.LocalDateTime;
 
