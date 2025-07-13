@@ -2,29 +2,24 @@ package com.gitsunjaeab.mapick.api.report;
 
 import com.gitsunjaeab.mapick.api.report.dto.ReportDetailResponse;
 import com.gitsunjaeab.mapick.api.report.dto.ReportListResponse;
-import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
-import com.gitsunjaeab.mapick.domain.roadmap.MarkerRepository;
-import com.gitsunjaeab.mapick.domain.member.MemberRepository;
-import com.gitsunjaeab.mapick.domain.quest.QuestRepository;
+import com.gitsunjaeab.mapick.api.report.dto.MapReportRequest;
+import com.gitsunjaeab.mapick.api.report.dto.QuestReportRequest;
+import com.gitsunjaeab.mapick.api.report.dto.MarkerReportRequest;
+import com.gitsunjaeab.mapick.api.report.dto.ReportProcessRequest;
 import com.gitsunjaeab.mapick.application.report.ReportService;
-import com.gitsunjaeab.mapick.api.report.dto.ReportDTO;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import com.gitsunjaeab.mapick.common.response.ApiResponse;
+import com.gitsunjaeab.mapick.common.response.ResponseCode;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = "/reports", produces = MediaType.APPLICATION_JSON_VALUE)
+@Tag(name = "Report", description = "신고 관리 API")
 public class ReportController {
 
     private final ReportService reportService;
@@ -33,41 +28,63 @@ public class ReportController {
         this.reportService = reportService;
     }
 
+    // ===== 관리자용 API =====
+    
     // 전체 신고 조회 (관리자)
     @GetMapping
+    @Operation(summary = "전체 신고 조회", description = "[관리자용] 모든 신고 내역을 조회합니다.")
     public ResponseEntity<ReportListResponse> getAllReports() {
         ReportListResponse response = reportService.findAll();
-
         return ResponseEntity.ok(response);
     }
 
     // 특정 신고 상세 조회 (관리자)
     @GetMapping("/{reportId}")
-    public ResponseEntity<ReportDetailResponse> getReport(@PathVariable(name = "reportId") final Long roadmapId) {
-        ReportDetailResponse response = reportService.getReportDetail(roadmapId);
-
+    @Operation(summary = "특정 신고 상세 조회", description = "[관리자용] 특정 신고의 상세 정보를 조회합니다.")
+    public ResponseEntity<ReportDetailResponse> getReport(@PathVariable(name = "reportId") final Long reportId) {
+        ReportDetailResponse response = reportService.getReportDetail(reportId);
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping
-    @ApiResponse(responseCode = "201")
-    public ResponseEntity<Long> createReport(@RequestBody @Valid final ReportDTO reportDTO) {
-        final Long createdId = reportService.create(reportDTO);
-        return new ResponseEntity<>(createdId, HttpStatus.CREATED);
+    // 신고 처리 완료 (관리자)
+    @PutMapping("/admin/{reportId}")
+    @Operation(summary = "신고 처리 완료", description = "[관리자용] 신고 상태를 변경하여 처리 완료합니다.")
+    public ResponseEntity<ApiResponse> processReport(@PathVariable(name = "reportId") final Long reportId,
+            @RequestBody @Valid final ReportProcessRequest request) {
+        reportService.processReport(reportId, request);
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "신고 처리가 완료되었습니다."));
     }
 
-    @PutMapping("/{reportsId}")
-    public ResponseEntity<Long> updateReport(@PathVariable(name = "reportsId") final Long reportsId,
-            @RequestBody @Valid final ReportDTO reportDTO) {
-        reportService.update(reportsId, reportDTO);
-        return ResponseEntity.ok(reportsId);
+    // ===== 사용자용 API (신고 생성) =====
+    
+    // 지도(로드맵) 신고 생성
+    @PostMapping("/maps/{mapId}")
+    @Operation(summary = "지도 신고 생성", description = "[사용자용] 특정 지도(로드맵)에 대한 신고를 접수합니다.")
+    public ResponseEntity<ApiResponse> reportMap(@PathVariable(name = "mapId") final Long mapId,
+            @RequestBody @Valid final MapReportRequest request) {
+        reportService.createMapReport(mapId, request);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.of(ResponseCode.OK, "지도 신고가 접수되었습니다."));
     }
 
-    @DeleteMapping("/{reportsId}")
-    public ResponseEntity<com.gitsunjaeab.mapick.common.response.ApiResponse> deleteReport(@PathVariable(name = "reportsId") final Long reportsId) {
-        reportService.delete(reportsId);
-        return ResponseEntity.ok(com.gitsunjaeab.mapick.common.response.ApiResponse.of(com.gitsunjaeab.mapick.common.response.ResponseCode.OK, "신고가 성공적으로 삭제되었습니다."));
+    // 퀘스트 신고 생성
+    @PostMapping("/quests/{questId}")
+    @Operation(summary = "퀘스트 신고 생성", description = "[사용자용] 특정 퀘스트에 대한 신고를 접수합니다.")
+    public ResponseEntity<ApiResponse> reportQuest(@PathVariable(name = "questId") final Long questId,
+            @RequestBody @Valid final QuestReportRequest request) {
+        reportService.createQuestReport(questId, request);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.of(ResponseCode.OK, "퀘스트 신고가 접수되었습니다."));
     }
 
+    // 마커 신고 생성
+    @PostMapping("/markers/{markerId}")
+    @Operation(summary = "마커 신고 생성", description = "[사용자용] 특정 마커에 대한 신고를 접수합니다.")
+    public ResponseEntity<ApiResponse> reportMarker(@PathVariable(name = "markerId") final Long markerId,
+            @RequestBody @Valid final MarkerReportRequest request) {
+        reportService.createMarkerReport(markerId, request);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.of(ResponseCode.OK, "마커 신고가 접수되었습니다."));
+    }
 }
 

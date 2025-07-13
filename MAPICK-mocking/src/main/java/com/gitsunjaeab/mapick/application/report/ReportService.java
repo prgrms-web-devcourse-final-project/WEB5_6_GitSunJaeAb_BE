@@ -5,9 +5,14 @@ import com.gitsunjaeab.mapick.api.quest.dto.QuestDTO;
 import com.gitsunjaeab.mapick.api.report.dto.ReportDetailDTO;
 import com.gitsunjaeab.mapick.api.report.dto.ReportDetailResponse;
 import com.gitsunjaeab.mapick.api.report.dto.ReportListResponse;
+import com.gitsunjaeab.mapick.api.report.dto.MapReportRequest;
+import com.gitsunjaeab.mapick.api.report.dto.QuestReportRequest;
+import com.gitsunjaeab.mapick.api.report.dto.MarkerReportRequest;
+import com.gitsunjaeab.mapick.api.report.dto.ReportProcessRequest;
 import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.marker.MarkerDTO;
 import com.gitsunjaeab.mapick.domain.report.ReportRepository;
+import com.gitsunjaeab.mapick.domain.report.ReportStatus;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.Marker;
 import com.gitsunjaeab.mapick.domain.roadmap.MarkerRepository;
@@ -27,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
+@Transactional
 public class ReportService {
 
     private final ReportRepository reportRepository;
@@ -45,6 +51,7 @@ public class ReportService {
         this.questRepository = questRepository;
     }
 
+    @Transactional(readOnly = true)
     public ReportListResponse findAll() {
         final List<Report> reports = reportRepository.findAll(Sort.by("id"));
         return ReportListResponse.of(reports);
@@ -78,6 +85,80 @@ public class ReportService {
         return ReportDetailResponse.of(dto);
     }
 
+    // ===== 관리자용 메서드 =====
+    
+    // 신고 처리 완료 (관리자용)
+    public void processReport(Long reportId, ReportProcessRequest request) {
+        Report report = reportRepository.findById(reportId)
+                .orElseThrow(() -> new NotFoundException("신고를 찾을 수 없습니다"));
+        
+        report.setStatus(request.getStatus());
+        
+        // 처리 완료 시 해결 시간 설정
+        if (request.getStatus() == ReportStatus.RESOLVED) {
+            report.setResolvedAt(OffsetDateTime.now());
+        }
+        
+        reportRepository.save(report);
+    }
+
+    // ===== 사용자용 신고 생성 메서드들 =====
+    
+    // 지도(로드맵) 신고 생성
+    public void createMapReport(Long mapId, MapReportRequest request) {
+        Member reporter = memberRepository.findById(request.getReporterId())
+                .orElseThrow(() -> new NotFoundException("신고자를 찾을 수 없습니다"));
+        
+        Roadmap roadmap = roadmapRepository.findById(mapId)
+                .orElseThrow(() -> new NotFoundException("지도를 찾을 수 없습니다"));
+        
+        Report report = new Report();
+        report.setReporter(reporter);
+        report.setDescription(request.getDescription());
+        report.setRoadmap(roadmap);
+        report.setStatus(ReportStatus.REPORTED);
+        report.setCreatedAt(OffsetDateTime.now());
+        
+        reportRepository.save(report);
+    }
+    
+    // 퀘스트 신고 생성
+    public void createQuestReport(Long questId, QuestReportRequest request) {
+        Member reporter = memberRepository.findById(request.getReporterId())
+                .orElseThrow(() -> new NotFoundException("신고자를 찾을 수 없습니다"));
+        
+        Quest quest = questRepository.findById(questId)
+                .orElseThrow(() -> new NotFoundException("퀘스트를 찾을 수 없습니다"));
+        
+        Report report = new Report();
+        report.setReporter(reporter);
+        report.setDescription(request.getDescription());
+        report.setQuest(quest);
+        report.setStatus(ReportStatus.REPORTED);
+        report.setCreatedAt(OffsetDateTime.now());
+        
+        reportRepository.save(report);
+    }
+    
+    // 마커 신고 생성
+    public void createMarkerReport(Long markerId, MarkerReportRequest request) {
+        Member reporter = memberRepository.findById(request.getReporterId())
+                .orElseThrow(() -> new NotFoundException("신고자를 찾을 수 없습니다"));
+        
+        Marker marker = markerRepository.findById(markerId)
+                .orElseThrow(() -> new NotFoundException("마커를 찾을 수 없습니다"));
+        
+        Report report = new Report();
+        report.setReporter(reporter);
+        report.setDescription(request.getDescription());
+        report.setMarker(marker);
+        report.setStatus(ReportStatus.REPORTED);
+        report.setCreatedAt(OffsetDateTime.now());
+        
+        reportRepository.save(report);
+    }
+
+    // ===== 기존 메서드들 (하위 호환성 유지) =====
 
     public Long create(final ReportDTO reportDTO) {
         final Report report = new Report();

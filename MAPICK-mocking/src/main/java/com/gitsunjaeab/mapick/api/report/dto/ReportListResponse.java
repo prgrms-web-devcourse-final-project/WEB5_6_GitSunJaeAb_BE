@@ -31,8 +31,8 @@ public class ReportListResponse implements BaseApiResponse {
         List<ReportDTO> reportDTOS = reportEntities.stream()
             .map(r -> new ReportDTO(
                 r.getId(),
-                r.getReporter().getId(),
-                r.getReportedMember().getId(),
+                r.getReporter() != null ? r.getReporter().getId() : null,
+                r.getReportedMember() != null ? r.getReportedMember().getId() : null,
                 r.getDescription(),
                 r.getRoadmap() != null ? r.getRoadmap().getId() : null,
                 r.getMarker() != null ? r.getMarker().getId() : null,
