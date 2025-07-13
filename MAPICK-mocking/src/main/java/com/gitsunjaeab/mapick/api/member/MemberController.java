@@ -1,24 +1,38 @@
 package com.gitsunjaeab.mapick.api.member;
 
-import com.gitsunjaeab.mapick.api.member.dto.*;
-import com.gitsunjaeab.mapick.application.member.MemberService;
+import com.gitsunjaeab.mapick.api.member.dto.MemberDTO;
+import com.gitsunjaeab.mapick.api.member.dto.MemberInterestDTO;
+import com.gitsunjaeab.mapick.api.member.dto.MemberInterestRequest;
+import com.gitsunjaeab.mapick.api.member.dto.MemberInterestResponse;
+import com.gitsunjaeab.mapick.api.member.dto.MemberListResponse;
+import com.gitsunjaeab.mapick.api.member.dto.MemberProfileResponse;
+import com.gitsunjaeab.mapick.api.member.dto.MemberProfileUpdateRequest;
+import com.gitsunjaeab.mapick.api.member.dto.MemberProfileUpdateResponse;
+import com.gitsunjaeab.mapick.api.member.dto.MemberResponse;
+import com.gitsunjaeab.mapick.api.member.dto.MemberUpdateRequest;
+import com.gitsunjaeab.mapick.api.member.dto.PasswordUpdateRequest;
+import com.gitsunjaeab.mapick.api.member.dto.PasswordVerifyRequest;
+import com.gitsunjaeab.mapick.api.member.dto.SimpleMessageResponse;
 import com.gitsunjaeab.mapick.application.member.MemberInterestService;
+import com.gitsunjaeab.mapick.application.member.MemberService;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.member.MemberInterest;
-import com.gitsunjaeab.mapick.domain.roadmap.LayerLibrary;
-import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
 import com.gitsunjaeab.mapick.util.ReferencedException;
 import com.gitsunjaeab.mapick.util.ReferencedWarning;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController

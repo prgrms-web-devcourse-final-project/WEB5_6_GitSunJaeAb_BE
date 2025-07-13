@@ -19,5 +19,13 @@ public class ApiResponse implements BaseApiResponse {
             LocalDateTime.now()
         );
     }
+
+    public static ApiResponse of(ResponseCode responseCode) {
+        return new ApiResponse(
+            responseCode.getCode(),
+            responseCode.getMessage(),
+            LocalDateTime.now()
+        );
+    }
 }
 

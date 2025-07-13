@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = "/reports", produces = MediaType.APPLICATION_JSON_VALUE)
-@Tag(name = "Report", description = "신고 관리 API")
+@Tag(name = "신고 관리 API")
 public class ReportController {
 
     private final ReportService reportService;

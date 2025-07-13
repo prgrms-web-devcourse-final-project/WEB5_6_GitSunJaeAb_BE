@@ -66,7 +66,7 @@ public class MemberDTO {
         this.nickname = member.getNickname();
         this.email = member.getEmail();
         this.password = member.getPassword();
-        this.loginType = member.getLoginType();
+        this.loginType = member.getLoginType().name();
         this.provider = member.getProvider();
         this.role = member.getRole();
         this.status = member.getStatus();

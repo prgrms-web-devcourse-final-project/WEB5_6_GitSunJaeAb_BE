@@ -74,7 +74,7 @@ public class MemberResponse implements BaseApiResponse {
             member.getNickname(),
             member.getEmail(),
             member.getPassword(),
-            member.getLoginType(),
+            member.getLoginType().name(),
             member.getProvider(),
             member.getRole(),
             member.getStatus(),

@@ -54,7 +54,7 @@ public class MemberProfileResponse implements BaseApiResponse {
         memberInfo.setName(member.getName());
         memberInfo.setNickname(member.getNickname());
         memberInfo.setEmail(member.getEmail());
-        memberInfo.setLoginType(member.getLoginType());
+        memberInfo.setLoginType(member.getLoginType().name());
         memberInfo.setProvider(member.getProvider());
         memberInfo.setRole(member.getRole());
         memberInfo.setStatus(member.getStatus());

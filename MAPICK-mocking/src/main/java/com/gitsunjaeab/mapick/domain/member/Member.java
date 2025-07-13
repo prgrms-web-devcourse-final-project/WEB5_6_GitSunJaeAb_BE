@@ -1,5 +1,6 @@
 package com.gitsunjaeab.mapick.domain.member;
 
+import com.gitsunjaeab.mapick.domain.auth.LoginType;
 import com.gitsunjaeab.mapick.domain.roadmap.Bookmark;
 import com.gitsunjaeab.mapick.domain.comment.Comment;
 import com.gitsunjaeab.mapick.domain.roadmap.Layer;
@@ -13,6 +14,8 @@ import com.gitsunjaeab.mapick.domain.quest.QuestRank;
 import com.gitsunjaeab.mapick.domain.report.Report;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -22,6 +25,8 @@ import jakarta.persistence.Table;
 import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.Set;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -30,6 +35,8 @@ import lombok.Setter;
 @Table(name = "Members")
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 public class Member {
 
     @Id
@@ -61,8 +68,9 @@ public class Member {
     @Column
     private String password;
 
-    @Column(nullable = false)
-    private String loginType;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "login_type")
+    private LoginType loginType;
 
     @Column
     private String provider;

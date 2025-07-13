@@ -1,3 +1,11 @@
+jwt:
+  secret: ${JWT_SECRET}
+  access-expiration: ${JWT_ACCESS_EXPIRATION}
+  refresh-expiration: ${JWT_REFRESH_EXPIRATION}
+
+server:
+  port: ${PORT:9000}
+
 spring:
   datasource:
     url: ${JDBC_DATABASE_URL}
@@ -22,6 +30,9 @@ spring:
             non_contextual_creation: true
         id:
           new_generator_mappings: true
+  config:
+    import: sm://
+
   web:
     resources:
       static-locations: classpath:/static/,file:${user.dir}/uploads/

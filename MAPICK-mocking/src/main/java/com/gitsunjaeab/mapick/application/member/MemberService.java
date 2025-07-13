@@ -1,6 +1,11 @@
 package com.gitsunjaeab.mapick.application.member;
 
+import com.gitsunjaeab.mapick.api.auth.dto.request.SignupRequest;
 import com.gitsunjaeab.mapick.api.member.dto.MemberListResponse;
+import com.gitsunjaeab.mapick.api.member.dto.SocialUserInfo;
+import com.gitsunjaeab.mapick.common.response.ResponseCode;
+import com.gitsunjaeab.mapick.domain.auth.LoginType;
+import com.gitsunjaeab.mapick.domain.auth.Role;
 import com.gitsunjaeab.mapick.domain.roadmap.Bookmark;
 import com.gitsunjaeab.mapick.domain.roadmap.BookmarkRepository;
 import com.gitsunjaeab.mapick.domain.comment.Comment;
@@ -28,11 +33,16 @@ import com.gitsunjaeab.mapick.domain.quest.QuestRank;
 import com.gitsunjaeab.mapick.domain.quest.QuestRankRepository;
 import com.gitsunjaeab.mapick.domain.report.Report;
 import com.gitsunjaeab.mapick.domain.report.ReportRepository;
+import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import com.gitsunjaeab.mapick.util.ReferencedWarning;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.UUID;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 
@@ -52,6 +62,7 @@ public class MemberService {
     private final MemberQuestRepository memberQuestRepository;
     private final QuestRankRepository questRankRepository;
     private final LayerLibraryRepository layerLibraryRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public MemberService(final MemberRepository memberRepository, final RoadmapRepository roadmapRepository,
             final RoadmapEditorRepository roadmapEditorRepository, final LayerRepository layerRepository,
@@ -61,7 +72,7 @@ public class MemberService {
             final ReportRepository reportRepository, final QuestRepository questRepository,
             final MemberQuestRepository memberQuestRepository,
             final QuestRankRepository questRankRepository,
-            final LayerLibraryRepository layerLibraryRepository) {
+            final LayerLibraryRepository layerLibraryRepository, PasswordEncoder passwordEncoder) {
         this.memberRepository = memberRepository;
         this.roadmapRepository = roadmapRepository;
         this.roadmapEditorRepository = roadmapEditorRepository;
@@ -75,6 +86,82 @@ public class MemberService {
         this.memberQuestRepository = memberQuestRepository;
         this.questRankRepository = questRankRepository;
         this.layerLibraryRepository = layerLibraryRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    // 소셜 로그인 시 임시 닉네임 부여
+    public String generateUniqueSocialNickname(String provider) {
+        String nickname;
+        do {
+            int randomNumber = (int) (Math.random() * 1_000_000);
+            nickname = provider + "_" + String.format("%06d", randomNumber);
+        } while (memberRepository.existsByNickname(nickname)); // 중복 체크
+
+        return nickname;
+    }
+
+    // 소셜 로그인 회원 가입
+    public Member registerNewSocialMember(SocialUserInfo userInfo, String provider) {
+
+        String nickname = generateUniqueSocialNickname(provider);
+
+        Member member = Member.builder()
+            .isBlacklisted(false)
+            .name(userInfo.getName())
+            .nickname(nickname)
+            .email(userInfo.getEmail())
+            .password(UUID.randomUUID().toString())
+            .loginType(LoginType.SOCIAL)
+            .provider(provider)
+            .role(String.valueOf(Role.ROLE_USER))
+            .status("ACTIVE")
+            .profileImage(userInfo.getPicture())
+            .createdAt(OffsetDateTime.now())
+            .updatedAt(OffsetDateTime.now())
+            .build();
+
+        Member savedMember;
+
+        try{
+            savedMember = memberRepository.save(member);
+        }catch (DataIntegrityViolationException e){
+            throw new CommonException(ResponseCode.DB_CONSTRAINT_VIOLATION); // DB 제약 조건 위배
+        }
+
+        return savedMember;
+    }
+
+    // 자체 로그인 회원 가입
+    public void signup(SignupRequest request) {
+
+        if (memberRepository.existsByEmail(request.getEmail())) {
+            throw new CommonException(ResponseCode.ALREADY_REGISTERED_EMAIL);
+        }
+
+        if (memberRepository.existsByNickname(request.getNickname())) {
+            throw new CommonException(ResponseCode.NICKNAME_DUPLICATED);
+        }
+
+        Member member = Member.builder()
+            .isBlacklisted(false)
+            .name(request.getName())
+            .nickname(request.getNickname())
+            .email(request.getEmail())
+            .password(passwordEncoder.encode(request.getPassword()))
+            .loginType(LoginType.LOCAL)
+            .provider(null)
+            .role(String.valueOf(Role.ROLE_USER))
+            .status("ACTIVE")
+            .profileImage(null)
+            .createdAt(OffsetDateTime.now())
+            .updatedAt(OffsetDateTime.now())
+            .build();
+
+        try{
+            memberRepository.save(member);
+        }catch (DataIntegrityViolationException e){
+            throw new CommonException(ResponseCode.DB_CONSTRAINT_VIOLATION); // DB 제약 조건 위배
+        }
     }
 
     public MemberListResponse findAll() {
@@ -111,7 +198,7 @@ public class MemberService {
         memberDTO.setNickname(member.getNickname());
         memberDTO.setEmail(member.getEmail());
         memberDTO.setPassword(member.getPassword());
-        memberDTO.setLoginType(member.getLoginType());
+        memberDTO.setLoginType(member.getLoginType().name());
         memberDTO.setProvider(member.getProvider());
         memberDTO.setRole(member.getRole());
         memberDTO.setStatus(member.getStatus());
@@ -128,7 +215,7 @@ public class MemberService {
         member.setNickname(memberDTO.getNickname());
         member.setEmail(memberDTO.getEmail());
         member.setPassword(memberDTO.getPassword());
-        member.setLoginType(memberDTO.getLoginType());
+        member.setLoginType(LoginType.valueOf(memberDTO.getLoginType()));
         member.setProvider(memberDTO.getProvider());
         member.setRole(memberDTO.getRole());
         member.setStatus(memberDTO.getStatus());
