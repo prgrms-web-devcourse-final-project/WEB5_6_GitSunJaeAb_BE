@@ -1,5 +1,6 @@
 package com.gitsunjaeab.mapick.application.roadmap;
 
+import com.gitsunjaeab.mapick.api.roadmap.dto.marker.MarkerListResponse;
 import com.gitsunjaeab.mapick.domain.roadmap.Layer;
 import com.gitsunjaeab.mapick.domain.roadmap.LayerRepository;
 import com.gitsunjaeab.mapick.api.roadmap.dto.marker.MarkerDTO;
@@ -33,11 +34,9 @@ public class MarkerService {
         this.reportRepository = reportRepository;
     }
 
-    public List<MarkerDTO> findAll() {
-        final List<Marker> markers = markerRepository.findAll(Sort.by("id"));
-        return markers.stream()
-                .map(marker -> roadmapToDTO(marker, new MarkerDTO()))
-                .toList();
+    public MarkerListResponse findAllMarkersOnLayer(Long layerId) {
+        final List<Marker> markers = markerRepository.findAllByLayer_Id(layerId);
+        return MarkerListResponse.of(markers);
     }
 
     public MarkerDTO get(final Long id) {

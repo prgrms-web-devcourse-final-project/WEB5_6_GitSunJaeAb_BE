@@ -1,5 +1,7 @@
 package com.gitsunjaeab.mapick.api.roadmap;
 
+import ch.qos.logback.classic.boolex.MarkerList;
+import com.gitsunjaeab.mapick.api.roadmap.dto.marker.MarkerListResponse;
 import com.gitsunjaeab.mapick.api.roadmap.dto.marker.MarkerRequest;
 import com.gitsunjaeab.mapick.application.roadmap.MarkerService;
 import com.gitsunjaeab.mapick.common.response.ApiResponse;
@@ -12,11 +14,13 @@ import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -36,10 +40,14 @@ public class MarkerController {
         this.layerRepository = layerRepository;
     }
 
-//    @GetMapping
-//    public ResponseEntity<List<MarkerDTO>> getAllMarkers() {
-//        return ResponseEntity.ok(markerService.findAll());
-//    }
+    // 특정 레이어에 적용된 마커 조회
+    @GetMapping
+    @Operation(summary = "마커 목록 조회", description = "[사용자용] 특정 레이어에 놓인 마커 전체 조회")
+    public ResponseEntity<MarkerListResponse> getAllMarkersOnLayer(
+        @RequestParam(required = false) Long layerId
+    ) {
+        return ResponseEntity.ok(markerService.findAllMarkersOnLayer(layerId));
+    }
 
     // 마커 생성
     @PostMapping

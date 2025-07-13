@@ -2,14 +2,14 @@ package com.gitsunjaeab.mapick.api.roadmap.dto.marker;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import java.time.OffsetDateTime;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
-
 
 @Getter
-@Setter
-public class MarkerResponse {
+@AllArgsConstructor
+public class MarkerListRequest {
+
+    private Long id;
 
     @Size(max = 255)
     private String name;
