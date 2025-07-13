@@ -46,13 +46,13 @@ public class LayerController {
         return ResponseEntity.ok(layerService.findAllMemberLayers(memberId));
     }
 
-    // TODO 사용자의 레이어 찜하기
+    // TODO 사용자 >> 레이어 찜하기
 
 
     // 특정 지도에 적용된 레이어 목록 조회
     @GetMapping("/roadmap")
     @Operation(summary = "레이어 목록 조회", description = "[사용자용] 특정 지도에 있는 레이어 전체 조회")
-    public ResponseEntity<LayerListResponse> getAllLayersOnMap(
+    public ResponseEntity<LayerListResponse> getAllLayersOnRoadmap(
         @RequestParam(required = false) Long roadmapId
     ) {
         return ResponseEntity.ok(layerService.findAllLayersOnRoadmap(roadmapId));
