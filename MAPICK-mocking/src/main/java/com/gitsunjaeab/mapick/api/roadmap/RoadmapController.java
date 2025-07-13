@@ -1,14 +1,18 @@
 package com.gitsunjaeab.mapick.api.roadmap;
 
+import com.gitsunjaeab.mapick.api.member.dto.MemberMapsResponse;
 import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapListResponse;
 import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapRequest;
 import com.gitsunjaeab.mapick.application.roadmap.RoadmapService;
 import com.gitsunjaeab.mapick.common.response.ApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
+import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.util.List;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -107,10 +111,18 @@ public class RoadmapController {
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "공유지도 수정 완료"));
     }
 
-    // TODO 특정 회원의 지도 목록 조회
+    // 특정 회원의 작성 로드맵/공유지도 목록 조회
+    @GetMapping("/member")
+    @Operation(summary = "회원 작성 로드맵/공유지도 목록 조회", description = "[제한적 공개] 본인이 작성한 공개/비공개 지도 목록 조회")
+    public ResponseEntity<RoadmapListResponse> getMemberMaps(
+        @RequestParam(required = false) Long memberId) {
+
+        return ResponseEntity.ok(roadmapService.findAllRoadmapsByMember(memberId));
+    }
 
     // 특정 지도 상세 조회
     @GetMapping("/{roadmapId}")
+    @Operation(summary = "지도 상세 조회", description = "[사용자용] 지도 관련 속성 상세 조회")
     public ResponseEntity<RoadmapDTO> getRoadmap(
         @PathVariable(name = "roadmapId") final Long roadmapId) {
         return ResponseEntity.ok(roadmapService.get(roadmapId));
