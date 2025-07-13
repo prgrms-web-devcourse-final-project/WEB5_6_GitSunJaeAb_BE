@@ -301,12 +301,4 @@ public class MemberService {
         return roadmapRepository.findByMember(member);
     }
 
-    // 마이페이지 - 회원 레이어 목록 조회
-    public List<LayerLibrary> getMemberLayers(Long memberId) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
-
-        return layerLibraryRepository.findByMember(member);
-    }
-
 }

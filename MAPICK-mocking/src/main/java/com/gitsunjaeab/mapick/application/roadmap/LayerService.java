@@ -14,6 +14,7 @@ import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import com.gitsunjaeab.mapick.util.ReferencedWarning;
+import java.util.Collections;
 import java.util.List;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -42,6 +43,19 @@ public class LayerService {
         final List<Layer> layers = layerRepository.findAllByRoadmap_Id(roadmapId);
         return LayerListResponse.of(layers);
     }
+
+
+    public LayerListResponse findAllMemberLayers(Long memberId) {
+        List<Long> layerIds = layerLibraryRepository.findLayerIdsByMemberId(memberId);
+
+        if (layerIds.isEmpty()) {
+            return LayerListResponse.of(Collections.emptyList());
+        }
+
+        List<Layer> layers = layerRepository.findAllById(layerIds);
+        return LayerListResponse.of(layers);
+    }
+
 
     public LayerDTO get(final Long id) {
         return layerRepository.findById(id)
@@ -115,5 +129,4 @@ public class LayerService {
         }
         return null;
     }
-
 }

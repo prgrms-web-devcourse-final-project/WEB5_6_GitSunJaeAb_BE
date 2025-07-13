@@ -12,4 +12,9 @@ public interface LayerRepository extends JpaRepository<Layer, Long> {
     Layer findFirstByRoadmap(Roadmap roadmap);
 
     List<Layer> findAllByRoadmap_Id(Long roadmapId);
+
+    // 레이어 Id들로 해당 레이어들 조회 (사용자 찜 레이어 목록 조회)
+    List<Layer> findAllByIdIn(List<Long> ids);
+
+
 }
