@@ -1,13 +1,13 @@
 package com.gitsunjaeab.mapick.api.comment;
 
-import com.gitsunjaeab.mapick.api.comment.dto.CommentDTO;
+import com.gitsunjaeab.mapick.api.comment.dto.CommentListResponse;
+import com.gitsunjaeab.mapick.api.comment.dto.CommentRequest;
 import com.gitsunjaeab.mapick.application.roadmap.CommentService;
-import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
+import com.gitsunjaeab.mapick.common.response.ApiResponse;
+import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
 import jakarta.validation.Valid;
-import java.util.List;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,11 +17,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-@RequestMapping(value = "/roadmaps/comments", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/comments", produces = MediaType.APPLICATION_JSON_VALUE)
 public class CommentController {
 
     private final CommentService commentService;
@@ -31,33 +32,34 @@ public class CommentController {
         this.commentService = commentService;
     }
 
-    // 로드맵 댓글 전체 조회
-    @GetMapping
-    public ResponseEntity<List<CommentDTO>> getAllComments() {
-        return ResponseEntity.ok(commentService.findAll());
+    // 지도(개인 로드맵, 공유지도) 댓글 전체 조회
+    @GetMapping("/roadmaps")
+    public ResponseEntity<CommentListResponse> getAllCommentsInMaps(
+        @RequestParam(required = false) Long roadmapId
+    ) {
+        return ResponseEntity.ok(commentService.findAllCommentsInRoadmaps(roadmapId));
     }
 
-    // 댓글 생성(작성)
-    @PostMapping
-    @ApiResponse(responseCode = "201")
-    public ResponseEntity<Long> createComment(@RequestBody @Valid final CommentDTO commentDTO) {
-        final Long createdId = commentService.create(commentDTO);
-        return new ResponseEntity<>(createdId, HttpStatus.CREATED);
+    // 지도 댓글 생성(작성)
+    @PostMapping("/roadmaps")
+    public ResponseEntity<ApiResponse> createComment(@RequestBody @Valid final CommentRequest request) {
+//        final Long createdId = commentService.create(request);
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "댓글 작성 완료"));
     }
 
-    // 댓글 수정
-    @PutMapping("/{commentId}")
-    public ResponseEntity<Long> updateComment(@PathVariable(name = "commentId") final Long commentId,
-            @RequestBody @Valid final CommentDTO commentDTO) {
-        commentService.update(commentId, commentDTO);
-        return ResponseEntity.ok(commentId);
+
+    // 지도 댓글 수정
+    @PutMapping("/roadmaps/{commentId}")
+    public ResponseEntity<ApiResponse> updateComment(@PathVariable(name = "commentId") final Long commentId,
+            @RequestBody @Valid final CommentRequest request) {
+//        commentService.update(commentId, request);
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "댓글 수정 완료"));
     }
 
-    // 댓글 삭제
-    @DeleteMapping("/{commentId}")
-    @ApiResponse(responseCode = "204")
-    public ResponseEntity<Void> deleteComment(@PathVariable(name = "commentId") final Long commentId) {
+    // 지도 댓글 삭제
+    @DeleteMapping("/roadmaps/{commentId}")
+    public ResponseEntity<ApiResponse> deleteComment(@PathVariable(name = "commentId") final Long commentId) {
         commentService.delete(commentId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "댓글 삭제 완료"));
     }
 }

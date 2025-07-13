@@ -1,15 +1,15 @@
 package com.gitsunjaeab.mapick.application.roadmap;
 
-import com.gitsunjaeab.mapick.domain.roadmap.CommentRepository;
 import com.gitsunjaeab.mapick.api.comment.dto.CommentDTO;
-import com.gitsunjaeab.mapick.domain.roadmap.Comment;
-import com.gitsunjaeab.mapick.domain.member.MemberRepository;
+import com.gitsunjaeab.mapick.api.comment.dto.CommentListResponse;
 import com.gitsunjaeab.mapick.domain.member.Member;
-import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
+import com.gitsunjaeab.mapick.domain.member.MemberRepository;
+import com.gitsunjaeab.mapick.domain.roadmap.Comment;
+import com.gitsunjaeab.mapick.domain.roadmap.CommentRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
+import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import java.util.List;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 
@@ -27,11 +27,9 @@ public class CommentService {
         this.memberRepository = memberRepository;
     }
 
-    public List<CommentDTO> findAll() {
-        final List<Comment> comments = commentRepository.findAll(Sort.by("id"));
-        return comments.stream()
-                .map(comment -> roadmapToDTO(comment, new CommentDTO()))
-                .toList();
+    public CommentListResponse findAllCommentsInRoadmaps(Long roadmapId) {
+        final List<Comment> comments = commentRepository.findAllByRoadmap_Id(roadmapId);
+        return CommentListResponse.of(comments);
     }
 
     public CommentDTO get(final Long id) {

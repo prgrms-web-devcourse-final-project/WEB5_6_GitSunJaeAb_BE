@@ -1,26 +1,22 @@
 package com.gitsunjaeab.mapick.api.comment.dto;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 
 @Getter
 @Setter
+@AllArgsConstructor
 public class CommentRequest {
-
-//    private Long id;
 
     @NotNull
     private String content;
 
-//    @NotNull
-//    private OffsetDateTime createdAt;
-//
-//    private OffsetDateTime updatedAt;
-//
-//    private Long map;
-//
-//    private Long member;
+
+    private Long roadmapId;
+
+    private Long memberId;
 
 }

@@ -1,6 +1,7 @@
 package com.gitsunjaeab.mapick.domain.roadmap;
 
 import com.gitsunjaeab.mapick.domain.member.Member;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 
@@ -10,4 +11,5 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     Comment findFirstByMember(Member member);
 
+    List<Comment> findAllByRoadmap_Id(Long roadmapId);
 }
