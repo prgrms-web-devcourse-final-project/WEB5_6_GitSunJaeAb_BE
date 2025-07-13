@@ -5,6 +5,8 @@ import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapListResponse;
 import com.gitsunjaeab.mapick.api.roadmap.dto.bookmark.BookmarkDTO;
 import com.gitsunjaeab.mapick.application.roadmap.BookmarkService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(value = "/bookmarks", produces = MediaType.APPLICATION_JSON_VALUE)
+@Tag(name = "북마크 관리 API", description = "로드맵 북마크 및 마이페이지 북마크 목록 관련 API")
 public class BookmarkController {
 
     private final BookmarkService bookmarkService;
@@ -27,13 +30,15 @@ public class BookmarkController {
 
     // 북마크 전체 조회 >> NOTE 프론트 데이터 확인용 (추후 삭제예정)
     @GetMapping
+    @Operation(summary = "북마크 전체 조회", description = "데이터 확인용 API (추후 삭제 예정)")
     public ResponseEntity<List<BookmarkDTO>> getAllBookmarks() {
         List<BookmarkDTO> bookmarkDTOS = bookmarkService.findAll();
         return ResponseEntity.ok(bookmarkDTOS);
     }
 
-     // 로드맵 북마크
+     // 지도(로드맵, 공유지도) 북마크
     @PostMapping("/{roadmapId}")
+    @Operation(summary = "지도(로드맵, 공유지도) 북마크", description = "[사용자용] 로드맵이나 공유지도를 북마크")
     public ResponseEntity<ApiResponse> createBookmark(@PathVariable(name = "roadmapId") final Long roadmapId) {
         // TODO: JWT 에서 memberId 추출
         Long memberId = 1L;
@@ -45,6 +50,7 @@ public class BookmarkController {
 
     // 로드맵 북마크 해제
     @DeleteMapping("/{likeId}")
+    @Operation(summary = "지도(로드맵, 공유지도) 북마크 해제", description = "[사용자용] 로드맵이나 공유지도 북마크를 해제")
     public ResponseEntity<ApiResponse> deleteBookmark(@PathVariable(name = "likeId") final Long likeId) {
         bookmarkService.delete(likeId);
 
@@ -53,6 +59,7 @@ public class BookmarkController {
 
     // 사용자 북마크 목록 조회 (마이페이지)
     @GetMapping("/bookmarkedRoadmaps")
+    @Operation(summary = "사용자의 지도(로드맵, 공유지도) 북마크 목록 조회", description = "[사용자용] 마이페이지에서 북마크한 지도 목록을 조회")
     public ResponseEntity<RoadmapListResponse> getMyBookmarkedRoadmaps() {
         // TODO: JWT 에서 memberId 추출
         Long memberId = 1L;

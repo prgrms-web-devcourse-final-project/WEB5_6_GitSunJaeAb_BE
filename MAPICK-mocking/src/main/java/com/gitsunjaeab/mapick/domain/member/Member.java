@@ -1,7 +1,7 @@
 package com.gitsunjaeab.mapick.domain.member;
 
 import com.gitsunjaeab.mapick.domain.roadmap.Bookmark;
-import com.gitsunjaeab.mapick.domain.roadmap.Comment;
+import com.gitsunjaeab.mapick.domain.comment.Comment;
 import com.gitsunjaeab.mapick.domain.roadmap.Layer;
 import com.gitsunjaeab.mapick.domain.roadmap.LayerLibrary;
 import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;

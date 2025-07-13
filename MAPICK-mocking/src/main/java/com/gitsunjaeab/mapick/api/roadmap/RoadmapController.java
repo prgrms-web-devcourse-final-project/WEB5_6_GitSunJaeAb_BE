@@ -6,8 +6,8 @@ import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapRequest;
 import com.gitsunjaeab.mapick.application.roadmap.RoadmapService;
 import com.gitsunjaeab.mapick.common.response.ApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
-import com.gitsunjaeab.mapick.util.ReferencedException;
-import com.gitsunjaeab.mapick.util.ReferencedWarning;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(value = "/roadmaps", produces = MediaType.APPLICATION_JSON_VALUE)
+@Tag(name = "지도 관리 API", description = "개인지도 및 공유지도 관련 API")
 public class RoadmapController {
 
     private final RoadmapService roadmapService;
@@ -34,6 +35,7 @@ public class RoadmapController {
 
     // 전체 조회 (로드맵, 공유지도) >> NOTE 프론트 데이터 확인용 (추후 삭제예정)
     @GetMapping
+    @Operation(summary = "전체 지도(로드맵, 공유지도) 조회", description = "데이터 확인용 API (추후 삭제 예정), 관리자에서 쓰일 지는 미정")
     public ResponseEntity<RoadmapListResponse> getAllRoadmaps() {
         RoadmapListResponse response = roadmapService.getAllRoadmaps();
         return ResponseEntity.ok(response);
@@ -41,6 +43,7 @@ public class RoadmapController {
 
     // 로드맵(PERSONAL) 조회
     @GetMapping("/personal")
+    @Operation(summary = "로드맵 조회", description = "[사용자용] 전체 로드맵을 조회하거나 카테고리별 로드맵을 조회")
     public ResponseEntity<RoadmapListResponse> getRoadmaps(
         @RequestParam(required = false) Long categoryId) {
         if (categoryId == null) {
@@ -54,6 +57,7 @@ public class RoadmapController {
 
     // 공유지도(SHARED) 조회
     @GetMapping("/shared")
+    @Operation(summary = "공유지도 조회", description = "[사용자용] 전체 공유지도를 조회하거나 카테고리별 공유지도를 조회")
     public ResponseEntity<RoadmapListResponse> getSharedRoadmaps(
         @RequestParam(required = false) Long categoryId) {
         if (categoryId == null) {
@@ -69,6 +73,7 @@ public class RoadmapController {
 
     // 로드맵 생성
     @PostMapping("/personal")
+    @Operation(summary = "로드맵 생성", description = "[사용자용] 레이어, 마커 제외 지도 관련 속성만 저장")
     public ResponseEntity<ApiResponse> createRoadmap(@RequestBody @Valid final RoadmapRequest request) {
 //        final Long createdId = roadmapService.create(request);
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "로드맵 생성 완료"));
@@ -76,6 +81,7 @@ public class RoadmapController {
 
     // 공유지도 생성
     @PostMapping("/shared")
+    @Operation(summary = "공유지도 생성", description = "[사용자용] 레이어, 마커 제외 지도 관련 속성만 저장")
     public ResponseEntity<ApiResponse> createSharedRoadmap(@RequestBody @Valid final RoadmapRequest request) {
 //        final Long createdId = roadmapService.create(request);
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "공유지도 생성 완료"));
@@ -83,6 +89,7 @@ public class RoadmapController {
 
     // 로드맵 수정
     @PutMapping("/personal/{roadmapId}")
+    @Operation(summary = "로드맵 수정", description = "[사용자용] 레이어, 마커 제외 지도 관련 속성만 수정")
     public ResponseEntity<ApiResponse> updateRoadmap(
         @PathVariable(name = "roadmapId") final Long roadmapId,
         @RequestBody @Valid final RoadmapRequest request) {
@@ -92,6 +99,7 @@ public class RoadmapController {
 
     // 공유지도 수정
     @PutMapping("/shared/{roadmapId}")
+    @Operation(summary = "공유지도 수정", description = "[사용자용] 레이어, 마커 제외 지도 관련 속성만 수정")
     public ResponseEntity<ApiResponse> updateSharedRoadmap(
         @PathVariable(name = "roadmapId") final Long roadmapId,
         @RequestBody @Valid final RoadmapRequest request) {
@@ -110,6 +118,7 @@ public class RoadmapController {
 
     // 로드맵/공유지도 삭제
     @DeleteMapping("/{roadmapId}")
+    @Operation(summary = "로드맵/공유지도 삭제", description = "[사용자/관리자용] 생성자나 관리자가 로드맵이나 공유지도를 삭제")
     public ResponseEntity<ApiResponse> deleteRoadmap(
         @PathVariable(name = "roadmapId") final Long roadmapId) {
 //        final ReferencedWarning referencedWarning = roadmapService.getReferencedWarning(roadmapId);

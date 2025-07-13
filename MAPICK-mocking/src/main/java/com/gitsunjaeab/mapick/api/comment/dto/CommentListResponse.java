@@ -2,7 +2,7 @@ package com.gitsunjaeab.mapick.api.comment.dto;
 
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
-import com.gitsunjaeab.mapick.domain.roadmap.Comment;
+import com.gitsunjaeab.mapick.domain.comment.Comment;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
