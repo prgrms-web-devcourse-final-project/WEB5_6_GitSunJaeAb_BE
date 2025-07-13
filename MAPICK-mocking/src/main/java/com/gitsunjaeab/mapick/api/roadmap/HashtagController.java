@@ -1,10 +1,16 @@
 package com.gitsunjaeab.mapick.api.roadmap;
 
+import com.gitsunjaeab.mapick.api.roadmap.dto.hashtag.HashtagListResponse;
+import com.gitsunjaeab.mapick.api.roadmap.dto.hashtag.HashtagRequest;
+import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerListResponse;
 import com.gitsunjaeab.mapick.application.roadmap.HashtagService;
 import com.gitsunjaeab.mapick.api.roadmap.dto.hashtag.HashtagDTO;
+import com.gitsunjaeab.mapick.common.response.ApiResponse;
+import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.util.ReferencedException;
 import com.gitsunjaeab.mapick.util.ReferencedWarning;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.http.HttpStatus;
@@ -17,12 +23,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-
-// NOTE 해당 컨트롤러는 따로 필요하지 않을 수도..? 근데 또 Hashtag로 로드맵 검색하려면...
 @RestController
 @RequestMapping(value = "/hashtags", produces = MediaType.APPLICATION_JSON_VALUE)
+@Tag(name = "해시태그 관리 API")
 public class HashtagController {
 
     private final HashtagService hashtagService;
@@ -31,39 +37,33 @@ public class HashtagController {
         this.hashtagService = hashtagService;
     }
 
-    @GetMapping
-    public ResponseEntity<List<HashtagDTO>> getAllHashtags() {
-        return ResponseEntity.ok(hashtagService.findAll());
+    // 특정 지도에 적용된 해시태그 조회
+    @GetMapping("/roadmap")
+    @Operation(summary = "해시태그 목록 조회", description = "[사용자용] 특정 지도에 있는 해시테그 전체 조회")
+    public ResponseEntity<HashtagListResponse> getAllHashtagsOnRoadmap(
+        @RequestParam(required = false) Long roadmapId
+    ) {
+        return ResponseEntity.ok(hashtagService.findAllHashtagsOnRoadmap(roadmapId));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<HashtagDTO> getHashtag(@PathVariable(name = "id") final Long id) {
-        return ResponseEntity.ok(hashtagService.get(id));
-    }
-
+    // 해시태그 생성
     @PostMapping
-    @ApiResponse(responseCode = "201")
-    public ResponseEntity<Long> createHashtag(@RequestBody @Valid final HashtagDTO hashtagDTO) {
-        final Long createdId = hashtagService.create(hashtagDTO);
-        return new ResponseEntity<>(createdId, HttpStatus.CREATED);
+    @Operation(summary = "해시태그 생성", description = "[사용자용] 지도 위에 해시태그를 생성")
+    public ResponseEntity<ApiResponse> createHashtag(@RequestBody @Valid final HashtagRequest request) {
+//        hashtagService.create(request);
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "해시태그 생성 완료"));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Long> updateHashtag(@PathVariable(name = "id") final Long id,
-            @RequestBody @Valid final HashtagDTO hashtagDTO) {
-        hashtagService.update(id, hashtagDTO);
-        return ResponseEntity.ok(id);
-    }
-
-    @DeleteMapping("/{id}")
-    @ApiResponse(responseCode = "204")
-    public ResponseEntity<Void> deleteHashtag(@PathVariable(name = "id") final Long id) {
-        final ReferencedWarning referencedWarning = hashtagService.getReferencedWarning(id);
-        if (referencedWarning != null) {
-            throw new ReferencedException(referencedWarning);
-        }
-        hashtagService.delete(id);
-        return ResponseEntity.noContent().build();
+    // 해시태그 삭제
+    @DeleteMapping("/{hashtagId}")
+    @Operation(summary = "해시태그 삭제", description = "[사용자용] 특정 해시태그 삭제")
+    public ResponseEntity<ApiResponse> deleteHashtag(@PathVariable(name = "hashtagId") final Long hashtagId) {
+//        final ReferencedWarning referencedWarning = hashtagService.getReferencedWarning(id);
+//        if (referencedWarning != null) {
+//            throw new ReferencedException(referencedWarning);
+//        }
+//        hashtagService.delete(hashtagId);
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "해시태그 삭제 완료"));
     }
 
 }

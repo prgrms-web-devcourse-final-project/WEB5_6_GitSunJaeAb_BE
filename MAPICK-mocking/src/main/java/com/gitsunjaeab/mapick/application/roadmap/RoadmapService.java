@@ -91,6 +91,12 @@ public class RoadmapService {
     }
 
     @Transactional(readOnly = true)
+    public RoadmapListResponse findAllRoadmapsByMember(Long memberId) {
+        List<Roadmap> roadmaps = roadmapRepository.findAllByMember_Id(memberId);
+        return buildRoadmapListResponse(roadmaps);
+    }
+
+    @Transactional(readOnly = true)
     public RoadmapListResponse buildRoadmapListResponse(List<Roadmap> roadmaps) {
         List<Long> roadmapIds = roadmaps.stream()
             .map(Roadmap::getId)
@@ -236,5 +242,4 @@ public class RoadmapService {
         }
         return null;
     }
-
 }

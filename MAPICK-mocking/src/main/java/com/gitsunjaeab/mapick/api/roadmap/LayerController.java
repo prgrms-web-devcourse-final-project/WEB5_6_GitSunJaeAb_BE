@@ -1,14 +1,18 @@
 package com.gitsunjaeab.mapick.api.roadmap;
 
+import com.gitsunjaeab.mapick.api.member.dto.MemberLayersResponse;
 import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerListResponse;
 import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerRequest;
 import com.gitsunjaeab.mapick.api.roadmap.dto.marker.MarkerListResponse;
 import com.gitsunjaeab.mapick.application.roadmap.LayerService;
 import com.gitsunjaeab.mapick.common.response.ApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
+import com.gitsunjaeab.mapick.domain.roadmap.LayerLibrary;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.util.List;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -33,16 +37,22 @@ public class LayerController {
         this.layerService = layerService;
     }
 
-    // TODO 특정 회원의 레이어 조회 >> LayerLibrary 에서 모아둔 레이어 조회
-//    @GetMapping("/")
-//    public ResponseEntity<List<LayerLibraryDTO>> getAllLayerLibraries() {
-//        return ResponseEntity.ok(layerLibraryService.findAll());
-//    }
+    // 특정 회원의 레이어 찜 목록 조회 >> LayerLibrary 에서 모아둔 레이어 조회
+    @GetMapping("/member")
+    @Operation(summary = "회원 찜 레이어 조회", description = "[사용자용] 본인이 찜한 레이어 목록 조회")
+    public ResponseEntity<LayerListResponse> getMemberLayers(
+        @RequestParam(required = false) Long memberId) {
+
+        return ResponseEntity.ok(layerService.findAllMemberLayers(memberId));
+    }
+
+    // TODO 사용자 >> 레이어 찜하기
+
 
     // 특정 지도에 적용된 레이어 목록 조회
-    @GetMapping
+    @GetMapping("/roadmap")
     @Operation(summary = "레이어 목록 조회", description = "[사용자용] 특정 지도에 있는 레이어 전체 조회")
-    public ResponseEntity<LayerListResponse> getAllLayersOnMap(
+    public ResponseEntity<LayerListResponse> getAllLayersOnRoadmap(
         @RequestParam(required = false) Long roadmapId
     ) {
         return ResponseEntity.ok(layerService.findAllLayersOnRoadmap(roadmapId));

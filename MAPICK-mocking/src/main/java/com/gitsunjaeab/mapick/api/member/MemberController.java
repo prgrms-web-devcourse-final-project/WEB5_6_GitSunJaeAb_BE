@@ -167,33 +167,6 @@ public class MemberController {
         return ResponseEntity.ok(SimpleMessageResponse.of("회원 탈퇴가 완료되었습니다."));
     }
 
-    // 마이페이지 - 회원 레이어 조회 (본인만)
-    @GetMapping("/{memberId}/layers")
-    @Operation(summary = "회원 레이어 조회", description = "[사용자 전용] 본인만 접근 가능한 레이어 라이브러리 조회")
-    public ResponseEntity<MemberLayersResponse> getMemberLayers(
-            @Parameter(description = "회원 ID") @PathVariable Long memberId) {
-        
-        List<LayerLibrary> layerLibraries = memberService.getMemberLayers(memberId);
-        MemberLayersResponse response = MemberLayersResponse.of(layerLibraries);
-        
-        return ResponseEntity.ok(response);
-    }
-
-    // =====  제한적 공개 API =====
-
-    // 마이페이지 - 회원 지도 목록 조회 (공개 지도는 누구나, 비공개는 본인만)
-    @GetMapping("/{memberId}/maps")
-    @Operation(summary = "회원 지도 목록 조회", description = "[제한적 공개] 공개 지도는 누구나 조회 가능, 비공개 지도는 본인만 조회 가능")
-    public ResponseEntity<MemberMapsResponse> getMemberMaps(
-            @Parameter(description = "회원 ID") @PathVariable Long memberId) {
-        
-        // TODO: 서비스에서 권한에 따라 필터링 처리 필요
-        List<Roadmap> roadmaps = memberService.getMemberRoadmaps(memberId);
-        MemberMapsResponse response = MemberMapsResponse.of(roadmaps);
-        
-        return ResponseEntity.ok(response);
-    }
-
     // ===== 회원 관심분야 관리 API =====
 
     // 회원 관심분야 선택 (본인만)

@@ -1,12 +1,17 @@
 package com.gitsunjaeab.mapick.application.roadmap;
 
 import com.gitsunjaeab.mapick.api.roadmap.dto.hashtag.HashtagDTO;
+import com.gitsunjaeab.mapick.api.roadmap.dto.hashtag.HashtagListResponse;
+import com.gitsunjaeab.mapick.api.roadmap.dto.hashtag.HashtagRequest;
+import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerListResponse;
 import com.gitsunjaeab.mapick.domain.roadmap.Hashtag;
 import com.gitsunjaeab.mapick.domain.roadmap.HashtagRepository;
+import com.gitsunjaeab.mapick.domain.roadmap.Layer;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapHashtagRelationRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapHashtagRelation;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import com.gitsunjaeab.mapick.util.ReferencedWarning;
+import java.util.Collections;
 import java.util.List;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -24,11 +29,15 @@ public class HashtagService {
         this.roadmapHashtagRelationRepository = roadmapHashtagRelationRepository;
     }
 
-    public List<HashtagDTO> findAll() {
-        final List<Hashtag> hashtags = hashtagRepository.findAll(Sort.by("id"));
-        return hashtags.stream()
-                .map(hashtag -> roadmapToDTO(hashtag, new HashtagDTO()))
-                .toList();
+    public HashtagListResponse findAllHashtagsOnRoadmap(Long roadmapId) {
+        final List<Long> hashtagsId = roadmapHashtagRelationRepository.findAllByRoadmap_Id(roadmapId);
+
+        if (hashtagsId.isEmpty()) {
+            return HashtagListResponse.of(Collections.emptyList());
+        }
+
+        List<Hashtag> hashtags = hashtagRepository.findAllById(hashtagsId);
+        return HashtagListResponse.of(hashtags);
     }
 
     public HashtagDTO get(final Long id) {
@@ -37,11 +46,11 @@ public class HashtagService {
                 .orElseThrow(NotFoundException::new);
     }
 
-    public Long create(final HashtagDTO hashtagDTO) {
-        final Hashtag hashtag = new Hashtag();
-        roadmapToEntity(hashtagDTO, hashtag);
-        return hashtagRepository.save(hashtag).getId();
-    }
+//    public Long create(final HashtagRequest hashtagDTO) {
+//        final Hashtag hashtag = new Hashtag();
+//        roadmapToEntity(hashtagDTO, hashtag);
+//        return hashtagRepository.save(hashtag).getId();
+//    }
 
     public void update(final Long id, final HashtagDTO hashtagDTO) {
         final Hashtag hashtag = hashtagRepository.findById(id)

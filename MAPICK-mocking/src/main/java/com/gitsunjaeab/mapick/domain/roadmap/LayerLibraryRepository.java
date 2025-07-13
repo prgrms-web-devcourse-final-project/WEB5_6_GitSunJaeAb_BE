@@ -13,8 +13,9 @@ public interface LayerLibraryRepository extends JpaRepository<LayerLibrary, Long
 
     LayerLibrary findFirstByLayer(Layer layer);
 
-    // 마이페이지 - 회원별 레이어 라이브러리 조회용
-    List<LayerLibrary> findByMember(Member member);
+    // 회원이 찜한 레이어 Id 조회 (사용자 찜 레이어 목록 조회)
+    @Query("SELECT ll.layer.id FROM LayerLibrary ll WHERE ll.member.id = :memberId")
+    List<Long> findLayerIdsByMemberId(@Param("memberId") Long memberId);
 
     // 인용수 조회
     @Query("""
@@ -24,6 +25,8 @@ public interface LayerLibraryRepository extends JpaRepository<LayerLibrary, Long
         GROUP BY l.layer.roadmap.id
     """)
     List<RoadmapCitationProjection> countDistinctMemberByRoadmapIds(@Param("roadmapIds") List<Long> roadmapIds);
+
+    List<Layer> findAllByMember_Id(Long memberId);
 
     interface RoadmapCitationProjection {
         Long getRoadmapId();

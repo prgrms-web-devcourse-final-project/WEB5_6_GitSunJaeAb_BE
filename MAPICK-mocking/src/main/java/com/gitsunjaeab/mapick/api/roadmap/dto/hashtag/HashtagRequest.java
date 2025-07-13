@@ -10,12 +10,8 @@ import lombok.Setter;
 @Setter
 public class HashtagRequest {
 
-//    private Long id;
-
     @NotNull
     @Size(max = 255)
     private String name;
-
-//    private OffsetDateTime createdAt;
 
 }

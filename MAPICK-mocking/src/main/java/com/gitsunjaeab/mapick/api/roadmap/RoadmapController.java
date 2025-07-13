@@ -33,17 +33,17 @@ public class RoadmapController {
         this.roadmapService = roadmapService;
     }
 
-    // 전체 조회 (로드맵, 공유지도) >> NOTE 프론트 데이터 확인용 (추후 삭제예정)
+    // 전체 조회 (개인로드맵, 공유지도) >> NOTE 프론트 데이터 확인용 (추후 삭제예정)
     @GetMapping
-    @Operation(summary = "전체 지도(로드맵, 공유지도) 조회", description = "데이터 확인용 API (추후 삭제 예정), 관리자에서 쓰일 지는 미정")
+    @Operation(summary = "전체 지도(개인로드맵, 공유지도) 조회", description = "데이터 확인용 API (추후 삭제 예정), 관리자에서 쓰일 지는 미정")
     public ResponseEntity<RoadmapListResponse> getAllRoadmaps() {
         RoadmapListResponse response = roadmapService.getAllRoadmaps();
         return ResponseEntity.ok(response);
     }
 
-    // 로드맵(PERSONAL) 조회
+    // 개인 로드맵(PERSONAL) 조회
     @GetMapping("/personal")
-    @Operation(summary = "로드맵 조회", description = "[사용자용] 전체 로드맵을 조회하거나 카테고리별 로드맵을 조회")
+    @Operation(summary = "개인 로드맵 조회", description = "[사용자용] 전체 로드맵을 조회하거나 카테고리별 로드맵을 조회")
     public ResponseEntity<RoadmapListResponse> getRoadmaps(
         @RequestParam(required = false) Long categoryId) {
         if (categoryId == null) {
@@ -71,7 +71,7 @@ public class RoadmapController {
 
     // TODO 해시태그로 로드맵 검색 >> {hashtagId} 활용??
 
-    // 로드맵 생성
+    // 개인 로드맵 생성
     @PostMapping("/personal")
     @Operation(summary = "로드맵 생성", description = "[사용자용] 레이어, 마커 제외 지도 관련 속성만 저장")
     public ResponseEntity<ApiResponse> createRoadmap(@RequestBody @Valid final RoadmapRequest request) {
@@ -87,7 +87,7 @@ public class RoadmapController {
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "공유지도 생성 완료"));
     }
 
-    // 로드맵 수정
+    // 개인 로드맵 수정
     @PutMapping("/personal/{roadmapId}")
     @Operation(summary = "로드맵 수정", description = "[사용자용] 레이어, 마커 제외 지도 관련 속성만 수정")
     public ResponseEntity<ApiResponse> updateRoadmap(
@@ -107,16 +107,24 @@ public class RoadmapController {
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "공유지도 수정 완료"));
     }
 
-    // TODO 특정 회원의 지도 목록 조회
+    // 특정 회원의 작성 개인 로드맵/공유지도 목록 조회
+    @GetMapping("/member")
+    @Operation(summary = "회원 작성 로드맵/공유지도 목록 조회", description = "[제한적 공개] 본인이 작성한 공개/비공개 지도 목록 조회")
+    public ResponseEntity<RoadmapListResponse> getMemberMaps(
+        @RequestParam(required = false) Long memberId) {
+
+        return ResponseEntity.ok(roadmapService.findAllRoadmapsByMember(memberId));
+    }
 
     // 특정 지도 상세 조회
     @GetMapping("/{roadmapId}")
+    @Operation(summary = "지도 상세 조회", description = "[사용자용] 지도 관련 속성 상세 조회")
     public ResponseEntity<RoadmapDTO> getRoadmap(
         @PathVariable(name = "roadmapId") final Long roadmapId) {
         return ResponseEntity.ok(roadmapService.get(roadmapId));
     }
 
-    // 로드맵/공유지도 삭제
+    // 개인 로드맵/공유지도 삭제
     @DeleteMapping("/{roadmapId}")
     @Operation(summary = "로드맵/공유지도 삭제", description = "[사용자/관리자용] 생성자나 관리자가 로드맵이나 공유지도를 삭제")
     public ResponseEntity<ApiResponse> deleteRoadmap(
