@@ -14,13 +14,15 @@ public class CommentListResponse implements BaseApiResponse {
     private String code;
     private String message;
     private LocalDateTime timestamp;
-    private List<CommentRequest> comments;
+    private List<CommentListRequest> comments;
 
     public static CommentListResponse of(List<Comment> commentEntities) {
-        List<CommentRequest> commentDTOs = commentEntities.stream()
-            .map(c -> new CommentRequest(
+        List<CommentListRequest> commentDTOs = commentEntities.stream()
+            .map(c -> new CommentListRequest(
+                c.getId(),
                 c.getContent(),
-                c.getRoadmap().getId()
+                c.getRoadmap().getId(),
+                c.getMember().getId()
             )).toList();
 
         return new CommentListResponse(

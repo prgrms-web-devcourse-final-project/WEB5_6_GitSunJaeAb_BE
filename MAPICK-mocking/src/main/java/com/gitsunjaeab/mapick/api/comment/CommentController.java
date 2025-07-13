@@ -37,7 +37,7 @@ public class CommentController {
 
     // 지도(개인 로드맵, 공유지도) 댓글 전체 조회
     @GetMapping("/roadmaps")
-    @Operation(summary = "지도(로드맵, 공유지도) 댓글 조회", description = "[사용자용] 로드맵이나 공유지도의 댓글 목록을 조회")
+    @Operation(summary = "댓글 목록 조회", description = "[사용자용] 로드맵이나 공유지도의 댓글 목록을 조회")
     public ResponseEntity<CommentListResponse> getAllCommentsInMaps(
         @RequestParam(required = false) Long roadmapId
     ) {
