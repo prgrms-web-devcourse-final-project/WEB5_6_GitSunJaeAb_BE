@@ -59,12 +59,12 @@ public class MemberController {
     // 회원 정보 수정 (관리자 전용)
     @PutMapping("/{membersId}")
     @Operation(summary = "회원 정보 수정 (관리자)", description = "[관리자 전용] 관리자만 접근 가능한 회원 정보 수정")
-    public ResponseEntity<Long> updateMember(@PathVariable(name = "membersId") final Long membersId,
+    public ResponseEntity<com.gitsunjaeab.mapick.common.response.ApiResponse> updateMember(@PathVariable(name = "membersId") final Long membersId,
             @RequestBody @Valid final MemberUpdateRequest memberUpdateRequest) {
         // TODO: MemberService를 수정하여 MemberUpdateRequest를 직접 받도록 개선 필요
         MemberDTO memberDTO = convertToMemberDTO(memberUpdateRequest);
         memberService.update(membersId, memberDTO);
-        return ResponseEntity.ok(membersId);
+        return ResponseEntity.ok(com.gitsunjaeab.mapick.common.response.ApiResponse.of(com.gitsunjaeab.mapick.common.response.ResponseCode.OK, "회원 정보 수정 완료"));
     }
 
     // 임시 변환 메서드 (TODO: 서비스 레이어 개선 후 제거)
@@ -86,14 +86,13 @@ public class MemberController {
     // 회원 삭제 (관리자 전용)
     @DeleteMapping("/{membersId}")
     @Operation(summary = "회원 삭제 (관리자)", description = "[관리자 전용] 관리자만 접근 가능한 회원 삭제")
-    @ApiResponse(responseCode = "204")
-    public ResponseEntity<Void> deleteMember(@PathVariable(name = "membersId") final Long membersId) {
+    public ResponseEntity<com.gitsunjaeab.mapick.common.response.ApiResponse> deleteMember(@PathVariable(name = "membersId") final Long membersId) {
         final ReferencedWarning referencedWarning = memberService.getReferencedWarning(membersId);
         if (referencedWarning != null) {
             throw new ReferencedException(referencedWarning);
         }
         memberService.delete(membersId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(com.gitsunjaeab.mapick.common.response.ApiResponse.of(com.gitsunjaeab.mapick.common.response.ResponseCode.OK, "회원 삭제 완료"));
     }
 
     // ===== 사용자 전용 API (본인만 접근 가능) =====
@@ -200,7 +199,6 @@ public class MemberController {
     // 회원 관심분야 선택 (본인만)
     @PostMapping("/interests")
     @Operation(summary = "회원 관심분야 선택", description = "[사용자 전용] 본인만 접근 가능한 관심분야 선택")
-    @ApiResponse(responseCode = "201")
     public ResponseEntity<MemberInterestResponse> createMemberInterest(
             @Valid @RequestBody MemberInterestRequest request) {
         
@@ -209,26 +207,35 @@ public class MemberController {
         
         // 관심분야 생성 후 엔티티 반환
         MemberInterest createdInterest = memberInterestService.createAndReturnEntity(memberInterestDTO);
-        MemberInterestResponse response = MemberInterestResponse.of(createdInterest);
         
-        return ResponseEntity.status(201).body(response);
+        return ResponseEntity.status(201).body(MemberInterestResponse.ofCreate(createdInterest));
     }
 
     // 회원 관심분야 수정 (본인만)
     @PutMapping("/interests/{memberInterestId}")
     @Operation(summary = "회원 관심분야 수정", description = "[사용자 전용] 본인만 접근 가능한 관심분야 수정")
-    public ResponseEntity<MemberInterestResponse> updateMemberInterest(
+    public ResponseEntity<com.gitsunjaeab.mapick.common.response.ApiResponse> updateMemberInterest(
             @Parameter(description = "관심분야 ID") @PathVariable Long memberInterestId,
             @Valid @RequestBody MemberInterestRequest request) {
         
         // Request를 DTO로 변환
         MemberInterestDTO memberInterestDTO = convertToMemberInterestDTO(request);
         
-        // 관심분야 수정 후 엔티티 반환
-        MemberInterest updatedInterest = memberInterestService.updateAndReturnEntity(memberInterestId, memberInterestDTO);
-        MemberInterestResponse response = MemberInterestResponse.of(updatedInterest);
+        // 관심분야 수정
+        memberInterestService.update(memberInterestId, memberInterestDTO);
         
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(com.gitsunjaeab.mapick.common.response.ApiResponse.of(com.gitsunjaeab.mapick.common.response.ResponseCode.OK, "관심분야 수정 완료"));
+    }
+
+    // 회원 관심분야 삭제 (본인만)
+    @DeleteMapping("/interests/{memberInterestId}")
+    @Operation(summary = "회원 관심분야 삭제", description = "[사용자 전용] 본인만 접근 가능한 관심분야 삭제")
+    public ResponseEntity<com.gitsunjaeab.mapick.common.response.ApiResponse> deleteMemberInterest(
+            @Parameter(description = "관심분야 ID") @PathVariable Long memberInterestId) {
+        
+        memberInterestService.delete(memberInterestId);
+        
+        return ResponseEntity.ok(com.gitsunjaeab.mapick.common.response.ApiResponse.of(com.gitsunjaeab.mapick.common.response.ResponseCode.OK, "관심분야 삭제 완료"));
     }
 
     // Request를 DTO로 변환하는 임시 메서드

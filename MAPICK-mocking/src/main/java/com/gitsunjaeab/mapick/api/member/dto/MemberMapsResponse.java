@@ -1,9 +1,12 @@
 package com.gitsunjaeab.mapick.api.member.dto;
 
+import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
+import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,10 +14,22 @@ import java.util.stream.Collectors;
 
 @Getter
 @Setter
-public class MemberMapsResponse {
+public class MemberMapsResponse implements BaseApiResponse {
 
+    // 커스텀 응답 필드들
+    private String code;
     private String message;
+    private LocalDateTime timestamp;
+
+    // 멤버 지도 목록 데이터
     private List<MapInfo> maps;
+
+    public MemberMapsResponse(String code, String message, LocalDateTime timestamp, List<MapInfo> maps) {
+        this.code = code;
+        this.message = message;
+        this.timestamp = timestamp;
+        this.maps = maps;
+    }
 
     @Getter
     @Setter
@@ -33,9 +48,6 @@ public class MemberMapsResponse {
     }
 
     public static MemberMapsResponse of(List<Roadmap> roadmaps) {
-        MemberMapsResponse response = new MemberMapsResponse();
-        response.setMessage("사용자 지도 목록 조회 성공");
-        
         List<MapInfo> mapInfos = roadmaps.stream()
             .map(roadmap -> {
                 MapInfo mapInfo = new MapInfo();
@@ -53,8 +65,12 @@ public class MemberMapsResponse {
                 return mapInfo;
             })
             .collect(Collectors.toList());
-        
-        response.setMaps(mapInfos);
-        return response;
+
+        return new MemberMapsResponse(
+            ResponseCode.OK.getCode(),
+            "회원 지도 조회 성공",
+            LocalDateTime.now(),
+            mapInfos
+        );
     }
 } 

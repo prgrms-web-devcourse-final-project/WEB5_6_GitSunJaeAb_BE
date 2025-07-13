@@ -1,18 +1,33 @@
 package com.gitsunjaeab.mapick.api.member.dto;
 
+import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
+import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 
 
 @Getter
 @Setter
-public class MemberProfileResponse {
+public class MemberProfileResponse implements BaseApiResponse {
 
+    // 커스텀 응답 필드들
+    private String code;
     private String message;
+    private LocalDateTime timestamp;
+
+    // 멤버 프로필 데이터
     private MemberInfo member;
+
+    public MemberProfileResponse(String code, String message, LocalDateTime timestamp, MemberInfo member) {
+        this.code = code;
+        this.message = message;
+        this.timestamp = timestamp;
+        this.member = member;
+    }
 
     @Getter
     @Setter
@@ -28,16 +43,12 @@ public class MemberProfileResponse {
         private String profileImage;
         private String intro;
         private String phone;
-        private OffsetDateTime lastLogin;
         private OffsetDateTime createdAt;
         private OffsetDateTime updatedAt;
         private OffsetDateTime deletedAt;
     }
 
     public static MemberProfileResponse of(Member member) {
-        MemberProfileResponse response = new MemberProfileResponse();
-        response.setMessage("회원 정보 조회 성공");
-        
         MemberInfo memberInfo = new MemberInfo();
         memberInfo.setId(member.getId());
         memberInfo.setName(member.getName());
@@ -50,12 +61,15 @@ public class MemberProfileResponse {
         memberInfo.setProfileImage(member.getProfileImage());
         memberInfo.setIntro(member.getIntro());
         memberInfo.setPhone(member.getPhone());
-        memberInfo.setLastLogin(member.getLastLogin());
         memberInfo.setCreatedAt(member.getCreatedAt());
         memberInfo.setUpdatedAt(member.getUpdatedAt());
         memberInfo.setDeletedAt(member.getDeletedAt());
-        
-        response.setMember(memberInfo);
-        return response;
+
+        return new MemberProfileResponse(
+            ResponseCode.OK.getCode(),
+            "회원 프로필 조회 성공",
+            LocalDateTime.now(),
+            memberInfo
+        );
     }
 } 
