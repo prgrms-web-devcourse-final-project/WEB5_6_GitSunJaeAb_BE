@@ -66,7 +66,7 @@ public class CommentController {
     @DeleteMapping("/roadmaps/{commentId}")
     @Operation(summary = "지도 댓글 삭제", description = "[사용자용] 로드맵이나 공유지도의 댓글 삭재")
     public ResponseEntity<ApiResponse> deleteComment(@PathVariable(name = "commentId") final Long commentId) {
-        commentService.delete(commentId);
+//        commentService.delete(commentId);
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "댓글 삭제 완료"));
     }
 }

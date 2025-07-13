@@ -36,14 +36,14 @@ public class BookmarkController {
         return ResponseEntity.ok(bookmarkDTOS);
     }
 
-     // 지도(로드맵, 공유지도) 북마크
+     // 지도(로드맵, 공유지도) 북마크 생성
     @PostMapping("/{roadmapId}")
     @Operation(summary = "지도(로드맵, 공유지도) 북마크", description = "[사용자용] 로드맵이나 공유지도를 북마크")
     public ResponseEntity<ApiResponse> createBookmark(@PathVariable(name = "roadmapId") final Long roadmapId) {
         // TODO: JWT 에서 memberId 추출
-        Long memberId = 1L;
+//        Long memberId = 1L;
 
-        bookmarkService.create(roadmapId, memberId);
+//        bookmarkService.create(roadmapId, memberId);
 
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "북마크 등록 완료"));
     }
@@ -52,7 +52,7 @@ public class BookmarkController {
     @DeleteMapping("/{likeId}")
     @Operation(summary = "지도(로드맵, 공유지도) 북마크 해제", description = "[사용자용] 로드맵이나 공유지도 북마크를 해제")
     public ResponseEntity<ApiResponse> deleteBookmark(@PathVariable(name = "likeId") final Long likeId) {
-        bookmarkService.delete(likeId);
+//        bookmarkService.delete(likeId);
 
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "북마크 해제 완료"));
     }

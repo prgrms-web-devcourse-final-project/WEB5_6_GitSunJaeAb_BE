@@ -49,7 +49,7 @@ public class CategoryController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse> createCategory(
         @Valid @ModelAttribute CategoryRequest request, MultipartFile imageFile) {
-        categoryService.create(request, imageFile);
+//        categoryService.create(request, imageFile);
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "카테고리 생성 완료"));
     }
 
@@ -60,10 +60,9 @@ public class CategoryController {
         @Valid @ModelAttribute CategoryRequest request,
         MultipartFile imageFile
     ) {
-        categoryService.update(categoryId, request, imageFile);
+//        categoryService.update(categoryId, request, imageFile);
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "카테고리 수정 완료"));
     }
 
     // 카테고리 삭제는 구현하지않음 (카테고리 삭제 시 연관된 로드맵 처리 문제 발생)
-
 }

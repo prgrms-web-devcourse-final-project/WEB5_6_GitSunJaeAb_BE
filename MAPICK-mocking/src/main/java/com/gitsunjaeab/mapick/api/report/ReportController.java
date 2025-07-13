@@ -51,7 +51,7 @@ public class ReportController {
     @Operation(summary = "신고 처리 완료", description = "[관리자용] 신고 상태를 변경하여 처리 완료합니다.")
     public ResponseEntity<ApiResponse> processReport(@PathVariable(name = "reportId") final Long reportId,
             @RequestBody @Valid final ReportProcessRequest request) {
-        reportService.processReport(reportId, request);
+//        reportService.processReport(reportId, request);
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "신고 처리가 완료되었습니다."));
     }
 
@@ -62,7 +62,7 @@ public class ReportController {
     @Operation(summary = "지도 신고 생성", description = "[사용자용] 특정 지도(로드맵)에 대한 신고를 접수합니다.")
     public ResponseEntity<ApiResponse> reportMap(@PathVariable(name = "mapId") final Long mapId,
             @RequestBody @Valid final MapReportRequest request) {
-        reportService.createMapReport(mapId, request);
+//        reportService.createMapReport(mapId, request);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.of(ResponseCode.OK, "지도 신고가 접수되었습니다."));
     }
@@ -72,7 +72,7 @@ public class ReportController {
     @Operation(summary = "퀘스트 신고 생성", description = "[사용자용] 특정 퀘스트에 대한 신고를 접수합니다.")
     public ResponseEntity<ApiResponse> reportQuest(@PathVariable(name = "questId") final Long questId,
             @RequestBody @Valid final QuestReportRequest request) {
-        reportService.createQuestReport(questId, request);
+//        reportService.createQuestReport(questId, request);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.of(ResponseCode.OK, "퀘스트 신고가 접수되었습니다."));
     }
@@ -82,7 +82,7 @@ public class ReportController {
     @Operation(summary = "마커 신고 생성", description = "[사용자용] 특정 마커에 대한 신고를 접수합니다.")
     public ResponseEntity<ApiResponse> reportMarker(@PathVariable(name = "markerId") final Long markerId,
             @RequestBody @Valid final MarkerReportRequest request) {
-        reportService.createMarkerReport(markerId, request);
+//        reportService.createMarkerReport(markerId, request);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.of(ResponseCode.OK, "마커 신고가 접수되었습니다."));
     }

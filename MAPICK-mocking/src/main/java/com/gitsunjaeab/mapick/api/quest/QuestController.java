@@ -71,7 +71,7 @@ public class QuestController {
     @Operation(summary = "퀘스트 수정", description = "[출제자용] 본인이 생성한 퀘스트의 정보를 수정합니다.")
     public ResponseEntity<ApiResponse> updateQuest(@PathVariable(name = "questsId") final Long questsId,
             @RequestBody @Valid final QuestRequest questRequest) {
-        questService.update(questsId, questRequest);
+//        questService.update(questsId, questRequest);
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "퀘스트 수정 완료"));
     }
 
@@ -79,11 +79,11 @@ public class QuestController {
     @DeleteMapping("/{questsId}")
     @Operation(summary = "퀘스트 삭제", description = "[출제자용] 본인이 생성한 퀘스트를 삭제합니다.")
     public ResponseEntity<ApiResponse> deleteQuest(@PathVariable(name = "questsId") final Long questsId) {
-        final ReferencedWarning referencedWarning = questService.getReferencedWarning(questsId);
-        if (referencedWarning != null) {
-            throw new ReferencedException(referencedWarning);
-        }
-        questService.delete(questsId);
+//        final ReferencedWarning referencedWarning = questService.getReferencedWarning(questsId);
+//        if (referencedWarning != null) {
+//            throw new ReferencedException(referencedWarning);
+//        }
+//        questService.delete(questsId);
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "퀘스트 삭제 완료"));
     }
 
@@ -130,8 +130,8 @@ public class QuestController {
     public ResponseEntity<ApiResponse> participateInQuest(@PathVariable(name = "questId") final Long questId,
             @RequestBody @Valid final MemberQuestRequest memberQuestRequest) {
         // questId를 request에 설정
-        memberQuestRequest.setQuest(questId);
-        memberQuestService.create(memberQuestRequest);
+//        memberQuestRequest.setQuest(questId);
+//        memberQuestService.create(memberQuestRequest);
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "퀘스트 참여 신청 완료"));
     }
 
@@ -141,8 +141,8 @@ public class QuestController {
     public ResponseEntity<ApiResponse> submitEvidence(@PathVariable(name = "memberQuestId") final Long memberQuestId,
             @RequestBody @Valid final MemberQuestEvidenceRequest evidenceRequest) {
         // memberQuestId를 request에 설정
-        evidenceRequest.setMemberQuest(memberQuestId);
-        memberQuestEvidenceService.create(evidenceRequest);
+//        evidenceRequest.setMemberQuest(memberQuestId);
+//        memberQuestEvidenceService.create(evidenceRequest);
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "증빙 자료 제출 완료"));
     }
 
@@ -158,7 +158,7 @@ public class QuestController {
     @Operation(summary = "증빙 자료 수정", description = "[참여자용] 본인이 제출한 증빙 자료를 수정합니다.")
     public ResponseEntity<ApiResponse> updateEvidence(@PathVariable(name = "evidenceId") final Long evidenceId,
             @RequestBody @Valid final MemberQuestEvidenceRequest evidenceRequest) {
-        memberQuestEvidenceService.update(evidenceId, evidenceRequest);
+//        memberQuestEvidenceService.update(evidenceId, evidenceRequest);
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "증빙 자료 수정 완료"));
     }
 
@@ -166,7 +166,7 @@ public class QuestController {
     @DeleteMapping("/evidence/{evidenceId}")
     @Operation(summary = "증빙 자료 삭제", description = "[참여자용] 본인이 제출한 증빙 자료를 삭제합니다.")
     public ResponseEntity<ApiResponse> deleteEvidence(@PathVariable(name = "evidenceId") final Long evidenceId) {
-        memberQuestEvidenceService.delete(evidenceId);
+//        memberQuestEvidenceService.delete(evidenceId);
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "증빙 자료 삭제 완료"));
     }
 
@@ -187,7 +187,7 @@ public class QuestController {
             @RequestBody @Valid final QuestCommentRequest questCommentRequest) {
         // questId를 request에 설정
         questCommentRequest.setQuest(questId);
-        questCommentService.create(questCommentRequest);
+//        questCommentService.create(questCommentRequest);
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "댓글 생성 완료"));
     }
 
@@ -196,7 +196,7 @@ public class QuestController {
     @Operation(summary = "댓글 수정", description = "[댓글 작성자] 자신이 작성한 댓글을 수정합니다.")
     public ResponseEntity<ApiResponse> updateQuestComment(@PathVariable final Long commentId,
             @RequestBody @Valid final QuestCommentRequest questCommentRequest) {
-        questCommentService.update(commentId, questCommentRequest);
+//        questCommentService.update(commentId, questCommentRequest);
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "댓글 수정 완료"));
     }
 
@@ -204,7 +204,7 @@ public class QuestController {
     @DeleteMapping("/comments/{commentId}")
     @Operation(summary = "댓글 삭제", description = "[댓글 작성자] 자신이 작성한 댓글을 삭제합니다.")
     public ResponseEntity<ApiResponse> deleteQuestComment(@PathVariable final Long commentId) {
-        questCommentService.delete(commentId);
+//        questCommentService.delete(commentId);
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "댓글 삭제 완료"));
     }
 
