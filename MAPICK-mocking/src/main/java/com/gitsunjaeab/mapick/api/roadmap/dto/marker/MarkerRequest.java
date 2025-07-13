@@ -10,8 +10,6 @@ import lombok.Setter;
 @Setter
 public class MarkerRequest {
 
-//    private Long id;
-
     @Size(max = 255)
     private String name;
 
@@ -31,15 +29,6 @@ public class MarkerRequest {
 
     private Integer markerSeq;
 
-//    @NotNull
-//    private OffsetDateTime createdAt;
-//
-//    private OffsetDateTime updatedAt;
-//
-//    private OffsetDateTime deletedAt;
-//
-//    private Long member;
-//
-//    private Long layer;
+    private Long layer;
 
 }

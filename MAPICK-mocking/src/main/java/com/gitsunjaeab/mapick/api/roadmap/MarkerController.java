@@ -1,18 +1,17 @@
 package com.gitsunjaeab.mapick.api.roadmap;
 
-import com.gitsunjaeab.mapick.domain.roadmap.LayerRepository;
+import com.gitsunjaeab.mapick.api.roadmap.dto.marker.MarkerRequest;
 import com.gitsunjaeab.mapick.application.roadmap.MarkerService;
-import com.gitsunjaeab.mapick.api.roadmap.dto.marker.MarkerDTO;
+import com.gitsunjaeab.mapick.common.response.ApiResponse;
+import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
-import com.gitsunjaeab.mapick.util.ReferencedException;
-import com.gitsunjaeab.mapick.util.ReferencedWarning;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import com.gitsunjaeab.mapick.domain.roadmap.LayerRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -23,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(value = "/markers", produces = MediaType.APPLICATION_JSON_VALUE)
+@Tag(name = "마커 관리 API")
 public class MarkerController {
 
     private final MarkerService markerService;
@@ -36,53 +36,43 @@ public class MarkerController {
         this.layerRepository = layerRepository;
     }
 
-    @PostMapping
-    @ApiResponse(responseCode = "201")
-    public ResponseEntity<Long> createMarker(@RequestBody @Valid final MarkerDTO markerDTO) {
-        final Long createdId = markerService.create(markerDTO);
-        return new ResponseEntity<>(createdId, HttpStatus.CREATED);
-    }
-
 //    @GetMapping
 //    public ResponseEntity<List<MarkerDTO>> getAllMarkers() {
 //        return ResponseEntity.ok(markerService.findAll());
 //    }
 
-    @GetMapping("/{markersId}")
-    public ResponseEntity<MarkerDTO> getMarker(@PathVariable(name = "markersId") final Long markersId) {
-        return ResponseEntity.ok(markerService.get(markersId));
+    // 마커 생성
+    @PostMapping
+    @Operation(summary = "마커 생성", description = "[사용자용] 레이어 위에 마커를 생성")
+    public ResponseEntity<ApiResponse> createMarker(@RequestBody @Valid final MarkerRequest request) {
+//        final Long createdId = markerService.create(request);
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "마커 생성 완료"));
     }
 
-    @PutMapping("/{markersId}")
-    public ResponseEntity<Long> updateMarker(@PathVariable(name = "markersId") final Long markersId,
-            @RequestBody @Valid final MarkerDTO markerDTO) {
-        markerService.update(markersId, markerDTO);
-        return ResponseEntity.ok(markersId);
+    // 마커 수정
+    @PutMapping("/{markerId}")
+    @Operation(summary = "마커 수정", description = "[사용자용] 특정 마커를 수정")
+    public ResponseEntity<ApiResponse> updateMarker(@PathVariable(name = "markerId") final Long markerId,
+            @RequestBody @Valid final MarkerRequest request) {
+//        markerService.update(markerId, markerDTO);
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "마커 수정 완료"));
     }
 
-    @DeleteMapping("/{markersId}")
-    @ApiResponse(responseCode = "204")
-    public ResponseEntity<Void> deleteMarker(@PathVariable(name = "markersId") final Long markersId) {
-        final ReferencedWarning referencedWarning = markerService.getReferencedWarning(markersId);
-        if (referencedWarning != null) {
-            throw new ReferencedException(referencedWarning);
-        }
-        markerService.delete(markersId);
-        return ResponseEntity.noContent().build();
+    // 마커 삭제
+    @DeleteMapping("/{markerId}")
+    @Operation(summary = "마커 삭제", description = "[사용자용] 특정 마커를 삭제")
+    public ResponseEntity<ApiResponse> deleteMarker(@PathVariable(name = "markerId") final Long markerId) {
+//        final ReferencedWarning referencedWarning = markerService.getReferencedWarning(markersId);
+//        if (referencedWarning != null) {
+//            throw new ReferencedException(referencedWarning);
+//        }
+//        markerService.delete(markersId);
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "마커 삭제 완료"));
     }
 
-//    @GetMapping("/memberValues")
-//    public ResponseEntity<Map<Long, String>> getMemberValues() {
-//        return ResponseEntity.ok(memberRepository.findAll(Sort.by("id"))
-//                .stream()
-//                .collect(CustomCollectors.toSortedMap(Member::getId, Member::getNickname)));
+//    특정 마커 조회 >> 어차피 전체 마커를 조회해오면 이게 필요한가?
+//    @GetMapping("/{markerId}")
+//    public ResponseEntity<MarkerDTO> getMarker(@PathVariable(name = "markerId") final Long markerId) {
+//        return ResponseEntity.ok(markerService.get(markerId));
 //    }
-//
-//    @GetMapping("/layerValues")
-//    public ResponseEntity<Map<Long, String>> getLayerValues() {
-//        return ResponseEntity.ok(layerRepository.findAll(Sort.by("id"))
-//                .stream()
-//                .collect(CustomCollectors.toSortedMap(Layer::getId, Layer::getName)));
-//    }
-
 }
