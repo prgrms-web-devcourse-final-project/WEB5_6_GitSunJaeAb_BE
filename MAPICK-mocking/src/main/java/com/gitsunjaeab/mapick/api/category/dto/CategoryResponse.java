@@ -46,11 +46,39 @@ public class CategoryResponse implements BaseApiResponse {
         this.createdAt = createdAt;
     }
 
-    // 데이터를 같이 반환하는 경우 - 단건
+    // 데이터를 같이 반환하는 경우 - 단건 조회
     public static CategoryResponse of(Category c) {
         return new CategoryResponse(
             ResponseCode.OK.getCode(),
             "카테고리 조회 성공.",
+            LocalDateTime.now(),
+            c.getId(),
+            c.getName(),
+            c.getDescription(),
+            c.getCategoryImage(),
+            c.getCreatedAt()
+        );
+    }
+    
+    // 카테고리 생성 응답
+    public static CategoryResponse ofCreate(Category c) {
+        return new CategoryResponse(
+            ResponseCode.OK.getCode(),
+            "카테고리 생성 완료",
+            LocalDateTime.now(),
+            c.getId(),
+            c.getName(),
+            c.getDescription(),
+            c.getCategoryImage(),
+            c.getCreatedAt()
+        );
+    }
+    
+    // 카테고리 수정 응답 (기존 of 메서드와 동일하지만 메시지만 다름)
+    public static CategoryResponse ofUpdate(Category c) {
+        return new CategoryResponse(
+            ResponseCode.OK.getCode(),
+            "카테고리 수정 완료",
             LocalDateTime.now(),
             c.getId(),
             c.getName(),
