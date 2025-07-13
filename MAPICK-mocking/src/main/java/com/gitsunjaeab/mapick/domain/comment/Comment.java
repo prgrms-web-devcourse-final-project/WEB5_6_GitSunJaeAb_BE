@@ -1,6 +1,7 @@
-package com.gitsunjaeab.mapick.domain.roadmap;
+package com.gitsunjaeab.mapick.domain.comment;
 
 import com.gitsunjaeab.mapick.domain.member.Member;
+import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;

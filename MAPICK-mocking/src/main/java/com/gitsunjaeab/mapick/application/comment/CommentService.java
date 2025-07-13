@@ -1,11 +1,11 @@
-package com.gitsunjaeab.mapick.application.roadmap;
+package com.gitsunjaeab.mapick.application.comment;
 
 import com.gitsunjaeab.mapick.api.comment.dto.CommentDTO;
 import com.gitsunjaeab.mapick.api.comment.dto.CommentListResponse;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
-import com.gitsunjaeab.mapick.domain.roadmap.Comment;
-import com.gitsunjaeab.mapick.domain.roadmap.CommentRepository;
+import com.gitsunjaeab.mapick.domain.comment.Comment;
+import com.gitsunjaeab.mapick.domain.comment.CommentRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
 import com.gitsunjaeab.mapick.util.NotFoundException;
