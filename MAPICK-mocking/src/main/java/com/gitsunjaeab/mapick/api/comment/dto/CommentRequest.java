@@ -14,9 +14,5 @@ public class CommentRequest {
     @NotNull
     private String content;
 
-
     private Long roadmapId;
-
-    private Long memberId;
-
 }

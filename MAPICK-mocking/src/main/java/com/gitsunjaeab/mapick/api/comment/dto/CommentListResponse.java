@@ -20,8 +20,7 @@ public class CommentListResponse implements BaseApiResponse {
         List<CommentRequest> commentDTOs = commentEntities.stream()
             .map(c -> new CommentRequest(
                 c.getContent(),
-                c.getRoadmap().getId(),
-                c.getMember().getId()
+                c.getRoadmap().getId()
             )).toList();
 
         return new CommentListResponse(
