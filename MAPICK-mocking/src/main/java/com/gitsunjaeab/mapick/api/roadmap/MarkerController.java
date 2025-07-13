@@ -40,7 +40,7 @@ public class MarkerController {
         this.layerRepository = layerRepository;
     }
 
-    // 특정 레이어에 적용된 마커 조회
+    // 특정 레이어에 적용된 마커 목록 조회
     @GetMapping
     @Operation(summary = "마커 목록 조회", description = "[사용자용] 특정 레이어에 놓인 마커 전체 조회")
     public ResponseEntity<MarkerListResponse> getAllMarkersOnLayer(

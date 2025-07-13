@@ -7,7 +7,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class MarkerListRequest {
+public class MarkerListDTO {
 
     private Long id;
 
