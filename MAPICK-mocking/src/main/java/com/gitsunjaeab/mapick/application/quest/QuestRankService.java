@@ -47,14 +47,6 @@ public class QuestRankService {
 
     // Entity → Response 변환
     private QuestRankResponse toResponse(final QuestRank questRank) {
-        QuestRankResponse response = new QuestRankResponse();
-        response.setId(questRank.getId());
-        response.setRank(questRank.getRank());
-        response.setScore(null); // QuestRank 엔티티에 score 필드가 없음
-        response.setCreatedAt(questRank.getCreatedAt());
-        response.setUpdatedAt(questRank.getUpdatedAt());
-        response.setQuest(questRank.getQuest() == null ? null : questRank.getQuest().getId());
-        response.setMember(questRank.getMember() == null ? null : questRank.getMember().getId());
-        return response;
+        return QuestRankResponse.ofCreate(questRank);
     }
 }

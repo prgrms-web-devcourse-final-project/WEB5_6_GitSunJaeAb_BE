@@ -1,17 +1,30 @@
 package com.gitsunjaeab.mapick.api.quest.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
+import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
 @Getter
 @Setter
-public class QuestResponse {
+@NoArgsConstructor
+@AllArgsConstructor
+public class QuestResponse implements BaseApiResponse {
 
+    // 커스텀 응답 필드들
+    private String code;
+    private String message;
+    private LocalDateTime timestamp;
+
+    // 퀘스트 데이터 필드들
     private Long id;
 
     @NotNull
@@ -38,7 +51,7 @@ public class QuestResponse {
 
     private Long member;
 
-    // QuestDTO를 QuestResponse로 변환하는 정적 메서드
+    // QuestDTO를 QuestResponse로 변환하는 정적 메서드 (단순 데이터만)
     public static QuestResponse of(QuestDTO questDTO) {
         QuestResponse response = new QuestResponse();
         response.setId(questDTO.getId());
@@ -52,6 +65,81 @@ public class QuestResponse {
         response.setDeletedAt(questDTO.getDeletedAt());
         response.setMember(questDTO.getMember());
         return response;
+    }
+    
+    // 퀘스트 생성 응답 (커스텀 응답 + 데이터)
+    public static QuestResponse ofCreate(QuestResponse questResponse) {
+        return new QuestResponse(
+            ResponseCode.OK.getCode(),
+            "퀘스트 생성 완료",
+            LocalDateTime.now(),
+            questResponse.getId(),
+            questResponse.getTitle(),
+            questResponse.getQuestImage(),
+            questResponse.getDescription(),
+            questResponse.getIsActive(),
+            questResponse.getCreatedAt(),
+            questResponse.getCompletedAt(),
+            questResponse.getUpdatedAt(),
+            questResponse.getDeletedAt(),
+            questResponse.getMember()
+        );
+    }
+    
+    // 퀘스트 수정 응답 (커스텀 응답 + 데이터)
+    public static QuestResponse ofUpdate(QuestResponse questResponse) {
+        return new QuestResponse(
+            ResponseCode.OK.getCode(),
+            "퀘스트 수정 완료",
+            LocalDateTime.now(),
+            questResponse.getId(),
+            questResponse.getTitle(),
+            questResponse.getQuestImage(),
+            questResponse.getDescription(),
+            questResponse.getIsActive(),
+            questResponse.getCreatedAt(),
+            questResponse.getCompletedAt(),
+            questResponse.getUpdatedAt(),
+            questResponse.getDeletedAt(),
+            questResponse.getMember()
+        );
+    }
+    
+    // QuestDTO를 받는 오버로드 메서드들
+    public static QuestResponse ofCreate(QuestDTO questDTO) {
+        return new QuestResponse(
+            ResponseCode.OK.getCode(),
+            "퀘스트 생성 완료",
+            LocalDateTime.now(),
+            questDTO.getId(),
+            questDTO.getTitle(),
+            questDTO.getQuestImage(),
+            questDTO.getDescription(),
+            questDTO.getIsActive(),
+            questDTO.getCreatedAt(),
+            questDTO.getCompletedAt(),
+            questDTO.getUpdatedAt(),
+            questDTO.getDeletedAt(),
+            questDTO.getMember()
+        );
+    }
+    
+    public static QuestResponse ofUpdate(QuestDTO questDTO) {
+        return new QuestResponse(
+            ResponseCode.OK.getCode(),
+            "퀘스트 수정 완료",
+            LocalDateTime.now(),
+            questDTO.getId(),
+            questDTO.getTitle(),
+            questDTO.getQuestImage(),
+            questDTO.getDescription(),
+            questDTO.getIsActive(),
+            questDTO.getCreatedAt(),
+            questDTO.getCompletedAt(),
+            questDTO.getUpdatedAt(),
+            questDTO.getDeletedAt(),
+            questDTO.getMember()
+        );
     }
 
 }

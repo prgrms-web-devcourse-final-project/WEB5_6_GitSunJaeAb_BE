@@ -1,42 +1,66 @@
 package com.gitsunjaeab.mapick.api.quest.dto;
 
+import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
+import com.gitsunjaeab.mapick.common.response.ResponseCode;
+import com.gitsunjaeab.mapick.domain.quest.MemberQuest;
 import jakarta.validation.constraints.NotNull;
-import java.time.OffsetDateTime;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Getter
 @Setter
-public class MemberQuestResponse {
+@NoArgsConstructor
+@AllArgsConstructor
+public class MemberQuestResponse implements BaseApiResponse {
+
+    // 커스텀 응답 필드들
+    private String code;
+    private String message;
+    private LocalDateTime timestamp;
     
-    // 참여 ID
+    // 퀘스트 참여 데이터 필드들
     private Long id;
     
-    // 참여 상태
     @NotNull
     private String status;
     
-    // 참여자 답안
     private String answer;
     
-    // 인정 여부
     private String isRecognized;
     
-    // 생성일시
     private OffsetDateTime createdAt;
     
-    // 완료일시
     private OffsetDateTime completedAt;
     
-    // 수정일시
     private OffsetDateTime updatedAt;
     
-    // 삭제일시
     private OffsetDateTime deletedAt;
     
-    // 참여하는 멤버 ID
     private Long member;
     
-    // 참여한 퀘스트 ID
     private Long quest;
+
+    // 퀘스트 참여 생성 응답 
+    public static MemberQuestResponse ofCreate(MemberQuest memberQuest) {
+        return new MemberQuestResponse(
+            ResponseCode.OK.getCode(),
+            "퀘스트 참여 생성 완료",
+            LocalDateTime.now(),
+            memberQuest.getId(),
+            memberQuest.getStatus(),
+            memberQuest.getAnswer(),
+            memberQuest.getIsRecognized(),
+            memberQuest.getCreatedAt(),
+            memberQuest.getCompletedAt(),
+            memberQuest.getUpdatedAt(),
+            memberQuest.getDeletedAt(),
+            memberQuest.getMember() != null ? memberQuest.getMember().getId() : null,
+            memberQuest.getQuest() != null ? memberQuest.getQuest().getId() : null
+        );
+    }
 }

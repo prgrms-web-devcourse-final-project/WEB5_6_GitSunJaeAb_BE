@@ -75,26 +75,7 @@ public class MemberQuestEvidenceService {
 
     // Entity → Response 변환
     private MemberQuestEvidenceResponse toResponse(final MemberQuestEvidence evidence) {
-        MemberQuestEvidenceResponse response = new MemberQuestEvidenceResponse();
-        response.setId(evidence.getId());
-        
-        // description에서 title과 description을 분리
-        String fullDescription = evidence.getDescription();
-        if (fullDescription != null && fullDescription.contains(": ")) {
-            String[] parts = fullDescription.split(": ", 2);
-            response.setTitle(parts[0]); // 첫 번째 부분이 제목
-            response.setDescription(parts[1]); // 나머지 부분이 설명
-        } else {
-            response.setTitle(fullDescription); // 구분자가 없으면 전체를 제목으로
-            response.setDescription("");
-        }
-        
-        response.setEvidenceImage(evidence.getImageUrl());
-        response.setCreatedAt(evidence.getCreatedAt());
-        response.setUpdatedAt(evidence.getUpdatedAt());
-        response.setDeletedAt(evidence.getDeletedAt());
-        response.setMemberQuest(evidence.getMemberQuest() == null ? null : evidence.getMemberQuest().getId());
-        return response;
+        return MemberQuestEvidenceResponse.ofCreate(evidence);
     }
 
     // Request → Entity 변환

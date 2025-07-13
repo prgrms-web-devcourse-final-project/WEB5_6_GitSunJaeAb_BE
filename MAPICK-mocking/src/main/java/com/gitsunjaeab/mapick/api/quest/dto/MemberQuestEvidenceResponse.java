@@ -1,36 +1,60 @@
 package com.gitsunjaeab.mapick.api.quest.dto;
 
+import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
+import com.gitsunjaeab.mapick.common.response.ResponseCode;
+import com.gitsunjaeab.mapick.domain.quest.MemberQuestEvidence;
 import jakarta.validation.constraints.NotNull;
-import java.time.OffsetDateTime;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Getter
 @Setter
-public class MemberQuestEvidenceResponse {
+@NoArgsConstructor
+@AllArgsConstructor
+public class MemberQuestEvidenceResponse implements BaseApiResponse {
+
+    // 커스텀 응답 필드들
+    private String code;
+    private String message;
+    private LocalDateTime timestamp;
     
-    // 증빙 ID
+    // 퀘스트 증거 데이터 필드들
     private Long id;
     
-    // 증빙 제목
     @NotNull
-    private String title;
+    private String evidenceType;
     
-    // 증빙 이미지 URL
-    private String evidenceImage;
+    private String evidenceUrl;
     
-    // 증빙 내용/설명
     private String description;
     
-    // 생성일시
     private OffsetDateTime createdAt;
     
-    // 수정일시
     private OffsetDateTime updatedAt;
     
-    // 삭제일시
     private OffsetDateTime deletedAt;
     
-    // 연관된 멤버퀘스트 ID
     private Long memberQuest;
+
+    // 퀘스트 증거 생성 응답 
+    public static MemberQuestEvidenceResponse ofCreate(MemberQuestEvidence evidence) {
+        return new MemberQuestEvidenceResponse(
+            ResponseCode.OK.getCode(),
+            "퀘스트 증거 생성 완료",
+            LocalDateTime.now(),
+            evidence.getId(),
+            "IMAGE", // 기본값으로 설정
+            evidence.getImageUrl(),
+            evidence.getDescription(),
+            evidence.getCreatedAt(),
+            evidence.getUpdatedAt(),
+            evidence.getDeletedAt(),
+            evidence.getMemberQuest() != null ? evidence.getMemberQuest().getId() : null
+        );
+    }
 }

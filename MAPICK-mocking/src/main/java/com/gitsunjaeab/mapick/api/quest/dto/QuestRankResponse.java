@@ -1,33 +1,54 @@
 package com.gitsunjaeab.mapick.api.quest.dto;
 
+import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
+import com.gitsunjaeab.mapick.common.response.ResponseCode;
+import com.gitsunjaeab.mapick.domain.quest.QuestRank;
 import jakarta.validation.constraints.NotNull;
-import java.time.OffsetDateTime;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Getter
 @Setter
-public class QuestRankResponse {
+@NoArgsConstructor
+@AllArgsConstructor
+public class QuestRankResponse implements BaseApiResponse {
+
+    // 커스텀 응답 필드들
+    private String code;
+    private String message;
+    private LocalDateTime timestamp;
     
-    // 랭킹 ID
+    // 퀘스트 랭킹 데이터 필드들
     private Long id;
     
-    // 순위
     @NotNull
     private Integer rank;
     
-    // 점수
-    private Integer score;
+    private OffsetDateTime completedAt;
     
-    // 생성일시
     private OffsetDateTime createdAt;
     
-    // 수정일시
     private OffsetDateTime updatedAt;
     
-    // 연관된 퀘스트 ID
     private Long quest;
-    
-    // 연관된 멤버 ID
-    private Long member;
+
+    // 퀘스트 랭킹 생성 응답 
+    public static QuestRankResponse ofCreate(QuestRank questRank) {
+        return new QuestRankResponse(
+            ResponseCode.OK.getCode(),
+            "퀘스트 랭킹 생성 완료",
+            LocalDateTime.now(),
+            questRank.getId(),
+            questRank.getRank(),
+            questRank.getCompletedAt(),
+            questRank.getCreatedAt(),
+            questRank.getUpdatedAt(),
+            questRank.getQuest() != null ? questRank.getQuest().getId() : null
+        );
+    }
 }

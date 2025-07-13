@@ -3,6 +3,7 @@ package com.gitsunjaeab.mapick.api.quest;
 import com.gitsunjaeab.mapick.api.quest.dto.QuestResponse;
 import com.gitsunjaeab.mapick.api.quest.dto.QuestListResponse;
 import com.gitsunjaeab.mapick.api.quest.dto.QuestRequest;
+import com.gitsunjaeab.mapick.api.quest.dto.QuestDTO;
 import com.gitsunjaeab.mapick.application.quest.MemberQuestService;
 import com.gitsunjaeab.mapick.application.quest.QuestRankService;
 import com.gitsunjaeab.mapick.application.quest.QuestService;
@@ -61,18 +62,20 @@ public class QuestController {
     // 퀘스트 생성 (출제자용)
     @PostMapping
     @Operation(summary = "퀘스트 생성", description = "[출제자용] 새로운 퀘스트를 생성합니다. 본인만 접근 가능합니다.")
-    public ResponseEntity<ApiResponse> createQuest(@RequestBody @Valid final QuestRequest questRequest) {
-        questService.create(questRequest);
-        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "퀘스트 생성 완료"));
+    public ResponseEntity<QuestResponse> createQuest(@RequestBody @Valid final QuestRequest questRequest) {
+        Long questId = questService.create(questRequest);
+        QuestResponse createdQuest = questService.get(questId);
+        return ResponseEntity.ok(QuestResponse.ofCreate(createdQuest));
     }
 
     // 퀘스트 수정 (출제자용)
     @PutMapping("/{questsId}")
     @Operation(summary = "퀘스트 수정", description = "[출제자용] 본인이 생성한 퀘스트의 정보를 수정합니다.")
-    public ResponseEntity<ApiResponse> updateQuest(@PathVariable(name = "questsId") final Long questsId,
+    public ResponseEntity<QuestResponse> updateQuest(@PathVariable(name = "questsId") final Long questsId,
             @RequestBody @Valid final QuestRequest questRequest) {
         questService.update(questsId, questRequest);
-        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "퀘스트 수정 완료"));
+        QuestResponse updatedQuest = questService.get(questsId);
+        return ResponseEntity.ok(QuestResponse.ofUpdate(updatedQuest));
     }
 
     // 퀘스트 삭제 (출제자용)
@@ -183,12 +186,13 @@ public class QuestController {
     // 댓글 생성
     @PostMapping("/{questId}/comments")
     @Operation(summary = "댓글 생성", description = "[모든 사용자] 퀘스트에 댓글을 작성합니다.")
-    public ResponseEntity<ApiResponse> createQuestComment(@PathVariable final Long questId,
+    public ResponseEntity<QuestCommentResponse> createQuestComment(@PathVariable final Long questId,
             @RequestBody @Valid final QuestCommentRequest questCommentRequest) {
         // questId를 request에 설정
         questCommentRequest.setQuest(questId);
-        questCommentService.create(questCommentRequest);
-        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "댓글 생성 완료"));
+        Long commentId = questCommentService.create(questCommentRequest);
+        QuestCommentResponse createdComment = questCommentService.get(commentId);
+        return ResponseEntity.ok(QuestCommentResponse.ofCreate(createdComment));
     }
 
     // 댓글 수정
