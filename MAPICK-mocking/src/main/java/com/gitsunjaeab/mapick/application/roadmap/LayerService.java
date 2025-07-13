@@ -1,6 +1,7 @@
 package com.gitsunjaeab.mapick.application.roadmap;
 
 import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerDTO;
+import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerListResponse;
 import com.gitsunjaeab.mapick.domain.roadmap.Layer;
 import com.gitsunjaeab.mapick.domain.roadmap.LayerRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.LayerLibraryRepository;
@@ -37,11 +38,9 @@ public class LayerService {
         this.layerLibraryRepository = layerLibraryRepository;
     }
 
-    public List<LayerDTO> findAll() {
-        final List<Layer> layers = layerRepository.findAll(Sort.by("id"));
-        return layers.stream()
-            .map(layer -> roadmapToDTO(layer, new LayerDTO()))
-            .toList();
+    public LayerListResponse findAllLayersOnRoadmap(Long roadmapId) {
+        final List<Layer> layers = layerRepository.findAllByRoadmap_Id(roadmapId);
+        return LayerListResponse.of(layers);
     }
 
     public LayerDTO get(final Long id) {

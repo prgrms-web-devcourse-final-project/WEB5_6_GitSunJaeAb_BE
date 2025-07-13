@@ -1,6 +1,8 @@
 package com.gitsunjaeab.mapick.api.roadmap;
 
+import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerListResponse;
 import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerRequest;
+import com.gitsunjaeab.mapick.api.roadmap.dto.marker.MarkerListResponse;
 import com.gitsunjaeab.mapick.application.roadmap.LayerService;
 import com.gitsunjaeab.mapick.common.response.ApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
@@ -10,11 +12,13 @@ import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -35,7 +39,14 @@ public class LayerController {
 //        return ResponseEntity.ok(layerLibraryService.findAll());
 //    }
 
-    // TODO 레이어 조회 (지도에 적용되어 있는, 수정이나 상제보기 시에 조회할 레이어)
+    // 특정 지도에 적용된 레이어 목록 조회
+    @GetMapping
+    @Operation(summary = "레이어 목록 조회", description = "[사용자용] 특정 지도에 있는 레이어 전체 조회")
+    public ResponseEntity<LayerListResponse> getAllLayersOnMap(
+        @RequestParam(required = false) Long roadmapId
+    ) {
+        return ResponseEntity.ok(layerService.findAllLayersOnRoadmap(roadmapId));
+    }
 
     // 레이어 생성
     @PostMapping
