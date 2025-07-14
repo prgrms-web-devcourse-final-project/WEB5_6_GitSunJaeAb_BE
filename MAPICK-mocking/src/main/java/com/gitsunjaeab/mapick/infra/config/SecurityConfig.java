@@ -116,7 +116,7 @@ public class SecurityConfig {
                 "https://34.47.121.164:9000"
         ));// 허용할 주소
         corsConfig.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); //허용 메소드
-        corsConfig.setAllowedHeaders(Collections.singletonList("*")); // 모든 헤더 허용
+        corsConfig.setAllowedHeaders(Collections.singletonList("*")); // 모든 헤더  허용
         corsConfig.setAllowCredentials(true); // 쿠키 포함 허용
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
