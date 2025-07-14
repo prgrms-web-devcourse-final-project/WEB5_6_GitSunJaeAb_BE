@@ -1,6 +1,7 @@
 package com.gitsunjaeab.mapick.api.roadmap.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.roadmap.Marker;
 import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapType;
@@ -58,7 +59,7 @@ public class RoadmapDTO {
 
     private OffsetDateTime deletedAt;
 
-    private Long member;
+    private Member member;
 
     private Long originalRoadmap;
 
@@ -77,7 +78,7 @@ public class RoadmapDTO {
         this.createdAt = roadmap.getCreatedAt();
         this.updatedAt = roadmap.getUpdatedAt();
         this.deletedAt = roadmap.getDeletedAt();
-        this.member = roadmap.getMember() != null ? roadmap.getMember().getId() : null;
+        this.member = roadmap.getMember() != null ? roadmap.getMember() : null;
         this.originalRoadmap = roadmap.getOriginalRoadmap() != null ? roadmap.getOriginalRoadmap().getId() : null;
     }
 }

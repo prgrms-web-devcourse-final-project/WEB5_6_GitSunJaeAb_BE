@@ -2,6 +2,7 @@ package com.gitsunjaeab.mapick.application.roadmap;
 
 import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapListResponse;
+import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapResponse;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
 import com.gitsunjaeab.mapick.domain.report.Report;
 import com.gitsunjaeab.mapick.domain.report.ReportRepository;
@@ -22,8 +23,10 @@ import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapType;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import com.gitsunjaeab.mapick.util.ReferencedWarning;
+import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -114,19 +117,20 @@ public class RoadmapService {
         return RoadmapListResponse.of(roadmaps, citationCountMap);
     }
 
+    @Transactional
+    public RoadmapResponse get(final Long id) {
+        Roadmap roadmap = roadmapRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("해당 로드맵이 존재하지 않습니다. id=" + id));
+
+        return RoadmapResponse.of(roadmap);
+    }
+
 //    @Transactional
 //    public Long create(final RoadmapRequest request) {
 //        final Roadmap roadmap =  new Roadmap();
 //        roadmapToEntity(request, roadmap);
 //        return roadmapRepository.save(roadmap).getId();
 //    }
-
-    public RoadmapDTO get(final Long id) {
-        return roadmapRepository.findById(id)
-                .map(map -> roadmapToDTO(map, new RoadmapDTO()))
-                .orElseThrow(NotFoundException::new);
-    }
-
 
 //    public void update(final Long id, final RoadmapRequest request) {
 //        final Roadmap roadmap = roadmapRepository.findById(id)
@@ -152,7 +156,7 @@ public class RoadmapService {
         roadmapDTO.setCreatedAt(roadmap.getCreatedAt());
         roadmapDTO.setUpdatedAt(roadmap.getUpdatedAt());
         roadmapDTO.setDeletedAt(roadmap.getDeletedAt());
-        roadmapDTO.setMember(roadmap.getMember() == null ? null : roadmap.getMember().getId());
+        roadmapDTO.setMember(roadmap.getMember() == null ? null : roadmap.getMember());
         roadmapDTO.setOriginalRoadmap(roadmap.getOriginalRoadmap() == null ? null : roadmap.getOriginalRoadmap().getId());
         return roadmapDTO;
     }
