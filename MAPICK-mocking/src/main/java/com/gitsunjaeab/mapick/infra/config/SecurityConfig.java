@@ -80,7 +80,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/auth/signin", "/auth/signup" , "/auth/socialLogin","/auth/logout").permitAll() // 누구나 이 URL로 요청 가능
                 .requestMatchers("/exit").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN") // 관리자페이지 접근 권한
-                .requestMatchers("/home", "/interests/**", "/mypage/**","/maps/**","/layers/**","/markers/**").hasAnyRole("USER", "ADMIN") // 사용자페이지 접근 권한
+//                .requestMatchers("/home", "/interests/**", "/mypage/**","/maps/**","/layers/**","/markers/**").hasAnyRole("USER", "ADMIN") // 사용자페이지 접근 권한
                 .anyRequest().permitAll() // 그 외 전부 로그인 필요
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

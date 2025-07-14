@@ -1,5 +1,6 @@
 package com.gitsunjaeab.mapick.api.roadmap.dto.marker;
 
+import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -31,5 +32,7 @@ public class MarkerListDTO {
     private Integer markerSeq;
 
     private Long layer;
+
+    private MemberSimpleDTO member;
 
 }

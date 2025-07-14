@@ -15,6 +15,7 @@ import com.gitsunjaeab.mapick.util.ReferencedWarning;
 import java.util.List;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
@@ -34,6 +35,7 @@ public class MarkerService {
         this.reportRepository = reportRepository;
     }
 
+    @Transactional(readOnly = true)
     public MarkerListResponse findAllMarkersOnLayer(Long layerId) {
         final List<Marker> markers = markerRepository.findAllByLayer_Id(layerId);
         return MarkerListResponse.of(markers);

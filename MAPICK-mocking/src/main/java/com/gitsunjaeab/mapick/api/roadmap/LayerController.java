@@ -39,7 +39,7 @@ public class LayerController {
 
     // 특정 회원의 레이어 찜 목록 조회 >> LayerLibrary 에서 모아둔 레이어 조회
     @GetMapping("/member")
-    @Operation(summary = "회원 찜 레이어 조회", description = "[사용자용] 본인이 찜한 레이어 목록 조회")
+    @Operation(summary = "회원 찜 레이어 조회", description = "[사용자용] 마이페이지 > 본인이 찜한 레이어 목록 조회")
     public ResponseEntity<LayerListResponse> getMemberLayers(
         @RequestParam(required = false) Long memberId) {
 
@@ -51,7 +51,7 @@ public class LayerController {
 
     // 특정 지도에 적용된 레이어 목록 조회
     @GetMapping("/roadmap")
-    @Operation(summary = "레이어 목록 조회", description = "[사용자용] 특정 지도에 있는 레이어 전체 조회")
+    @Operation(summary = "지도에 적용된 레이어 목록 조회", description = "[사용자용] 특정 지도에 있는 레이어 전체 조회")
     public ResponseEntity<LayerListResponse> getAllLayersOnRoadmap(
         @RequestParam(required = false) Long roadmapId
     ) {

@@ -1,5 +1,6 @@
 package com.gitsunjaeab.mapick.api.roadmap.dto.layer;
 
+import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.roadmap.Layer;
@@ -32,7 +33,7 @@ public class LayerListResponse implements BaseApiResponse {
                 dto.setLayerSeq(l.getLayerSeq());
                 dto.setLayerTime(l.getLayerTime());
                 dto.setCreatedAt(l.getCreatedAt());
-                dto.setMember(l.getMember() != null ? l.getMember().getId() : null);
+                dto.setMember(new MemberSimpleDTO(l.getMember()));
                 dto.setRoadmap(l.getRoadmap() != null ? l.getRoadmap().getId() : null);
                 return dto;
             })

@@ -1,5 +1,7 @@
 package com.gitsunjaeab.mapick.api.roadmap.dto.marker;
 
+import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
+import com.gitsunjaeab.mapick.domain.member.Member;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.OffsetDateTime;

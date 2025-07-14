@@ -1,5 +1,6 @@
 package com.gitsunjaeab.mapick.api.roadmap.dto.marker;
 
+import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.roadmap.Marker;
@@ -27,7 +28,8 @@ public class MarkerListResponse implements BaseApiResponse {
                 m.getColor(),
                 m.getImageUrl(),
                 m.getMarkerSeq(),
-                m.getLayer() != null ? m.getLayer().getId() : null
+                m.getLayer() != null ? m.getLayer().getId() : null,
+                new MemberSimpleDTO(m.getMember())
             ))
             .toList();
 

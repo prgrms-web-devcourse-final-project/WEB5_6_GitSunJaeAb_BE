@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.List;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class LayerService {
@@ -39,12 +40,13 @@ public class LayerService {
         this.layerLibraryRepository = layerLibraryRepository;
     }
 
+    @Transactional(readOnly = true)
     public LayerListResponse findAllLayersOnRoadmap(Long roadmapId) {
         final List<Layer> layers = layerRepository.findAllByRoadmap_Id(roadmapId);
         return LayerListResponse.of(layers);
     }
 
-
+    @Transactional(readOnly = true)
     public LayerListResponse findAllMemberLayers(Long memberId) {
         List<Long> layerIds = layerLibraryRepository.findLayerIdsByMemberId(memberId);
 
@@ -56,7 +58,7 @@ public class LayerService {
         return LayerListResponse.of(layers);
     }
 
-
+    @Transactional(readOnly = true)
     public LayerDTO get(final Long id) {
         return layerRepository.findById(id)
             .map(layer -> roadmapToDTO(layer, new LayerDTO()))

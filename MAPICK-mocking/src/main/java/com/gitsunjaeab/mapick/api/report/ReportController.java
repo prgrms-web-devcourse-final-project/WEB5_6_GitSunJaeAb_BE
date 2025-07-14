@@ -42,8 +42,7 @@ public class ReportController {
     @GetMapping("/{reportId}")
     @Operation(summary = "특정 신고 상세 조회", description = "[관리자용] 특정 신고의 상세 정보를 조회합니다.")
     public ResponseEntity<ReportDetailResponse> getReport(@PathVariable(name = "reportId") final Long reportId) {
-        ReportDetailResponse response = reportService.getReportDetail(reportId);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(reportService.getReportDetail(reportId));
     }
 
     // 신고 처리 완료 (관리자)

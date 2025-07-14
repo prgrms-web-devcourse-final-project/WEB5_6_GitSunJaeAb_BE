@@ -1,5 +1,6 @@
 package com.gitsunjaeab.mapick.api.report.dto;
 
+import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
 import com.gitsunjaeab.mapick.domain.report.ReportStatus;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
@@ -25,9 +26,9 @@ public class ReportDTO {
 //    @Size(max = 255)
 //    private String reportType;
 
-    private Long reporter;  // 신고자
+    private MemberSimpleDTO reporter;  // 신고자
 
-    private Long reportedMember;  // 피신고자
+    private MemberSimpleDTO reportedMember;  // 피신고자
 
     private String description;
 
