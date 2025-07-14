@@ -72,7 +72,7 @@ public class CommentController {
 
     // 퀘스트 댓글 조회 (쿼리 파라미터 방식)
     @GetMapping("/quests")
-    @Operation(summary = "퀘스트 댓글 조회", description = "[모든 사용자] 특정 퀘스트의 모든 댓글을 조회합니다.")
+    @Operation(summary = "퀘스트 댓글 목록 조회", description = "[모든 사용자] 특정 퀘스트의 모든 댓글을 조회합니다.")
     public ResponseEntity<CommentListResponse> getQuestComments(@RequestParam Long questId) {
         return ResponseEntity.ok(commentService.findAllCommentsInQuest(questId));
     }
