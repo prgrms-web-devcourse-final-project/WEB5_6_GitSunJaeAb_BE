@@ -45,7 +45,4 @@ public class ReportDTO {
     private OffsetDateTime createdAt;
 
     private OffsetDateTime resolvedAt;
-
-
-
 }

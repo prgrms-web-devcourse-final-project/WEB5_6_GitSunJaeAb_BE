@@ -21,13 +21,4 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
     Report findFirstByMarker(Marker marker);
 
     Report findFirstByQuest(Quest quest);
-
-    @Query("SELECT r FROM Report r "
-        + "LEFT JOIN FETCH r.reporter "
-        + "LEFT JOIN FETCH r.reportedMember "
-        + "LEFT JOIN FETCH r.roadmap "
-        + "LEFT JOIN FETCH r.marker "
-        + "LEFT JOIN FETCH r.quest "
-        + "WHERE r.id = :id")
-    Optional<Report> findByIdWithFetch(@Param("id") Long id);
 }

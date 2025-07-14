@@ -1,5 +1,6 @@
 package com.gitsunjaeab.mapick.api.roadmap.dto.marker;
 
+import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
 import com.gitsunjaeab.mapick.domain.roadmap.Marker;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -44,7 +45,7 @@ public class MarkerDTO {
 
     private OffsetDateTime deletedAt;
 
-    private Long member;
+    private MemberSimpleDTO member;
 
     private Long layer;
 
@@ -60,7 +61,7 @@ public class MarkerDTO {
         this.createdAt = marker.getCreatedAt();
         this.updatedAt = marker.getUpdatedAt();
         this.deletedAt = marker.getDeletedAt();
-        this.member = marker.getMember() != null ? marker.getMember().getId() : null;
+        this.member = marker.getMember() != null ? new MemberSimpleDTO(marker.getMember()) : null;
         this.layer = marker.getLayer() != null ? marker.getLayer().getId() : null;
     }
 

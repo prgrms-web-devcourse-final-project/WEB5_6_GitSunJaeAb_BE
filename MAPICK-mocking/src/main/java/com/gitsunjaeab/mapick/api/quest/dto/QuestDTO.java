@@ -1,6 +1,7 @@
 package com.gitsunjaeab.mapick.api.quest.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
 import com.gitsunjaeab.mapick.domain.quest.Quest;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -39,7 +40,7 @@ public class QuestDTO {
 
     private OffsetDateTime deletedAt;
 
-    private Long member;
+    private MemberSimpleDTO member;
 
     public QuestDTO(Quest quest) {
         this.id = quest.getId();
@@ -51,6 +52,6 @@ public class QuestDTO {
         this.completedAt = quest.getCompletedAt();
         this.updatedAt = quest.getUpdatedAt();
         this.deletedAt = quest.getDeletedAt();
-        this.member = quest.getMember() != null ? quest.getMember().getId() : null;
+        this.member = quest.getMember() != null ? new MemberSimpleDTO(quest.getMember()) : null;
     }
 }

@@ -63,7 +63,7 @@ public class QuestResponse implements BaseApiResponse {
         response.setCompletedAt(questDTO.getCompletedAt());
         response.setUpdatedAt(questDTO.getUpdatedAt());
         response.setDeletedAt(questDTO.getDeletedAt());
-        response.setMember(questDTO.getMember());
+        response.setMember(questDTO.getMember().getId());
         return response;
     }
     
@@ -139,7 +139,7 @@ public class QuestResponse implements BaseApiResponse {
             questDTO.getCompletedAt(),
             questDTO.getUpdatedAt(),
             questDTO.getDeletedAt(),
-            questDTO.getMember()
+            questDTO.getMember().getId()
         );
     }
     
@@ -157,7 +157,7 @@ public class QuestResponse implements BaseApiResponse {
             questDTO.getCompletedAt(),
             questDTO.getUpdatedAt(),
             questDTO.getDeletedAt(),
-            questDTO.getMember()
+            questDTO.getMember().getId()
         );
     }
 

@@ -1,5 +1,6 @@
 package com.gitsunjaeab.mapick.application.roadmap;
 
+import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.marker.MarkerListResponse;
 import com.gitsunjaeab.mapick.domain.roadmap.Layer;
 import com.gitsunjaeab.mapick.domain.roadmap.LayerRepository;
@@ -76,7 +77,7 @@ public class MarkerService {
         markerDTO.setCreatedAt(marker.getCreatedAt());
         markerDTO.setUpdatedAt(marker.getUpdatedAt());
         markerDTO.setDeletedAt(marker.getDeletedAt());
-        markerDTO.setMember(marker.getMember() == null ? null : marker.getMember().getId());
+        markerDTO.setMember(marker.getMember() == null ? null : new MemberSimpleDTO(marker.getMember()));
         markerDTO.setLayer(marker.getLayer() == null ? null : marker.getLayer().getId());
         return markerDTO;
     }
@@ -92,7 +93,7 @@ public class MarkerService {
         marker.setCreatedAt(markerDTO.getCreatedAt());
         marker.setUpdatedAt(markerDTO.getUpdatedAt());
         marker.setDeletedAt(markerDTO.getDeletedAt());
-        final Member member = markerDTO.getMember() == null ? null : memberRepository.findById(markerDTO.getMember())
+        final Member member = markerDTO.getMember() == null ? null : memberRepository.findById(markerDTO.getMember().getId())
                 .orElseThrow(() -> new NotFoundException("member not found"));
         marker.setMember(member);
         final Layer layer = markerDTO.getLayer() == null ? null : layerRepository.findById(markerDTO.getLayer())

@@ -1,67 +1,75 @@
 package com.gitsunjaeab.mapick.api.report.dto;
 
+import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
+import com.gitsunjaeab.mapick.api.quest.dto.QuestDTO;
+import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapDTO;
+import com.gitsunjaeab.mapick.api.roadmap.dto.marker.MarkerDTO;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.report.Report;
-import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
+import groovyjarjarantlr4.v4.runtime.misc.NotNull;
+import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 public class ReportResponse implements BaseApiResponse {
 
-    // 커스텀 응답 필드들
     private String code;
     private String message;
     private LocalDateTime timestamp;
+    private ReportInfo report;
 
-    // 신고 데이터 필드들
-    private Long id;
+    public ReportResponse(String code, String message, LocalDateTime timestamp, ReportInfo report) {
+        this.code = code;
+        this.message = message;
+        this.timestamp = timestamp;
+        this.report = report;
+    }
 
-    private String description;
+    @Getter
+    @Setter
+    public static class ReportInfo {
+        private Long id;
+        private String description;
 
-    @NotNull
-    private String status;
+        @NotNull
+        @Size(max = 255)
+        private String status;
 
-    private OffsetDateTime createdAt;
+        private OffsetDateTime createdAt;
+        private OffsetDateTime resolvedAt;
 
-    private OffsetDateTime resolvedAt;
+        private MemberSimpleDTO reporter;
+        private MemberSimpleDTO reportedMember;
 
-    private Long reporter;
+        private RoadmapDTO roadmap;
+        private MarkerDTO marker;
+        private QuestDTO quest;
+    }
 
-    private Long reportedMember;
+    public static ReportResponse of(Report report) {
+        ReportInfo reportInfo = new ReportInfo();
+        reportInfo.setId(report.getId());
+        reportInfo.setDescription(report.getDescription());
+        reportInfo.setStatus(report.getStatus().name());
+        reportInfo.setCreatedAt(report.getCreatedAt());
+        reportInfo.setResolvedAt(report.getResolvedAt());
+        reportInfo.setReporter(new MemberSimpleDTO(report.getReporter()));
+        reportInfo.setReportedMember(new MemberSimpleDTO(report.getReportedMember()));
+        reportInfo.setRoadmap(report.getRoadmap() == null ? null : new RoadmapDTO(report.getRoadmap()));
+        reportInfo.setMarker(report.getMarker() == null ? null : new MarkerDTO(report.getMarker()));
+        reportInfo.setQuest(report.getQuest() == null ? null : new QuestDTO(report.getQuest()));
 
-    private Long roadmap;
-
-    private Long marker;
-
-    private Long quest;
-
-    // 신고 생성 응답 
-    public static ReportResponse ofCreate(Report report) {
         return new ReportResponse(
             ResponseCode.OK.getCode(),
-            "신고 생성 완료",
+            "신고 상세 조회 성공",
             LocalDateTime.now(),
-            report.getId(),
-            report.getDescription(),
-            report.getStatus().name(),
-            report.getCreatedAt(),
-            report.getResolvedAt(),
-            report.getReporter() != null ? report.getReporter().getId() : null,
-            report.getReportedMember() != null ? report.getReportedMember().getId() : null,
-            report.getRoadmap() != null ? report.getRoadmap().getId() : null,
-            report.getMarker() != null ? report.getMarker().getId() : null,
-            report.getQuest() != null ? report.getQuest().getId() : null
+            reportInfo
         );
     }
 }
+
+

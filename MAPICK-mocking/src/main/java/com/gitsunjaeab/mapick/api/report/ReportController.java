@@ -1,6 +1,6 @@
 package com.gitsunjaeab.mapick.api.report;
 
-import com.gitsunjaeab.mapick.api.report.dto.ReportDetailResponse;
+import com.gitsunjaeab.mapick.api.report.dto.ReportResponse;
 import com.gitsunjaeab.mapick.api.report.dto.ReportListResponse;
 import com.gitsunjaeab.mapick.api.report.dto.MapReportRequest;
 import com.gitsunjaeab.mapick.api.report.dto.QuestReportRequest;
@@ -41,7 +41,7 @@ public class ReportController {
     // 특정 신고 상세 조회 (관리자)
     @GetMapping("/{reportId}")
     @Operation(summary = "특정 신고 상세 조회", description = "[관리자용] 특정 신고의 상세 정보를 조회합니다.")
-    public ResponseEntity<ReportDetailResponse> getReport(@PathVariable(name = "reportId") final Long reportId) {
+    public ResponseEntity<ReportResponse> getReport(@PathVariable(name = "reportId") final Long reportId) {
         return ResponseEntity.ok(reportService.getReportDetail(reportId));
     }
 

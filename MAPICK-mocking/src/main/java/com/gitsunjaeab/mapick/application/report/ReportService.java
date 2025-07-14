@@ -1,20 +1,12 @@
 package com.gitsunjaeab.mapick.application.report;
 
-import static com.gitsunjaeab.mapick.domain.roadmap.QRoadmap.roadmap;
-
-import com.gitsunjaeab.mapick.api.member.dto.MemberDTO;
 import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
-import com.gitsunjaeab.mapick.api.quest.dto.QuestDTO;
-import com.gitsunjaeab.mapick.api.report.dto.ReportDetailDTO;
-import com.gitsunjaeab.mapick.api.report.dto.ReportDetailResponse;
+import com.gitsunjaeab.mapick.api.report.dto.ReportResponse;
 import com.gitsunjaeab.mapick.api.report.dto.ReportListResponse;
 import com.gitsunjaeab.mapick.api.report.dto.MapReportRequest;
 import com.gitsunjaeab.mapick.api.report.dto.QuestReportRequest;
 import com.gitsunjaeab.mapick.api.report.dto.MarkerReportRequest;
 import com.gitsunjaeab.mapick.api.report.dto.ReportProcessRequest;
-import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapDTO;
-import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapResponse;
-import com.gitsunjaeab.mapick.api.roadmap.dto.marker.MarkerDTO;
 import com.gitsunjaeab.mapick.domain.report.ReportRepository;
 import com.gitsunjaeab.mapick.domain.report.ReportStatus;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
@@ -31,7 +23,6 @@ import com.gitsunjaeab.mapick.util.NotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,11 +55,11 @@ public class ReportService {
     }
 
     @Transactional(readOnly = true)
-    public ReportDetailResponse getReportDetail(Long id) {
+    public ReportResponse getReportDetail(Long id) {
         Report report = reportRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException("해당 로드맵이 존재하지 않습니다. id=" + id));
 
-        return ReportDetailResponse.of(report);
+        return ReportResponse.of(report);
     }
 
 

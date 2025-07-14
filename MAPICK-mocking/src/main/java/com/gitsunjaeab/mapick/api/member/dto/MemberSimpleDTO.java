@@ -34,6 +34,6 @@ public class MemberSimpleDTO {
         this.name = member.getName();
         this.nickname = member.getNickname();
         this.email = member.getEmail();
-        this.profileImage = member.getProfileImage();
+        this.profileImage = member.getProfileImage() != null ? member.getProfileImage() : null;
     }
 }

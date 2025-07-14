@@ -1,5 +1,6 @@
 package com.gitsunjaeab.mapick.application.roadmap;
 
+import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapListResponse;
 import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapResponse;
@@ -156,7 +157,7 @@ public class RoadmapService {
         roadmapDTO.setCreatedAt(roadmap.getCreatedAt());
         roadmapDTO.setUpdatedAt(roadmap.getUpdatedAt());
         roadmapDTO.setDeletedAt(roadmap.getDeletedAt());
-        roadmapDTO.setMember(roadmap.getMember() == null ? null : roadmap.getMember());
+        roadmapDTO.setMember(roadmap.getMember() == null ? null : new MemberSimpleDTO(roadmap.getMember()));
         roadmapDTO.setOriginalRoadmap(roadmap.getOriginalRoadmap() == null ? null : roadmap.getOriginalRoadmap().getId());
         return roadmapDTO;
     }
