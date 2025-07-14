@@ -11,6 +11,7 @@ import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import java.util.List;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
@@ -27,11 +28,13 @@ public class CommentService {
         this.memberRepository = memberRepository;
     }
 
+    @Transactional
     public CommentListResponse findAllCommentsInRoadmaps(Long roadmapId) {
         final List<Comment> comments = commentRepository.findAllByRoadmap_Id(roadmapId);
         return CommentListResponse.of(comments);
     }
 
+    @Transactional
     public CommentListResponse findAllCommentsInQuest(Long questId) {
         final List<Comment> comments = commentRepository.findAllByQuest_Id(questId);
         return CommentListResponse.of(comments);

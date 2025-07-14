@@ -1,5 +1,6 @@
 package com.gitsunjaeab.mapick.api.comment.dto;
 
+import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.comment.Comment;
@@ -23,8 +24,8 @@ public class CommentListResponse implements BaseApiResponse {
                 c.getId(),
                 c.getContent(),
                 c.getRoadmap() == null ? null : c.getRoadmap().getId(),
-                c.getMember() == null ? null : c.getMember().getId(),
-                c.getQuest().getId()
+                new MemberSimpleDTO(c.getMember()),
+                c.getQuest() == null ? null : c.getQuest().getId()
             )).toList();
 
         return new CommentListResponse(

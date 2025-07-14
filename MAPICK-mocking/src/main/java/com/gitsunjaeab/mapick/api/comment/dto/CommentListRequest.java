@@ -1,5 +1,6 @@
 package com.gitsunjaeab.mapick.api.comment.dto;
 
+import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,7 +18,7 @@ public class CommentListRequest {
 
     private Long roadmapId;
 
-    private Long questId;
+    private MemberSimpleDTO member;
 
-    private Long memberId;
+    private Long questId;
 }
