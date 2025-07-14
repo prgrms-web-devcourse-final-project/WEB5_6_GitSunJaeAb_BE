@@ -1,6 +1,5 @@
 package com.gitsunjaeab.mapick.api.category.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Size;
 import java.time.OffsetDateTime;
 import lombok.Getter;
@@ -11,10 +10,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Getter
 @Setter
 public class CategoryRequest {
-
-    // PUT 요청에서 클라이언트가 보내는 id는 무시 (경로 변수에서 가져옴)
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private Long id;
 
     @Size(max = 255)
     private String name;
