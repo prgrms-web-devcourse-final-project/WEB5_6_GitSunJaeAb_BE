@@ -61,6 +61,7 @@ public class AuthController {
 
         TokenResponse tokenResponseDto = TokenResponse.builder()
                 .accessToken(dto.getAccessToken())
+                .refreshToken(dto.getRefreshToken())
                 .expiresIn(dto.getAtExpiresIn())
                 .grantType(GrantType.BEARER)
                 .build();
@@ -95,6 +96,7 @@ public class AuthController {
             // 반환용 객체에 accessToken 전달
             TokenResponse tokenResponseDto = TokenResponse.builder()
                 .accessToken(dto.getAccessToken())
+                .refreshToken(dto.getRefreshToken())
                 .expiresIn(dto.getAtExpiresIn())
                 .grantType(GrantType.BEARER)
                 .build();
