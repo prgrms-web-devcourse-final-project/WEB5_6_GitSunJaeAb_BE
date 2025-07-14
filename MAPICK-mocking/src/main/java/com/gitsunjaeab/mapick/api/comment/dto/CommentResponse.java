@@ -20,7 +20,9 @@ public class CommentResponse {
 
     private OffsetDateTime updatedAt;
 
-    private Long roadmap;
+    private Long roadmapId;
+
+    private Long questId;
 
     private Long member;
 

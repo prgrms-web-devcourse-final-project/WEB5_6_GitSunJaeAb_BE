@@ -22,6 +22,8 @@ public class CommentDTO {
 
     private Long roadmap;
 
+    private Long quest;
+
     private Long member;
 
 }

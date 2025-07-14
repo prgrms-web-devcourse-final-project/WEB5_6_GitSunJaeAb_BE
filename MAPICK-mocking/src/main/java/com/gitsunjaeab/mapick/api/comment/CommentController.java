@@ -2,14 +2,9 @@ package com.gitsunjaeab.mapick.api.comment;
 
 import com.gitsunjaeab.mapick.api.comment.dto.CommentListResponse;
 import com.gitsunjaeab.mapick.api.comment.dto.CommentRequest;
-import com.gitsunjaeab.mapick.api.quest.dto.QuestCommentRequest;
-import com.gitsunjaeab.mapick.api.quest.dto.QuestCommentResponse;
 import com.gitsunjaeab.mapick.application.comment.CommentService;
-import com.gitsunjaeab.mapick.application.quest.QuestCommentService;
 import com.gitsunjaeab.mapick.common.response.ApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
-import com.gitsunjaeab.mapick.domain.member.MemberRepository;
-import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -24,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import java.util.List;
 
 
 @RestController
@@ -33,12 +27,9 @@ import java.util.List;
 public class CommentController {
 
     private final CommentService commentService;
-    private final QuestCommentService questCommentService;
 
-    public CommentController(final CommentService commentService, 
-            final QuestCommentService questCommentService) {
+    public CommentController(final CommentService commentService){
         this.commentService = commentService;
-        this.questCommentService = questCommentService;
     }
 
     // ===== 지도 댓글 관련 API =====
@@ -82,26 +73,20 @@ public class CommentController {
     // 퀘스트 댓글 조회 (쿼리 파라미터 방식)
     @GetMapping("/quests")
     @Operation(summary = "퀘스트 댓글 조회", description = "[모든 사용자] 특정 퀘스트의 모든 댓글을 조회합니다.")
-    public ResponseEntity<List<QuestCommentResponse>> getQuestComments(@RequestParam Long questId) {
-        try {
-            final List<QuestCommentResponse> comments = questCommentService.findByQuestId(questId);
-            return ResponseEntity.ok(comments);
-        } catch (Exception e) {
-            // 오류 발생 시 빈 리스트 반환
-            return ResponseEntity.ok(List.of());
-        }
+    public ResponseEntity<CommentListResponse> getQuestComments(@RequestParam Long questId) {
+        return ResponseEntity.ok(commentService.findAllCommentsInQuest(questId));
     }
 
     // 퀘스트 댓글 생성
     @PostMapping("/quests")
     @Operation(summary = "퀘스트 댓글 생성", description = "[모든 사용자] 퀘스트에 댓글을 작성합니다.")
-    public ResponseEntity<QuestCommentResponse> createQuestComment(@RequestParam Long questId,
-            @RequestBody @Valid final QuestCommentRequest questCommentRequest) {
+    public ResponseEntity<ApiResponse> createQuestComment(@RequestParam Long questId,
+            @RequestBody @Valid final CommentRequest request) {
         // questId를 request에 설정
-        questCommentRequest.setQuest(questId);
-        Long commentId = questCommentService.create(questCommentRequest);
-        QuestCommentResponse createdComment = questCommentService.get(commentId);
-        return ResponseEntity.ok(QuestCommentResponse.ofCreate(createdComment));
+//        questCommentRequest.setQuest(questId);
+//        Long commentId = questCommentService.create(questCommentRequest);
+//        QuestCommentResponse createdComment = questCommentService.get(commentId);
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "퀘스트 댓글 생성 완료"));
     }
 
     // 퀘스트 댓글 수정
@@ -109,11 +94,11 @@ public class CommentController {
     @Operation(summary = "퀘스트 댓글 수정", description = "[댓글 작성자] 자신이 작성한 댓글을 수정합니다.")
     public ResponseEntity<ApiResponse> updateQuestComment(@PathVariable final Long commentId,
             @RequestParam Long questId,
-            @RequestBody @Valid final QuestCommentRequest questCommentRequest) {
+            @RequestBody @Valid final CommentRequest request) {
         // questId 설정 (일관성 유지)
-        questCommentRequest.setQuest(questId);
-        questCommentService.update(commentId, questCommentRequest);
-        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "댓글 수정 완료"));
+//        questCommentRequest.setQuest(questId);
+//        questCommentService.update(commentId, questCommentRequest);
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "퀘스트 댓글 수정 완료"));
     }
 
     // 퀘스트 댓글 삭제
@@ -121,8 +106,8 @@ public class CommentController {
     @Operation(summary = "퀘스트 댓글 삭제", description = "[댓글 작성자] 자신이 작성한 댓글을 삭제합니다.")
     public ResponseEntity<ApiResponse> deleteQuestComment(@PathVariable final Long commentId,
             @RequestParam Long questId) {
-        questCommentService.delete(commentId);
-        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "댓글 삭제 완료"));
+//        questCommentService.delete(commentId);
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "퀘스트 댓글 삭제 완료"));
     }
 
 }

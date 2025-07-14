@@ -15,4 +15,6 @@ public class CommentRequest {
     private String content;
 
     private Long roadmapId;
+
+    private Long questId;
 }

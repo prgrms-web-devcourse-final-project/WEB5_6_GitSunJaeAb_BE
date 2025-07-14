@@ -11,6 +11,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class CommentListResponse implements BaseApiResponse {
+
     private String code;
     private String message;
     private LocalDateTime timestamp;
@@ -21,8 +22,9 @@ public class CommentListResponse implements BaseApiResponse {
             .map(c -> new CommentListRequest(
                 c.getId(),
                 c.getContent(),
-                c.getRoadmap().getId(),
-                c.getMember().getId()
+                c.getRoadmap() == null ? null : c.getRoadmap().getId(),
+                c.getMember() == null ? null : c.getMember().getId(),
+                c.getQuest().getId()
             )).toList();
 
         return new CommentListResponse(

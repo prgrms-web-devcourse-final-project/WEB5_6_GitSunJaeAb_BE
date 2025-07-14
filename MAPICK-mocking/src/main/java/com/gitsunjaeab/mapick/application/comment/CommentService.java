@@ -32,6 +32,11 @@ public class CommentService {
         return CommentListResponse.of(comments);
     }
 
+    public CommentListResponse findAllCommentsInQuest(Long questId) {
+        final List<Comment> comments = commentRepository.findAllByQuest_Id(questId);
+        return CommentListResponse.of(comments);
+    }
+
     public CommentDTO get(final Long id) {
         return commentRepository.findById(id)
                 .map(comment -> roadmapToDTO(comment, new CommentDTO()))
@@ -77,5 +82,4 @@ public class CommentService {
         comment.setMember(member);
         return comment;
     }
-
 }

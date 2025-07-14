@@ -77,7 +77,4 @@ public class Quest {
     @OneToMany(mappedBy = "quest")
     private Set<QuestRank> questQuestTopSubmitters = new HashSet<>();
 
-    @OneToMany(mappedBy = "quest")
-    private Set<QuestComment> questComments = new HashSet<>();
-
 }

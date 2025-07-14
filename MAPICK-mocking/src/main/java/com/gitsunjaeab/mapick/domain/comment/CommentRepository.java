@@ -13,4 +13,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     Comment findFirstByMember(Member member);
 
     List<Comment> findAllByRoadmap_Id(Long roadmapId);
+
+    List<Comment> findAllByQuest_Id(Long questId);
 }

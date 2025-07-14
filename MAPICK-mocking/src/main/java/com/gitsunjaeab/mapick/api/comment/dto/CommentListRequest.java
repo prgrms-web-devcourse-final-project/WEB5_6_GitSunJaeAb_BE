@@ -17,5 +17,7 @@ public class CommentListRequest {
 
     private Long roadmapId;
 
+    private Long questId;
+
     private Long memberId;
 }
