@@ -10,6 +10,8 @@ import com.gitsunjaeab.mapick.infra.auth.token.filter.LogoutFilter;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
@@ -107,8 +109,13 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfig = new CorsConfiguration();
-        corsConfig.setAllowedOriginPatterns(Collections.singletonList("http://localhost:8081")); // 허용할 주소
-        corsConfig.setAllowedMethods(Arrays.asList("GET", "POST")); //허용 메소드
+        corsConfig.setAllowedOriginPatterns(List.of(
+                "http://localhost:3000",
+                "https://localhost:3000",
+                "http://34.47.121.164:9000",
+                "https://34.47.121.164:9000"
+        ));// 허용할 주소
+        corsConfig.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); //허용 메소드
         corsConfig.setAllowedHeaders(Collections.singletonList("*")); // 모든 헤더 허용
         corsConfig.setAllowCredentials(true); // 쿠키 포함 허용
 
