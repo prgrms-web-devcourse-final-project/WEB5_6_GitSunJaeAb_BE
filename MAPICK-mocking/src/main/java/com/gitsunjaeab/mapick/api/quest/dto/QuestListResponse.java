@@ -1,5 +1,6 @@
 package com.gitsunjaeab.mapick.api.quest.dto;
 
+import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import jakarta.validation.constraints.Size;
@@ -67,7 +68,7 @@ public class QuestListResponse implements BaseApiResponse {
         private OffsetDateTime completedAt;
         private OffsetDateTime updatedAt;
         private OffsetDateTime deletedAt;
-        private Long member;
+        private MemberSimpleDTO member;
     }
 
     // 데이터 없이 메시지만 반환할 때

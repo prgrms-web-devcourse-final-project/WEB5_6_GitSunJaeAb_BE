@@ -1,6 +1,7 @@
 package com.gitsunjaeab.mapick.api.quest.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import jakarta.validation.constraints.NotNull;
@@ -49,7 +50,10 @@ public class QuestResponse implements BaseApiResponse {
 
     private OffsetDateTime deletedAt;
 
-    private Long member;
+//    private Long member;
+
+    private MemberSimpleDTO member;
+
 
     // QuestDTO를 QuestResponse로 변환하는 정적 메서드 (단순 데이터만)
     public static QuestResponse of(QuestDTO questDTO) {
@@ -63,7 +67,7 @@ public class QuestResponse implements BaseApiResponse {
         response.setCompletedAt(questDTO.getCompletedAt());
         response.setUpdatedAt(questDTO.getUpdatedAt());
         response.setDeletedAt(questDTO.getDeletedAt());
-        response.setMember(questDTO.getMember().getId());
+        response.setMember(questDTO.getMember());
         return response;
     }
     
@@ -139,7 +143,7 @@ public class QuestResponse implements BaseApiResponse {
             questDTO.getCompletedAt(),
             questDTO.getUpdatedAt(),
             questDTO.getDeletedAt(),
-            questDTO.getMember().getId()
+            questDTO.getMember()
         );
     }
     
@@ -157,7 +161,7 @@ public class QuestResponse implements BaseApiResponse {
             questDTO.getCompletedAt(),
             questDTO.getUpdatedAt(),
             questDTO.getDeletedAt(),
-            questDTO.getMember().getId()
+            questDTO.getMember()
         );
     }
 

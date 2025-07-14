@@ -36,4 +36,10 @@ public class MemberSimpleDTO {
         this.email = member.getEmail();
         this.profileImage = member.getProfileImage() != null ? member.getProfileImage() : null;
     }
+
+    public static MemberSimpleDTO from(Member member) {
+        if (member == null) return null;
+        return new MemberSimpleDTO(member);
+    }
+
 }

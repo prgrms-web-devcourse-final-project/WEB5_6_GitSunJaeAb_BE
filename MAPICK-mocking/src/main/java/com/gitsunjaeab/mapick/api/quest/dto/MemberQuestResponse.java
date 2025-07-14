@@ -1,5 +1,6 @@
 package com.gitsunjaeab.mapick.api.quest.dto;
 
+import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.quest.MemberQuest;
@@ -41,8 +42,9 @@ public class MemberQuestResponse implements BaseApiResponse {
     
     private OffsetDateTime deletedAt;
     
-    private Long member;
-    
+//    private Long member;
+
+    private MemberSimpleDTO member;
     private Long quest;
 
     // 퀘스트 참여 생성 응답 
@@ -59,7 +61,7 @@ public class MemberQuestResponse implements BaseApiResponse {
             memberQuest.getCompletedAt(),
             memberQuest.getUpdatedAt(),
             memberQuest.getDeletedAt(),
-            memberQuest.getMember() != null ? memberQuest.getMember().getId() : null,
+            memberQuest.getMember() != null ? new MemberSimpleDTO(memberQuest.getMember()) : null,
             memberQuest.getQuest() != null ? memberQuest.getQuest().getId() : null
         );
     }

@@ -1,5 +1,6 @@
 package com.gitsunjaeab.mapick.application.quest;
 
+import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
 import com.gitsunjaeab.mapick.domain.quest.QuestRepository;
@@ -40,15 +41,15 @@ public class QuestService {
     }
 
     public List<QuestResponse> findAll() {
-        final List<Quest> quests = questRepository.findAll(Sort.by("id"));
+        final List<Quest> quests = questRepository.findAllWithMember();
         return quests.stream()
-                .map(quest -> questToResponse(quest))
+                .map(this::questToResponse)
                 .toList();
     }
 
     public QuestResponse get(final Long id) {
-        return questRepository.findById(id)
-                .map(quest -> questToResponse(quest))
+        return questRepository.findWithMemberById(id)
+                .map(this::questToResponse)
                 .orElseThrow(NotFoundException::new);
     }
 
@@ -80,7 +81,7 @@ public class QuestService {
         questResponse.setCompletedAt(quest.getCompletedAt());
         questResponse.setUpdatedAt(quest.getUpdatedAt());
         questResponse.setDeletedAt(quest.getDeletedAt());
-        questResponse.setMember(quest.getMember() == null ? null : quest.getMember().getId());
+        questResponse.setMember(MemberSimpleDTO.from(quest.getMember()));
         return questResponse;
     }
 

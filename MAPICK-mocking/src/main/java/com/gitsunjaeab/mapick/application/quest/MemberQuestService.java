@@ -1,5 +1,6 @@
 package com.gitsunjaeab.mapick.application.quest;
 
+import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
 import com.gitsunjaeab.mapick.domain.quest.MemberQuestRepository;
 import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestRequest;
 import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestResponse;
@@ -89,7 +90,7 @@ public class MemberQuestService {
         response.setCompletedAt(memberQuest.getCompletedAt());
         response.setUpdatedAt(memberQuest.getUpdatedAt());
         response.setDeletedAt(memberQuest.getDeletedAt());
-        response.setMember(memberQuest.getMember() == null ? null : memberQuest.getMember().getId());
+        response.setMember(memberQuest.getMember() == null ? null : new MemberSimpleDTO(memberQuest.getMember()));
         response.setQuest(memberQuest.getQuest() == null ? null : memberQuest.getQuest().getId());
         return response;
     }
