@@ -20,7 +20,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update    # update
+      ddl-auto: create    # update
     open-in-view: false
     properties:
       hibernate:
