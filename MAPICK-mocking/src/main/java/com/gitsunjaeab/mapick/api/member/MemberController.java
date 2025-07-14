@@ -208,21 +208,9 @@ public class MemberController {
         // Request를 DTO로 변환
         MemberInterestDTO memberInterestDTO = convertToMemberInterestDTO(request);
         
-        // 관심분야 수정
         memberInterestService.update(memberInterestId, memberInterestDTO);
         
         return ResponseEntity.ok(com.gitsunjaeab.mapick.common.response.ApiResponse.of(com.gitsunjaeab.mapick.common.response.ResponseCode.OK, "관심분야 수정 완료"));
-    }
-
-    // 회원 관심분야 삭제 (본인만)
-    @DeleteMapping("/interests/{memberInterestId}")
-    @Operation(summary = "회원 관심분야 삭제", description = "[사용자 전용] 본인만 접근 가능한 관심분야 삭제")
-    public ResponseEntity<com.gitsunjaeab.mapick.common.response.ApiResponse> deleteMemberInterest(
-            @Parameter(description = "관심분야 ID") @PathVariable Long memberInterestId) {
-        
-        memberInterestService.delete(memberInterestId);
-        
-        return ResponseEntity.ok(com.gitsunjaeab.mapick.common.response.ApiResponse.of(com.gitsunjaeab.mapick.common.response.ResponseCode.OK, "관심분야 삭제 완료"));
     }
 
     // Request를 DTO로 변환하는 임시 메서드
