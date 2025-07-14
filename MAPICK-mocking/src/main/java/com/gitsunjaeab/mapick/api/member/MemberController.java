@@ -53,7 +53,7 @@ public class MemberController {
     
     
     // 전체 회원 조회 (관리자 전용)
-    @GetMapping
+    @GetMapping("/list")
     @Operation(summary = "전체 회원 조회 (관리자)", description = "[관리자 전용] 관리자만 접근 가능한 전체 회원 목록 조회")
     public ResponseEntity<MemberListResponse> getAllMembers() {
         MemberListResponse response = memberService.findAll();
@@ -61,19 +61,21 @@ public class MemberController {
     }
 
     // 특정 회원 조회 (관리자 전용)
-    @GetMapping("/{membersId}")
+    @GetMapping("{memberId}")
     @Operation(summary = "회원 조회 (관리자)", description = "[관리자 전용] 관리자만 접근 가능한 특정 회원 정보 조회")
-    public ResponseEntity<MemberResponse> getMember(@PathVariable(name = "membersId") final Long membersId) {
+    public ResponseEntity<MemberResponse> getMember(@PathVariable(name = "memberId") final Long membersId) {
         MemberDTO memberDTO = memberService.get(membersId);
         // TODO: MemberService를 수정하여 직접 Member 엔티티를 반환하도록 개선 필요
-        Member member = memberService.getMemberProfile(membersId); 
-        return ResponseEntity.ok(MemberResponse.of(member));
+        Member member = memberService.getMemberProfile(membersId);
+        MemberResponse response = MemberResponse.of(member);
+
+        return ResponseEntity.ok(response);
     }
 
     // 회원 정보 수정 (관리자 전용)
-    @PutMapping("/{membersId}")
+    @PutMapping
     @Operation(summary = "회원 정보 수정 (관리자)", description = "[관리자 전용] 관리자만 접근 가능한 회원 정보 수정")
-    public ResponseEntity<com.gitsunjaeab.mapick.common.response.ApiResponse> updateMember(@PathVariable(name = "membersId") final Long membersId,
+    public ResponseEntity<com.gitsunjaeab.mapick.common.response.ApiResponse> updateMember(final Long membersId,
             @RequestBody @Valid final MemberUpdateRequest memberUpdateRequest) {
         // TODO: MemberService를 수정하여 MemberUpdateRequest를 직접 받도록 개선 필요
         MemberDTO memberDTO = convertToMemberDTO(memberUpdateRequest);
@@ -98,9 +100,9 @@ public class MemberController {
     }
 
     // 회원 삭제 (관리자 전용)
-    @DeleteMapping("/{membersId}")
+    @DeleteMapping
     @Operation(summary = "회원 삭제 (관리자)", description = "[관리자 전용] 관리자만 접근 가능한 회원 삭제")
-    public ResponseEntity<com.gitsunjaeab.mapick.common.response.ApiResponse> deleteMember(@PathVariable(name = "membersId") final Long membersId) {
+    public ResponseEntity<com.gitsunjaeab.mapick.common.response.ApiResponse> deleteMember(final Long membersId) {
         final ReferencedWarning referencedWarning = memberService.getReferencedWarning(membersId);
         if (referencedWarning != null) {
             throw new ReferencedException(referencedWarning);
@@ -112,10 +114,10 @@ public class MemberController {
     // ===== 사용자 전용 API (본인만 접근 가능) =====
 
     // 마이페이지 - 회원 프로필 조회 (본인만)
-    @GetMapping("/{memberId}/profile")
+    @GetMapping("/profile")
     @Operation(summary = "회원 프로필 조회", description = "[사용자 전용] 본인 또는 관리자만 접근 가능한 프로필 조회")
-    public ResponseEntity<MemberProfileResponse> getMemberProfile(
-            @Parameter(description = "회원 ID") @PathVariable Long memberId) {
+    public ResponseEntity<MemberProfileResponse> getMemberProfile() {
+        Long memberId = 1L;
         
         Member member = memberService.getMemberProfile(memberId);
         MemberProfileResponse response = MemberProfileResponse.of(member);
@@ -124,30 +126,32 @@ public class MemberController {
     }
 
     // 마이페이지 - 회원 정보 수정 (본인만)
-    @PutMapping("/{memberId}/profile")
+    @PutMapping("/profile")
     @Operation(summary = "회원 정보 수정", description = "[사용자 전용] 본인만 접근 가능한 프로필 정보 수정")
     public ResponseEntity<MemberProfileUpdateResponse> updateMemberProfile(
-            @Parameter(description = "회원 ID") @PathVariable Long memberId,
             @Valid @RequestBody MemberProfileUpdateRequest request) {
+
+        Long memberId = 1L;
         
         Member updatedMember = memberService.updateMemberProfile(
-            memberId, 
-            request.getNickname(), 
+            memberId,
+            request.getNickname(),
             request.getProfileImage(),
             request.getIntro(),
             request.getPhone()
         );
-        
+
         MemberProfileUpdateResponse response = MemberProfileUpdateResponse.of(updatedMember);
         return ResponseEntity.ok(response);
     }
 
     // 마이페이지 - 비밀번호 확인 (본인만)
-    @PostMapping("/{memberId}/password/verify")
+    @PostMapping("/password/verify")
     @Operation(summary = "비밀번호 확인", description = "[사용자 전용] 본인만 접근 가능한 비밀번호 확인")
     public ResponseEntity<SimpleMessageResponse> verifyPassword(
-            @Parameter(description = "회원 ID") @PathVariable Long memberId,
             @Valid @RequestBody PasswordVerifyRequest request) {
+
+        Long memberId = 1L;
         
         boolean isValid = memberService.verifyPassword(memberId, request.getCurrentPassword());
         
@@ -159,11 +163,12 @@ public class MemberController {
     }
 
     // 마이페이지 - 비밀번호 수정 (본인만)
-    @PutMapping("/{memberId}/password")
+    @PutMapping("/password")
     @Operation(summary = "비밀번호 수정", description = "[사용자 전용] 본인만 접근 가능한 비밀번호 변경")
     public ResponseEntity<SimpleMessageResponse> updatePassword(
-            @Parameter(description = "회원 ID") @PathVariable Long memberId,
             @Valid @RequestBody PasswordUpdateRequest request) {
+
+        Long memberId = 1L;
         
         memberService.updatePassword(memberId, request.getNewPassword());
         
@@ -171,11 +176,10 @@ public class MemberController {
     }
 
     // 마이페이지 - 회원 탈퇴 (본인만)
-    @DeleteMapping("/{memberId}/withdraw")
+    @DeleteMapping("/withdraw")
     @Operation(summary = "회원 탈퇴", description = "[사용자 전용] 본인만 접근 가능한 회원 탈퇴")
-    public ResponseEntity<SimpleMessageResponse> withdrawMember(
-            @Parameter(description = "회원 ID") @PathVariable Long memberId) {
-        
+    public ResponseEntity<SimpleMessageResponse> withdrawMember() {
+        Long memberId = 1L;
         memberService.withdrawMember(memberId);
         
         return ResponseEntity.ok(SimpleMessageResponse.of("회원 탈퇴가 완료되었습니다."));

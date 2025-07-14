@@ -1,6 +1,7 @@
 package com.gitsunjaeab.mapick.api.roadmap.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.gitsunjaeab.mapick.api.member.dto.MemberProfileResponse.MemberInfo;
 import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
@@ -10,53 +11,67 @@ import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
-@AllArgsConstructor
 public class RoadmapResponse implements BaseApiResponse {
 
     private String code;
     private String message;
     private LocalDateTime timestamp;
+    private RoadmapInfo roadmap;
 
-    // --- 실제 데이터 필드 ---
-    @NotNull
-    @Size(max = 255)
-    private String title;
+    public RoadmapResponse(String code, String message, LocalDateTime timestamp, RoadmapInfo roadmap){
+        this.code = code;
+        this.message = message;
+        this.timestamp = timestamp;
+        this.roadmap = roadmap;
+    }
 
-    private String description;
+    @Getter
+    @Setter
+    public static class RoadmapInfo {
+        @NotNull
+        @Size(max = 255)
+        private String title;
 
-    @Size(max = 255)
-    private String thumbnail;
+        private String description;
 
-    private MemberSimpleDTO member;
+        @Size(max = 255)
+        private String thumbnail;
 
-    @NotNull
-    @JsonProperty("isPublic")
-    private Boolean isPublic;
+        private MemberSimpleDTO member;
 
-    @NotNull
-    @JsonProperty("isAnimated")
-    private Boolean isAnimated;
+        @NotNull
+        @JsonProperty("isPublic")
+        private Boolean isPublic;
 
-    private Integer likeCount;
+        @NotNull
+        @JsonProperty("isAnimated")
+        private Boolean isAnimated;
 
-    private Integer viewCount;
+        private Integer likeCount;
+
+        private Integer viewCount;
+    }
 
     // --- 정적 팩토리 메서드 ---
     public static RoadmapResponse of(Roadmap r) {
+        RoadmapInfo roadmapInfo = new RoadmapInfo();
+        roadmapInfo.setTitle(r.getTitle());
+        roadmapInfo.setDescription(r.getDescription());
+        roadmapInfo.setThumbnail(r.getThumbnail());
+        roadmapInfo.setMember(new MemberSimpleDTO(r.getMember()));
+        roadmapInfo.setIsPublic(r.getIsPublic());
+        roadmapInfo.setIsAnimated(r.getIsAnimated());
+        roadmapInfo.setLikeCount(r.getLikeCount());
+        roadmapInfo.setViewCount(r.getViewCount());
+
         return new RoadmapResponse(
             ResponseCode.OK.getCode(),
             "로드맵 조회 성공",
             LocalDateTime.now(),
-            r.getTitle(),
-            r.getDescription(),
-            r.getThumbnail(),
-            new MemberSimpleDTO(r.getMember()),
-            r.getIsPublic(),
-            r.getIsAnimated(),
-            r.getLikeCount(),
-            r.getViewCount()
+            roadmapInfo
         );
     }
 }
