@@ -17,9 +17,6 @@ import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestResponse;
 import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestEvidenceRequest;
 import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestEvidenceResponse;
 import com.gitsunjaeab.mapick.api.quest.dto.QuestRankResponse;
-import com.gitsunjaeab.mapick.api.quest.dto.QuestCommentRequest;
-import com.gitsunjaeab.mapick.api.quest.dto.QuestCommentResponse;
-import com.gitsunjaeab.mapick.application.quest.QuestCommentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -34,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
+import com.gitsunjaeab.mapick.domain.quest.MemberQuest;
 
 @RestController
 @RequestMapping(value = "/quests", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -44,17 +42,14 @@ public class QuestController {
     private final QuestRankService questRankService;
     private final MemberQuestService memberQuestService;
     private final MemberQuestEvidenceService memberQuestEvidenceService;
-    private final QuestCommentService questCommentService;
 
     public QuestController(final QuestService questService, final QuestRankService questRankService,
         final MemberQuestService memberQuestService,
-        final MemberQuestEvidenceService memberQuestEvidenceService,
-        final QuestCommentService questCommentService) {
+        final MemberQuestEvidenceService memberQuestEvidenceService) {
         this.questService = questService;
         this.questRankService = questRankService;
         this.memberQuestService = memberQuestService;
         this.memberQuestEvidenceService = memberQuestEvidenceService;
-        this.questCommentService = questCommentService;
     }
 
     // ===== 출제자용 API (퀘스트 관리) =====
@@ -106,11 +101,12 @@ public class QuestController {
         return ResponseEntity.ok(QuestListResponse.of(questService.findAll()));
     }
 
-    // 단일 퀘스트 조회 (참여자용)
+    // 특정 퀘스트 조회 (참여자용)
     @GetMapping("/{questsId}")
     @Operation(summary = "퀘스트 상세 조회", description = "[참여자용] 특정 퀘스트의 상세 정보를 조회합니다.")
     public ResponseEntity<QuestResponse> getQuest(@PathVariable(name = "questsId") final Long questsId) {
-        return ResponseEntity.ok(questService.get(questsId));
+        QuestResponse questResponse = questService.get(questsId);
+        return ResponseEntity.ok(QuestResponse.ofGetDetail(questResponse));
     }
 
     // 퀘스트 랭킹 조회 (참여자용)
@@ -130,12 +126,12 @@ public class QuestController {
     // 퀘스트 참여 신청 (참여자용)
     @PostMapping("/{questId}/memberQuest")
     @Operation(summary = "퀘스트 참여 신청", description = "[참여자용] 특정 퀘스트에 참여 신청을 합니다.")
-    public ResponseEntity<ApiResponse> participateInQuest(@PathVariable(name = "questId") final Long questId,
+    public ResponseEntity<MemberQuestResponse> participateInQuest(@PathVariable(name = "questId") final Long questId,
             @RequestBody @Valid final MemberQuestRequest memberQuestRequest) {
         // questId를 request에 설정
         memberQuestRequest.setQuest(questId);
-        memberQuestService.create(memberQuestRequest);
-        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "퀘스트 참여 신청 완료"));
+        MemberQuest createdMemberQuest = memberQuestService.createAndReturnEntity(memberQuestRequest);
+        return ResponseEntity.ok(MemberQuestResponse.ofCreate(createdMemberQuest));
     }
 
     // 증빙 자료 제출 (참여자용)
@@ -171,45 +167,6 @@ public class QuestController {
     public ResponseEntity<ApiResponse> deleteEvidence(@PathVariable(name = "evidenceId") final Long evidenceId) {
         memberQuestEvidenceService.delete(evidenceId);
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "증빙 자료 삭제 완료"));
-    }
-
-    // ===== 퀘스트 댓글 관련 API =====
-    
-    // 댓글 조회 (특정 퀘스트의 모든 댓글)
-    @GetMapping("/{questId}/comments")
-    @Operation(summary = "퀘스트 댓글 조회", description = "[모든 사용자] 특정 퀘스트의 모든 댓글을 조회합니다.")
-    public ResponseEntity<List<QuestCommentResponse>> getQuestComments(@PathVariable final Long questId) {
-        final List<QuestCommentResponse> comments = questCommentService.findByQuestId(questId);
-        return ResponseEntity.ok(comments);
-    }
-
-    // 댓글 생성
-    @PostMapping("/{questId}/comments")
-    @Operation(summary = "댓글 생성", description = "[모든 사용자] 퀘스트에 댓글을 작성합니다.")
-    public ResponseEntity<QuestCommentResponse> createQuestComment(@PathVariable final Long questId,
-            @RequestBody @Valid final QuestCommentRequest questCommentRequest) {
-        // questId를 request에 설정
-        questCommentRequest.setQuest(questId);
-        Long commentId = questCommentService.create(questCommentRequest);
-        QuestCommentResponse createdComment = questCommentService.get(commentId);
-        return ResponseEntity.ok(QuestCommentResponse.ofCreate(createdComment));
-    }
-
-    // 댓글 수정
-    @PutMapping("/comments/{commentId}")
-    @Operation(summary = "댓글 수정", description = "[댓글 작성자] 자신이 작성한 댓글을 수정합니다.")
-    public ResponseEntity<ApiResponse> updateQuestComment(@PathVariable final Long commentId,
-            @RequestBody @Valid final QuestCommentRequest questCommentRequest) {
-        questCommentService.update(commentId, questCommentRequest);
-        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "댓글 수정 완료"));
-    }
-
-    // 댓글 삭제
-    @DeleteMapping("/comments/{commentId}")
-    @Operation(summary = "댓글 삭제", description = "[댓글 작성자] 자신이 작성한 댓글을 삭제합니다.")
-    public ResponseEntity<ApiResponse> deleteQuestComment(@PathVariable final Long commentId) {
-        questCommentService.delete(commentId);
-        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "댓글 삭제 완료"));
     }
 
 }

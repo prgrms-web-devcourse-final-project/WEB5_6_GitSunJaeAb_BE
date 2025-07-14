@@ -105,6 +105,25 @@ public class QuestResponse implements BaseApiResponse {
         );
     }
     
+    // 퀘스트 조회 응답 (커스텀 응답 + 데이터)
+    public static QuestResponse ofGetDetail(QuestResponse questResponse) {
+        return new QuestResponse(
+            ResponseCode.OK.getCode(),
+            "퀘스트 조회 완료",
+            LocalDateTime.now(),
+            questResponse.getId(),
+            questResponse.getTitle(),
+            questResponse.getQuestImage(),
+            questResponse.getDescription(),
+            questResponse.getIsActive(),
+            questResponse.getCreatedAt(),
+            questResponse.getCompletedAt(),
+            questResponse.getUpdatedAt(),
+            questResponse.getDeletedAt(),
+            questResponse.getMember()
+        );
+    }
+
     // QuestDTO를 받는 오버로드 메서드들
     public static QuestResponse ofCreate(QuestDTO questDTO) {
         return new QuestResponse(

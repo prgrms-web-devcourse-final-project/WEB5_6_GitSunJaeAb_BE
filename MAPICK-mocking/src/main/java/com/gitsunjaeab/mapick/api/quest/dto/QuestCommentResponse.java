@@ -55,4 +55,36 @@ public class QuestCommentResponse implements BaseApiResponse {
         );
     }
 
+    // 퀘스트 댓글 조회 응답 (커스텀 응답 + 데이터)
+    public static QuestCommentResponse ofGetDetail(QuestCommentResponse commentResponse) {
+        return new QuestCommentResponse(
+            ResponseCode.OK.getCode(),
+            "댓글 조회 완료",
+            LocalDateTime.now(),
+            commentResponse.getId(),
+            commentResponse.getContent(),
+            commentResponse.getCreatedAt(),
+            commentResponse.getUpdatedAt(),
+            commentResponse.getQuest(),
+            commentResponse.getMember(),
+            commentResponse.getMemberName()
+        );
+    }
+
+    // 댓글 목록 조회 응답 (커스텀 응답 + 데이터)
+    public static QuestCommentResponse ofGetList(QuestCommentResponse commentResponse) {
+        return new QuestCommentResponse(
+            ResponseCode.OK.getCode(),
+            "댓글 목록 조회 완료",
+            LocalDateTime.now(),
+            commentResponse.getId(),
+            commentResponse.getContent(),
+            commentResponse.getCreatedAt(),
+            commentResponse.getUpdatedAt(),
+            commentResponse.getQuest(),
+            commentResponse.getMember(),
+            commentResponse.getMemberName()
+        );
+    }
+
 } 

@@ -63,4 +63,43 @@ public class MemberQuestResponse implements BaseApiResponse {
             memberQuest.getQuest() != null ? memberQuest.getQuest().getId() : null
         );
     }
+
+    // 퀘스트 참여 조회 응답 (커스텀 응답 + 데이터)
+    public static MemberQuestResponse ofGetDetail(MemberQuestResponse memberQuestResponse) {
+        return new MemberQuestResponse(
+            ResponseCode.OK.getCode(),
+            "퀘스트 참여 조회 완료",
+            LocalDateTime.now(),
+            memberQuestResponse.getId(),
+            memberQuestResponse.getStatus(),
+            memberQuestResponse.getAnswer(),
+            memberQuestResponse.getIsRecognized(),
+            memberQuestResponse.getCreatedAt(),
+            memberQuestResponse.getCompletedAt(),
+            memberQuestResponse.getUpdatedAt(),
+            memberQuestResponse.getDeletedAt(),
+            memberQuestResponse.getMember(),
+            memberQuestResponse.getQuest()
+        );
+    }
+
+    // 퀘스트 참여 목록 조회 응답 (커스텀 응답 + 데이터)
+    public static MemberQuestResponse ofGetList(MemberQuestResponse memberQuestResponse) {
+        return new MemberQuestResponse(
+            ResponseCode.OK.getCode(),
+            "퀘스트 참여 목록 조회 완료",
+            LocalDateTime.now(),
+            memberQuestResponse.getId(),
+            memberQuestResponse.getStatus(),
+            memberQuestResponse.getAnswer(),
+            memberQuestResponse.getIsRecognized(),
+            memberQuestResponse.getCreatedAt(),
+            memberQuestResponse.getCompletedAt(),
+            memberQuestResponse.getUpdatedAt(),
+            memberQuestResponse.getDeletedAt(),
+            memberQuestResponse.getMember(),
+            memberQuestResponse.getQuest()
+        );
+    }
+
 }

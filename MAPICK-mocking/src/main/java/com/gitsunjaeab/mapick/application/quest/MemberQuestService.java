@@ -40,6 +40,7 @@ public class MemberQuestService {
         final List<MemberQuest> memberQuests = memberQuestRepository.findByQuestId(questId);
         return memberQuests.stream()
                 .map(this::toResponse)
+                .map(MemberQuestResponse::ofGetList)
                 .toList();
     }
 
@@ -55,6 +56,13 @@ public class MemberQuestService {
         final MemberQuest memberQuest = new MemberQuest();
         requestToEntity(request, memberQuest);
         return memberQuestRepository.save(memberQuest).getId();
+    }
+    
+    // 퀘스트 참여 신청 후 엔티티 반환
+    public MemberQuest createAndReturnEntity(final MemberQuestRequest request) {
+        final MemberQuest memberQuest = new MemberQuest();
+        requestToEntity(request, memberQuest);
+        return memberQuestRepository.save(memberQuest);
     }
 
     // 참여 정보 수정

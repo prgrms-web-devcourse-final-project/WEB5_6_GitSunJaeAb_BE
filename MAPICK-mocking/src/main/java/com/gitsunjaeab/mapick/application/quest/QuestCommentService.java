@@ -48,6 +48,7 @@ public class QuestCommentService {
         final List<QuestComment> questComments = questCommentRepository.findByQuestOrderByCreatedAtDesc(quest);
         return questComments.stream()
                 .map(this::toResponse)
+                .map(QuestCommentResponse::ofGetList)
                 .toList();
     }
 
