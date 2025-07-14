@@ -1,98 +1,140 @@
--- 오늘 작업한 도메인들의 예제 데이터 (ID 충돌 방지 + NOT NULL 제약조건 해결)
+-- Member 데이터
+INSERT INTO public.members (is_blacklisted, created_at, deleted_at, id, last_login, updated_at, email, intro, login_type, name, nickname, password, phone, profile_image, provider, role, status)
+VALUES (false, '2025-06-30 10:48:44.000000 +00:00', null, 1, null, null, 'aaa@aaa.com', null, 'LOCAL', '노선우', '노션우', '{bcrypt}$2a$10$.RttUQ8agUixVeg3UiLkJeboPyG9hq7EkEUZTOpPKpvW8K1oUKLRG', null, null, null, 'ROLE_USER', '2025-07-11 09:16:33.910784'),
+       (false, '2025-07-11 09:16:33.910752 +00:00', null, 2, null, null, 'bbb@aaa.com', null, 'LOCAL', '임서현', '임세령', '{bcrypt}$2a$10$.RttUQ8agUixVeg3UiLkJeboPyG9hq7EkEUZTOpPKpvW8K1oUKLRG', null, null, null, 'ROLE_USER', '2025-07-11 09:16:33.910784'),
+       (false, '2025-07-13 14:03:48.420649 +00:00', null, 3, null, '2025-07-13 14:03:48.420668 +00:00', 'ccc@ccc.com', null, 'LOCAL', '김나단', '김가나단', '{bcrypt}$2a$10$n/PDTvgDuoFbovmzOAxstOuXFA2NWLQDAy/BsIm1yNE.IWwjM60Yu', null, null, null, 'ROLE_USER', 'ACTIVE'),
+       (false, '2025-07-13 14:08:10.200440 +00:00', null, 4, null, '2025-07-13 14:08:10.201013 +00:00', 'ddd@ddd.com', null, 'LOCAL', '이초롱', '롱롱', '{bcrypt}$2a$10$tdt3EceYdja2K4WekvZgweOBOKt0x.Yz2Gka7wB.biQ1..jo1mJ.m', null, null, null, 'ROLE_USER', 'ACTIVE'),
+       (false, '2025-07-13 14:08:43.742824 +00:00', null, 5, null, '2025-07-13 14:08:43.742848 +00:00', 'cocjfals0@gmail.com', null, 'SOCIAL', 'chulmin chae', 'google_381267', 'e745e950-929c-4b6b-bf74-eab2814ed577', null, 'https://lh3.googleusercontent.com/a/ACg8ocItiSYT_99SLb-Jd99ISYCFhKMx2O0SngxUbvQDZA4cCv635w=s96-c', 'google', 'ROLE_USER', 'ACTIVE');
 
--- Categories 데이터 (기존 데이터에 추가)
-INSERT INTO "public"."categories" ("created_at", "id", "category_image", "description", "name")
-VALUES ('2025-07-13 07:00:00+00', '100', null, '개발자들의 코딩 지식 공유', '개발'),
-       ('2025-07-13 07:01:00+00', '101', null, '운동과 건강 관리 노하우', '운동'),
-       ('2025-07-13 07:06:00+00', '102', null, '독서와 학습을 통한 자기계발', '독서'),
-       ('2025-07-13 07:07:00+00', '103', null, '요리와 맛있는 레시피 공유', '요리');
+-- Category 데이터
+INSERT INTO public.categories (created_at, id, category_image, description, name)
+VALUES ('2025-07-11 10:03:28.000000 +00:00', 1, null, '내가 이 구역 맛잘알', '음식'),
+       ('2025-07-11 10:03:39.000000 +00:00', 2, null, '한국사 덕후들 모여라', '한국사'),
+       ('2025-07-11 10:04:03.000000 +00:00', 3, null, '삼국지 덕후들 모여라', '삼국지'),
+       ('2025-07-11 10:04:15.000000 +00:00', 4, null, '나만의 야경 맛집을 공유해보자', '야경'),
+       ('2025-07-11 10:55:01.000000 +00:00', 5, null, '나만의 여행 로드맵을 공유해보자', '여행');
 
--- Members 데이터 (기존 데이터에 추가)
-INSERT INTO "public"."members" ("is_blacklisted", "created_at", "deleted_at", "id", "last_login", "updated_at", "email", "login_type", "name", "nickname", "password", "profile_image", "provider", "role", "status")
-VALUES ('false', '2025-07-13 07:08:00+00', null, '100', null, null, 'ccc@example.com', 'LOCAL', '김개발', '코딩천재', '{bcrypt}$2a$10$.RttUQ8agUixVeg3UiLkJeboPyG9hq7EkEUZTOpPKpvW8K1oUKLRG', null, null, 'ROLE_USER', 'ACTIVE'),
-       ('false', '2025-07-13 07:09:00+00', null, '101', null, null, 'ddd@example.com', 'LOCAL', '박요리사', '맛집헌터', '{bcrypt}$2a$10$.RttUQ8agUixVeg3UiLkJeboPyG9hq7EkEUZTOpPKpvW8K1oUKLRG', null, null, 'ROLE_USER', 'ACTIVE');
+-- Roadmaps 데이터
+INSERT INTO public.roadmaps (is_animated, is_public, like_count, view_count, category_id, created_at, deleted_at, id, member_id, original_roadmap_id, updated_at, description, roadmap_type, thumbnail, title)
+VALUES (true, true, 15, 70, 1, '2025-07-11 10:46:52.000000 +00:00', null, 1, 1, null, null, '잠실 주변 맛집 내가 추천해줄게', 'PERSONAL', null, '잠실 주변 맛집'),
+       (true, true, 35, 100, 2, '2025-07-11 10:51:46.000000 +00:00', null, 2, 1, null, null, '서울시와 함께 하는 야경 맛집 스팟', 'SHARED', null, '서울시 야경 맛집'),
+       (true, false, 1, 3, 3, '2025-07-11 10:53:21.000000 +00:00', null, 3, 1, null, null, '8/11-8/12 여름 삿포로 여행', 'PERSONAL', null, '여름 일본 여행'),
+       (false, true, 3, 45, 2, '2025-07-13 17:42:59.736000 +00:00', null, 4, 2, null, null, '이번 겨울 온천여행은 여기로~!', 'PERSONAL', null, '겨울 온천 여행'),
+       (false, false, 86, 18, 1, '2025-07-13 17:05:00.000000+00:00', null, 5, 3, null, null, '설명 5번 - 자동 생성된 설명입니다.', 'PERSONAL', null, '로드맵 5번 타이틀'),
+       (false, false, 5, 238, 3, '2025-07-13 17:06:00.000000+00:00', null, 6, 1, null, null, '설명 6번 - 자동 생성된 설명입니다.', 'SHARED', null, '로드맵 6번 타이틀'),
+       (true, true, 92, 101, 4, '2025-07-13 17:07:00.000000+00:00', null, 7, 2, null, null, '설명 7번 - 자동 생성된 설명입니다.', 'PERSONAL', null, '로드맵 7번 타이틀'),
+       (false, true, 0, 164, 2, '2025-07-13 17:08:00.000000+00:00', null, 8, 1, null, null, '설명 8번 - 자동 생성된 설명입니다.', 'SHARED', null, '로드맵 8번 타이틀');
 
--- Hashtags 데이터 (기존 데이터에 추가)
-INSERT INTO "public"."hashtags" ("created_at", "id", "name")
-VALUES ('2025-07-13 07:02:00+00', '100', 'Spring'),
-       ('2025-07-13 07:03:00+00', '101', 'Java'),
-       ('2025-07-13 07:04:00+00', '102', '헬스장'),
-       ('2025-07-13 07:05:00+00', '103', '홈트레이닝'),
-       ('2025-07-13 07:10:00+00', '104', '독서모임'),
-       ('2025-07-13 07:11:00+00', '105', '자기계발'),
-       ('2025-07-13 07:12:00+00', '106', '집밥'),
-       ('2025-07-13 07:13:00+00', '107', '레시피');
+-- Hashtags 데이터
+INSERT INTO public.hashtags (created_at, id, name)
+VALUES ('2025-07-11 10:45:28+00', 1, '서울'),
+       ('2025-07-11 10:46:02+00', 2, '고구려'),
+       ('2025-07-11 10:46:32+00', 3, '아경'),
+       ('2025-07-11 10:51:12+00', 4, '맛집추천'),
+       ('2025-07-11 10:56:44+00', 5, '삿포로'),
+       ('2025-07-13 18:00:00+00', 6, '한식'),
+       ('2025-07-13 18:00:00+00', 7, '데이트'),
+       ('2025-07-13 18:00:00+00', 8, '전통시장'),
+       ('2025-07-13 18:00:00+00', 9, '야경맛집'),
+       ('2025-07-13 18:00:00+00', 10, '온천'),
+       ('2025-07-13 18:00:00+00', 11, '일본'),
+       ('2025-07-13 18:00:00+00', 12, '중국집'),
+       ('2025-07-13 18:00:00+00', 13, '미식회'),
+       ('2025-07-13 18:00:00+00', 14, '서울여행'),
+       ('2025-07-13 18:00:00+00', 15, '성수동'),
+       ('2025-07-13 18:00:00+00', 16, '도쿄');
 
--- Quests 데이터 (NOT NULL 제약조건 해결: quest_image 필수)
-INSERT INTO "public"."quests" ("created_at", "id", "member_id", "completed_at", "deleted_at", "description", "is_active", "quest_image", "title", "updated_at")
-VALUES ('2025-07-13 07:10:00+00', '10001', '1', NULL, NULL, '스프링 부트 프로젝트를 처음부터 끝까지 설계하고 구현해보세요. 기본적인 CRUD 기능부터 고급 기능까지 포함해야 합니다.', 'true', '/uploads/quest-spring-boot.png', 'Spring Boot 프로젝트 구조 설계', '2025-07-13 07:10:00+00'),
-       ('2025-07-13 07:15:00+00', '10002', '1', NULL, NULL, '매일 30분 이상 홈트레이닝을 하고 운동 영상을 찍어 인증해보세요. 꾸준함이 중요합니다!', 'true', '/uploads/quest-home-workout.png', '홈트레이닝 운동 루틴', '2025-07-13 07:15:00+00'),
-       ('2025-07-13 07:20:00+00', '10003', '100', NULL, NULL, '한 달에 2권 이상의 책을 읽고 독서 후기를 작성하세요. 다양한 장르의 책을 읽어보는 것이 좋습니다.', 'true', '/uploads/quest-reading.png', '월 2권 독서 챌린지', '2025-07-13 07:20:00+00'),
-       ('2025-07-13 07:25:00+00', '10004', '101', NULL, NULL, '매주 새로운 집밥 레시피를 만들어보고 사진과 함께 후기를 남겨보세요. 건강한 재료를 사용하는 것이 중요합니다.', 'true', '/uploads/quest-cooking.png', '건강한 집밥 레시피', '2025-07-13 07:25:00+00');
+-- Roadmap-Hashtag-relations 데이터
+INSERT INTO public.roadmap_hashtag_relations (created_at, hashtag_id, id, roadmap_id)
+VALUES('2025-07-11 10:50:25+00', 1, 1 ,1),
+      ('2025-07-11 10:50:42+00', 4, 2, 1),
+      ('2025-07-13 17:00:00+00', 4, 3, 1),
+      ('2025-07-13 17:00:00+00', 15, 4, 1),
+      ('2025-07-13 17:00:00+00', 10, 5, 1),
+      ('2025-07-13 18:01:00+00', 3, 6, 2),
+      ('2025-07-13 18:01:00+00', 9, 7, 2),
+      ('2025-07-13 18:01:00+00', 1, 8, 3),
+      ('2025-07-13 18:01:00+00', 11, 9, 3),
+      ('2025-07-13 18:01:00+00', 10, 10, 4),
+      ('2025-07-13 18:01:00+00', 7, 11, 5),
+      ('2025-07-13 18:01:00+00', 6, 12, 6),
+      ('2025-07-13 18:01:00+00', 13, 13, 6),
+      ('2025-07-13 18:01:00+00', 14, 14, 7),
+      ('2025-07-13 18:01:00+00', 15, 15, 7),
+      ('2025-07-13 18:01:00+00', 2, 16, 8);
 
--- Quest Comments 데이터 (새로 추가)
-INSERT INTO "public"."quest_comments" ("created_at", "id", "member_id", "quest_id", "updated_at", "content")
-VALUES ('2025-07-13 07:30:00+00', '10001', '1', '10001', '2025-07-13 07:30:00+00', 'Spring Boot 프로젝트 구조 설계할 때 어떤 부분을 중점적으로 봐야 할까요?'),
-       ('2025-07-13 07:31:00+00', '10002', '2', '10001', '2025-07-13 07:31:00+00', 'MVC 패턴을 잘 적용하는 것이 중요하다고 생각합니다. 레이어 분리도 신경써야 해요.'),
-       ('2025-07-13 07:32:00+00', '10003', '100', '10002', '2025-07-13 07:32:00+00', '홈트레이닝 너무 좋아요! 매일 하는 게 정말 중요한 것 같습니다.'),
-       ('2025-07-13 07:33:00+00', '10004', '101', '10002', '2025-07-13 07:33:00+00', '운동 초보자를 위한 쉬운 루틴부터 시작하면 좋을 것 같아요.'),
-       ('2025-07-13 07:34:00+00', '10005', '1', '10003', '2025-07-13 07:34:00+00', '독서 챌린지 너무 좋은 아이디어네요. 저도 참여하고 싶어요!'),
-       ('2025-07-13 07:35:00+00', '10006', '2', '10003', '2025-07-13 07:35:00+00', '어떤 장르의 책을 읽어야 할지 추천해주세요.'),
-       ('2025-07-13 07:36:00+00', '10007', '100', '10004', '2025-07-13 07:36:00+00', '집밥 레시피 공유 정말 좋은 취지네요. 건강한 요리법 기대됩니다.'),
-       ('2025-07-13 07:37:00+00', '10008', '1', '10004', '2025-07-13 07:37:00+00', '요리 초보도 쉽게 따라할 수 있는 레시피면 좋겠어요.');
+-- Bookmarks 데이터
+INSERT INTO public.bookmarks (created_at, id, member_id, roadmap_id)
+VALUES
+    ('2025-07-11 11:24:43+00', 1, 1, 1),
+    ('2025-07-13 18:05:00+00', 2, 2, 2),
+    ('2025-07-13 18:05:10+00', 3, 3, 3),
+    ('2025-07-13 18:05:20+00', 4, 4, 1),
+    ('2025-07-13 18:05:30+00', 5, 5, 2),
+    ('2025-07-13 18:05:40+00', 6, 1, 3);
 
--- Member Quests 데이터 (엔티티 필드명에 맞춰 수정: status, is_recognized 필수)
-INSERT INTO "public"."member_quests" ("created_at", "id", "member_id", "quest_id", "updated_at", "completed_at", "status", "is_recognized", "answer")
-VALUES ('2025-07-13 07:40:00+00', '10001', '1', '10001', '2025-07-13 07:40:00+00', NULL, 'SUBMITTED', 'false', '멀티 모듈 프로젝트 구조로 설계했습니다.'),
-       ('2025-07-13 07:41:00+00', '10002', '2', '10001', '2025-07-13 07:41:00+00', NULL, 'SUBMITTED', 'false', '클린 아키텍처를 적용한 프로젝트입니다.'),
-       ('2025-07-13 07:42:00+00', '10003', '100', '10002', '2025-07-13 07:42:00+00', NULL, 'SUBMITTED', 'false', '매일 30분 홈트레이닝을 실천하고 있습니다.'),
-       ('2025-07-13 07:43:00+00', '10004', '101', '10002', '2025-07-13 07:43:00+00', NULL, 'SUBMITTED', 'false', 'HIIT 운동으로 고강도 운동을 하고 있습니다.'),
-       ('2025-07-13 07:44:00+00', '10005', '1', '10003', '2025-07-13 07:44:00+00', NULL, 'SUBMITTED', 'false', '이번 달에 2권의 개발서를 읽었습니다.'),
-       ('2025-07-13 07:45:00+00', '10006', '2', '10003', '2025-07-13 07:45:00+00', NULL, 'SUBMITTED', 'false', '자기계발서와 소설을 균형있게 읽고 있습니다.'),
-       ('2025-07-13 07:46:00+00', '10007', '100', '10004', '2025-07-13 07:46:00+00', NULL, 'SUBMITTED', 'false', '건강한 단백질 위주의 레시피를 만들었습니다.'),
-       ('2025-07-13 07:47:00+00', '10008', '1', '10004', '2025-07-13 07:47:00+00', NULL, 'SUBMITTED', 'false', '저칼로리 고단백 식단을 준비했습니다.');
+-- Reports 데이터
+INSERT INTO  "public"."reports" (id, reporter_id, reported_member_id, roadmap_id, marker_id, quest_id, created_at, resolved_at, description, status)
+VALUES (1,1, 2, 1, NULL, NULL, '2024-07-13 00:15:05.732000 +00:00', NULL, '잘못된 정보', 'REPORTED');
 
--- Member Quest Evidence 데이터 (엔티티 필드명에 맞춰 수정: image_url 필수)
-INSERT INTO "public"."member_quest_evidences" ("created_at", "id", "member_quest_id", "updated_at", "image_url", "description")
-VALUES ('2025-07-13 07:50:00+00', '10001', '10001', '2025-07-13 07:50:00+00', '/uploads/evidence-spring-project-structure.png', 'Spring Boot 프로젝트의 기본 구조를 설계하고 패키지를 분리했습니다.'),
-       ('2025-07-13 07:51:00+00', '10002', '10002', '2025-07-13 07:51:00+00', '/uploads/evidence-mvc-pattern.png', 'MVC 패턴을 적용한 컨트롤러와 서비스 레이어를 구현했습니다.'),
-       ('2025-07-13 07:52:00+00', '10003', '10003', '2025-07-13 07:52:00+00', '/uploads/evidence-home-workout.jpg', '오늘 30분 홈트레이닝 완료! 플랭크와 스쿼트를 중심으로 운동했습니다.'),
-       ('2025-07-13 07:53:00+00', '10004', '10004', '2025-07-13 07:53:00+00', '/uploads/evidence-workout-routine.jpg', '운동 루틴을 체계적으로 정리해서 매일 실천하고 있습니다.'),
-       ('2025-07-13 07:54:00+00', '10005', '10005', '2025-07-13 07:54:00+00', '/uploads/evidence-book-review1.png', '이번 주에 읽은 책: "클린 코드" - 코드 품질 향상에 대한 좋은 인사이트를 얻었습니다.'),
-       ('2025-07-13 07:55:00+00', '10006', '10006', '2025-07-13 07:55:00+00', '/uploads/evidence-book-review2.png', '두 번째 책: "자바의 정석" - 기본기를 다시 한 번 점검할 수 있어서 좋았습니다.'),
-       ('2025-07-13 07:56:00+00', '10007', '10007', '2025-07-13 07:56:00+00', '/uploads/evidence-healthy-meal1.jpg', '오늘의 건강한 집밥: 현미밥과 구운 연어, 브로콜리 샐러드를 만들었습니다.'),
-       ('2025-07-13 07:57:00+00', '10008', '10008', '2025-07-13 07:57:00+00', '/uploads/evidence-healthy-meal2.jpg', '간단한 아침 메뉴: 아보카도 토스트와 달걀프라이를 만들어 먹었습니다.');
+-- Comments 데이터
+INSERT INTO "public"."comments" (created_at, id, member_id, roadmap_id, updated_at, content)
+VALUES ('2025-07-13 15:14:28.674000 +00:00', 2, 2, 1, null, '오 이거 괜찮네');
 
--- Quest Ranks 데이터 (엔티티 필드명에 맞춰 수정: rank 필수)
-INSERT INTO "public"."quest_ranks" ("created_at", "id", "member_id", "quest_id", "updated_at", "completed_at", "rank")
-VALUES ('2025-07-13 08:00:00+00', '10001', '1', '10001', '2025-07-13 08:00:00+00', '2025-07-13 08:00:00+00', '1'),
-       ('2025-07-13 08:01:00+00', '10002', '2', '10001', '2025-07-13 08:01:00+00', '2025-07-13 08:01:00+00', '2'),
-       ('2025-07-13 08:02:00+00', '10003', '100', '10002', '2025-07-13 08:02:00+00', '2025-07-13 08:02:00+00', '1'),
-       ('2025-07-13 08:03:00+00', '10004', '101', '10002', '2025-07-13 08:03:00+00', '2025-07-13 08:03:00+00', '2'),
-       ('2025-07-13 08:04:00+00', '10005', '1', '10003', '2025-07-13 08:04:00+00', '2025-07-13 08:04:00+00', '1'),
-       ('2025-07-13 08:05:00+00', '10006', '2', '10003', '2025-07-13 08:05:00+00', '2025-07-13 08:05:00+00', '2'),
-       ('2025-07-13 08:06:00+00', '10007', '100', '10004', '2025-07-13 08:06:00+00', '2025-07-13 08:06:00+00', '1'),
-       ('2025-07-13 08:07:00+00', '10008', '1', '10004', '2025-07-13 08:07:00+00', '2025-07-13 08:07:00+00', '2');
+-- Layers 데이터
+INSERT INTO public.layers (layer_seq, layer_time, created_at, deleted_at, id, member_id, roadmap_id, updated_at, description, name)
+VALUES (1, '2025-07-13', '2025-07-13 16:23:21.552000 +00:00', null, 1, 1, 1, null, null, '롯데월드몰'),
+       (2, null, '2025-07-13 16:24:06.215000 +00:00', null, 2, 1, 1, null, null, '방이먹자골목');
 
--- Reports 데이터 (신고 관련 추가)
-INSERT INTO "public"."reports" (id, reporter_id, reported_member_id, roadmap_id, marker_id, quest_id, created_at, resolved_at, description, status)
-VALUES (10001, 1, 100, NULL, NULL, 10001, '2025-07-13 08:10:00+00', NULL, '퀘스트 내용이 부적절합니다.', 'REPORTED'),
-       (10002, 2, 101, 1, NULL, NULL, '2025-07-13 08:11:00+00', NULL, '로드맵에 잘못된 정보가 포함되어 있습니다.', 'REPORTED');
+-- Markers 데이터
+INSERT INTO public.markers (lat, lng, marker_seq, created_at, deleted_at, id, layer_id, member_id, updated_at, color, description, image_url, name)
+VALUES (37.512817, 127.102496, 1, '2025-07-13 16:28:29.510000 +00:00', null, 1, 1, 1, null, '#FF0000', '잠실 제일가는 함박 스테이크', null, '후쿠오카 함바그 롯데월드몰점'),
+       (37.512817, 127.102496, 2, '2025-07-13 16:34:33.283000 +00:00', null, 2, 1, 1, null, '#FF0000', '버거하면 고든램지', null, '고든램지버거 롯데월드몰점');
 
--- Roadmaps 데이터 (새로운 카테고리에 맞는 로드맵 추가)
-INSERT INTO "public"."roadmaps" ("is_animated", "is_public", "like_count", "view_count", "category_id", "created_at", "deleted_at", "id", "member_id", "original_roadmap_id", "updated_at", "description", "roadmap_type", "thumbnail", "title")
-VALUES ('true', 'true', '25', '120', '100', '2025-07-13 08:15:00+00', null, '10001', '100', null, null, 'Spring Boot 학습 로드맵 - 기초부터 고급까지', 'PERSONAL', null, 'Spring Boot 완벽 가이드'),
-       ('true', 'true', '30', '95', '102', '2025-07-13 08:16:00+00', null, '10002', '101', null, null, '독서 습관 만들기 - 체계적인 독서 계획', 'SHARED', null, '독서 마스터 플랜');
+-- LayerLibraries 데이터
+INSERT INTO public.layer_libraries (created_at, id, layer_id, member_id)
+VALUES ('2025-07-13 17:19:57.332000 +00:00', 1, 1, 2),
+       ('2025-07-13 17:20:10.760000 +00:00', 2, 2, 2);
 
--- Bookmarks 데이터 (새 로드맵 북마크)
-INSERT INTO "public"."bookmarks" ("created_at", "id", "member_id", "roadmap_id")
-VALUES ('2025-07-13 08:20:00+00', '10001', '1', '10001'),
-       ('2025-07-13 08:21:00+00', '10002', '2', '10002');
+-- Quest 데이터
+INSERT INTO quests (is_active, completed_at, created_at, deleted_at, id, member_id, updated_at, description, quest_image, title)
+VALUES
+    (true, null, '2025-07-13 19:00:00+00:00', null, 2, 1, null, '여기 어디게~? 2탄 장소에 대한 퀘스트입니다. 사진을 보고 맞혀보세요!', 'https://example.com/q2.jpg', '여기 어디게~? 2탄'),
+    (true, null, '2025-07-13 19:01:00+00:00', null, 3, 3, null, '여기 어디게~? 3탄 장소에 대한 퀘스트입니다. 사진을 보고 맞혀보세요!', 'https://example.com/q3.jpg', '여기 어디게~? 3탄'),
+    (true, null, '2025-07-13 19:02:00+00:00', null, 4, 2, null, '여기 어디게~? 4탄 장소에 대한 퀘스트입니다. 사진을 보고 맞혀보세요!', 'https://example.com/q4.jpg', '여기 어디게~? 4탄');
 
--- Roadmap-Hashtag-relations 데이터 (로드맵과 해시태그 연결)
-INSERT INTO "public"."roadmap_hashtag_relations" ("created_at", "hashtag_id", "id", "roadmap_id")
-VALUES ('2025-07-13 08:25:00+00', '100', '10001', '10001'),
-       ('2025-07-13 08:26:00+00', '101', '10002', '10001'),
-       ('2025-07-13 08:27:00+00', '104', '10003', '10002'),
-       ('2025-07-13 08:28:00+00', '105', '10004', '10002'); 
-       
+-- MemberQuest 데이터
+INSERT INTO member_quests (completed_at, created_at, deleted_at, id, member_id, quest_id, updated_at, answer, is_recognized, status)
+VALUES
+    (null, '2025-07-13 19:00:00+00:00', null, 3, 2, 2, null, '롯데월드몰', 'true', 'COMPLETED'),
+    (null, '2025-07-13 19:00:00+00:00', null, 4, 5, 2, null, '남산타워', 'false', 'WRONG'),
+    (null, '2025-07-13 19:00:00+00:00', null, 5, 1, 2, null, '서울숲', 'true', 'COMPLETED'),
+    (null, '2025-07-13 19:01:00+00:00', null, 6, 3, 3, null, '방이먹자골목', 'true', 'COMPLETED'),
+    (null, '2025-07-13 19:01:00+00:00', null, 7, 2, 3, null, '성수동카페', 'false', 'WRONG'),
+    (null, '2025-07-13 19:01:00+00:00', null, 8, 4, 3, null, '롯데월드몰', 'true', 'COMPLETED'),
+    (null, '2025-07-13 19:02:00+00:00', null, 9, 5, 4, null, '남산타워', 'true', 'COMPLETED'),
+    (null, '2025-07-13 19:02:00+00:00', null, 10, 1, 4, null, '롯데월드몰', 'true', 'COMPLETED'),
+    (null, '2025-07-13 19:02:00+00:00', null, 11, 2, 4, null, '서울숲', 'false', 'WRONG');
+
+-- QuestRank 데이터
+INSERT INTO quest_ranks (rank, completed_at, created_at, deleted_at, id, member_id, quest_id, updated_at)
+VALUES
+    (1, null, '2025-07-13 19:00:00+00:00', null, 3, 2, 2, null),
+    (1, null, '2025-07-13 19:00:00+00:00', null, 4, 1, 2, null),
+    (1, null, '2025-07-13 19:01:00+00:00', null, 5, 3, 3, null),
+    (1, null, '2025-07-13 19:01:00+00:00', null, 6, 4, 3, null),
+    (1, null, '2025-07-13 19:02:00+00:00', null, 7, 5, 4, null),
+    (1, null, '2025-07-13 19:02:00+00:00', null, 8, 1, 4, null);
+
+-- MemberQuestEvidences 데이터
+INSERT INTO member_quest_evidences (created_at, deleted_at, id, member_quest_id, updated_at, description, image_url)
+VALUES
+    ('2025-07-13 19:00:00+00:00', null, 3, 3, null, '현장 인증입니다.', 'https://example.com/evidence3.jpg'),
+    ('2025-07-13 19:00:00+00:00', null, 4, 4, null, '잘 모르겠지만 찍었어요.', 'https://example.com/evidence4.jpg'),
+    ('2025-07-13 19:00:00+00:00', null, 5, 5, null, '서울숲일지도?', 'https://example.com/evidence5.jpg'),
+    ('2025-07-13 19:01:00+00:00', null, 6, 6, null, '이 골목 어디게?', 'https://example.com/evidence6.jpg'),
+    ('2025-07-13 19:01:00+00:00', null, 7, 7, null, '찍긴 했는데요...', 'https://example.com/evidence7.jpg'),
+    ('2025-07-13 19:01:00+00:00', null, 8, 8, null, '이 장소 아닐까요?', 'https://example.com/evidence8.jpg'),
+    ('2025-07-13 19:02:00+00:00', null, 9, 9, null, '온천 근처입니다.', 'https://example.com/evidence9.jpg'),
+    ('2025-07-13 19:02:00+00:00', null, 10, 10, null, '정답 맞죠?', 'https://example.com/evidence10.jpg'),
+    ('2025-07-13 19:02:00+00:00', null, 11, 11, null, '틀려도 재미있었어요~', 'https://example.com/evidence11.jpg');
