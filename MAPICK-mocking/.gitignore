@@ -2,6 +2,7 @@
 /build/
 /.gradle/
 /out/
+/node_modules
 
 # IntelliJ IDEA
 .idea/
