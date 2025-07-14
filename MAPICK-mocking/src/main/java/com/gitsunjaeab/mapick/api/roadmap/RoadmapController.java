@@ -3,6 +3,7 @@ package com.gitsunjaeab.mapick.api.roadmap;
 import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapListResponse;
 import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapRequest;
+import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapResponse;
 import com.gitsunjaeab.mapick.application.roadmap.RoadmapService;
 import com.gitsunjaeab.mapick.common.response.ApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
@@ -119,7 +120,7 @@ public class RoadmapController {
     // 특정 지도 상세 조회
     @GetMapping("/{roadmapId}")
     @Operation(summary = "지도 상세 조회", description = "[사용자용] 지도 관련 속성 상세 조회")
-    public ResponseEntity<RoadmapDTO> getRoadmap(
+    public ResponseEntity<RoadmapResponse> getRoadmap(
         @PathVariable(name = "roadmapId") final Long roadmapId) {
         return ResponseEntity.ok(roadmapService.get(roadmapId));
     }
