@@ -83,8 +83,8 @@ dependencies {
     testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
 
-    // Google Secret Manager
-    implementation 'com.google.cloud:spring-cloud-gcp-starter-secretmanager:3.5.2'
+//    // Google Secret Manager
+//    implementation 'com.google.cloud:spring-cloud-gcp-starter-secretmanager:3.5.2'
 }
 
 

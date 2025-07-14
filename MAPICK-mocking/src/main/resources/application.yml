@@ -30,8 +30,8 @@ spring:
             non_contextual_creation: true
         id:
           new_generator_mappings: true
-  config:
-    import: sm://
+#  config:
+#    import: sm://
 
   web:
     resources:
