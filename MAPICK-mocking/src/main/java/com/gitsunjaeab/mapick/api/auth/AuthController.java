@@ -104,7 +104,12 @@ public class AuthController {
 
     // 자체 회원가입
     @PostMapping("/signup")
-    @Operation(summary = "자체 회원가입")
+    @Operation(summary = "자체 회원가입", 
+               description = "[회원가입] 자체 회원가입을 진행합니다.\n\n" +
+                           "**검증 조건:**\n" +
+                           "- 비밀번호는 8자 이상, 12자 이하 영문+숫자를 포함해야 합니다.\n" +
+                           "- 이메일은 중복 불가입니다.\n" +
+                           "- 닉네임은 중복 불가입니다.")
     public ResponseEntity<?> signup(@RequestBody @Valid SignupRequest request) {
 
         memberService.signup(request);
