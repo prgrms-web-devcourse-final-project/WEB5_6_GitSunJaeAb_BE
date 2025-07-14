@@ -20,7 +20,7 @@ public class TokenCookieFactory {
     public static ResponseCookie createExpiredToken(TokenType tokenType) {
         return from(tokenType.name(), "")
                 .httpOnly(true)
-                .maxAge(500)
+                .maxAge(15000) // 테스트용
                 .sameSite("None")
                 .secure(false) // true 인거 false 인거 하나씩
                 .path("/")

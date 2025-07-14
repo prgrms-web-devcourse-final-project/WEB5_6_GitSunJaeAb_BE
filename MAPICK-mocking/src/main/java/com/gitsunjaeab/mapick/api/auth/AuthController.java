@@ -55,12 +55,13 @@ public class AuthController {
                 dto.getRtExpiresIn()
         );
 
-        response.addHeader("Set-Cookie", accessTokenCookie.toString());
+//        response.addHeader("Set-Cookie", accessTokenCookie.toString());
         response.addHeader("Set-Cookie", refreshTokenCookie.toString());
 
 
         TokenResponse tokenResponseDto = TokenResponse.builder()
                 .accessToken(dto.getAccessToken())
+                .refreshToken(dto.getRefreshToken())
                 .expiresIn(dto.getAtExpiresIn())
                 .grantType(GrantType.BEARER)
                 .build();
@@ -89,12 +90,13 @@ public class AuthController {
             );
 
             // 응답 헤더에 추가
-            response.addHeader("Set-Cookie", accessTokenCookie.toString());
+//            response.addHeader("Set-Cookie", accessTokenCookie.toString());
             response.addHeader("Set-Cookie", refreshTokenCookie.toString());
 
             // 반환용 객체에 accessToken 전달
             TokenResponse tokenResponseDto = TokenResponse.builder()
                 .accessToken(dto.getAccessToken())
+                .refreshToken(dto.getRefreshToken())
                 .expiresIn(dto.getAtExpiresIn())
                 .grantType(GrantType.BEARER)
                 .build();
