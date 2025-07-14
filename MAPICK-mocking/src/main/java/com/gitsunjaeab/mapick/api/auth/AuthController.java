@@ -55,7 +55,7 @@ public class AuthController {
                 dto.getRtExpiresIn()
         );
 
-        response.addHeader("Set-Cookie", accessTokenCookie.toString());
+//        response.addHeader("Set-Cookie", accessTokenCookie.toString());
         response.addHeader("Set-Cookie", refreshTokenCookie.toString());
 
 
@@ -90,7 +90,7 @@ public class AuthController {
             );
 
             // 응답 헤더에 추가
-            response.addHeader("Set-Cookie", accessTokenCookie.toString());
+//            response.addHeader("Set-Cookie", accessTokenCookie.toString());
             response.addHeader("Set-Cookie", refreshTokenCookie.toString());
 
             // 반환용 객체에 accessToken 전달
