@@ -38,7 +38,7 @@ public class MemberQuestService {
 
     // 특정 퀘스트의 참여자 목록 조회
     public List<MemberQuestResponse> findByQuestId(final Long questId) {
-        final List<MemberQuest> memberQuests = memberQuestRepository.findByQuestId(questId);
+        final List<MemberQuest> memberQuests = memberQuestRepository.findWithMemberByQuestId(questId);
         return memberQuests.stream()
                 .map(this::toResponse)
                 .map(MemberQuestResponse::ofGetList)
