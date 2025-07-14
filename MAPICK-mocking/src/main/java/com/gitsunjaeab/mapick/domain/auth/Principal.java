@@ -14,18 +14,27 @@ public class Principal extends User { // Spring Security의 User 객체를 확�
 
     private final Member member;
 
-    // UserDetails 객체 만들기
-    public Principal(String email, String password, Collection<? extends GrantedAuthority> authorities) {
-        super(email, password, authorities); // Spring Security 내부 UserDetails 구성
-        this.member = null;
+    public Principal(Member member) {
+        super(
+                member.getId().toString(),
+                member.getPassword(),
+                List.of(new SimpleGrantedAuthority(member.getRole()))
+        );
+        this.member = member;
     }
 
-    public Principal(Member member) {
-        super(member.getEmail(), member.getPassword(), List.of(new SimpleGrantedAuthority(member.getRole())));
+    // UserDetails 객체 만들기
+    private Principal(String username, String password, Collection<? extends GrantedAuthority> authorities, Member member) {
+        super(username, password, authorities);
         this.member = member;
     }
 
     public static Principal createPrincipal(Member member, List<SimpleGrantedAuthority> authorities){
-        return new Principal(member.getEmail(), member.getPassword(), authorities);
+        return new Principal(
+                member.getId().toString(),
+                member.getPassword(),
+                authorities,
+                member
+        );
     }
 }
