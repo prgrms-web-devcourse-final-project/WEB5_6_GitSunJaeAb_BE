@@ -64,7 +64,7 @@ public class AuthService {
                 throw new CommonException(ResponseCode.PROVIDER_MISMATCH);
             }
 
-            TokenDTO tokendto = processTokenSignin(existing.getEmail()); // jwt 토큰 발급
+            TokenDTO tokendto = processTokenSignin(existing); // jwt 토큰 발급
 
             return tokendto;
 
@@ -74,7 +74,7 @@ public class AuthService {
 
             Member member = memberService.registerNewSocialMember(userInfo, request.getProvider());
 
-            TokenDTO tokendto = processTokenSignin(member.getEmail()); // jwt 토큰 발급
+            TokenDTO tokendto = processTokenSignin(member); // jwt 토큰 발급
 
             return tokendto;
 
@@ -101,16 +101,16 @@ public class AuthService {
         Authentication authentication = authenticationManager.authenticate(authToken); // 인증 객체 생성
         SecurityContextHolder.getContext().setAuthentication(authentication); // 보안 컨텍스트 저장
 
-        TokenDTO tokendto = processTokenSignin(email); // jwt 토큰 발급
+        TokenDTO tokendto = processTokenSignin(member); // jwt 토큰 발급
 
         return tokendto;
     }
 
     // JWT 토큰 발급
-    public TokenDTO processTokenSignin(String email) {
+    public TokenDTO processTokenSignin(Member member) {
 
-        TokenDTO accessToken = jwtProvider.generateAccessToken(email); // AccessToken 만들기
-        RefreshToken refreshToken = new RefreshToken(email, accessToken.getId()); // refreshToken 만들기
+        TokenDTO accessToken = jwtProvider.generateAccessToken(member.getEmail()); // AccessToken 만들기
+        RefreshToken refreshToken = new RefreshToken(member, accessToken.getId()); // refreshToken 만들기
 
         try{
             refreshTokenRepository.save(refreshToken); // RefreshToken 저장

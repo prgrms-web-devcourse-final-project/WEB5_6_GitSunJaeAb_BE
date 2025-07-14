@@ -1,9 +1,8 @@
 package com.gitsunjaeab.mapick.domain.auth;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.gitsunjaeab.mapick.domain.member.Member;
+import jakarta.persistence.*;
+
 import java.util.UUID;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,13 +15,16 @@ public class RefreshToken {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
-    private String email;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
     private String accessTokenId;
 
     private String token;
 
-    public RefreshToken(String email, String accessTokenId) {
-        this.email = email;
+    public RefreshToken(Member member, String accessTokenId) {
+        this.member = member;
         this.accessTokenId = accessTokenId;
         this.token = UUID.randomUUID().toString();
     }
