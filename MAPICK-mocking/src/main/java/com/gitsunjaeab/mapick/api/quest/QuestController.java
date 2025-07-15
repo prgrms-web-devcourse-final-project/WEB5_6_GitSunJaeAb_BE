@@ -89,7 +89,7 @@ public class QuestController {
 
     // 본인 퀘스트 증빙 자료 조회 (출제자용 - 정답 처리시 사용)
     @GetMapping("/evidence")
-    @Operation(summary = "본인 퀘스트 증빙 자료 조회", description = "[출제자용] 본인이 생성한 퀘스트의 모든 증빙 자료를 조회합니다. 정답 처리시 사용됩니다.")
+    @Operation(summary = "본인 퀘스트 증빙 자료 조회", description = "[출제자용] (추후 추가예정) 본인이 생성한 퀘스트의 모든 증빙 자료를 조회합니다. 정답 처리시 사용됩니다.")
     public ResponseEntity<List<MemberQuestEvidenceResponse>> getAllEvidence() {
         return ResponseEntity.ok(memberQuestEvidenceService.findAll());
     }
@@ -113,7 +113,7 @@ public class QuestController {
 
     // 퀘스트 랭킹 조회 (참여자용)
     @GetMapping("/{questId}/rankings")
-    @Operation(summary = "퀘스트 랭킹 조회", description = "[참여자용] 특정 퀘스트의 랭킹을 조회합니다.")
+    @Operation(summary = "퀘스트 랭킹 조회", description = "[참여자용] (추후 추가예정) 특정 퀘스트의 랭킹을 조회합니다.")
     public ResponseEntity<List<QuestRankResponse>> getQuestRankings(@PathVariable(name = "questId") final Long questId) {
         return ResponseEntity.ok(questRankService.findByQuestId(questId));
     }
@@ -150,7 +150,7 @@ public class QuestController {
 
     // 참여자 증빙 자료 조회 (참여자용)
     @GetMapping("/memberQuest/{memberQuestId}/evidence")
-    @Operation(summary = "참여자 증빙 자료 조회", description = "[참여자용] 특정 참여자의 증빙 자료를 조회합니다.")
+    @Operation(summary = "참여자 증빙 자료 조회", description = "[참여자용] (추후 추가예정)특정 참여자의 증빙 자료를 조회합니다.")
     public ResponseEntity<List<MemberQuestEvidenceResponse>> getParticipantEvidence(@PathVariable(name = "memberQuestId") final Long memberQuestId) {
         return ResponseEntity.ok(memberQuestEvidenceService.findByMemberQuestId(memberQuestId));
     }
