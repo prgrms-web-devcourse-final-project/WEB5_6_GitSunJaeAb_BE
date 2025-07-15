@@ -84,12 +84,6 @@ public class Member {
     @Column
     private String profileImage;
 
-    @Column(columnDefinition = "text")
-    private String intro;
-
-    @Column
-    private String phone;
-
     @Column
     private OffsetDateTime lastLogin;
 

@@ -65,10 +65,10 @@ public class MemberController {
     // 특정 회원 조회 (관리자 전용)
     @GetMapping("{memberId}")
     @Operation(summary = "회원 조회 (관리자)", description = "[관리자 전용] 관리자만 접근 가능한 특정 회원 정보 조회")
-    public ResponseEntity<MemberResponse> getMember(@PathVariable(name = "memberId") final Long membersId) {
-        MemberDTO memberDTO = memberService.get(membersId);
+    public ResponseEntity<MemberResponse> getMember(@PathVariable(name = "memberId") final Long memberId) {
+        MemberDTO memberDTO = memberService.get(memberId);
         // TODO: MemberService를 수정하여 직접 Member 엔티티를 반환하도록 개선 필요
-        Member member = memberService.getMemberProfile(membersId);
+        Member member = memberService.getMemberProfile(memberId);
         MemberResponse response = MemberResponse.of(member);
 
         return ResponseEntity.ok(response);
@@ -77,7 +77,7 @@ public class MemberController {
     // 회원 정보 수정 (관리자 전용)
     @PutMapping
     @Operation(summary = "회원 정보 수정 (관리자)", description = "[관리자 전용] 관리자만 접근 가능한 회원 정보 수정")
-    public ResponseEntity<ApiResponse> updateMember(final Long membersId,
+    public ResponseEntity<ApiResponse> updateMember(final Long memberId,
             @RequestBody @Valid final MemberUpdateRequest memberUpdateRequest) {
         // TODO: MemberService를 수정하여 MemberUpdateRequest를 직접 받도록 개선 필요
 //        MemberDTO memberDTO = convertToMemberDTO(memberUpdateRequest);
@@ -104,13 +104,13 @@ public class MemberController {
     // 회원 삭제 (관리자 전용)
     @DeleteMapping
     @Operation(summary = "회원 삭제 (관리자)", description = "[관리자 전용] 관리자만 접근 가능한 회원 삭제")
-    public ResponseEntity<com.gitsunjaeab.mapick.common.response.ApiResponse> deleteMember(final Long membersId) {
-        final ReferencedWarning referencedWarning = memberService.getReferencedWarning(membersId);
-        if (referencedWarning != null) {
-            throw new ReferencedException(referencedWarning);
-        }
-        memberService.delete(membersId);
-        return ResponseEntity.ok(com.gitsunjaeab.mapick.common.response.ApiResponse.of(com.gitsunjaeab.mapick.common.response.ResponseCode.OK, "회원 삭제 완료"));
+    public ResponseEntity<ApiResponse> deleteMember(final Long memberId) {
+//        final ReferencedWarning referencedWarning = memberService.getReferencedWarning(memberId);
+//        if (referencedWarning != null) {
+//            throw new ReferencedException(referencedWarning);
+//        }
+//        memberService.delete(memberId);
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "회원 삭제 완료"));
     }
 
     // ===== 사용자 전용 API (본인만 접근 가능) =====
@@ -130,21 +130,19 @@ public class MemberController {
     // 마이페이지 - 회원 정보 수정 (본인만)
     @PutMapping("/profile")
     @Operation(summary = "회원 정보 수정", description = "[사용자 전용] 본인만 접근 가능한 프로필 정보 수정")
-    public ResponseEntity<MemberProfileUpdateResponse> updateMemberProfile(
+    public ResponseEntity<ApiResponse> updateMemberProfile(
             @Valid @RequestBody MemberProfileUpdateRequest request) {
 
-        Long memberId = 1L;
-        
-        Member updatedMember = memberService.updateMemberProfile(
-            memberId,
-            request.getNickname(),
-            request.getProfileImage(),
-            request.getIntro(),
-            request.getPhone()
-        );
+//        Long memberId = 1L;
+//
+//        Member updatedMember = memberService.updateMemberProfile(
+//            memberId,
+//            request.getNickname(),
+//            request.getProfileImage()
+//        );
 
-        MemberProfileUpdateResponse response = MemberProfileUpdateResponse.of(updatedMember);
-        return ResponseEntity.ok(response);
+//        MemberProfileUpdateResponse response = MemberProfileUpdateResponse.of(updatedMember);
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "회원정보 수정 완료"));
     }
 
     // 마이페이지 - 비밀번호 확인 (본인만)
@@ -154,9 +152,9 @@ public class MemberController {
             @Valid @RequestBody PasswordVerifyRequest request) {
 
         Long memberId = 1L;
-        
+
         boolean isValid = memberService.verifyPassword(memberId, request.getCurrentPassword());
-        
+
         if (isValid) {
             return ResponseEntity.ok(SimpleMessageResponse.of("비밀번호가 일치합니다."));
         } else {
@@ -192,31 +190,27 @@ public class MemberController {
     // 회원 관심분야 선택 (본인만)
     @PostMapping("/interests")
     @Operation(summary = "회원 관심분야 선택", description = "[사용자 전용] 본인만 접근 가능한 관심분야 선택")
-    public ResponseEntity<MemberInterestResponse> createMemberInterest(
-            @Valid @RequestBody MemberInterestRequest request) {
-        
-        // Request를 DTO로 변환
-        MemberInterestDTO memberInterestDTO = convertToMemberInterestDTO(request);
-        
-        // 관심분야 생성 후 엔티티 반환
-        MemberInterest createdInterest = memberInterestService.createAndReturnEntity(memberInterestDTO);
-        
-        return ResponseEntity.status(201).body(MemberInterestResponse.ofCreate(createdInterest));
+    public ResponseEntity<ApiResponse> createMemberInterest(
+        @Valid @RequestBody MemberInterestRequest request) {
+
+//        memberInterestService.createMemberInterests(request);
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "관심분야 선택 완료"));
     }
+
 
     // 회원 관심분야 수정 (본인만)
     @PutMapping("/interests/{memberInterestId}")
     @Operation(summary = "회원 관심분야 수정", description = "[사용자 전용] 본인만 접근 가능한 관심분야 수정")
-    public ResponseEntity<com.gitsunjaeab.mapick.common.response.ApiResponse> updateMemberInterest(
+    public ResponseEntity<ApiResponse> updateMemberInterest(
             @Parameter(description = "관심분야 ID") @PathVariable Long memberInterestId,
             @Valid @RequestBody MemberInterestRequest request) {
         
         // Request를 DTO로 변환
-        MemberInterestDTO memberInterestDTO = convertToMemberInterestDTO(request);
+//        MemberInterestDTO memberInterestDTO = convertToMemberInterestDTO(request);
+//
+//        memberInterestService.update(memberInterestId, memberInterestDTO);
         
-        memberInterestService.update(memberInterestId, memberInterestDTO);
-        
-        return ResponseEntity.ok(com.gitsunjaeab.mapick.common.response.ApiResponse.of(com.gitsunjaeab.mapick.common.response.ResponseCode.OK, "관심분야 수정 완료"));
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "관심분야 수정 완료"));
     }
 
     // Request를 DTO로 변환하는 임시 메서드

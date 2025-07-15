@@ -70,6 +70,14 @@ public class RoadmapController {
         }
     }
 
+    // 특정 지도 상세 조회
+    @GetMapping("/{roadmapId}")
+    @Operation(summary = "지도 상세 조회", description = "[사용자용] 지도 관련 속성 상세 조회")
+    public ResponseEntity<RoadmapResponse> getRoadmap(
+        @PathVariable(name = "roadmapId") final Long roadmapId) {
+        return ResponseEntity.ok(roadmapService.get(roadmapId));
+    }
+
     // TODO 해시태그로 로드맵 검색 >> {hashtagId} 활용??
 
     // 개인 로드맵 생성
@@ -115,14 +123,6 @@ public class RoadmapController {
         @RequestParam(required = false) Long memberId) {
 
         return ResponseEntity.ok(roadmapService.findAllRoadmapsByMember(memberId));
-    }
-
-    // 특정 지도 상세 조회
-    @GetMapping("/{roadmapId}")
-    @Operation(summary = "지도 상세 조회", description = "[사용자용] 지도 관련 속성 상세 조회")
-    public ResponseEntity<RoadmapResponse> getRoadmap(
-        @PathVariable(name = "roadmapId") final Long roadmapId) {
-        return ResponseEntity.ok(roadmapService.get(roadmapId));
     }
 
     // 개인 로드맵/공유지도 삭제

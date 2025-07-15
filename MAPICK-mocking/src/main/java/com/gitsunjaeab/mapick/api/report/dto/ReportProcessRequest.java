@@ -19,5 +19,5 @@ public class ReportProcessRequest {
     @NotNull(message = "처리 상태는 필수입니다")
     private ReportStatus status;  // 처리 상태 (IN_PROGRESS, RESOLVED, REJECTED)
 
-    private String processNote;  // 처리 메모 (선택사항)
+//    private String processNote;  // 처리 메모 (선택사항)
 } 

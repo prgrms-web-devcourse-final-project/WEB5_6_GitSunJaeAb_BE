@@ -329,7 +329,7 @@ public class MemberService {
     }
 
     // 마이페이지 - 회원 정보 수정
-    public Member updateMemberProfile(Long memberId, String nickname, String profileImage, String intro, String phone) {
+    public Member updateMemberProfile(Long memberId, String nickname, String profileImage) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
 
@@ -338,12 +338,6 @@ public class MemberService {
         }
         if (profileImage != null) {
             member.setProfileImage(profileImage);
-        }
-        if (intro != null) {
-            member.setIntro(intro);
-        }
-        if (phone != null) {
-            member.setPhone(phone);
         }
 
         member.updateTimestamp();

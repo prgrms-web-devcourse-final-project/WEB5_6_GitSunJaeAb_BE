@@ -41,8 +41,6 @@ public class MemberProfileResponse implements BaseApiResponse {
         private String role;
         private String status;
         private String profileImage;
-        private String intro;
-        private String phone;
         private OffsetDateTime createdAt;
         private OffsetDateTime updatedAt;
         private OffsetDateTime deletedAt;
@@ -59,8 +57,6 @@ public class MemberProfileResponse implements BaseApiResponse {
         memberInfo.setRole(member.getRole());
         memberInfo.setStatus(member.getStatus());
         memberInfo.setProfileImage(member.getProfileImage());
-        memberInfo.setIntro(member.getIntro());
-        memberInfo.setPhone(member.getPhone());
         memberInfo.setCreatedAt(member.getCreatedAt());
         memberInfo.setUpdatedAt(member.getUpdatedAt());
         memberInfo.setDeletedAt(member.getDeletedAt());

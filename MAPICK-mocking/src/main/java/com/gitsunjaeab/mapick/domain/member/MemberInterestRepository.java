@@ -10,4 +10,5 @@ public interface MemberInterestRepository extends JpaRepository<MemberInterest, 
 
     MemberInterest findFirstByMember(Member member);
 
+    void deleteByMemberId(Long memberId);
 }

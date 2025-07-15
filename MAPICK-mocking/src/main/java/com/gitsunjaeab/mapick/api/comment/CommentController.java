@@ -80,7 +80,7 @@ public class CommentController {
     // 퀘스트 댓글 생성
     @PostMapping("/quests")
     @Operation(summary = "퀘스트 댓글 생성", description = "[모든 사용자] 퀘스트에 댓글을 작성합니다.")
-    public ResponseEntity<ApiResponse> createQuestComment(@RequestParam Long questId,
+    public ResponseEntity<ApiResponse> createQuestComment(
             @RequestBody @Valid final CommentRequest request) {
         // questId를 request에 설정
 //        questCommentRequest.setQuest(questId);
@@ -92,7 +92,7 @@ public class CommentController {
     // 퀘스트 댓글 수정
     @PutMapping("/quests/{commentId}")
     @Operation(summary = "퀘스트 댓글 수정", description = "[댓글 작성자] 자신이 작성한 댓글을 수정합니다.")
-    public ResponseEntity<ApiResponse> updateQuestComment(@PathVariable final Long commentId,
+    public ResponseEntity<ApiResponse> updateQuestComment(
             @RequestParam Long questId,
             @RequestBody @Valid final CommentRequest request) {
         // questId 설정 (일관성 유지)
@@ -104,7 +104,7 @@ public class CommentController {
     // 퀘스트 댓글 삭제
     @DeleteMapping("/quests/{commentId}")
     @Operation(summary = "퀘스트 댓글 삭제", description = "[댓글 작성자] 자신이 작성한 댓글을 삭제합니다.")
-    public ResponseEntity<ApiResponse> deleteQuestComment(@PathVariable final Long commentId,
+    public ResponseEntity<ApiResponse> deleteQuestComment(
             @RequestParam Long questId) {
 //        questCommentService.delete(commentId);
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "퀘스트 댓글 삭제 완료"));

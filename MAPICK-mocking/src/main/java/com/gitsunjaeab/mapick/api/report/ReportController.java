@@ -57,9 +57,9 @@ public class ReportController {
     // ===== 사용자용 API (신고 생성) =====
     
     // 지도(로드맵) 신고 생성
-    @PostMapping("/maps/{mapId}")
+    @PostMapping("/maps/{roadmapId}")
     @Operation(summary = "지도 신고 생성", description = "[사용자용] 특정 지도(로드맵)에 대한 신고를 접수합니다.")
-    public ResponseEntity<ApiResponse> reportMap(@PathVariable(name = "mapId") final Long mapId,
+    public ResponseEntity<ApiResponse> reportMap(@PathVariable(name = "roadmapId") final Long roadmapId,
             @RequestBody @Valid final MapReportRequest request) {
 //        reportService.createMapReport(mapId, request);
         return ResponseEntity.status(HttpStatus.CREATED)

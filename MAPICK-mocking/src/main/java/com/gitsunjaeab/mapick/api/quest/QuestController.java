@@ -59,31 +59,31 @@ public class QuestController {
     // 퀘스트 생성 (출제자용)
     @PostMapping
     @Operation(summary = "퀘스트 생성", description = "[출제자용] 새로운 퀘스트를 생성합니다. 본인만 접근 가능합니다.")
-    public ResponseEntity<QuestResponse> createQuest(@RequestBody @Valid final QuestRequest questRequest) {
-        Long questId = questService.create(questRequest);
-        QuestResponse createdQuest = questService.get(questId);
-        return ResponseEntity.ok(QuestResponse.ofCreate(createdQuest));
+    public ResponseEntity<ApiResponse> createQuest(@RequestBody @Valid final QuestRequest questRequest) {
+//        Long questId = questService.create(questRequest);
+//        QuestResponse createdQuest = questService.get(questId);
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "퀘스트 생성 완료"));
     }
 
     // 퀘스트 수정 (출제자용)
     @PutMapping("/{questsId}")
     @Operation(summary = "퀘스트 수정", description = "[출제자용] 본인이 생성한 퀘스트의 정보를 수정합니다.")
-    public ResponseEntity<QuestResponse> updateQuest(@PathVariable(name = "questsId") final Long questsId,
+    public ResponseEntity<ApiResponse> updateQuest(@PathVariable(name = "questsId") final Long questsId,
             @RequestBody @Valid final QuestRequest questRequest) {
-        questService.update(questsId, questRequest);
-        QuestResponse updatedQuest = questService.get(questsId);
-        return ResponseEntity.ok(QuestResponse.ofUpdate(updatedQuest));
+//        questService.update(questsId, questRequest);
+//        QuestResponse updatedQuest = questService.get(questsId);
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "퀘스트 수정 완료"));
     }
 
     // 퀘스트 삭제 (출제자용)
     @DeleteMapping("/{questsId}")
     @Operation(summary = "퀘스트 삭제", description = "[출제자용] 본인이 생성한 퀘스트를 삭제합니다.")
     public ResponseEntity<ApiResponse> deleteQuest(@PathVariable(name = "questsId") final Long questsId) {
-        final ReferencedWarning referencedWarning = questService.getReferencedWarning(questsId);
-        if (referencedWarning != null) {
-            throw new ReferencedException(referencedWarning);
-        }
-        questService.delete(questsId);
+//        final ReferencedWarning referencedWarning = questService.getReferencedWarning(questsId);
+//        if (referencedWarning != null) {
+//            throw new ReferencedException(referencedWarning);
+//        }
+//        questService.delete(questsId);
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "퀘스트 삭제 완료"));
     }
 
@@ -129,12 +129,11 @@ public class QuestController {
     // 퀘스트 참여 신청 (참여자용)
     @PostMapping("/{questId}/memberQuest")
     @Operation(summary = "퀘스트 참여 신청", description = "[참여자용] 특정 퀘스트에 참여 신청을 합니다.")
-    public ResponseEntity<MemberQuestResponse> participateInQuest(@PathVariable(name = "questId") final Long questId,
-            @RequestBody @Valid final MemberQuestRequest memberQuestRequest) {
-        // questId를 request에 설정
-        memberQuestRequest.setQuest(questId);
-        MemberQuest createdMemberQuest = memberQuestService.createAndReturnEntity(memberQuestRequest);
-        return ResponseEntity.ok(MemberQuestResponse.ofCreate(createdMemberQuest));
+    public ResponseEntity<ApiResponse> participateInQuest(@PathVariable(name = "questId") final Long questId) {
+//        // questId를 request에 설정
+//        memberQuestRequest.setQuest(questId);
+//        MemberQuest createdMemberQuest = memberQuestService.createAndReturnEntity(memberQuestRequest);
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "퀘스트 침여 완료"));
     }
 
     // 증빙 자료 제출 (참여자용)
