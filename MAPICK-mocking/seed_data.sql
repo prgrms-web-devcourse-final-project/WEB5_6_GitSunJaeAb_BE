@@ -1,28 +1,34 @@
--- Member 데이터
+-- Members 데이터
 INSERT INTO public.members (is_blacklisted, created_at, deleted_at, id, last_login, updated_at,
-                            email, intro, login_type, name, nickname, password, phone,
+                            email, login_type, name, nickname, password,
                             profile_image, provider, role, status)
-VALUES (false, '2025-06-30 10:48:44.000000 +00:00', null, 1, null, null, 'aaa@aaa.com', null,
-        'LOCAL', '노선우', '노션우',
-        '{bcrypt}$2a$10$.RttUQ8agUixVeg3UiLkJeboPyG9hq7EkEUZTOpPKpvW8K1oUKLRG', null, null, null,
-        'ROLE_USER', '2025-07-11 09:16:33.910784'),
-       (false, '2025-07-11 09:16:33.910752 +00:00', null, 2, null, null, 'bbb@aaa.com', null,
-        'LOCAL', '임서현', '임세령',
-        '{bcrypt}$2a$10$.RttUQ8agUixVeg3UiLkJeboPyG9hq7EkEUZTOpPKpvW8K1oUKLRG', null, null, null,
-        'ROLE_USER', '2025-07-11 09:16:33.910784'),
-       (true, '2025-07-13 14:03:48.420649 +00:00', null, 3, null,
-        '2025-07-13 14:03:48.420668 +00:00', 'ccc@ccc.com', null, 'LOCAL', '김나단', '김가나단',
-        '{bcrypt}$2a$10$n/PDTvgDuoFbovmzOAxstOuXFA2NWLQDAy/BsIm1yNE.IWwjM60Yu', null, null, null,
-        'ROLE_USER', 'ACTIVE'),
-       (false, '2025-07-13 14:08:10.200440 +00:00', null, 4, null,
-        '2025-07-13 14:08:10.201013 +00:00', 'ddd@ddd.com', null, 'LOCAL', '이초롱', '롱롱',
-        '{bcrypt}$2a$10$tdt3EceYdja2K4WekvZgweOBOKt0x.Yz2Gka7wB.biQ1..jo1mJ.m', null, null, null,
-        'ROLE_ADMIN', 'ACTIVE'),
-       (true, '2025-07-13 14:08:43.742824 +00:00', null, 5, null,
-        '2025-07-13 14:08:43.742848 +00:00', 'cocjfals0@gmail.com', null, 'SOCIAL', 'chulmin chae',
-        'google_381267', 'e745e950-929c-4b6b-bf74-eab2814ed577', null,
-        'https://lh3.googleusercontent.com/a/ACg8ocItiSYT_99SLb-Jd99ISYCFhKMx2O0SngxUbvQDZA4cCv635w=s96-c',
-        'google', 'ROLE_USER', 'ACTIVE');
+VALUES
+    (false, '2025-06-30 10:48:44.000000 +00:00', null, 1, null, null, 'aaa@aaa.com',
+     'LOCAL', '노선우', '노션우',
+     '{bcrypt}$2a$10$.RttUQ8agUixVeg3UiLkJeboPyG9hq7EkEUZTOpPKpvW8K1oUKLRG',
+     null, null, 'ROLE_USER', '2025-07-11 09:16:33.910784'),
+
+    (false, '2025-07-11 09:16:33.910752 +00:00', null, 2, null, null, 'bbb@aaa.com',
+     'LOCAL', '임서현', '임세령',
+     '{bcrypt}$2a$10$.RttUQ8agUixVeg3UiLkJeboPyG9hq7EkEUZTOpPKpvW8K1oUKLRG',
+     null, null, 'ROLE_USER', '2025-07-11 09:16:33.910784'),
+
+    (true, '2025-07-13 14:03:48.420649 +00:00', null, 3, null, '2025-07-13 14:03:48.420668 +00:00',
+     'ccc@ccc.com', 'LOCAL', '김나단', '김가나단',
+     '{bcrypt}$2a$10$n/PDTvgDuoFbovmzOAxstOuXFA2NWLQDAy/BsIm1yNE.IWwjM60Yu',
+     null, null, 'ROLE_USER', 'ACTIVE'),
+
+    (false, '2025-07-13 14:08:10.200440 +00:00', null, 4, null, '2025-07-13 14:08:10.201013 +00:00',
+     'ddd@ddd.com', 'LOCAL', '이초롱', '롱롱',
+     '{bcrypt}$2a$10$tdt3EceYdja2K4WekvZgweOBOKt0x.Yz2Gka7wB.biQ1..jo1mJ.m',
+     null, null, 'ROLE_ADMIN', 'ACTIVE'),
+
+    (true, '2025-07-13 14:08:43.742824 +00:00', null, 5, null, '2025-07-13 14:08:43.742848 +00:00',
+     'cocjfals0@gmail.com', 'SOCIAL', 'chulmin chae', 'google_381267',
+     'e745e950-929c-4b6b-bf74-eab2814ed577',
+     'https://lh3.googleusercontent.com/a/ACg8ocItiSYT_99SLb-Jd99ISYCFhKMx2O0SngxUbvQDZA4cCv635w=s96-c',
+     'google', 'ROLE_USER', 'ACTIVE');
+
 
 -- Category 데이터
 INSERT INTO public.categories (created_at, id, category_image, description, name)
