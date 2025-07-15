@@ -22,7 +22,7 @@ public class TokenCookieFactory {
                 .httpOnly(true)
                 .maxAge(15000) // 테스트용
                 .sameSite("None")
-                .secure(false) // true 인거 false 인거 하나씩
+                .secure(true) // true 인거 false 인거 하나씩
                 .path("/")
                 .build();
     }
