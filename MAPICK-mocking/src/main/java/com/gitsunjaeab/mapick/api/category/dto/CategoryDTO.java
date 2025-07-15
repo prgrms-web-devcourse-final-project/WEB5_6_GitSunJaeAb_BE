@@ -1,14 +1,17 @@
 package com.gitsunjaeab.mapick.api.category.dto;
 
+import com.gitsunjaeab.mapick.domain.category.Category;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.OffsetDateTime;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 
 @Getter
 @Setter
+@AllArgsConstructor
 public class CategoryDTO {
 
     private Long id;
@@ -24,5 +27,4 @@ public class CategoryDTO {
 
     @NotNull
     private OffsetDateTime createdAt;
-
 }

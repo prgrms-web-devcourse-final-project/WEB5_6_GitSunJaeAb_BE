@@ -1,6 +1,6 @@
 package com.gitsunjaeab.mapick.api.roadmap.dto;
 
-import com.gitsunjaeab.mapick.api.member.dto.MemberDTO;
+import com.gitsunjaeab.mapick.api.category.dto.SimpleCategoryDTO;
 import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
@@ -29,7 +29,7 @@ public class RoadmapListResponse implements BaseApiResponse {
         List<RoadmapListDTO> roadmapDtos = roadmapEntities.stream()
             .map(r -> new RoadmapListDTO(
                 r.getId(),
-                r.getCategory().getName(),
+                new SimpleCategoryDTO(r.getCategory()),
                 new MemberSimpleDTO(r.getMember()),
                 r.getTitle(),
                 r.getDescription(),
