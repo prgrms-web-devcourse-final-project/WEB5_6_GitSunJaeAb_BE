@@ -112,8 +112,9 @@ public class SecurityConfig {
         corsConfig.setAllowedOriginPatterns(List.of(
                 "http://localhost:3000",
                 "https://localhost:3000",
-                "http://34.47.121.164:9000",
-                "https://34.47.121.164:9000"
+                "http://34.47.121.164:80",
+                "https://34.47.121.164:80"
+
         ));// 허용할 주소
         corsConfig.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); //허용 메소드
         corsConfig.setAllowedHeaders(Collections.singletonList("*")); // 모든 헤더  허용
