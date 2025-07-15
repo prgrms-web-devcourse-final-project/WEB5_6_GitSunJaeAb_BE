@@ -98,13 +98,6 @@ public class CategoryService {
         if (request.getDescription() != null) {
             category.setDescription(request.getDescription());
         }
-        if (request.getCategoryImage() != null) {
-            category.setCategoryImage(request.getCategoryImage());
-        }
-        if (request.getCreatedAt() != null) {
-            category.setCreatedAt(request.getCreatedAt());
-        }
-
         return category;
     }
 
