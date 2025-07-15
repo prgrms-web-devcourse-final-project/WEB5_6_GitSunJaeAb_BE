@@ -2,6 +2,7 @@ package com.gitsunjaeab.mapick.api.member.dto;
 
 import jakarta.validation.constraints.NotNull;
 import java.time.OffsetDateTime;
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,7 +16,7 @@ public class MemberInterestDTO {
     @NotNull
     private OffsetDateTime createdAt;
 
-    private Long category;
+    private List<Long> category;
 
     private Long member;
 
