@@ -4,7 +4,7 @@ jwt:
   refresh-expiration: ${JWT_REFRESH_EXPIRATION}
 
 server:
-  port: ${PORT:9000}
+  port: ${PORT:8080}
 
 spring:
   datasource:
