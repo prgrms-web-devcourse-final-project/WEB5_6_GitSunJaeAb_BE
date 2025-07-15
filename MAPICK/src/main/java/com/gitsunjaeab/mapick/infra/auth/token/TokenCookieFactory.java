@@ -12,7 +12,7 @@ public class TokenCookieFactory {
                 .maxAge(expires)
                 // todo : 배포 후 true 로 변경
                 .sameSite("None")
-                .secure(false)
+                .secure(true)
                 .path("/")
                 .build();
     }
