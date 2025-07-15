@@ -1,5 +1,6 @@
 package com.gitsunjaeab.mapick.api.quest;
 
+import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestListResponse;
 import com.gitsunjaeab.mapick.api.quest.dto.QuestDetailResponse;
 import com.gitsunjaeab.mapick.api.quest.dto.QuestResponse;
 import com.gitsunjaeab.mapick.api.quest.dto.QuestListResponse;
@@ -120,8 +121,9 @@ public class QuestController {
     // 퀘스트 참여자 목록 조회 (참여자용)
     @GetMapping("/{questId}/memberQuest")
     @Operation(summary = "퀘스트 참여자 조회", description = "[참여자용] 특정 퀘스트의 참여자 목록을 조회합니다.")
-    public ResponseEntity<List<MemberQuestResponse>> getQuestParticipants(@PathVariable(name = "questId") final Long questId) {
-        return ResponseEntity.ok(memberQuestService.findByQuestId(questId));
+    public ResponseEntity<MemberQuestListResponse> getQuestParticipants(@PathVariable(name = "questId") final Long questId) {
+        List<MemberQuestResponse> memberQuests = memberQuestService.findByQuestId(questId);
+        return ResponseEntity.ok(MemberQuestListResponse.of(memberQuests));
     }
 
     // 퀘스트 참여 신청 (참여자용)
