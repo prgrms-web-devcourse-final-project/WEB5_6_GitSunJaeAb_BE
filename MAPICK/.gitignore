@@ -1,0 +1,25 @@
+# Gradle 빌드 결과물
+/build/
+/.gradle/
+/out/
+/node_modules
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+workspace.xml
+tasks.xml
+*.log
+
+# OS별 무시 항목 (MacOS)
+/.DS_Store
+
+# 기타
+*.class
+*.jar
+*.war
+*.ear
+
+.env
