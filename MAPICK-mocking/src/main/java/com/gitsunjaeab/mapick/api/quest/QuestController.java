@@ -1,5 +1,6 @@
 package com.gitsunjaeab.mapick.api.quest;
 
+import com.gitsunjaeab.mapick.api.quest.dto.QuestDetailResponse;
 import com.gitsunjaeab.mapick.api.quest.dto.QuestResponse;
 import com.gitsunjaeab.mapick.api.quest.dto.QuestListResponse;
 import com.gitsunjaeab.mapick.api.quest.dto.QuestRequest;
@@ -104,9 +105,9 @@ public class QuestController {
     // 특정 퀘스트 조회 (참여자용)
     @GetMapping("/{questsId}")
     @Operation(summary = "퀘스트 상세 조회", description = "[참여자용] 특정 퀘스트의 상세 정보를 조회합니다.")
-    public ResponseEntity<QuestResponse> getQuest(@PathVariable(name = "questsId") final Long questsId) {
+    public ResponseEntity<QuestDetailResponse> getQuest(@PathVariable(name = "questsId") final Long questsId) {
         QuestResponse questResponse = questService.get(questsId);
-        return ResponseEntity.ok(QuestResponse.ofGetDetail(questResponse));
+        return ResponseEntity.ok(QuestDetailResponse.of(questResponse));
     }
 
     // 퀘스트 랭킹 조회 (참여자용)
