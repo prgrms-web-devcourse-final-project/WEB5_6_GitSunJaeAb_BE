@@ -18,6 +18,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -48,7 +49,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .cors(Customizer.withDefaults())
             .csrf(AbstractHttpConfigurer::disable) // csrf 비활성화
             .formLogin(AbstractHttpConfigurer::disable) // 기본 인증 비활성화
             .logout(AbstractHttpConfigurer::disable) // 기본 로그아웃 비활성화
@@ -78,9 +79,7 @@ public class SecurityConfig {
                 .requestMatchers("/css/**", "/js/**", "/img/**").permitAll()
                 .requestMatchers("/index", "/auth/signin", "/auth/signup", "/auth/socialLogin").anonymous() // 로그인 하지 않은 사용자만 접근 가능
                 .requestMatchers(HttpMethod.POST, "/auth/signin", "/auth/signup" , "/auth/socialLogin","/auth/logout").permitAll() // 누구나 이 URL로 요청 가능
-                .requestMatchers("/exit").permitAll()
-                .requestMatchers("/admin/**").hasRole("ADMIN") // 관리자페이지 접근 권한
-//                .requestMatchers("/home", "/interests/**", "/mypage/**","/maps/**","/layers/**","/markers/**").hasAnyRole("USER", "ADMIN") // 사용자페이지 접근 권한
+//              .requestMatchers("/home", "/interests/**", "/mypage/**","/maps/**","/layers/**","/markers/**").hasAnyRole("USER", "ADMIN") // 사용자페이지 접근 권한
                 .anyRequest().permitAll() // 그 외 전부 로그인 필요
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
@@ -106,29 +105,21 @@ public class SecurityConfig {
     }
 
     // CORS 관련 보안 정책 추가
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration corsConfig = new CorsConfiguration();
-        corsConfig.setAllowedOriginPatterns(List.of(
-                "http://localhost:3000",
-                "https://localhost:3000",
-                "http://34.47.121.164:80",
-                "https://34.47.121.164:80",
-                "http://34.47.121.164",
-                "https://34.47.121.164",
-                "https://mapick.cedartodo.uk",
-                "https://localhost:8080"
-
-
-        ));// 허용할 주소
-        corsConfig.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); //허용 메소드
-        corsConfig.setAllowedHeaders(Collections.singletonList("*")); // 모든 헤더  허용
-        corsConfig.setAllowCredentials(true); // 쿠키 포함 허용
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", corsConfig); // 모든 경로에 적용
-        return source;
-    }
+//    @Bean
+//    public CorsConfigurationSource corsConfigurationSource() {
+//        CorsConfiguration corsConfig = new CorsConfiguration();
+//        corsConfig.setAllowedOriginPatterns(List.of(
+//                "http://localhost:3000",
+//                "https://localhost:3000"
+//        ));// 허용할 주소
+//        corsConfig.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); //허용 메소드
+//        corsConfig.setAllowedHeaders(Collections.singletonList("*")); // 모든 헤더  허용
+//        corsConfig.setAllowCredentials(true); // 쿠키 포함 허용
+//
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", corsConfig); // 모든 경로에 적용
+//        return source;
+//    }
 
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http, PasswordEncoder passwordEncoder, UserDetailsServiceImpl userDetailsService) throws Exception {
