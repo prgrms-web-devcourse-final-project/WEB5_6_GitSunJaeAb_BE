@@ -40,6 +40,8 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -47,6 +49,7 @@ import org.springframework.stereotype.Service;
 
 
 @Service
+@RequiredArgsConstructor
 public class MemberService {
 
     private final MemberRepository memberRepository;
@@ -64,30 +67,7 @@ public class MemberService {
     private final LayerLibraryRepository layerLibraryRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public MemberService(final MemberRepository memberRepository, final RoadmapRepository roadmapRepository,
-            final RoadmapEditorRepository roadmapEditorRepository, final LayerRepository layerRepository,
-            final MarkerRepository markerRepository, final CommentRepository commentRepository,
-            final BookmarkRepository bookmarkRepository,
-            final MemberInterestRepository memberInterestRepository,
-            final ReportRepository reportRepository, final QuestRepository questRepository,
-            final MemberQuestRepository memberQuestRepository,
-            final QuestRankRepository questRankRepository,
-            final LayerLibraryRepository layerLibraryRepository, PasswordEncoder passwordEncoder) {
-        this.memberRepository = memberRepository;
-        this.roadmapRepository = roadmapRepository;
-        this.roadmapEditorRepository = roadmapEditorRepository;
-        this.layerRepository = layerRepository;
-        this.markerRepository = markerRepository;
-        this.commentRepository = commentRepository;
-        this.bookmarkRepository = bookmarkRepository;
-        this.memberInterestRepository = memberInterestRepository;
-        this.reportRepository = reportRepository;
-        this.questRepository = questRepository;
-        this.memberQuestRepository = memberQuestRepository;
-        this.questRankRepository = questRankRepository;
-        this.layerLibraryRepository = layerLibraryRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
+
 
     // 소셜 로그인 시 임시 닉네임 부여
     public String generateUniqueSocialNickname(String provider) {
