@@ -104,23 +104,6 @@ public class SecurityConfig {
         };
     }
 
-    // CORS 관련 보안 정책 추가
-//    @Bean
-//    public CorsConfigurationSource corsConfigurationSource() {
-//        CorsConfiguration corsConfig = new CorsConfiguration();
-//        corsConfig.setAllowedOriginPatterns(List.of(
-//                "http://localhost:3000",
-//                "https://localhost:3000"
-//        ));// 허용할 주소
-//        corsConfig.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); //허용 메소드
-//        corsConfig.setAllowedHeaders(Collections.singletonList("*")); // 모든 헤더  허용
-//        corsConfig.setAllowCredentials(true); // 쿠키 포함 허용
-//
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        source.registerCorsConfiguration("/**", corsConfig); // 모든 경로에 적용
-//        return source;
-//    }
-
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http, PasswordEncoder passwordEncoder, UserDetailsServiceImpl userDetailsService) throws Exception {
         AuthenticationManagerBuilder builder = http.getSharedObject(AuthenticationManagerBuilder.class);
