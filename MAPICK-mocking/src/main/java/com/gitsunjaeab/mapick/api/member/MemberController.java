@@ -15,6 +15,8 @@ import com.gitsunjaeab.mapick.api.member.dto.PasswordVerifyRequest;
 import com.gitsunjaeab.mapick.api.member.dto.SimpleMessageResponse;
 import com.gitsunjaeab.mapick.application.member.MemberInterestService;
 import com.gitsunjaeab.mapick.application.member.MemberService;
+import com.gitsunjaeab.mapick.common.response.ApiResponse;
+import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.member.MemberInterest;
 import com.gitsunjaeab.mapick.util.ReferencedException;
@@ -75,12 +77,12 @@ public class MemberController {
     // 회원 정보 수정 (관리자 전용)
     @PutMapping
     @Operation(summary = "회원 정보 수정 (관리자)", description = "[관리자 전용] 관리자만 접근 가능한 회원 정보 수정")
-    public ResponseEntity<com.gitsunjaeab.mapick.common.response.ApiResponse> updateMember(final Long membersId,
+    public ResponseEntity<ApiResponse> updateMember(final Long membersId,
             @RequestBody @Valid final MemberUpdateRequest memberUpdateRequest) {
         // TODO: MemberService를 수정하여 MemberUpdateRequest를 직접 받도록 개선 필요
-        MemberDTO memberDTO = convertToMemberDTO(memberUpdateRequest);
-        memberService.update(membersId, memberDTO);
-        return ResponseEntity.ok(com.gitsunjaeab.mapick.common.response.ApiResponse.of(com.gitsunjaeab.mapick.common.response.ResponseCode.OK, "회원 정보 수정 완료"));
+//        MemberDTO memberDTO = convertToMemberDTO(memberUpdateRequest);
+//        memberService.update(membersId, memberDTO);
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "회원 정보 수정 완료"));
     }
 
     // 임시 변환 메서드 (TODO: 서비스 레이어 개선 후 제거)
