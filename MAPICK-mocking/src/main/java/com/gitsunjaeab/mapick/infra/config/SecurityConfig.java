@@ -113,7 +113,12 @@ public class SecurityConfig {
                 "http://localhost:3000",
                 "https://localhost:3000",
                 "http://34.47.121.164:80",
-                "https://34.47.121.164:80"
+                "https://34.47.121.164:80",
+                "http://34.47.121.164",
+                "https://34.47.121.164",
+                "https://mapick.cedartodo.uk",
+                "https://localhost:8080"
+
 
         ));// 허용할 주소
         corsConfig.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); //허용 메소드

@@ -20,7 +20,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update    # update # create
+      ddl-auto: create    # update # create
     open-in-view: false
     properties:
       hibernate:
@@ -30,8 +30,9 @@ spring:
             non_contextual_creation: true
         id:
           new_generator_mappings: true
-#  config:
-#    import: sm://
+
+  config:
+    import: sm://
 
   web:
     resources:
