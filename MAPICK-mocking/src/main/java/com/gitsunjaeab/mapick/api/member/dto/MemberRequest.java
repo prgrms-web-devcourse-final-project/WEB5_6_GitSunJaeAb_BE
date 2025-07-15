@@ -33,23 +33,6 @@ public class MemberRequest {
     @Size(max = 255)
     private String provider;
 
-//    @NotNull
-//    @Size(max = 255)
-//    private String role;
-//
-//    @Size(max = 255)
-//    private String status;
-
     @Size(max = 255)
     private String profileImage;
-
-//    private OffsetDateTime lastLogin;
-//
-//    @NotNull
-//    private OffsetDateTime createdAt;
-//
-//    private OffsetDateTime updatedAt;
-//
-//    private OffsetDateTime deletedAt;
-
 }
