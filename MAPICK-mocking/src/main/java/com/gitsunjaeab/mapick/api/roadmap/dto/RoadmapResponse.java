@@ -1,15 +1,16 @@
 package com.gitsunjaeab.mapick.api.roadmap.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.gitsunjaeab.mapick.api.member.dto.MemberProfileResponse.MemberInfo;
 import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
+import com.gitsunjaeab.mapick.api.roadmap.dto.hashtag.HashtagDTO;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
-import lombok.AllArgsConstructor;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -41,6 +42,8 @@ public class RoadmapResponse implements BaseApiResponse {
         private String thumbnail;
 
         private MemberSimpleDTO member;
+        
+        private List<HashtagDTO> hashtags;
 
         @NotNull
         @JsonProperty("isPublic")
@@ -62,6 +65,10 @@ public class RoadmapResponse implements BaseApiResponse {
         roadmapInfo.setDescription(r.getDescription());
         roadmapInfo.setThumbnail(r.getThumbnail());
         roadmapInfo.setMember(new MemberSimpleDTO(r.getMember()));
+        List<HashtagDTO> hashtags = r.getRoadmapMapHashtags().stream()
+            .map(h -> new HashtagDTO(h.getHashtag().getId(), h.getHashtag().getName()))
+            .collect(Collectors.toList());
+        roadmapInfo.setHashtags(hashtags);
         roadmapInfo.setIsPublic(r.getIsPublic());
         roadmapInfo.setIsAnimated(r.getIsAnimated());
         roadmapInfo.setLikeCount(r.getLikeCount());
