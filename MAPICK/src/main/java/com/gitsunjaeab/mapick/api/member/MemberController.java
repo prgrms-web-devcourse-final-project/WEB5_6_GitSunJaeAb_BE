@@ -17,6 +17,7 @@ import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -48,7 +51,7 @@ public class MemberController {
     // 특정 회원 조회 (관리자)
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("{memberId}")
-    @Operation(summary = "회원 조회 ", description = " 특정 회원 정보 조회")
+    @Operation(summary = "특정 회원 조회 ", description = " 특정 회원 정보 조회")
     public ResponseEntity<MemberResponse> getMember(@PathVariable(name = "memberId") final Long memberId) {
         MemberResponse response = memberService.get(memberId);
 
@@ -60,9 +63,15 @@ public class MemberController {
 
     // 마이페이지 - 회원 프로필 조회 (본인만)
     @GetMapping
-    @Operation(summary = "회원 프로필 조회", description = "[사용자 전용] 본인만 접근 가능한 프로필 조회")
+    @Operation(summary = "회원 프로필 조회", description = "[사용자 전용] 본인만 접근 가능한 프로필 조회" )
     public ResponseEntity<MemberProfileResponse> getMemberProfile() {
         Long memberId = 1L;
+
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println("현재 로그인한 사용자: " + auth.getName());
+        System.out.println("권한 목록: " + auth.getAuthorities());
+        System.out.println("Principal 정보: " + auth.getPrincipal());
 
         Member member = memberService.getMemberProfile(memberId);
         MemberProfileResponse response = MemberProfileResponse.of(member);
@@ -73,7 +82,7 @@ public class MemberController {
     // 전체 회원 조회 (관리자 전용) -> 완성
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/list")
-    @Operation(summary = "전체 회원 조회 (관리자)", description = "[관리자 전용] 관리자만 접근 가능한 전체 회원 목록 조회")
+    @Operation(summary = "전체 회원 조회 (관리자)", description = "[관리자 전용] 관리자만 접근 가능한 전체 회원 목록 조회" )
     public ResponseEntity<MemberListResponse> getAllMembers() {
 
         MemberListResponse response = memberService.findAll();
