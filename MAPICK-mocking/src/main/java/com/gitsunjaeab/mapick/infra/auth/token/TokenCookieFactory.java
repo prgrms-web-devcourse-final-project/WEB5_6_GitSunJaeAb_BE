@@ -7,9 +7,10 @@ import org.springframework.http.ResponseCookie;
 
 public class TokenCookieFactory {
     public static ResponseCookie create(String name, String value, Long expires){
+        long expiresInSeconds = expires / 1000L;
         return from(name, value)
                 .httpOnly(true)
-                .maxAge(expires)
+                .maxAge(expiresInSeconds)
                 // todo : 배포 후 true 로 변경
                 .sameSite("None")
                 .secure(true)
@@ -20,7 +21,7 @@ public class TokenCookieFactory {
     public static ResponseCookie createExpiredToken(TokenType tokenType) {
         return from(tokenType.name(), "")
                 .httpOnly(true)
-                .maxAge(15000) // 테스트용
+                .maxAge(15000L) // 테스트용
                 .sameSite("None")
                 .secure(true) // true 인거 false 인거 하나씩
                 .path("/")
