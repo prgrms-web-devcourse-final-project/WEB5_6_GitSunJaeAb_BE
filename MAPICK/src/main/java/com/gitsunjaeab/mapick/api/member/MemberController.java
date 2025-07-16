@@ -94,7 +94,7 @@ public class MemberController {
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "블랙리스트 설정 완료"));
     }
 
-    // 회원의 관리자 여부 수정 (관리자 전용)
+    // 회원의 관리자로 설정 (관리자 전용) -> 완성
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/role/{memberId}")
     @Operation(summary = "회원 role 변경 (관리자)", description = "[관리자 전용] 회원의 role 수정")
@@ -142,7 +142,6 @@ public class MemberController {
     public ResponseEntity<ApiResponse> deleteMember(final Long memberId) {
 
         // todo 관리자 만 해당 url 사용 할 수 있도록 시큐리티 컨피그에 추가 필요
-        // todo 해당 url을 실행 한 사람이 관리자가 맞는지 확인
 
         memberService.deleteMember(memberId); // 소프트 딜리트
 
@@ -150,13 +149,16 @@ public class MemberController {
     }
 
     // 회원 삭제 (사용자)
+
     @DeleteMapping ("/withdraw")// 실제로 delete 되지 않는데 delete 로 두어도 되는지 질문 예정
     @Operation(summary = "회원 탈퇴", description = "회원 탈퇴")
     public ResponseEntity<ApiResponse> withdrawMember(final Long memberId) {
 
+        // todo 본인 객체 꺼내서 memberId 꺼내도록 변경
+
         memberService.deleteMember(memberId); // 소프트 딜리트
 
-        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "회원 삭제 완료"));
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "회원 탈퇴 완료"));
     }
 
 
