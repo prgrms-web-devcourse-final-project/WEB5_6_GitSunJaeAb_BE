@@ -1,6 +1,5 @@
 package com.gitsunjaeab.mapick.application.member;
 
-import com.gitsunjaeab.mapick.api.member.dto.MemberInterestRequest;
 import com.gitsunjaeab.mapick.domain.category.Category;
 import com.gitsunjaeab.mapick.domain.category.CategoryRepository;
 import com.gitsunjaeab.mapick.domain.member.Member;

@@ -1,7 +1,7 @@
 package com.gitsunjaeab.mapick.application.auth;
 
 import com.gitsunjaeab.mapick.api.auth.dto.request.SocialLoginRequest;
-import com.gitsunjaeab.mapick.api.member.dto.SocialUserInfo;
+import com.gitsunjaeab.mapick.api.auth.dto.SocialUserInfo;
 import com.gitsunjaeab.mapick.application.member.MemberService;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.auth.LoginType;
@@ -13,7 +13,7 @@ import com.gitsunjaeab.mapick.domain.member.MemberRepository;
 import com.gitsunjaeab.mapick.infra.auth.token.JwtProvider;
 import com.gitsunjaeab.mapick.infra.auth.token.code.GrantType;
 import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
-import java.time.LocalDateTime;
+
 import java.time.OffsetDateTime;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;

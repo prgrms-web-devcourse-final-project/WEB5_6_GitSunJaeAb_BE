@@ -2,29 +2,24 @@ package com.gitsunjaeab.mapick.api.member;
 
 import com.gitsunjaeab.mapick.api.member.dto.MemberDTO;
 import com.gitsunjaeab.mapick.api.member.dto.MemberInterestDTO;
-import com.gitsunjaeab.mapick.api.member.dto.MemberInterestRequest;
-import com.gitsunjaeab.mapick.api.member.dto.MemberInterestResponse;
-import com.gitsunjaeab.mapick.api.member.dto.MemberListResponse;
-import com.gitsunjaeab.mapick.api.member.dto.MemberProfileResponse;
-import com.gitsunjaeab.mapick.api.member.dto.MemberProfileUpdateRequest;
-import com.gitsunjaeab.mapick.api.member.dto.MemberProfileUpdateResponse;
-import com.gitsunjaeab.mapick.api.member.dto.MemberResponse;
-import com.gitsunjaeab.mapick.api.member.dto.MemberUpdateRequest;
-import com.gitsunjaeab.mapick.api.member.dto.PasswordUpdateRequest;
-import com.gitsunjaeab.mapick.api.member.dto.PasswordVerifyRequest;
-import com.gitsunjaeab.mapick.api.member.dto.SimpleMessageResponse;
+import com.gitsunjaeab.mapick.api.member.dto.request.MemberInterestRequest;
+import com.gitsunjaeab.mapick.api.member.dto.response.MemberListResponse;
+import com.gitsunjaeab.mapick.api.member.dto.response.MemberResponse;
+import com.gitsunjaeab.mapick.api.member.dto.request.MemberUpdateRequest;
+import com.gitsunjaeab.mapick.api.member.dto.request.PasswordUpdateRequest;
+import com.gitsunjaeab.mapick.api.member.dto.request.PasswordVerifyRequest;
+import com.gitsunjaeab.mapick.api.member.dto.response.SimpleMessageResponse;
 import com.gitsunjaeab.mapick.application.member.MemberInterestService;
 import com.gitsunjaeab.mapick.application.member.MemberService;
 import com.gitsunjaeab.mapick.common.response.ApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.member.Member;
-import com.gitsunjaeab.mapick.domain.member.MemberInterest;
-import com.gitsunjaeab.mapick.util.ReferencedException;
-import com.gitsunjaeab.mapick.util.ReferencedWarning;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -40,37 +35,29 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/members", produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "회원 관리 API", description = "회원 관리 및 마이페이지 관련 API")
+@RequiredArgsConstructor
 public class MemberController {
 
     private final MemberService memberService;
     private final MemberInterestService memberInterestService;
 
-    public MemberController(final MemberService memberService,
-        final MemberInterestService memberInterestService) {
-        this.memberService = memberService;
-        this.memberInterestService = memberInterestService;
+
+
+    // 특정 회원 조회 (관리자/사용자) -> 관리자/ 사용자 통합
+    @GetMapping("{memberId}")
+    @Operation(summary = "회원 조회 ", description = " 특정 회원 정보 조회")
+    public ResponseEntity<MemberResponse> getMember(@PathVariable(name = "memberId") final Long memberId) {
+        MemberResponse response = memberService.get(memberId);
+
+        // 관리자 인지 사용자인지 판별 후 로직 추가 필요
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(response);
     }
 
     // ===== 관리자 전용 API (ADMIN 권한 필요) =====
 
-    // 회원의 블랙리스트 여부 수정
-    @GetMapping("/blacklist/{memberId}")
-    @Operation(summary = "블랙리스트 여부 변경 (관리자)", description = "[관리자 전용] 회원의 블랙 리스트 여부 수정")
-    public ResponseEntity<ApiResponse> updateMemberBlackList(@PathVariable(name = "memberId") final Long memberId) {
-        Member member = memberService.getMemberProfile(memberId);
-        // 로직 추가 필요
-        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "블랙리스트 여부 수정 완료"));
-    }
-
-    // 회원의 role 수정
-    @GetMapping("/role/{memberId}")
-    @Operation(summary = "회원 role 변경 (관리자)", description = "[관리자 전용] 회원의 role 수정")
-    public ResponseEntity<ApiResponse> updateMemberRole(@PathVariable(name = "memberId") final Long memberId) {
-        Member member = memberService.getMemberProfile(memberId);
-        // 로직 추가 필요
-        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "회원의 role 수정 완료"));
-    }
-    
     // 전체 회원 조회 (관리자 전용)
     @GetMapping("/list")
     @Operation(summary = "전체 회원 조회 (관리자)", description = "[관리자 전용] 관리자만 접근 가능한 전체 회원 목록 조회")
@@ -79,17 +66,24 @@ public class MemberController {
         return ResponseEntity.ok(response);
     }
 
-    // 특정 회원 조회 (관리자/사용자) -> 관리자/ 사용자 통합
-    @GetMapping("{memberId}")
-    @Operation(summary = "회원 조회 ", description = " 특정 회원 정보 조회")
-    public ResponseEntity<MemberResponse> getMember(@PathVariable(name = "memberId") final Long memberId) {
-        MemberDTO memberDTO = memberService.get(memberId);
-        // TODO: MemberService를 수정하여 직접 Member 엔티티를 반환하도록 개선 필요
+    // 회원의 블랙리스트 여부 수정
+    @PutMapping("/blacklist/{memberId}")
+    @Operation(summary = "블랙리스트 여부 변경 (관리자)", description = "[관리자 전용] 회원의 블랙 리스트 여부 수정")
+    public ResponseEntity<ApiResponse> updateMemberBlackList(@PathVariable(name = "memberId") final Long memberId) {
         Member member = memberService.getMemberProfile(memberId);
-        MemberResponse response = MemberResponse.of(member);
-
-        return ResponseEntity.ok(response);
+        // 로직 추가 필요
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "블랙리스트 여부 수정 완료"));
     }
+
+    // 회원의 role 수정
+    @PutMapping("/role/{memberId}")
+    @Operation(summary = "회원 role 변경 (관리자)", description = "[관리자 전용] 회원의 role 수정")
+    public ResponseEntity<ApiResponse> updateMemberRole(@PathVariable(name = "memberId") final Long memberId) {
+        Member member = memberService.getMemberProfile(memberId);
+        // 로직 추가 필요
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "회원의 role 수정 완료"));
+    }
+    
 
     // 회원 정보 수정 (관리자 전용)
     @PutMapping

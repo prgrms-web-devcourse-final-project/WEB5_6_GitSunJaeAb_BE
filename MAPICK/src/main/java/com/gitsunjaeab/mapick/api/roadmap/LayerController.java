@@ -1,18 +1,13 @@
 package com.gitsunjaeab.mapick.api.roadmap;
 
-import com.gitsunjaeab.mapick.api.member.dto.MemberLayersResponse;
 import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerListResponse;
 import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerRequest;
-import com.gitsunjaeab.mapick.api.roadmap.dto.marker.MarkerListResponse;
 import com.gitsunjaeab.mapick.application.roadmap.LayerService;
 import com.gitsunjaeab.mapick.common.response.ApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
-import com.gitsunjaeab.mapick.domain.roadmap.LayerLibrary;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import java.util.List;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;

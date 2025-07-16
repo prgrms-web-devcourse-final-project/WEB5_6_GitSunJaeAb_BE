@@ -1,8 +1,9 @@
 package com.gitsunjaeab.mapick.application.member;
 
 import com.gitsunjaeab.mapick.api.auth.dto.request.SignupRequest;
-import com.gitsunjaeab.mapick.api.member.dto.MemberListResponse;
-import com.gitsunjaeab.mapick.api.member.dto.SocialUserInfo;
+import com.gitsunjaeab.mapick.api.member.dto.response.MemberListResponse;
+import com.gitsunjaeab.mapick.api.auth.dto.SocialUserInfo;
+import com.gitsunjaeab.mapick.api.member.dto.response.MemberResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.auth.LoginType;
 import com.gitsunjaeab.mapick.domain.auth.Role;
@@ -36,7 +37,7 @@ import com.gitsunjaeab.mapick.domain.report.ReportRepository;
 import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import com.gitsunjaeab.mapick.util.ReferencedWarning;
-import java.time.LocalDateTime;
+
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -149,10 +150,10 @@ public class MemberService {
         return MemberListResponse.of(members);
     }
 
-    public MemberDTO get(final Long id) {
-        return memberRepository.findById(id)
-                .map(member -> roadmapToDTO(member, new MemberDTO()))
-                .orElseThrow(NotFoundException::new);
+    public MemberResponse get(final Long id) {
+        final Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("해당 회원이 없습니다."));
+        return MemberResponse.of(member);
     }
 
     public Long create(final MemberDTO memberDTO) {

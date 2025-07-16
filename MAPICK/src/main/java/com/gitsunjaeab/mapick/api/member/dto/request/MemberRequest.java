@@ -1,19 +1,17 @@
-package com.gitsunjaeab.mapick.api.member.dto;
+package com.gitsunjaeab.mapick.api.member.dto.request;
 
+import com.gitsunjaeab.mapick.api.member.dto.MemberEmailUnique;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
 @Getter
 @Setter
-@NoArgsConstructor
-public class MemberUpdateRequest {
+public class MemberRequest {
 
-    @NotNull
-    private boolean isBlacklisted;
+//    private Long id;
 
     @Size(max = 255)
     private String name;
@@ -36,13 +34,6 @@ public class MemberUpdateRequest {
     @Size(max = 255)
     private String provider;
 
-    @NotNull
-    @Size(max = 255)
-    private String role;
-
-    @Size(max = 255)
-    private String status;
-
     @Size(max = 255)
     private String profileImage;
-} 
+}

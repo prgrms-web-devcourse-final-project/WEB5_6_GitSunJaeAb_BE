@@ -1,6 +1,6 @@
 package com.gitsunjaeab.mapick.application.auth;
 
-import com.gitsunjaeab.mapick.api.member.dto.SocialUserInfo;
+import com.gitsunjaeab.mapick.api.auth.dto.SocialUserInfo;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;

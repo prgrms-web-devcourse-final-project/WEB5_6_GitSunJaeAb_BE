@@ -1,4 +1,4 @@
-package com.gitsunjaeab.mapick.api.member.dto;
+package com.gitsunjaeab.mapick.api.member.dto.request;
 
 import jakarta.validation.constraints.Size;
 import lombok.Getter;

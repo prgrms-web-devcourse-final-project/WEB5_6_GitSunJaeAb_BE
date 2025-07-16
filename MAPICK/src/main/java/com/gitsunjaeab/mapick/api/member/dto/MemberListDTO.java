@@ -31,26 +31,4 @@ public class MemberListDTO {
     @NotNull
     @Size(max = 255)
     private String role;
-//    @NotNull
-//    @Size(max = 255)
-//    private String loginType;
-//
-//    @Size(max = 255)
-//    private String provider;
-//
-//
-//    @Size(max = 255)
-//    private String status;
-//
-//    @Size(max = 255)
-//    private String profileImage;
-//
-//    private OffsetDateTime lastLogin;
-//
-//    @NotNull
-//    private OffsetDateTime createdAt;
-//
-//    private OffsetDateTime updatedAt;
-//
-//    private OffsetDateTime deletedAt;
 }
