@@ -49,7 +49,7 @@ public class MemberController {
     public ResponseEntity<MemberResponse> getMember(@PathVariable(name = "memberId") final Long memberId) {
         MemberResponse response = memberService.get(memberId);
 
-        // 관리자 인지 사용자인지 판별 후 로직 추가 필요
+        // todo 관리자 인지 사용자인지 판별 후 로직 추가 필요
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -71,7 +71,7 @@ public class MemberController {
     @Operation(summary = "블랙리스트 여부 변경 (관리자)", description = "[관리자 전용] 회원의 블랙 리스트 여부 수정")
     public ResponseEntity<ApiResponse> updateMemberBlackList(@PathVariable(name = "memberId") final Long memberId) {
         Member member = memberService.getMemberProfile(memberId);
-        // 로직 추가 필요
+        // todo 로직 추가 필요
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "블랙리스트 여부 수정 완료"));
     }
 
@@ -80,7 +80,7 @@ public class MemberController {
     @Operation(summary = "회원 role 변경 (관리자)", description = "[관리자 전용] 회원의 role 수정")
     public ResponseEntity<ApiResponse> updateMemberRole(@PathVariable(name = "memberId") final Long memberId) {
         Member member = memberService.getMemberProfile(memberId);
-        // 로직 추가 필요
+        // todo 로직 추가 필요
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "회원의 role 수정 완료"));
     }
     
@@ -112,15 +112,13 @@ public class MemberController {
         return dto;
     }
 
-    // 회원 삭제 (관리자 전용)
+    // 회원 삭제 (관리자/사용자 )
     @DeleteMapping
-    @Operation(summary = "회원 삭제 (관리자)", description = "[관리자 전용] 관리자만 접근 가능한 회원 삭제")
+    @Operation(summary = "회원 삭제/탈퇴", description = "회원 삭제/탈퇴")
     public ResponseEntity<ApiResponse> deleteMember(final Long memberId) {
-//        final ReferencedWarning referencedWarning = memberService.getReferencedWarning(memberId);
-//        if (referencedWarning != null) {
-//            throw new ReferencedException(referencedWarning);
-//        }
-//        memberService.delete(memberId);
+
+        memberService.delete(memberId);
+
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "회원 삭제 완료"));
     }
 
@@ -186,15 +184,6 @@ public class MemberController {
         return ResponseEntity.ok(SimpleMessageResponse.of("비밀번호가 성공적으로 변경되었습니다."));
     }
 
-    // 마이페이지 - 회원 탈퇴 (본인만)
-    @DeleteMapping("/withdraw")
-    @Operation(summary = "회원 탈퇴", description = "[사용자 전용] 본인만 접근 가능한 회원 탈퇴")
-    public ResponseEntity<SimpleMessageResponse> withdrawMember() {
-        Long memberId = 1L;
-        memberService.withdrawMember(memberId);
-        
-        return ResponseEntity.ok(SimpleMessageResponse.of("회원 탈퇴가 완료되었습니다."));
-    }
 
     // ===== 회원 관심분야 관리 API =====
 
