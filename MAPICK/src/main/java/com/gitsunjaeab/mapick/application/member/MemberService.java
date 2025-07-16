@@ -151,9 +151,12 @@ public class MemberService {
         return MemberListResponse.of(members);
     }
 
-    public MemberResponse get(final Long id) {
+    // 멤버 상세 조회 
+    public MemberResponse getMember(final Long id) {
+
         final Member member = memberRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("해당 회원이 없습니다."));
+                .orElseThrow(() -> new CommonException(ResponseCode.MEMBER_NOT_FOUND));
+
         return MemberResponse.of(member);
     }
 

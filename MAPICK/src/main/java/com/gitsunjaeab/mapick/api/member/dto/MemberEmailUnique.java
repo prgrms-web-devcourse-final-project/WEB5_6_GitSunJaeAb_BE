@@ -55,7 +55,7 @@ public @interface MemberEmailUnique {
             @SuppressWarnings("unchecked") final Map<String, String> pathVariables =
                     ((Map<String, String>)request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE));
             final String currentId = pathVariables.get("id");
-            if (currentId != null && value.equalsIgnoreCase(memberService.get(Long.parseLong(currentId)).getMember().getEmail())) {
+            if (currentId != null && value.equalsIgnoreCase(memberService.getMember(Long.parseLong(currentId)).getMember().getEmail())) {
                 // value hasn't changed
                 return true;
             }

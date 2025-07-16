@@ -48,13 +48,13 @@ public class MemberController {
 
 
 
-    // 특정 회원 조회 (관리자)
+    // 특정 회원 상세 조회 (관리자)
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("{memberId}")
     @Operation(summary = "특정 회원 조회 ", description = " 특정 회원 정보 조회")
     public ResponseEntity<MemberResponse> getMember(@PathVariable(name = "memberId") final Long memberId) {
-        MemberResponse response = memberService.get(memberId);
 
+        MemberResponse response = memberService.getMember(memberId);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
