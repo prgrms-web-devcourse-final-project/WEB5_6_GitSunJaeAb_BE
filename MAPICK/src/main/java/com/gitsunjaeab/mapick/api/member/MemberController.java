@@ -4,6 +4,7 @@ import com.gitsunjaeab.mapick.api.member.dto.MemberDTO;
 import com.gitsunjaeab.mapick.api.member.dto.MemberInterestDTO;
 import com.gitsunjaeab.mapick.api.member.dto.request.MemberInterestRequest;
 import com.gitsunjaeab.mapick.api.member.dto.response.MemberListResponse;
+import com.gitsunjaeab.mapick.api.member.dto.response.MemberProfileResponse;
 import com.gitsunjaeab.mapick.api.member.dto.response.MemberResponse;
 import com.gitsunjaeab.mapick.api.member.dto.request.MemberUpdateRequest;
 import com.gitsunjaeab.mapick.api.member.dto.request.PasswordUpdateRequest;
@@ -43,7 +44,7 @@ public class MemberController {
 
 
 
-    // 특정 회원 조회 (관리자/사용자) -> 관리자/ 사용자 통합
+    // 특정 회원 조회 (관리자) -> 관리자 통합
     @GetMapping("{memberId}")
     @Operation(summary = "회원 조회 ", description = " 특정 회원 정보 조회")
     public ResponseEntity<MemberResponse> getMember(@PathVariable(name = "memberId") final Long memberId) {
@@ -56,7 +57,17 @@ public class MemberController {
                 .body(response);
     }
 
+    // 마이페이지 - 회원 프로필 조회 (본인만)
+    @GetMapping
+    @Operation(summary = "회원 프로필 조회", description = "[사용자 전용] 본인만 접근 가능한 프로필 조회")
+    public ResponseEntity<MemberProfileResponse> getMemberProfile() {
+        Long memberId = 1L;
 
+        Member member = memberService.getMemberProfile(memberId);
+        MemberProfileResponse response = MemberProfileResponse.of(member);
+
+        return ResponseEntity.ok(response);
+    }
 
     // 전체 회원 조회 (관리자 전용)
     @GetMapping("/list")
