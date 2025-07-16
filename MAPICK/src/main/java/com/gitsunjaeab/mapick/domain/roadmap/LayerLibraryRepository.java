@@ -13,7 +13,11 @@ public interface LayerLibraryRepository extends JpaRepository<LayerLibrary, Long
 
     LayerLibrary findFirstByLayer(Layer layer);
 
-    // 회원이 찜한 레이어 Id 조회 (사용자 찜 레이어 목록 조회)
+    // 전체 회원 라이브러리 레이어 조회
+    @Query("SELECT DISTINCT ll.layer.id FROM LayerLibrary ll")
+    List<Long> findAllLayerIdsInLibrary();
+
+    // 특정 회원의 레이어 찜 목록 조회
     @Query("SELECT ll.layer.id FROM LayerLibrary ll WHERE ll.member.id = :memberId")
     List<Long> findLayerIdsByMemberId(@Param("memberId") Long memberId);
 

@@ -2,6 +2,7 @@ package com.gitsunjaeab.mapick.application.roadmap;
 
 import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerListResponse;
+import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerResponse;
 import com.gitsunjaeab.mapick.domain.roadmap.Layer;
 import com.gitsunjaeab.mapick.domain.roadmap.LayerRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.LayerLibraryRepository;
@@ -14,9 +15,10 @@ import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import com.gitsunjaeab.mapick.util.ReferencedWarning;
+import jakarta.persistence.EntityNotFoundException;
 import java.util.Collections;
 import java.util.List;
-import org.springframework.data.domain.Sort;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,37 +42,37 @@ public class LayerService {
         this.layerLibraryRepository = layerLibraryRepository;
     }
 
+    // 로드맵의 레이어 조회
     @Transactional(readOnly = true)
     public LayerListResponse findAllLayersOnRoadmap(Long roadmapId) {
-        final List<Layer> layers = layerRepository.findAllByRoadmap_Id(roadmapId);
-        return LayerListResponse.of(layers);
-    }
-
-    @Transactional(readOnly = true)
-    public LayerListResponse findAllMemberLayers(Long memberId) {
-        List<Long> layerIds = layerLibraryRepository.findLayerIdsByMemberId(memberId);
-
-        if (layerIds.isEmpty()) {
-            return LayerListResponse.of(Collections.emptyList());
+        final List<Layer> layers;
+        if (roadmapId == null) {
+            // 전체 레이어 조회
+            layers = layerRepository.findAll();
+        } else {
+            // 특정 로드맵 레이어 조회
+            layers = layerRepository.findAllByRoadmap_Id(roadmapId);
         }
-
-        List<Layer> layers = layerRepository.findAllById(layerIds);
         return LayerListResponse.of(layers);
     }
 
+    // 레이어 조회
     @Transactional(readOnly = true)
-    public LayerDTO get(final Long id) {
-        return layerRepository.findById(id)
-            .map(layer -> roadmapToDTO(layer, new LayerDTO()))
-            .orElseThrow(NotFoundException::new);
+    public LayerResponse getLayerDetail(final Long id) {
+        Layer layer = layerRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("해당 레이어가 존재하지 않습니다. id=" + id));
+
+        return LayerResponse.of(layer);
     }
 
+    // 레이어 생성
     public Long create(final LayerDTO layerDTO) {
         final Layer layer = new Layer();
         roadmapToEntity(layerDTO, layer);
         return layerRepository.save(layer).getId();
     }
 
+    // 레이어 수정
     public void update(final Long id, final LayerDTO layerDTO) {
         final Layer layer = layerRepository.findById(id)
             .orElseThrow(NotFoundException::new);
@@ -78,6 +80,7 @@ public class LayerService {
         layerRepository.save(layer);
     }
 
+    // 레이어 삭제
     public void delete(final Long id) {
         layerRepository.deleteById(id);
     }
