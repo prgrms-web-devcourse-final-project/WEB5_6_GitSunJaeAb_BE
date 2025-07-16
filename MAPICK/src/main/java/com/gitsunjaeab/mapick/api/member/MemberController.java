@@ -47,7 +47,7 @@ public class MemberController {
     private final MemberInterestService memberInterestService;
 
 
-    // 특정 회원 상세 조회 (관리자)
+    // 특정 회원 상세 조회 (관리자) -> 완성
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("{memberId}")
     @Operation(summary = "특정 회원 조회 ", description = " 특정 회원 정보 조회")
@@ -138,46 +138,28 @@ public class MemberController {
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "회원 탈퇴 완료"));
     }
 
-    // 회원 정보 수정 (관리자 전용)
-    @PreAuthorize("hasRole('ADMIN')")
+    // 회원 정보 수정
     @PutMapping
-    @Operation(summary = "회원 정보 수정 (관리자)", description = "[관리자 전용] 관리자만 접근 가능한 회원 정보 수정")
-    public ResponseEntity<ApiResponse> updateMember(final Long memberId, @RequestBody @Valid final MemberUpdateRequest memberUpdateRequest) {
-        // TODO: MemberService를 수정하여 MemberUpdateRequest를 직접 받도록 개선 필요
-//        MemberDTO memberDTO = convertToMemberDTO(memberUpdateRequest);
-//        memberService.update(membersId, memberDTO);
+    @Operation(summary = "회원 정보 수정", description = "사용자 회원 정보 수정")
+    public ResponseEntity<ApiResponse> updateMember(@RequestBody @Valid final MemberUpdateRequest memberUpdateRequest) {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Long memberId = Long.parseLong(auth.getName());
+
+        memberService.updateMemberProfile(memberId, memberUpdateRequest);
+
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "회원 정보 수정 완료"));
     }
-
-    // 임시 변환 메서드 (TODO: 서비스 레이어 개선 후 제거)
-    private MemberDTO convertToMemberDTO(MemberUpdateRequest request) {
-        MemberDTO dto = new MemberDTO();
-        dto.setBlacklisted(request.isBlacklisted());
-        dto.setName(request.getName());
-        dto.setNickname(request.getNickname());
-        dto.setEmail(request.getEmail());
-        dto.setPassword(request.getPassword());
-        dto.setLoginType(request.getLoginType());
-        dto.setProvider(request.getProvider());
-        dto.setRole(request.getRole());
-        dto.setStatus(request.getStatus());
-        dto.setProfileImage(request.getProfileImage());
-        return dto;
-    }
-
-
-
-
 
 
 
     // 마이페이지 - 비밀번호 확인 (본인만)
     @PostMapping("/password/verify")
     @Operation(summary = "비밀번호 확인", description = "[사용자 전용] 본인만 접근 가능한 비밀번호 확인")
-    public ResponseEntity<SimpleMessageResponse> verifyPassword(
-            @Valid @RequestBody PasswordVerifyRequest request) {
+    public ResponseEntity<SimpleMessageResponse> verifyPassword(@Valid @RequestBody PasswordVerifyRequest request) {
 
-        Long memberId = 1L;
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Long memberId = Long.parseLong(auth.getName());
 
         boolean isValid = memberService.verifyPassword(memberId, request.getCurrentPassword());
 

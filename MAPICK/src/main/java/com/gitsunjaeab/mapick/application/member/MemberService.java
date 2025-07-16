@@ -1,6 +1,7 @@
 package com.gitsunjaeab.mapick.application.member;
 
 import com.gitsunjaeab.mapick.api.auth.dto.request.SignupRequest;
+import com.gitsunjaeab.mapick.api.member.dto.request.MemberUpdateRequest;
 import com.gitsunjaeab.mapick.api.member.dto.response.MemberListResponse;
 import com.gitsunjaeab.mapick.api.auth.dto.SocialUserInfo;
 import com.gitsunjaeab.mapick.api.member.dto.response.MemberProfileResponse;
@@ -148,14 +149,16 @@ public class MemberService {
     }
 
     public MemberListResponse findAll() {
+
         final List<Member> members = memberRepository.findAll(Sort.by("id"));
+
         return MemberListResponse.of(members);
     }
 
     // 멤버 상세 조회
-    public MemberResponse getMember(final Long id) {
+    public MemberResponse getMember(final Long memberId) {
 
-        final Member member = memberRepository.findById(id)
+        final Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CommonException(ResponseCode.MEMBER_NOT_FOUND));
 
         return MemberResponse.of(member);
@@ -167,11 +170,30 @@ public class MemberService {
         return memberRepository.save(member).getId();
     }
 
-    public void update(final Long id, final MemberDTO memberDTO) {
-        final Member member = memberRepository.findById(id)
-                .orElseThrow(NotFoundException::new);
-        roadmapToEntity(memberDTO, member);
-        memberRepository.save(member);
+    // 사용자 정보 수정
+    @Transactional // 이걸 달까 말까
+    public void updateMemberProfile(final Long memberId, final MemberUpdateRequest memberUpdateRequest) {
+
+        final Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new CommonException(ResponseCode.MEMBER_NOT_FOUND));
+
+        member.setIsBlacklisted(memberUpdateRequest.isBlacklisted());
+        member.setName(memberUpdateRequest.getName());
+        member.setNickname(memberUpdateRequest.getNickname());
+        member.setEmail(memberUpdateRequest.getEmail());
+        member.setPassword(memberUpdateRequest.getPassword());
+        member.setLoginType(LoginType.valueOf(memberUpdateRequest.getLoginType()));
+        member.setProvider(String.valueOf(memberUpdateRequest.getProvider()));
+        member.setProfileImage(memberUpdateRequest.getProfileImage());
+        member.setRole(String.valueOf(memberUpdateRequest.getRole()));
+        member.setRole(String.valueOf(memberUpdateRequest.getRole()));
+        member.setUpdatedAt(OffsetDateTime.now());
+
+        try{
+            memberRepository.save(member);
+        }catch (DataIntegrityViolationException e){
+            throw new CommonException(ResponseCode.DB_CONSTRAINT_VIOLATION); // DB 제약 조건 위배
+        }
     }
 
     // 회원 삭제/탈퇴(소프트 딜리트)
@@ -188,6 +210,7 @@ public class MemberService {
         member.setDeletedAt(OffsetDateTime.now()); // 삭제 날짜에 현재 시간 입력
     }
 
+    // 엔티티 -> dto
     private MemberDTO roadmapToDTO(final Member member, final MemberDTO memberDTO) {
         memberDTO.setId(member.getId());
         memberDTO.setName(member.getName());
@@ -206,6 +229,7 @@ public class MemberService {
         return memberDTO;
     }
 
+    // dto -> 엔티티
     private Member roadmapToEntity(final MemberDTO memberDTO, final Member member) {
         member.setName(memberDTO.getName());
         member.setNickname(memberDTO.getNickname());
