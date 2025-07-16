@@ -373,11 +373,16 @@ public class MemberService {
         return roadmapRepository.findByMember(member);
     }
 
-    // 마이페이지 - 회원 지도 목록 조회
+    // 관리자 - 유저 블랙 리스트 설정
     @Transactional
     public void setMemberBlackList(Long memberId) {
+
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
+
+        if (member.getIsBlacklisted() == true){
+            throw new CommonException(ResponseCode.ALREADY_REGISTERED_BLACKLIST);
+        }
 
         member.setIsBlacklisted(true);
 

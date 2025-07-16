@@ -28,7 +28,9 @@ public enum ResponseCode {
     CONFLICT("4090", HttpStatus.CONFLICT, "충돌이 발생하였습니다."),
     NICKNAME_DUPLICATED("4091", HttpStatus.CONFLICT, "중복된 닉네임입니다."),
     ALREADY_REGISTERED_EMAIL("4092", HttpStatus.CONFLICT, "이미 가입된 이메일입니다."),
+
     DB_CONSTRAINT_VIOLATION("4093", HttpStatus.CONFLICT, "DB 제약 조건에 위배되었습니다."),
+    ALREADY_REGISTERED_BLACKLIST("4094", HttpStatus.CONFLICT, "이미 블랙리스트에 등록된 회원 입니다.."),
 
 
     // 내부 오류

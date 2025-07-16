@@ -86,7 +86,7 @@ public class MemberController {
 
         memberService.setMemberBlackList(memberId);
 
-        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "블랙리스트 여부 수정 완료"));
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "블랙리스트 설정 완료"));
     }
 
     // 회원의 role 수정
