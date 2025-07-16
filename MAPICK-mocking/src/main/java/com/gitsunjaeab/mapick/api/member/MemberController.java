@@ -77,7 +77,19 @@ public class MemberController {
         return ResponseEntity.ok(response);
     }
 
-    // 특정 회원 조회 (관리자/사용자)
+    // 마이페이지 - 회원 프로필 조회 (본인만)
+    @GetMapping
+    @Operation(summary = "회원 프로필 조회", description = "[사용자 전용] 본인만 접근 가능한 프로필 조회")
+    public ResponseEntity<MemberProfileResponse> getMemberProfile() {
+        Long memberId = 1L;
+
+        Member member = memberService.getMemberProfile(memberId);
+        MemberProfileResponse response = MemberProfileResponse.of(member);
+
+        return ResponseEntity.ok(response);
+    }
+
+    // 특정 회원 조회 (관리자)
     @GetMapping("{memberId}")
     @Operation(summary = "회원 조회 (관리자)", description = "[관리자 전용] 관리자만 접근 가능한 특정 회원 정보 조회")
     public ResponseEntity<MemberResponse> getMember(@PathVariable(name = "memberId") final Long memberId) {
