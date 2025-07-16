@@ -52,7 +52,7 @@ public class MemberController {
     // ===== 관리자 전용 API (ADMIN 권한 필요) =====
 
     // 회원의 블랙리스트 여부 수정
-    @GetMapping("/blacklist/{memberId}")
+    @PutMapping("/blacklist/{memberId}")
     @Operation(summary = "블랙리스트 여부 변경 (관리자)", description = "[관리자 전용] 회원의 블랙 리스트 여부 수정")
     public ResponseEntity<ApiResponse> updateMemberBlackList(@PathVariable(name = "memberId") final Long memberId) {
         Member member = memberService.getMemberProfile(memberId);
@@ -61,7 +61,7 @@ public class MemberController {
     }
 
     // 회원의 role 수정
-    @GetMapping("/role/{memberId}")
+    @PutMapping("/role/{memberId}")
     @Operation(summary = "회원 role 변경 (관리자)", description = "[관리자 전용] 회원의 role 수정")
     public ResponseEntity<ApiResponse> updateMemberRole(@PathVariable(name = "memberId") final Long memberId) {
         Member member = memberService.getMemberProfile(memberId);
