@@ -47,7 +47,6 @@ public class MemberController {
     private final MemberInterestService memberInterestService;
 
 
-
     // 특정 회원 상세 조회 (관리자)
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("{memberId}")
@@ -80,6 +79,8 @@ public class MemberController {
     @Operation(summary = "전체 회원 조회 (관리자)", description = "[관리자 전용] 관리자만 접근 가능한 전체 회원 목록 조회" )
     public ResponseEntity<MemberListResponse> getAllMembers() {
 
+        // todo 관리자 만 해당 url 사용 할 수 있도록 시큐리티 컨피그에 추가 필요
+
         MemberListResponse response = memberService.findAll();
 
         return ResponseEntity.ok(response);
@@ -110,7 +111,32 @@ public class MemberController {
 
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "회원의 role 수정 완료"));
     }
-    
+
+    // 회원 삭제 (관리자) -> 완성
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping // 실제로 delete 되지 않는데 delete 로 두어도 되는지 질문 예정
+    @Operation(summary = "회원 삭제(관리자)", description = "회원 삭제")
+    public ResponseEntity<ApiResponse> deleteMember(final Long memberId) {
+
+        // todo 관리자 만 해당 url 사용 할 수 있도록 시큐리티 컨피그에 추가 필요
+
+        memberService.deleteMember(memberId); // 소프트 딜리트
+
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "회원 삭제 완료"));
+    }
+
+    // 회원 탈퇴 (사용자) -> 완성
+    @DeleteMapping ("/withdraw")// 실제로 delete 되지 않는데 delete 로 두어도 되는지 질문 예정
+    @Operation(summary = "회원 탈퇴", description = "회원 탈퇴")
+    public ResponseEntity<ApiResponse> withdrawMember() {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Long memberId = Long.parseLong(auth.getName());
+
+        memberService.deleteMember(memberId); // 소프트 딜리트
+
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "회원 탈퇴 완료"));
+    }
 
     // 회원 정보 수정 (관리자 전용)
     @PreAuthorize("hasRole('ADMIN')")
@@ -139,31 +165,9 @@ public class MemberController {
         return dto;
     }
 
-    // 회원 삭제 (관리자)
-    @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping // 실제로 delete 되지 않는데 delete 로 두어도 되는지 질문 예정
-    @Operation(summary = "회원 삭제", description = "회원 삭제")
-    public ResponseEntity<ApiResponse> deleteMember(final Long memberId) {
 
-        // todo 관리자 만 해당 url 사용 할 수 있도록 시큐리티 컨피그에 추가 필요
 
-        memberService.deleteMember(memberId); // 소프트 딜리트
 
-        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "회원 삭제 완료"));
-    }
-
-    // 회원 삭제 (사용자)
-
-    @DeleteMapping ("/withdraw")// 실제로 delete 되지 않는데 delete 로 두어도 되는지 질문 예정
-    @Operation(summary = "회원 탈퇴", description = "회원 탈퇴")
-    public ResponseEntity<ApiResponse> withdrawMember(final Long memberId) {
-
-        // todo 본인 객체 꺼내서 memberId 꺼내도록 변경
-
-        memberService.deleteMember(memberId); // 소프트 딜리트
-
-        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "회원 탈퇴 완료"));
-    }
 
 
 
