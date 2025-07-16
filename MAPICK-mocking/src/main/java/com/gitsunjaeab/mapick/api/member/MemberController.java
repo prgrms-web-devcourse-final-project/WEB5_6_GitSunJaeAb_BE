@@ -25,6 +25,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -40,19 +41,33 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/members", produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "회원 관리 API", description = "회원 관리 및 마이페이지 관련 API")
+@RequiredArgsConstructor
 public class MemberController {
 
     private final MemberService memberService;
     private final MemberInterestService memberInterestService;
 
-    public MemberController(final MemberService memberService,
-        final MemberInterestService memberInterestService) {
-        this.memberService = memberService;
-        this.memberInterestService = memberInterestService;
-    }
+
 
     // ===== 관리자 전용 API (ADMIN 권한 필요) =====
-    
+
+    // 회원의 블랙리스트 여부 수정
+    @GetMapping("/blacklist/{memberId}")
+    @Operation(summary = "블랙리스트 여부 변경 (관리자)", description = "[관리자 전용] 회원의 블랙 리스트 여부 수정")
+    public ResponseEntity<ApiResponse> updateMemberBlackList(@PathVariable(name = "memberId") final Long memberId) {
+        Member member = memberService.getMemberProfile(memberId);
+        // 로직 추가 필요
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "블랙리스트 여부 수정 완료"));
+    }
+
+    // 회원의 role 수정
+    @GetMapping("/role/{memberId}")
+    @Operation(summary = "회원 role 변경 (관리자)", description = "[관리자 전용] 회원의 role 수정")
+    public ResponseEntity<ApiResponse> updateMemberRole(@PathVariable(name = "memberId") final Long memberId) {
+        Member member = memberService.getMemberProfile(memberId);
+        // 로직 추가 필요
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "회원의 role 수정 완료"));
+    }
     
     // 전체 회원 조회 (관리자 전용)
     @GetMapping("/list")
@@ -62,7 +77,7 @@ public class MemberController {
         return ResponseEntity.ok(response);
     }
 
-    // 특정 회원 조회 (관리자 전용)
+    // 특정 회원 조회 (관리자/사용자)
     @GetMapping("{memberId}")
     @Operation(summary = "회원 조회 (관리자)", description = "[관리자 전용] 관리자만 접근 가능한 특정 회원 정보 조회")
     public ResponseEntity<MemberResponse> getMember(@PathVariable(name = "memberId") final Long memberId) {
@@ -74,9 +89,9 @@ public class MemberController {
         return ResponseEntity.ok(response);
     }
 
-    // 회원 정보 수정 (관리자 전용)
+    // 회원 정보 수정 (사용자 본인)
     @PutMapping
-    @Operation(summary = "회원 정보 수정 (관리자)", description = "[관리자 전용] 관리자만 접근 가능한 회원 정보 수정")
+    @Operation(summary = "회원 정보 수정 ", description = "회원 정보 수정")
     public ResponseEntity<ApiResponse> updateMember(final Long memberId,
             @RequestBody @Valid final MemberUpdateRequest memberUpdateRequest) {
         // TODO: MemberService를 수정하여 MemberUpdateRequest를 직접 받도록 개선 필요
@@ -116,34 +131,34 @@ public class MemberController {
     // ===== 사용자 전용 API (본인만 접근 가능) =====
 
     // 마이페이지 - 회원 프로필 조회 (본인만)
-    @GetMapping("/profile")
-    @Operation(summary = "회원 프로필 조회", description = "[사용자 전용] 본인 또는 관리자만 접근 가능한 프로필 조회")
-    public ResponseEntity<MemberProfileResponse> getMemberProfile() {
-        Long memberId = 1L;
-        
-        Member member = memberService.getMemberProfile(memberId);
-        MemberProfileResponse response = MemberProfileResponse.of(member);
-        
-        return ResponseEntity.ok(response);
-    }
-
-    // 마이페이지 - 회원 정보 수정 (본인만)
-    @PutMapping("/profile")
-    @Operation(summary = "회원 정보 수정", description = "[사용자 전용] 본인만 접근 가능한 프로필 정보 수정")
-    public ResponseEntity<ApiResponse> updateMemberProfile(
-            @Valid @RequestBody MemberProfileUpdateRequest request) {
-
+//    @GetMapping("/profile")
+//    @Operation(summary = "회원 프로필 조회", description = "[사용자 전용] 본인 또는 관리자만 접근 가능한 프로필 조회")
+//    public ResponseEntity<MemberProfileResponse> getMemberProfile() {
 //        Long memberId = 1L;
 //
-//        Member updatedMember = memberService.updateMemberProfile(
-//            memberId,
-//            request.getNickname(),
-//            request.getProfileImage()
-//        );
+//        Member member = memberService.getMemberProfile(memberId);
+//        MemberProfileResponse response = MemberProfileResponse.of(member);
+//
+//        return ResponseEntity.ok(response);
+//    }
 
-//        MemberProfileUpdateResponse response = MemberProfileUpdateResponse.of(updatedMember);
-        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "회원정보 수정 완료"));
-    }
+    // 마이페이지 - 회원 정보 수정 (본인만)
+//    @PutMapping("/profile")
+//    @Operation(summary = "회원 정보 수정", description = "[사용자 전용] 본인만 접근 가능한 프로필 정보 수정")
+//    public ResponseEntity<ApiResponse> updateMemberProfile(
+//            @Valid @RequestBody MemberProfileUpdateRequest request) {
+//
+////        Long memberId = 1L;
+////
+////        Member updatedMember = memberService.updateMemberProfile(
+////            memberId,
+////            request.getNickname(),
+////            request.getProfileImage()
+////        );
+//
+////        MemberProfileUpdateResponse response = MemberProfileUpdateResponse.of(updatedMember);
+//        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "회원정보 수정 완료"));
+//    }
 
     // 마이페이지 - 비밀번호 확인 (본인만)
     @PostMapping("/password/verify")
