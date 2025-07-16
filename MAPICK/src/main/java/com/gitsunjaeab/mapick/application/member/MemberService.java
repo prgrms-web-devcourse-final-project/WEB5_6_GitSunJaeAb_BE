@@ -312,8 +312,11 @@ public class MemberService {
 
     // 마이페이지 - 회원 정보 조회
     public Member getMemberProfile(Long memberId) {
-        return memberRepository.findById(memberId)
+
+        Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
+
+        return member;
     }
 
     // 마이페이지 - 회원 정보 수정
@@ -368,6 +371,16 @@ public class MemberService {
                 .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
 
         return roadmapRepository.findByMember(member);
+    }
+
+    // 마이페이지 - 회원 지도 목록 조회
+    @Transactional
+    public void setMemberBlackList(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
+
+        member.setIsBlacklisted(true);
+
     }
 
 }

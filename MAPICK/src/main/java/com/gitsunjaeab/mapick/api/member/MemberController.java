@@ -69,20 +69,23 @@ public class MemberController {
         return ResponseEntity.ok(response);
     }
 
-    // 전체 회원 조회 (관리자 전용)
+    // 전체 회원 조회 (관리자 전용) -> 완성
     @GetMapping("/list")
     @Operation(summary = "전체 회원 조회 (관리자)", description = "[관리자 전용] 관리자만 접근 가능한 전체 회원 목록 조회")
     public ResponseEntity<MemberListResponse> getAllMembers() {
+
         MemberListResponse response = memberService.findAll();
+
         return ResponseEntity.ok(response);
     }
 
-    // 회원의 블랙리스트 여부 수정
+    // 회원의 블랙리스트 여부 수정 (관리자 전용) -> 완성
     @PutMapping("/blacklist/{memberId}")
     @Operation(summary = "블랙리스트 여부 변경 (관리자)", description = "[관리자 전용] 회원의 블랙 리스트 여부 수정")
     public ResponseEntity<ApiResponse> updateMemberBlackList(@PathVariable(name = "memberId") final Long memberId) {
-        Member member = memberService.getMemberProfile(memberId);
-        // todo 로직 추가 필요
+
+        memberService.setMemberBlackList(memberId);
+
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "블랙리스트 여부 수정 완료"));
     }
 
@@ -124,7 +127,7 @@ public class MemberController {
     }
 
     // 회원 삭제 (관리자/사용자 공용)
-    @DeleteMapping
+    @DeleteMapping // 실제로 delete 되지 않는데 delete 로 두어도 되는지 질문 예정
     @Operation(summary = "회원 삭제/탈퇴", description = "회원 삭제/탈퇴")
     public ResponseEntity<ApiResponse> deleteMember(final Long memberId) {
 
@@ -136,37 +139,7 @@ public class MemberController {
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "회원 삭제 완료"));
     }
 
-    // ===== 사용자 전용 API (본인만 접근 가능) =====
 
-    // 마이페이지 - 회원 프로필 조회 (본인만)
-//    @GetMapping("/profile")
-//    @Operation(summary = "회원 프로필 조회", description = "[사용자 전용] 본인 또는 관리자만 접근 가능한 프로필 조회")
-//    public ResponseEntity<MemberProfileResponse> getMemberProfile() {
-//        Long memberId = 1L;
-//
-//        Member member = memberService.getMemberProfile(memberId);
-//        MemberProfileResponse response = MemberProfileResponse.of(member);
-//
-//        return ResponseEntity.ok(response);
-//    }
-
-    // 마이페이지 - 회원 정보 수정 (본인만)
-//    @PutMapping("/profile")
-//    @Operation(summary = "회원 정보 수정", description = "[사용자 전용] 본인만 접근 가능한 프로필 정보 수정")
-//    public ResponseEntity<ApiResponse> updateMemberProfile(
-//            @Valid @RequestBody MemberProfileUpdateRequest request) {
-//
-////        Long memberId = 1L;
-////
-////        Member updatedMember = memberService.updateMemberProfile(
-////            memberId,
-////            request.getNickname(),
-////            request.getProfileImage()
-////        );
-//
-////        MemberProfileUpdateResponse response = MemberProfileUpdateResponse.of(updatedMember);
-//        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "회원정보 수정 완료"));
-//    }
 
     // 마이페이지 - 비밀번호 확인 (본인만)
     @PostMapping("/password/verify")
