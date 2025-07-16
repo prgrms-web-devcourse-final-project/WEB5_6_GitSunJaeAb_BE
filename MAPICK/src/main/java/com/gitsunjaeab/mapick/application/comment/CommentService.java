@@ -1,17 +1,17 @@
 package com.gitsunjaeab.mapick.application.comment;
 
-import com.gitsunjaeab.mapick.api.comment.dto.CommentDTO;
 import com.gitsunjaeab.mapick.api.comment.dto.CommentListResponse;
 import com.gitsunjaeab.mapick.api.comment.dto.CommentRequest;
-import com.gitsunjaeab.mapick.domain.member.Member;
-import com.gitsunjaeab.mapick.domain.member.MemberRepository;
 import com.gitsunjaeab.mapick.domain.comment.Comment;
 import com.gitsunjaeab.mapick.domain.comment.CommentRepository;
+import com.gitsunjaeab.mapick.domain.member.Member;
+import com.gitsunjaeab.mapick.domain.member.MemberRepository;
 import com.gitsunjaeab.mapick.domain.quest.Quest;
 import com.gitsunjaeab.mapick.domain.quest.QuestRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
 import com.gitsunjaeab.mapick.util.NotFoundException;
+import jakarta.validation.Valid;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -54,19 +54,14 @@ public class CommentService {
         return CommentListResponse.of(comments);
     }
 
-//    public CommentDTO get(final Long id) {
-//        return commentRepository.findById(id)
-//                .map(comment -> roadmapToDTO(comment, new CommentDTO()))
-//                .orElseThrow(NotFoundException::new);
-//    }
+    @Transactional
+    public void update(Long commentId, @Valid CommentRequest request) {
+        final Comment comment = commentRepository.findById(commentId)
+            .orElseThrow(() -> new NotFoundException("존재하지 않는 댓글 ID 입니다."));
+        comment.setContent(request.getContent());
 
-
-/*    public void update(final Long id, final CommentDTO commentDTO) {
-        final Comment comment = commentRepository.findById(id)
-                .orElseThrow(NotFoundException::new);
-        DtoToEntity(commentDTO, comment);
         commentRepository.save(comment);
-    }*/
+    }
 
     public void delete(final Long id) {
         commentRepository.deleteById(id);
@@ -108,16 +103,5 @@ public class CommentService {
             .flatMap(memberRepository::findById)
             .orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다"));
         comment.setMember(member);
-    }
-
-
-    private CommentDTO roadmapToDTO(final Comment comment, final CommentDTO commentDTO) {
-        commentDTO.setId(comment.getId());
-        commentDTO.setContent(comment.getContent());
-        commentDTO.setCreatedAt(comment.getCreatedAt());
-        commentDTO.setUpdatedAt(comment.getUpdatedAt());
-        commentDTO.setRoadmap(comment.getRoadmap() == null ? null : comment.getRoadmap().getId());
-        commentDTO.setMember(comment.getMember() == null ? null : comment.getMember().getId());
-        return commentDTO;
     }
 }

@@ -54,25 +54,6 @@ public class CommentController {
         return ResponseEntity.ok(commentService.findAllCommentsInRoadmaps(roadmapId));
     }
 
-    // 지도 댓글 수정
-    @PutMapping("/roadmaps/{commentId}")
-    @Operation(summary = "지도 댓글 수정", description = "[사용자용] 로드맵이나 공유지도의 댓글 수정")
-    public ResponseEntity<ApiResponse> updateComment(@PathVariable(name = "commentId") final Long commentId,
-            @RequestBody @Valid final CommentRequest request) {
-//        commentService.update(commentId, request);
-        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "댓글 수정 완료"));
-    }
-
-    // 지도 댓글 삭제
-    @DeleteMapping("/roadmaps/{commentId}")
-    @Operation(summary = "지도 댓글 삭제", description = "[사용자용] 로드맵이나 공유지도의 댓글 삭제")
-    public ResponseEntity<ApiResponse> deleteComment(@PathVariable(name = "commentId") final Long commentId) {
-//        commentService.delete(commentId);
-        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "댓글 삭제 완료"));
-    }
-
-
-
     /**
      * 퀘스트 댓글 API
      */
@@ -97,25 +78,27 @@ public class CommentController {
         return ResponseEntity.ok(commentService.findAllCommentsInQuest(questId));
     }
 
-    // 퀘스트 댓글 수정
-    @PutMapping("/quests/{commentId}")
-    @Operation(summary = "퀘스트 댓글 수정", description = "[댓글 작성자] 자신이 작성한 댓글을 수정합니다.")
-    public ResponseEntity<ApiResponse> updateQuestComment(
-            @RequestParam Long questId,
-            @RequestBody @Valid final CommentRequest request) {
-        // questId 설정 (일관성 유지)
-//        questCommentRequest.setQuest(questId);
-//        questCommentService.update(commentId, questCommentRequest);
-        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "퀘스트 댓글 수정 완료"));
+
+    /**
+     * 댓글 수정, 삭제 (공통)
+     */
+
+    // 지도 댓글 수정
+    @PutMapping("/{commentId}")
+    @Operation(summary = "댓글 수정", description = "[댓글 작성자/게시글 작성자] 특정 댓글 수정")
+    public ResponseEntity<ApiResponse> updateRoadmapComment(
+        @PathVariable(name = "commentId") final Long commentId,
+        @RequestBody @Valid final CommentRequest request) {
+        commentService.update(commentId, request);
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "댓글 수정 완료"));
     }
 
-    // 퀘스트 댓글 삭제
-    @DeleteMapping("/quests/{commentId}")
-    @Operation(summary = "퀘스트 댓글 삭제", description = "[댓글 작성자] 자신이 작성한 댓글을 삭제합니다.")
-    public ResponseEntity<ApiResponse> deleteQuestComment(
-            @RequestParam Long questId) {
-//        questCommentService.delete(commentId);
-        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "퀘스트 댓글 삭제 완료"));
+    // 지도 댓글 삭제
+    @DeleteMapping("/{commentId}")
+    @Operation(summary = "댓글 삭제", description = "[댓글 작성자/게시글 작성자] 댓글 삭제")
+    public ResponseEntity<ApiResponse> deleteComment(@PathVariable(name = "commentId") final Long commentId) {
+        commentService.delete(commentId);
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "댓글 삭제 완료"));
     }
 
 }
