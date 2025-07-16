@@ -177,6 +177,10 @@ public class MemberService {
         final Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("해당 회원이 없습니다."));
 
+        if (member.getDeletedAt() != null) {
+            throw new CommonException(ResponseCode.ALREADY_DELETED_USER);
+        }
+
         member.setDeletedAt(OffsetDateTime.now()); // 삭제 날짜에 현재 시간 입력
     }
 
@@ -376,6 +380,7 @@ public class MemberService {
     // 관리자 - 특정 유저 블랙 리스트 설정
     @Transactional
     public void setMemberBlackList(Long memberId) {
+        try{
 
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
@@ -384,13 +389,18 @@ public class MemberService {
             throw new CommonException(ResponseCode.ALREADY_REGISTERED_BLACKLIST);
         }
 
-        member.setIsBlacklisted(true);
+
+            member.setIsBlacklisted(true);
+        }catch (DataIntegrityViolationException e){
+            throw new CommonException(ResponseCode.DB_CONSTRAINT_VIOLATION); // DB 제약 조건 위배
+        }
 
     }
 
     // 관리자 - 특정 유저 관리자 설정
     @Transactional
     public void setMemberRoleAdmin(Long memberId) {
+        try{
 
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
@@ -399,7 +409,10 @@ public class MemberService {
             throw new CommonException(ResponseCode.ALREADY_REGISTERED_ADMIN);
         }
 
-        member.setIsBlacklisted(true);
+        member.setRole("ROLE_ADMIN");
+        }catch (DataIntegrityViolationException e){
+            throw new CommonException(ResponseCode.DB_CONSTRAINT_VIOLATION); // DB 제약 조건 위배
+        }
 
     }
 

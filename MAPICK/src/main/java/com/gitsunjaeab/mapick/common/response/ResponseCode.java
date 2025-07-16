@@ -30,8 +30,9 @@ public enum ResponseCode {
     ALREADY_REGISTERED_EMAIL("4092", HttpStatus.CONFLICT, "이미 가입된 이메일입니다."),
 
     DB_CONSTRAINT_VIOLATION("4093", HttpStatus.CONFLICT, "DB 제약 조건에 위배되었습니다."),
-    ALREADY_REGISTERED_BLACKLIST("4094", HttpStatus.CONFLICT, "이미 블랙리스트에 등록된 회원 입니다.."),
-    ALREADY_REGISTERED_ADMIN("4095", HttpStatus.CONFLICT, "이미 관리자로 등록된 회원 입니다.."),
+    ALREADY_REGISTERED_BLACKLIST("4094", HttpStatus.CONFLICT, "이미 블랙리스트에 등록된 회원 입니다."),
+    ALREADY_REGISTERED_ADMIN("4095", HttpStatus.CONFLICT, "이미 관리자로 등록된 회원 입니다."),
+    ALREADY_DELETED_USER("4096", HttpStatus.CONFLICT, "이미 삭제된 회원 입니다."),
 
 
     // 내부 오류

@@ -23,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,13 +45,13 @@ public class MemberController {
 
 
 
-    // 특정 회원 조회 (관리자) -> 관리자 통합
+    // 특정 회원 조회 (관리자)
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("{memberId}")
     @Operation(summary = "회원 조회 ", description = " 특정 회원 정보 조회")
     public ResponseEntity<MemberResponse> getMember(@PathVariable(name = "memberId") final Long memberId) {
         MemberResponse response = memberService.get(memberId);
 
-        // todo 관리자 인지 사용자인지 판별 후 로직 추가 필요
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -70,6 +71,7 @@ public class MemberController {
     }
 
     // 전체 회원 조회 (관리자 전용) -> 완성
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/list")
     @Operation(summary = "전체 회원 조회 (관리자)", description = "[관리자 전용] 관리자만 접근 가능한 전체 회원 목록 조회")
     public ResponseEntity<MemberListResponse> getAllMembers() {
@@ -80,12 +82,12 @@ public class MemberController {
     }
 
     // 회원의 블랙리스트 여부 수정 (관리자 전용) -> 완성
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/blacklist/{memberId}")
     @Operation(summary = "블랙리스트 여부 변경 (관리자)", description = "[관리자 전용] 회원의 블랙 리스트 여부 수정")
     public ResponseEntity<ApiResponse> updateMemberBlackList(@PathVariable(name = "memberId") final Long memberId) {
 
         // todo 관리자 만 해당 url 사용 할 수 있도록 시큐리티 컨피그에 추가 필요
-        // todo 해당 url을 실행 한 사람이 관리자가 맞는지 확인
 
         memberService.setMemberBlackList(memberId);
 
@@ -93,12 +95,12 @@ public class MemberController {
     }
 
     // 회원의 관리자 여부 수정 (관리자 전용)
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/role/{memberId}")
     @Operation(summary = "회원 role 변경 (관리자)", description = "[관리자 전용] 회원의 role 수정")
     public ResponseEntity<ApiResponse> updateMemberRole(@PathVariable(name = "memberId") final Long memberId) {
 
         // todo 관리자 만 해당 url 사용 할 수 있도록 시큐리티 컨피그에 추가 필요
-        // todo 해당 url을 실행 한 사람이 관리자가 맞는지 확인
 
         memberService.setMemberRoleAdmin(memberId);
 
@@ -107,10 +109,10 @@ public class MemberController {
     
 
     // 회원 정보 수정 (관리자 전용)
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping
     @Operation(summary = "회원 정보 수정 (관리자)", description = "[관리자 전용] 관리자만 접근 가능한 회원 정보 수정")
-    public ResponseEntity<ApiResponse> updateMember(final Long memberId,
-            @RequestBody @Valid final MemberUpdateRequest memberUpdateRequest) {
+    public ResponseEntity<ApiResponse> updateMember(final Long memberId, @RequestBody @Valid final MemberUpdateRequest memberUpdateRequest) {
         // TODO: MemberService를 수정하여 MemberUpdateRequest를 직접 받도록 개선 필요
 //        MemberDTO memberDTO = convertToMemberDTO(memberUpdateRequest);
 //        memberService.update(membersId, memberDTO);
@@ -133,15 +135,26 @@ public class MemberController {
         return dto;
     }
 
-    // 회원 삭제 (관리자/사용자 공용)
+    // 회원 삭제 (관리자)
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping // 실제로 delete 되지 않는데 delete 로 두어도 되는지 질문 예정
-    @Operation(summary = "회원 삭제/탈퇴", description = "회원 삭제/탈퇴")
+    @Operation(summary = "회원 삭제", description = "회원 삭제")
     public ResponseEntity<ApiResponse> deleteMember(final Long memberId) {
+
+        // todo 관리자 만 해당 url 사용 할 수 있도록 시큐리티 컨피그에 추가 필요
+        // todo 해당 url을 실행 한 사람이 관리자가 맞는지 확인
 
         memberService.deleteMember(memberId); // 소프트 딜리트
 
-        // todo 관리자 인지 사용자인지 판별 후 로직 추가 필요
-        // todo 삭제된 사용자 라면 성공 뜨지 않고 중복이라고 표시 하는 로직 필요
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "회원 삭제 완료"));
+    }
+
+    // 회원 삭제 (사용자)
+    @DeleteMapping ("/withdraw")// 실제로 delete 되지 않는데 delete 로 두어도 되는지 질문 예정
+    @Operation(summary = "회원 탈퇴", description = "회원 탈퇴")
+    public ResponseEntity<ApiResponse> withdrawMember(final Long memberId) {
+
+        memberService.deleteMember(memberId); // 소프트 딜리트
 
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "회원 삭제 완료"));
     }
