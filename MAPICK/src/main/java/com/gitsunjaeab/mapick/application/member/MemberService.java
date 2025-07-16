@@ -373,7 +373,7 @@ public class MemberService {
         return roadmapRepository.findByMember(member);
     }
 
-    // 관리자 - 유저 블랙 리스트 설정
+    // 관리자 - 특정 유저 블랙 리스트 설정
     @Transactional
     public void setMemberBlackList(Long memberId) {
 
@@ -382,6 +382,21 @@ public class MemberService {
 
         if (member.getIsBlacklisted() == true){
             throw new CommonException(ResponseCode.ALREADY_REGISTERED_BLACKLIST);
+        }
+
+        member.setIsBlacklisted(true);
+
+    }
+
+    // 관리자 - 특정 유저 관리자 설정
+    @Transactional
+    public void setMemberRoleAdmin(Long memberId) {
+
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
+
+        if ("ROLE_ADMIN".equals(member.getRole())) { // 리터럴을 앞에 두어 null 방지
+            throw new CommonException(ResponseCode.ALREADY_REGISTERED_ADMIN);
         }
 
         member.setIsBlacklisted(true);

@@ -84,17 +84,24 @@ public class MemberController {
     @Operation(summary = "블랙리스트 여부 변경 (관리자)", description = "[관리자 전용] 회원의 블랙 리스트 여부 수정")
     public ResponseEntity<ApiResponse> updateMemberBlackList(@PathVariable(name = "memberId") final Long memberId) {
 
+        // todo 관리자 만 해당 url 사용 할 수 있도록 시큐리티 컨피그에 추가 필요
+        // todo 해당 url을 실행 한 사람이 관리자가 맞는지 확인
+
         memberService.setMemberBlackList(memberId);
 
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "블랙리스트 설정 완료"));
     }
 
-    // 회원의 role 수정
+    // 회원의 관리자 여부 수정 (관리자 전용)
     @PutMapping("/role/{memberId}")
     @Operation(summary = "회원 role 변경 (관리자)", description = "[관리자 전용] 회원의 role 수정")
     public ResponseEntity<ApiResponse> updateMemberRole(@PathVariable(name = "memberId") final Long memberId) {
-        Member member = memberService.getMemberProfile(memberId);
-        // todo 로직 추가 필요
+
+        // todo 관리자 만 해당 url 사용 할 수 있도록 시큐리티 컨피그에 추가 필요
+        // todo 해당 url을 실행 한 사람이 관리자가 맞는지 확인
+
+        memberService.setMemberRoleAdmin(memberId);
+
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "회원의 role 수정 완료"));
     }
     
