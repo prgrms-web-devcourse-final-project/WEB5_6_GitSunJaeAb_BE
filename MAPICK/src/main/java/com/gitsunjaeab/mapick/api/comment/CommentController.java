@@ -8,6 +8,7 @@ import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,34 +22,36 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
+@Tag(name = "댓글 관리 API", description = "지도 및 퀘스트의 댓글 관리 API")
 @RestController
 @RequestMapping(value = "/comments", produces = MediaType.APPLICATION_JSON_VALUE)
-@Tag(name = "댓글 관리 API", description = "지도 및 퀘스트의 댓글 관리 API")
+@RequiredArgsConstructor
 public class CommentController {
 
     private final CommentService commentService;
 
-    public CommentController(final CommentService commentService){
-        this.commentService = commentService;
-    }
-
     /**
      * 지도 댓글 API
      */
+
+    // 지도 댓글 생성
+    @PostMapping("/roadmaps")
+    @Operation(summary = "지도 댓글 생성", description = "[모든 사용자] 특정 로드맵/공유지도의 댓글 생성")
+    public ResponseEntity<ApiResponse> createComment(
+//        @AuthenticationPrincipal Principal principal,
+        @RequestBody @Valid final CommentRequest request) {
+//        Long memberId = principal.getMember().getId();
+        Long memberId = 3L;
+        commentService.create(request, memberId);
+
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "댓글 작성 완료"));
+    }
 
     // 특정 지도 댓글 조회
     @GetMapping("/roadmaps")
     @Operation(summary = "지도 댓글 목록 조회", description = "[모든 사용자] 특정 로드맵/공유지도의 모든 댓글을 조회")
     public ResponseEntity<CommentListResponse> getAllCommentsInMaps(@RequestParam Long roadmapId) {
         return ResponseEntity.ok(commentService.findAllCommentsInRoadmaps(roadmapId));
-    }
-
-    // 지도 댓글 생성(작성)
-    @PostMapping("/roadmaps")
-    @Operation(summary = "지도 댓글 생성", description = "[사용자용] 로드맵이나 공유지도의 댓글 생성")
-    public ResponseEntity<ApiResponse> createComment(@RequestBody @Valid final CommentRequest request) {
-//        final Long createdId = commentService.create(request);
-        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "댓글 작성 완료"));
     }
 
     // 지도 댓글 수정
@@ -74,23 +77,24 @@ public class CommentController {
      * 퀘스트 댓글 API
      */
 
+    // 퀘스트 댓글 생성
+    @PostMapping("/quests")
+    @Operation(summary = "퀘스트 댓글 생성", description = "[모든 사용자] 특정 퀘스트의 댓글 생성")
+    public ResponseEntity<ApiResponse> createQuestComment(
+//        @AuthenticationPrincipal Principal principal,
+        @RequestBody @Valid final CommentRequest request) {
+//        Long memberId = principal.getMember().getId();
+        Long memberId = 3L;
+        commentService.create(request, memberId);
+
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "퀘스트 댓글 생성 완료"));
+    }
+
     // 특정 퀘스트 댓글 조회
     @GetMapping("/quests")
     @Operation(summary = "퀘스트 댓글 목록 조회", description = "[모든 사용자] 특정 퀘스트의 모든 댓글을 조회")
     public ResponseEntity<CommentListResponse> getQuestComments(@RequestParam Long questId) {
         return ResponseEntity.ok(commentService.findAllCommentsInQuest(questId));
-    }
-
-    // 퀘스트 댓글 생성
-    @PostMapping("/quests")
-    @Operation(summary = "퀘스트 댓글 생성", description = "[모든 사용자] 퀘스트에 댓글을 작성합니다.")
-    public ResponseEntity<ApiResponse> createQuestComment(
-            @RequestBody @Valid final CommentRequest request) {
-        // questId를 request에 설정
-//        questCommentRequest.setQuest(questId);
-//        Long commentId = questCommentService.create(questCommentRequest);
-//        QuestCommentResponse createdComment = questCommentService.get(commentId);
-        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "퀘스트 댓글 생성 완료"));
     }
 
     // 퀘스트 댓글 수정
