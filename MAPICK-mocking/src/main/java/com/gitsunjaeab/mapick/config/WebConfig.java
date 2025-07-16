@@ -19,6 +19,7 @@ public class WebConfig {
                     .allowedOrigins(
                             "http://localhost:3000",
                             "https://localhost:3000",
+                            "https://localhost:3443",
                             "https://mapick.cedartodo.uk") // 해당 도메인에서 오는 요청만 허용
                     .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS") // 지정된 HTTP 메서드만 허용
                     .allowedHeaders("*") // 모든 헤더를 허용
