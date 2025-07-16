@@ -31,7 +31,7 @@ public class MemberQuest {
         name = "primary_sequence",
         sequenceName = "primary_sequence",
         allocationSize = 1,
-        initialValue = 1
+        initialValue = 100
     )
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
