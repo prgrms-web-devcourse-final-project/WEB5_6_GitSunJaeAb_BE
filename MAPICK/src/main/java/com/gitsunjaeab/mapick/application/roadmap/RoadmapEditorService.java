@@ -12,7 +12,7 @@ import java.util.List;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-
+// 공유지도
 @Service
 public class RoadmapEditorService {
 

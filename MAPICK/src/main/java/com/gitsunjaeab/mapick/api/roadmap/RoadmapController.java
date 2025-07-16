@@ -7,11 +7,14 @@ import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapResponse;
 import com.gitsunjaeab.mapick.application.roadmap.RoadmapService;
 import com.gitsunjaeab.mapick.common.response.ApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
+import com.gitsunjaeab.mapick.domain.auth.Principal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(value = "/roadmaps", produces = MediaType.APPLICATION_JSON_VALUE)
+@Slf4j
 @Tag(name = "지도 관리 API", description = "개인지도 및 공유지도 관련 API")
 public class RoadmapController {
 
@@ -83,8 +87,16 @@ public class RoadmapController {
     // 개인 로드맵 생성
     @PostMapping("/personal")
     @Operation(summary = "로드맵 생성", description = "[사용자용] 레이어, 마커 제외 지도 관련 속성만 저장")
-    public ResponseEntity<ApiResponse> createRoadmap(@RequestBody @Valid final RoadmapRequest request) {
-//        final Long createdId = roadmapService.create(request);
+    public ResponseEntity<ApiResponse> createRoadmap(
+            @RequestBody @Valid final RoadmapRequest request,
+            @AuthenticationPrincipal final Principal principal
+    ) {
+        if (principal == null) {
+            throw new IllegalStateException("로그인되지 않았습니다.");
+        }
+
+        Long memberId = principal.getMember().getId();
+        roadmapService.create(request, memberId);
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "로드맵 생성 완료"));
     }
 
@@ -101,8 +113,15 @@ public class RoadmapController {
     @Operation(summary = "로드맵 수정", description = "[사용자용] 레이어, 마커 제외 지도 관련 속성만 수정")
     public ResponseEntity<ApiResponse> updateRoadmap(
         @PathVariable(name = "roadmapId") final Long roadmapId,
-        @RequestBody @Valid final RoadmapRequest request) {
-//        roadmapService.update(roadmapId, request);
+        @RequestBody @Valid final RoadmapRequest request,
+        @AuthenticationPrincipal final Principal principal) {
+
+        if (principal == null) {
+            throw new IllegalStateException("로그인되지 않았습니다.");
+        }
+
+        Long memberId = principal.getMember().getId();
+        roadmapService.update(request, roadmapId, memberId);
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "로드맵 수정 완료"));
     }
 

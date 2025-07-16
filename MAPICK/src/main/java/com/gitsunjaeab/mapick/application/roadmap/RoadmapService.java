@@ -3,7 +3,11 @@ package com.gitsunjaeab.mapick.application.roadmap;
 import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapListResponse;
+import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapRequest;
 import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapResponse;
+import com.gitsunjaeab.mapick.domain.category.Category;
+import com.gitsunjaeab.mapick.domain.category.CategoryRepository;
+import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
 import com.gitsunjaeab.mapick.domain.report.Report;
 import com.gitsunjaeab.mapick.domain.report.ReportRepository;
@@ -25,16 +29,25 @@ import com.gitsunjaeab.mapick.domain.roadmap.RoadmapType;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import com.gitsunjaeab.mapick.util.ReferencedWarning;
 import jakarta.persistence.EntityNotFoundException;
+
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
+@RequiredArgsConstructor
+@Slf4j
 public class RoadmapService {
 
     private final RoadmapRepository roadmapRepository;
@@ -47,21 +60,54 @@ public class RoadmapService {
     private final ReportRepository reportRepository;
     @Autowired
     private LayerLibraryRepository layerLibraryRepository;
+    private final CategoryRepository categoryRepository;
 
-    public RoadmapService(final RoadmapRepository roadmapRepository, final MemberRepository memberRepository,
-            final RoadmapEditorRepository roadmapEditorRepository, final LayerRepository layerRepository,
-            final CommentRepository commentRepository, final BookmarkRepository bookmarkRepository,
-            final RoadmapHashtagRelationRepository roadmapHashtagRelationRepository,
-            final ReportRepository reportRepository) {
-        this.roadmapRepository = roadmapRepository;
-        this.memberRepository = memberRepository;
-        this.roadmapEditorRepository = roadmapEditorRepository;
-        this.layerRepository = layerRepository;
-        this.commentRepository = commentRepository;
-        this.bookmarkRepository = bookmarkRepository;
-        this.roadmapHashtagRelationRepository = roadmapHashtagRelationRepository;
-        this.reportRepository = reportRepository;
+    // 개인 로드맵 생성
+    @Transactional
+    public void create(@Valid RoadmapRequest request, Long memberId) {
+        Category category = categoryRepository.findById(request.getCategoryId())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카테고리입니다."));
+
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+
+        Roadmap roadmap = new Roadmap();
+        roadmap.setCategory(category);
+        roadmap.setMember(member);
+        roadmap.setTitle(request.getTitle());
+        roadmap.setDescription(request.getDescription());
+        roadmap.setThumbnail(request.getThumbnail());
+        roadmap.setIsPublic(request.getIsPublic());
+        roadmap.setIsAnimated(false); // 기본값
+        roadmap.setLikeCount(0);
+        roadmap.setViewCount(0);
+        roadmap.setRoadmapType(RoadmapType.PERSONAL); // 개인 로드맵
+        roadmap.setCreatedAt(OffsetDateTime.now());
+
+        roadmapRepository.save(roadmap);
     }
+
+    // 개인 로드맵 수정
+    @Transactional
+    public void update(@Valid RoadmapRequest request, Long roadmapId, Long memberId) {
+        Roadmap roadmap = roadmapRepository.findById(roadmapId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 로드맵입니다."));
+
+        // 본인 소유인지 검증
+        if (!roadmap.getMember().getId().equals(memberId)) {
+            throw new AccessDeniedException("이 로드맵을 수정할 권한이 없습니다.");
+        }
+
+        Category category = categoryRepository.findById(request.getCategoryId())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카테고리입니다."));
+
+        roadmap.setTitle(request.getTitle());
+        roadmap.setDescription(request.getDescription());
+        roadmap.setThumbnail(request.getThumbnail());
+        roadmap.setIsPublic(request.getIsPublic());
+        roadmap.setCategory(category);
+    }
+
 
     @Transactional(readOnly = true)
     public RoadmapListResponse getAllRoadmaps() {
@@ -246,4 +292,7 @@ public class RoadmapService {
         }
         return null;
     }
+
+
+
 }
