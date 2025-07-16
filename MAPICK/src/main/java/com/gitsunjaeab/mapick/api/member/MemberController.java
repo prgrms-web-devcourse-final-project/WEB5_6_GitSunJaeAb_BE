@@ -56,7 +56,7 @@ public class MemberController {
                 .body(response);
     }
 
-    // ===== 관리자 전용 API (ADMIN 권한 필요) =====
+
 
     // 전체 회원 조회 (관리자 전용)
     @GetMapping("/list")
@@ -112,12 +112,15 @@ public class MemberController {
         return dto;
     }
 
-    // 회원 삭제 (관리자/사용자 )
+    // 회원 삭제 (관리자/사용자 공용)
     @DeleteMapping
     @Operation(summary = "회원 삭제/탈퇴", description = "회원 삭제/탈퇴")
     public ResponseEntity<ApiResponse> deleteMember(final Long memberId) {
 
-        memberService.delete(memberId);
+        memberService.deleteMember(memberId); // 소프트 딜리트
+
+        // todo 관리자 인지 사용자인지 판별 후 로직 추가 필요
+        // todo 삭제된 사용자 라면 성공 뜨지 않고 중복이라고 표시 하는 로직 필요
 
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "회원 삭제 완료"));
     }

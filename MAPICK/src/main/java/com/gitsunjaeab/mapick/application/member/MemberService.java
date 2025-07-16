@@ -42,6 +42,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Sort;
@@ -169,8 +170,14 @@ public class MemberService {
         memberRepository.save(member);
     }
 
-    public void delete(final Long id) {
-        memberRepository.deleteById(id);
+    // 회원 삭제/탈퇴(소프트 딜리트)
+    @Transactional
+    public void deleteMember(final Long id) {
+
+        final Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("해당 회원이 없습니다."));
+
+        member.setDeletedAt(OffsetDateTime.now()); // 삭제 날짜에 현재 시간 입력
     }
 
     private MemberDTO roadmapToDTO(final Member member, final MemberDTO memberDTO) {
