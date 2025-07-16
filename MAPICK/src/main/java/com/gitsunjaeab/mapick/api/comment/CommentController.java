@@ -32,14 +32,14 @@ public class CommentController {
         this.commentService = commentService;
     }
 
-    // ===== 지도 댓글 관련 API =====
+    /**
+     * 지도 댓글 API
+     */
 
-    // 지도(개인 로드맵, 공유지도) 댓글 전체 조회
+    // 특정 지도 댓글 조회
     @GetMapping("/roadmaps")
-    @Operation(summary = "지도 댓글 목록 조회", description = "[사용자용] 로드맵이나 공유지도의 댓글 목록을 조회")
-    public ResponseEntity<CommentListResponse> getAllCommentsInMaps(
-        @RequestParam(required = false) Long roadmapId
-    ) {
+    @Operation(summary = "지도 댓글 목록 조회", description = "[모든 사용자] 특정 로드맵/공유지도의 모든 댓글을 조회")
+    public ResponseEntity<CommentListResponse> getAllCommentsInMaps(@RequestParam Long roadmapId) {
         return ResponseEntity.ok(commentService.findAllCommentsInRoadmaps(roadmapId));
     }
 
@@ -68,11 +68,15 @@ public class CommentController {
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "댓글 삭제 완료"));
     }
 
-    // ===== 퀘스트 댓글 관련 API =====
 
-    // 퀘스트 댓글 조회 (쿼리 파라미터 방식)
+
+    /**
+     * 퀘스트 댓글 API
+     */
+
+    // 특정 퀘스트 댓글 조회
     @GetMapping("/quests")
-    @Operation(summary = "퀘스트 댓글 목록 조회", description = "[모든 사용자] 특정 퀘스트의 모든 댓글을 조회합니다.")
+    @Operation(summary = "퀘스트 댓글 목록 조회", description = "[모든 사용자] 특정 퀘스트의 모든 댓글을 조회")
     public ResponseEntity<CommentListResponse> getQuestComments(@RequestParam Long questId) {
         return ResponseEntity.ok(commentService.findAllCommentsInQuest(questId));
     }

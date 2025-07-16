@@ -6,37 +6,40 @@ import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
 import com.gitsunjaeab.mapick.domain.comment.Comment;
 import com.gitsunjaeab.mapick.domain.comment.CommentRepository;
+import com.gitsunjaeab.mapick.domain.quest.QuestRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import java.util.List;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
+@AllArgsConstructor
 public class CommentService {
 
     private final CommentRepository commentRepository;
     private final RoadmapRepository roadmapRepository;
     private final MemberRepository memberRepository;
-
-    public CommentService(final CommentRepository commentRepository,
-            final RoadmapRepository roadmapRepository, final MemberRepository memberRepository) {
-        this.commentRepository = commentRepository;
-        this.roadmapRepository = roadmapRepository;
-        this.memberRepository = memberRepository;
-    }
+    private final QuestRepository questRepository;
 
     @Transactional
     public CommentListResponse findAllCommentsInRoadmaps(Long roadmapId) {
+        roadmapRepository.findById(roadmapId)
+            .orElseThrow(() -> new NotFoundException("해당 로드맵이 존재하지 않습니다."));
         final List<Comment> comments = commentRepository.findAllByRoadmap_Id(roadmapId);
+
         return CommentListResponse.of(comments);
     }
 
     @Transactional
     public CommentListResponse findAllCommentsInQuest(Long questId) {
+        questRepository.findById(questId)
+            .orElseThrow(() -> new NotFoundException("해당 퀘스트가 존재하지 않습니다."));
         final List<Comment> comments = commentRepository.findAllByQuest_Id(questId);
+
         return CommentListResponse.of(comments);
     }
 
