@@ -3,6 +3,7 @@ package com.gitsunjaeab.mapick.application.member;
 import com.gitsunjaeab.mapick.api.auth.dto.request.SignupRequest;
 import com.gitsunjaeab.mapick.api.member.dto.response.MemberListResponse;
 import com.gitsunjaeab.mapick.api.auth.dto.SocialUserInfo;
+import com.gitsunjaeab.mapick.api.member.dto.response.MemberProfileResponse;
 import com.gitsunjaeab.mapick.api.member.dto.response.MemberResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.auth.LoginType;
@@ -151,7 +152,7 @@ public class MemberService {
         return MemberListResponse.of(members);
     }
 
-    // 멤버 상세 조회 
+    // 멤버 상세 조회
     public MemberResponse getMember(final Long id) {
 
         final Member member = memberRepository.findById(id)
@@ -318,12 +319,12 @@ public class MemberService {
     }
 
     // 마이페이지 - 회원 정보 조회
-    public Member getMemberProfile(Long memberId) {
+    public MemberProfileResponse getMemberProfile(Long memberId) {
 
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
+         Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new CommonException(ResponseCode.MEMBER_NOT_FOUND));
 
-        return member;
+        return MemberProfileResponse.of(member);
     }
 
     // 마이페이지 - 회원 정보 수정

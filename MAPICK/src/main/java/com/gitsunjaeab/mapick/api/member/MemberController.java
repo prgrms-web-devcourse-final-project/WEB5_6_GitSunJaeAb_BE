@@ -61,20 +61,15 @@ public class MemberController {
                 .body(response);
     }
 
-    // 마이페이지 - 회원 프로필 조회 (본인만)
+    // 본인 회원 정보 조회 (프로필) -> 완성
     @GetMapping
     @Operation(summary = "회원 프로필 조회", description = "[사용자 전용] 본인만 접근 가능한 프로필 조회" )
     public ResponseEntity<MemberProfileResponse> getMemberProfile() {
-        Long memberId = 1L;
-
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println("현재 로그인한 사용자: " + auth.getName());
-        System.out.println("권한 목록: " + auth.getAuthorities());
-        System.out.println("Principal 정보: " + auth.getPrincipal());
+        Long memberId = Long.parseLong(auth.getName());
 
-        Member member = memberService.getMemberProfile(memberId);
-        MemberProfileResponse response = MemberProfileResponse.of(member);
+        MemberProfileResponse response = memberService.getMemberProfile(memberId);
 
         return ResponseEntity.ok(response);
     }
