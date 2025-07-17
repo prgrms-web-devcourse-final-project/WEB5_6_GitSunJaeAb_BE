@@ -135,7 +135,7 @@ public class MemberService {
 
 
     // 사용자 정보 수정
-    @Transactional // 이걸 달까 말까
+    @Transactional
     public void updateMemberProfile(final Long memberId, final MemberProfileUpdateRequest memberProfileUpdateRequest) {
 
         final Member member = memberRepository.findById(memberId)
@@ -166,42 +166,7 @@ public class MemberService {
         member.setDeletedAt(OffsetDateTime.now()); // 삭제 날짜에 현재 시간 입력
     }
 
-    // 엔티티 -> dto
-    private MemberDTO enityToDTO(final Member member, final MemberDTO memberDTO) {
-        memberDTO.setId(member.getId());
-        memberDTO.setName(member.getName());
-        memberDTO.setNickname(member.getNickname());
-        memberDTO.setEmail(member.getEmail());
-        memberDTO.setPassword(member.getPassword());
-        memberDTO.setLoginType(member.getLoginType().name());
-        memberDTO.setProvider(member.getProvider());
-        memberDTO.setRole(member.getRole());
-        memberDTO.setStatus(member.getStatus());
-        memberDTO.setProfileImage(member.getProfileImage());
-        memberDTO.setLastLogin(member.getLastLogin());
-        memberDTO.setCreatedAt(member.getCreatedAt());
-        memberDTO.setUpdatedAt(member.getUpdatedAt());
-        memberDTO.setDeletedAt(member.getDeletedAt());
-        return memberDTO;
-    }
 
-    // dto -> 엔티티
-    private Member DTOToEntity(final MemberDTO memberDTO, final Member member) {
-        member.setName(memberDTO.getName());
-        member.setNickname(memberDTO.getNickname());
-        member.setEmail(memberDTO.getEmail());
-        member.setPassword(memberDTO.getPassword());
-        member.setLoginType(LoginType.valueOf(memberDTO.getLoginType()));
-        member.setProvider(memberDTO.getProvider());
-        member.setRole(memberDTO.getRole());
-        member.setStatus(memberDTO.getStatus());
-        member.setProfileImage(memberDTO.getProfileImage());
-        member.setLastLogin(memberDTO.getLastLogin());
-        member.setCreatedAt(memberDTO.getCreatedAt());
-        member.setUpdatedAt(memberDTO.getUpdatedAt());
-        member.setDeletedAt(memberDTO.getDeletedAt());
-        return member;
-    }
 
     public boolean emailExists(final String email) {
         return memberRepository.existsByEmailIgnoreCase(email);
@@ -215,7 +180,6 @@ public class MemberService {
 
         return MemberProfileResponse.of(member);
     }
-
 
 
     // 마이페이지 - 비밀번호 확인
@@ -293,6 +257,43 @@ public class MemberService {
             throw new CommonException(ResponseCode.DB_CONSTRAINT_VIOLATION); // DB 제약 조건 위배
         }
 
+    }
+
+    // 엔티티 -> dto
+    private MemberDTO enityToDTO(final Member member, final MemberDTO memberDTO) {
+        memberDTO.setId(member.getId());
+        memberDTO.setName(member.getName());
+        memberDTO.setNickname(member.getNickname());
+        memberDTO.setEmail(member.getEmail());
+        memberDTO.setPassword(member.getPassword());
+        memberDTO.setLoginType(member.getLoginType().name());
+        memberDTO.setProvider(member.getProvider());
+        memberDTO.setRole(member.getRole());
+        memberDTO.setStatus(member.getStatus());
+        memberDTO.setProfileImage(member.getProfileImage());
+        memberDTO.setLastLogin(member.getLastLogin());
+        memberDTO.setCreatedAt(member.getCreatedAt());
+        memberDTO.setUpdatedAt(member.getUpdatedAt());
+        memberDTO.setDeletedAt(member.getDeletedAt());
+        return memberDTO;
+    }
+
+    // dto -> 엔티티
+    private Member DTOToEntity(final MemberDTO memberDTO, final Member member) {
+        member.setName(memberDTO.getName());
+        member.setNickname(memberDTO.getNickname());
+        member.setEmail(memberDTO.getEmail());
+        member.setPassword(memberDTO.getPassword());
+        member.setLoginType(LoginType.valueOf(memberDTO.getLoginType()));
+        member.setProvider(memberDTO.getProvider());
+        member.setRole(memberDTO.getRole());
+        member.setStatus(memberDTO.getStatus());
+        member.setProfileImage(memberDTO.getProfileImage());
+        member.setLastLogin(memberDTO.getLastLogin());
+        member.setCreatedAt(memberDTO.getCreatedAt());
+        member.setUpdatedAt(memberDTO.getUpdatedAt());
+        member.setDeletedAt(memberDTO.getDeletedAt());
+        return member;
     }
 
 }

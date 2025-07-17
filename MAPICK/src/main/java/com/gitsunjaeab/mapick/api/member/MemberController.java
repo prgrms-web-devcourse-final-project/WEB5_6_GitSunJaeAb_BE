@@ -48,7 +48,7 @@ public class MemberController {
      */
 
 
-    // 전체 회원 조회 (관리자 전용) -> 완성
+    // 전체 회원 조회 (관리자 전용) -> 완성(예외처리 필요)
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/list")
     @Operation(summary = "전체 회원 조회 (관리자)", description = "[관리자 전용] 관리자만 접근 가능한 전체 회원 목록 조회" )
@@ -63,7 +63,7 @@ public class MemberController {
                 .body(response);
     }
 
-    // 특정 회원 상세 조회 (관리자) -> 완성
+    // 특정 회원 상세 조회 (관리자) -> 완성(예외처리 필요)
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("{memberId}")
     @Operation(summary = "특정 회원 조회 ", description = " 특정 회원 정보 조회")
@@ -76,7 +76,7 @@ public class MemberController {
                 .body(response);
     }
 
-    // 회원의 블랙리스트 여부 수정 (관리자 전용) -> 완성
+    // 회원의 블랙리스트 여부 수정 (관리자 전용) -> 완성(예외처리 필요)
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/blacklist/{memberId}")
     @Operation(summary = "블랙리스트 여부 변경 (관리자)", description = "[관리자 전용] 회원의 블랙 리스트 여부 수정")
@@ -89,7 +89,7 @@ public class MemberController {
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "블랙리스트 설정 완료"));
     }
 
-    // 회원의 관리자로 설정 (관리자 전용) -> 완성
+    // 회원의 관리자로 설정 (관리자 전용) -> 완성(예외처리 필요)
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/role/{memberId}")
     @Operation(summary = "회원 role 변경 (관리자)", description = "[관리자 전용] 회원의 role 수정")
@@ -102,7 +102,7 @@ public class MemberController {
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "회원의 role 수정 완료"));
     }
 
-    // 회원 삭제 (관리자) -> 완성
+    // 회원 삭제 (관리자 전용) -> 완성(예외처리 필요)
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("{memberId}") // 실제로 delete 되지 않는데 delete 로 두어도 되는지 질문 예정
     @Operation(summary = "회원 삭제(관리자)", description = "회원 삭제")
@@ -123,7 +123,7 @@ public class MemberController {
      *
      */
 
-    // 본인 회원 정보 조회 (프로필) -> 완성
+    // 본인 회원 정보 조회 (프로필) -> 완성(예외처리 필요)
     @GetMapping
     @Operation(summary = "회원 프로필 조회", description = "[사용자 전용] 본인만 접근 가능한 프로필 조회" )
     public ResponseEntity<MemberProfileResponse> getMemberProfile() {
@@ -136,7 +136,7 @@ public class MemberController {
         return ResponseEntity.ok(response);
     }
 
-    // 회원 정보 수정 (프로필) -> 완성
+    // 회원 정보 수정 (프로필) -> 완성(예외처리 필요)
     @PutMapping
     @Operation(summary = "회원 정보 수정", description = "사용자 회원 정보 수정")
     public ResponseEntity<ApiResponse> updateMember(@RequestBody @Valid final MemberProfileUpdateRequest MemberProfileUpdateRequest) {
@@ -149,8 +149,8 @@ public class MemberController {
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "회원 정보 수정 완료"));
     }
 
-    // 회원 탈퇴 (사용자) -> 완성
-    @DeleteMapping ("/withdraw")// 실제로 delete 되지 않는데 delete 로 두어도 되는지 질문 예정
+    // 회원 탈퇴 (사용자) -> 완성(예외처리 필요)
+    @DeleteMapping ("/withdraw")
     @Operation(summary = "회원 탈퇴", description = "회원 탈퇴")
     public ResponseEntity<ApiResponse> withdrawMember() {
 
@@ -164,7 +164,7 @@ public class MemberController {
 
     // ===== 회원 관심분야 관리 API =====
 
-    // 회원 관심분야 선택 (본인만)
+    // 회원 관심분야 선택 (본인만) -> 완성(예외처리 필요)
     @PostMapping("/interests")
     @Operation(summary = "회원 관심분야 선택", description = "[사용자 전용] 본인만 접근 가능한 관심분야 선택")
     public ResponseEntity<ApiResponse> createMemberInterest(@Valid @RequestBody MemberInterestRequest memberInterestRequest) {
@@ -177,7 +177,7 @@ public class MemberController {
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "관심분야 선택 완료"));
     }
 
-    // 회원 관심분야 수정 (본인만)
+    // 회원 관심분야 수정 (본인만) -> 완성(예외처리 필요)
     @PutMapping("/interests")
     @Operation(summary = "회원 관심분야 수정", description = "[사용자 전용] 본인만 접근 가능한 관심분야 수정")
     public ResponseEntity<ApiResponse> updateMemberInterest(@Valid @RequestBody MemberInterestRequest memberInterestRequest) {
@@ -191,6 +191,7 @@ public class MemberController {
     }
 
     // ===== 회원 비밀번호 관리 API =====
+    // 미완성
 
     // 마이페이지 - 비밀번호 확인 (본인만)
     @PostMapping("/password/verify")
