@@ -1,6 +1,7 @@
 package com.gitsunjaeab.mapick.infra.auth.token.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.gitsunjaeab.mapick.application.auth.RefreshTokenService;
 import com.gitsunjaeab.mapick.common.response.ApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
@@ -54,6 +55,7 @@ public class LogoutFilter extends OncePerRequestFilter {
             response.setCharacterEncoding("UTF-8");
 
             ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule()); // 이거 추가해야 500에러 안뜸
             ApiResponse responseBody = ApiResponse.of(ResponseCode.LOGOUT_SUCCESS);
             String json = objectMapper.writeValueAsString(responseBody);
             response.getWriter().write(json);
@@ -61,5 +63,6 @@ public class LogoutFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request,response);
+
     }
 }

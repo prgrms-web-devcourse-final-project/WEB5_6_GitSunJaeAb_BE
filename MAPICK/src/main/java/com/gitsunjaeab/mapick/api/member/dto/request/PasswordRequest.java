@@ -11,6 +11,6 @@ import lombok.Setter;
 @Setter
 public class PasswordRequest {
 
-    @NotBlank(message = "현재 비밀번호를 입력해주세요.")
+    @NotBlank
     private String password;
-} 
+}
