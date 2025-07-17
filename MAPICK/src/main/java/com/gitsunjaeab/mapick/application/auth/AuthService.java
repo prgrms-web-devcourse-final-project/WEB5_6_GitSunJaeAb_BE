@@ -16,6 +16,8 @@ import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
 
 import java.time.OffsetDateTime;
 import java.util.Optional;
+
+import com.gitsunjaeab.mapick.util.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -81,7 +83,6 @@ public class AuthService {
     }
 
     // 자체 로그인
-    // 인증 객체 생성
     public TokenDTO signin(String email, String password){
 
         // 이메일로 사용자 객체 가져오기
@@ -93,24 +94,47 @@ public class AuthService {
             throw new CommonException(ResponseCode.INVALID_PASSWORD);
         }
 
-        // last login 날짜 추가
-        member.setLastLogin(OffsetDateTime.now());
+        member.setLastLogin(OffsetDateTime.now()); // last login 날짜 추가
 
-        // 인증된 사용자 정보 등록용 토큰 생성
-        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(email, password); // 인증되지 않은 토큰
-        Authentication authentication = authenticationManager.authenticate(authToken); // 인증 객체 생성
-        SecurityContextHolder.getContext().setAuthentication(authentication); // 보안 컨텍스트 저장
+        authenticateMember(email, password); // 인증 객체 생성 및 Spring Security 등록
 
         TokenDTO tokendto = processTokenSignin(member); // jwt 토큰 발급
 
         return tokendto;
     }
 
+    // 비밀번호 변경
+    @Transactional
+    public TokenDTO updatePassword(Long memberId, String password) {
+
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
+
+        refreshTokenRepository.deleteByMember(member);
+
+        member.setPassword(passwordEncoder.encode(password));
+        member.updateTimestamp();
+
+        authenticateMember(member.getEmail(), password); // 바로 로그아웃 안시키려면 다시 인증
+
+        TokenDTO tokendto = processTokenSignin(member); // JWT 토큰 발급
+
+        return tokendto;
+    }
+
+    // 인증 객체 생성 및 Spring Security 등록
+    public void authenticateMember(String email, String password) {
+        // 인증된 사용자 정보 등록용 토큰 생성
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(email, password); // 인증되지 않은 토큰
+        Authentication authentication = authenticationManager.authenticate(authToken); // 인증 객체 생성
+        SecurityContextHolder.getContext().setAuthentication(authentication); // 보안 컨텍스트 저장
+    }
+
     // JWT 토큰 발급
     public TokenDTO processTokenSignin(Member member) {
 
         TokenDTO accessToken = jwtProvider.generateAccessToken(member.getEmail()); // AccessToken 만들기
-        RefreshToken refreshToken = new RefreshToken(member, accessToken.getId()); // refreshToken 만들기
+        RefreshToken refreshToken = new RefreshToken(member, accessToken.getId()); // RefreshToken 만들기
 
         try{
             refreshTokenRepository.save(refreshToken); // RefreshToken 저장

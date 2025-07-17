@@ -11,7 +11,6 @@ import com.gitsunjaeab.mapick.domain.auth.LoginType;
 import com.gitsunjaeab.mapick.domain.auth.Role;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
-import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
 import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import jakarta.transaction.Transactional;
@@ -33,7 +32,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
 
-    // 소셜 로그인 시 임시 닉네임 부여
+   // 소셜 로그인 시 임시 닉네임 부여
     public String generateUniqueSocialNickname(String provider) {
         String nickname;
         do {
@@ -218,8 +217,6 @@ public class MemberService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
 
-        // 실제 구현에서는 암호화된 비밀번호와 비교해야 함
-
         if (!passwordEncoder.matches(password, member.getPassword())) {
             throw new CommonException(ResponseCode.INVALID_PASSWORD);
         }
@@ -227,16 +224,7 @@ public class MemberService {
         return member.getPassword().equals(password);
     }
 
-    // 마이페이지 - 비밀번호 수정
-    public void updatePassword(Long memberId, String newPassword) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
 
-        // 실제 구현에서는 비밀번호를 암호화해야 함
-        member.setPassword(newPassword);
-        member.updateTimestamp();
-        memberRepository.save(member);
-    }
 
     /**
      * 쓸까 말까 고민중

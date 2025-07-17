@@ -41,6 +41,7 @@ public class MemberController {
     private final MemberInterestService memberInterestService;
 
 
+
     /**
      *
      * 관리자
@@ -195,29 +196,18 @@ public class MemberController {
     // 마이페이지 - 비밀번호 확인 (본인만)
     @PostMapping("/password/verify")
     @Operation(summary = "비밀번호 확인", description = "[사용자 전용] 본인만 접근 가능한 비밀번호 확인")
-    public ResponseEntity<ApiResponse> verifyPassword(@Valid @RequestBody PasswordRequest request) {
+    public ResponseEntity<ApiResponse> verifyPassword(@Valid @RequestBody PasswordRequest passwordRequest) {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Long memberId = Long.parseLong(auth.getName());
 
-        memberService.verifyPassword(memberId, request.getPassword());
+        memberService.verifyPassword(memberId, passwordRequest.getPassword());
 
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ApiResponse.of(ResponseCode.VERITY_PASSWORD_SUCCESS));
     }
 
-    // 마이페이지 - 비밀번호 수정 (본인만)
-    @PutMapping("/password")
-    @Operation(summary = "비밀번호 수정", description = "[사용자 전용] 본인만 접근 가능한 비밀번호 변경")
-    public ResponseEntity<SimpleMessageResponse> updatePassword(@Valid @RequestBody PasswordRequest request) {
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Long memberId = Long.parseLong(auth.getName());
-
-        memberService.updatePassword(memberId, request.getPassword());
-
-        return ResponseEntity.ok(SimpleMessageResponse.of("비밀번호가 성공적으로 변경되었습니다."));
-    }
 
 }

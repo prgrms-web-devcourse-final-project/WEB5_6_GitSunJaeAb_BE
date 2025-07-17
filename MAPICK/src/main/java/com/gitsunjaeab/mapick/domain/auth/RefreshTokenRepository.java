@@ -1,6 +1,8 @@
 package com.gitsunjaeab.mapick.domain.auth;
 
 import java.util.Optional;
+
+import com.gitsunjaeab.mapick.domain.member.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface RefreshTokenRepository extends JpaRepository<RefreshToken, String> {
@@ -8,4 +10,6 @@ public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Stri
     Optional<RefreshToken> findByAccessTokenId(String id);
 
     long deleteByToken(String token);
+
+    void deleteByMember(Member member);
 }
