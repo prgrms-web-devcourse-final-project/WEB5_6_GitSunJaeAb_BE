@@ -118,8 +118,6 @@ public class AuthController {
 
         memberService.signup(request);
 
-
-
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.SIGNUP_SUCCESS));
 
     }

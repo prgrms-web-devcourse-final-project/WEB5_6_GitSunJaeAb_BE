@@ -1,20 +1,17 @@
 package com.gitsunjaeab.mapick.api.member;
 
-import com.gitsunjaeab.mapick.api.member.dto.MemberInterestDTO;
 import com.gitsunjaeab.mapick.api.member.dto.request.MemberInterestRequest;
+import com.gitsunjaeab.mapick.api.member.dto.request.MemberProfileUpdateRequest;
+import com.gitsunjaeab.mapick.api.member.dto.request.PasswordRequest;
 import com.gitsunjaeab.mapick.api.member.dto.response.MemberListResponse;
 import com.gitsunjaeab.mapick.api.member.dto.response.MemberProfileResponse;
 import com.gitsunjaeab.mapick.api.member.dto.response.MemberResponse;
-import com.gitsunjaeab.mapick.api.member.dto.request.MemberUpdateRequest;
-import com.gitsunjaeab.mapick.api.member.dto.request.PasswordUpdateRequest;
-import com.gitsunjaeab.mapick.api.member.dto.request.PasswordVerifyRequest;
 import com.gitsunjaeab.mapick.api.member.dto.response.SimpleMessageResponse;
 import com.gitsunjaeab.mapick.application.member.MemberInterestService;
 import com.gitsunjaeab.mapick.application.member.MemberService;
 import com.gitsunjaeab.mapick.common.response.ApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +21,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -140,16 +136,15 @@ public class MemberController {
         return ResponseEntity.ok(response);
     }
 
-
-    // 회원 정보 수정 -> 완성
+    // 회원 정보 수정 (프로필) -> 완성
     @PutMapping
     @Operation(summary = "회원 정보 수정", description = "사용자 회원 정보 수정")
-    public ResponseEntity<ApiResponse> updateMember(@RequestBody @Valid final MemberUpdateRequest memberUpdateRequest) {
+    public ResponseEntity<ApiResponse> updateMember(@RequestBody @Valid final MemberProfileUpdateRequest MemberProfileUpdateRequest) {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Long memberId = Long.parseLong(auth.getName());
 
-        memberService.updateMemberProfile(memberId, memberUpdateRequest);
+        memberService.updateMemberProfile(memberId, MemberProfileUpdateRequest);
 
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "회원 정보 수정 완료"));
     }
@@ -167,44 +162,6 @@ public class MemberController {
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "회원 탈퇴 완료"));
     }
 
-
-
-    // 마이페이지 - 비밀번호 확인 (본인만)
-    @PostMapping("/password/verify")
-    @Operation(summary = "비밀번호 확인", description = "[사용자 전용] 본인만 접근 가능한 비밀번호 확인")
-    public ResponseEntity<SimpleMessageResponse> verifyPassword(@Valid @RequestBody PasswordVerifyRequest request) {
-
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Long memberId = Long.parseLong(auth.getName());
-
-        boolean isValid = memberService.verifyPassword(memberId, request.getCurrentPassword());
-
-        if (isValid) {
-            return ResponseEntity.ok(SimpleMessageResponse.of("비밀번호가 일치합니다."));
-        } else {
-            return ResponseEntity.badRequest().body(SimpleMessageResponse.of("비밀번호가 일치하지 않습니다."));
-        }
-    }
-
-    // 마이페이지 - 비밀번호 수정 (본인만)
-    @PutMapping("/password")
-    @Operation(summary = "비밀번호 수정", description = "[사용자 전용] 본인만 접근 가능한 비밀번호 변경")
-    public ResponseEntity<SimpleMessageResponse> updatePassword(@Valid @RequestBody PasswordUpdateRequest request) {
-
-        Long memberId = 1L;
-        
-        memberService.updatePassword(memberId, request.getNewPassword());
-        
-        return ResponseEntity.ok(SimpleMessageResponse.of("비밀번호가 성공적으로 변경되었습니다."));
-    }
-
-
-
-
-
-
-
-
     // ===== 회원 관심분야 관리 API =====
 
     // 회원 관심분야 선택 (본인만)
@@ -221,7 +178,6 @@ public class MemberController {
     }
 
     // 회원 관심분야 수정 (본인만)
-    @Transactional
     @PutMapping("/interests")
     @Operation(summary = "회원 관심분야 수정", description = "[사용자 전용] 본인만 접근 가능한 관심분야 수정")
     public ResponseEntity<ApiResponse> updateMemberInterest(@Valid @RequestBody MemberInterestRequest memberInterestRequest) {
@@ -234,6 +190,36 @@ public class MemberController {
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "관심분야 수정 완료"));
     }
 
+    // ===== 회원 비밀번호 관리 API =====
 
+    // 마이페이지 - 비밀번호 확인 (본인만)
+    @PostMapping("/password/verify")
+    @Operation(summary = "비밀번호 확인", description = "[사용자 전용] 본인만 접근 가능한 비밀번호 확인")
+    public ResponseEntity<SimpleMessageResponse> verifyPassword(@Valid @RequestBody PasswordRequest request) {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Long memberId = Long.parseLong(auth.getName());
+
+        boolean isValid = memberService.verifyPassword(memberId, request.getPassword());
+
+        if (isValid) {
+            return ResponseEntity.ok(SimpleMessageResponse.of("비밀번호가 일치합니다."));
+        } else {
+            return ResponseEntity.badRequest().body(SimpleMessageResponse.of("비밀번호가 일치하지 않습니다."));
+        }
+    }
+
+    // 마이페이지 - 비밀번호 수정 (본인만)
+    @PutMapping("/password")
+    @Operation(summary = "비밀번호 수정", description = "[사용자 전용] 본인만 접근 가능한 비밀번호 변경")
+    public ResponseEntity<SimpleMessageResponse> updatePassword(@Valid @RequestBody PasswordRequest request) {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Long memberId = Long.parseLong(auth.getName());
+
+        memberService.updatePassword(memberId, request.getPassword());
+
+        return ResponseEntity.ok(SimpleMessageResponse.of("비밀번호가 성공적으로 변경되었습니다."));
+    }
 
 }

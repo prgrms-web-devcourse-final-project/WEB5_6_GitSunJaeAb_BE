@@ -1,55 +1,31 @@
 package com.gitsunjaeab.mapick.application.member;
 
-import com.gitsunjaeab.mapick.api.auth.dto.request.SignupRequest;
-import com.gitsunjaeab.mapick.api.member.dto.request.MemberUpdateRequest;
-import com.gitsunjaeab.mapick.api.member.dto.response.MemberListResponse;
 import com.gitsunjaeab.mapick.api.auth.dto.SocialUserInfo;
+import com.gitsunjaeab.mapick.api.auth.dto.request.SignupRequest;
+import com.gitsunjaeab.mapick.api.member.dto.MemberDTO;
+import com.gitsunjaeab.mapick.api.member.dto.request.MemberProfileUpdateRequest;
+import com.gitsunjaeab.mapick.api.member.dto.response.MemberListResponse;
 import com.gitsunjaeab.mapick.api.member.dto.response.MemberProfileResponse;
 import com.gitsunjaeab.mapick.api.member.dto.response.MemberResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.auth.LoginType;
 import com.gitsunjaeab.mapick.domain.auth.Role;
-import com.gitsunjaeab.mapick.domain.roadmap.Bookmark;
-import com.gitsunjaeab.mapick.domain.roadmap.BookmarkRepository;
-import com.gitsunjaeab.mapick.domain.comment.Comment;
-import com.gitsunjaeab.mapick.domain.comment.CommentRepository;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
-import com.gitsunjaeab.mapick.domain.roadmap.Layer;
-import com.gitsunjaeab.mapick.domain.roadmap.LayerRepository;
-import com.gitsunjaeab.mapick.domain.roadmap.LayerLibrary;
-import com.gitsunjaeab.mapick.domain.roadmap.LayerLibraryRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
-import com.gitsunjaeab.mapick.domain.roadmap.RoadmapEditor;
-import com.gitsunjaeab.mapick.domain.roadmap.RoadmapEditorRepository;
-import com.gitsunjaeab.mapick.domain.roadmap.Marker;
-import com.gitsunjaeab.mapick.domain.roadmap.MarkerRepository;
-import com.gitsunjaeab.mapick.api.member.dto.MemberDTO;
-import com.gitsunjaeab.mapick.domain.member.MemberInterest;
-import com.gitsunjaeab.mapick.domain.member.MemberInterestRepository;
-import com.gitsunjaeab.mapick.domain.quest.MemberQuest;
-import com.gitsunjaeab.mapick.domain.quest.MemberQuestRepository;
-import com.gitsunjaeab.mapick.domain.quest.Quest;
-import com.gitsunjaeab.mapick.domain.quest.QuestRepository;
-import com.gitsunjaeab.mapick.domain.quest.QuestRank;
-import com.gitsunjaeab.mapick.domain.quest.QuestRankRepository;
-import com.gitsunjaeab.mapick.domain.report.Report;
-import com.gitsunjaeab.mapick.domain.report.ReportRepository;
 import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
 import com.gitsunjaeab.mapick.util.NotFoundException;
-import com.gitsunjaeab.mapick.util.ReferencedWarning;
-
-import java.time.OffsetDateTime;
-import java.util.List;
-import java.util.UUID;
-
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.time.OffsetDateTime;
+import java.util.List;
+import java.util.UUID;
 
 
 @Service
@@ -58,20 +34,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final RoadmapRepository roadmapRepository;
-    private final RoadmapEditorRepository roadmapEditorRepository;
-    private final LayerRepository layerRepository;
-    private final MarkerRepository markerRepository;
-    private final CommentRepository commentRepository;
-    private final BookmarkRepository bookmarkRepository;
-    private final MemberInterestRepository memberInterestRepository;
-    private final ReportRepository reportRepository;
-    private final QuestRepository questRepository;
-    private final MemberQuestRepository memberQuestRepository;
-    private final QuestRankRepository questRankRepository;
-    private final LayerLibraryRepository layerLibraryRepository;
     private final PasswordEncoder passwordEncoder;
-
-
 
     // 소셜 로그인 시 임시 닉네임 부여
     public String generateUniqueSocialNickname(String provider) {
@@ -173,25 +136,13 @@ public class MemberService {
 
     // 사용자 정보 수정
     @Transactional // 이걸 달까 말까
-    public void updateMemberProfile(final Long memberId, final MemberUpdateRequest memberUpdateRequest) {
+    public void updateMemberProfile(final Long memberId, final MemberProfileUpdateRequest memberProfileUpdateRequest) {
 
         final Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CommonException(ResponseCode.MEMBER_NOT_FOUND));
 
-        member.setIsBlacklisted(memberUpdateRequest.isBlacklisted());
-        member.setName(memberUpdateRequest.getName());
-
-        if (memberUpdateRequest.getName() != null && !memberUpdateRequest.getName().trim().isEmpty()) {
-            member.setNickname(memberUpdateRequest.getName());
-        }
-
-        member.setEmail(memberUpdateRequest.getEmail());
-        member.setPassword(memberUpdateRequest.getPassword());
-        member.setLoginType(LoginType.valueOf(memberUpdateRequest.getLoginType()));
-        member.setProvider(String.valueOf(memberUpdateRequest.getProvider()));
-        member.setProfileImage(memberUpdateRequest.getProfileImage());
-        member.setRole(String.valueOf(memberUpdateRequest.getRole()));
-        member.setRole(String.valueOf(memberUpdateRequest.getRole()));
+        member.setNickname(memberProfileUpdateRequest.getNickname());
+        member.setProfileImage(memberProfileUpdateRequest.getProfileImage());
         member.setUpdatedAt(OffsetDateTime.now());
 
         try{
