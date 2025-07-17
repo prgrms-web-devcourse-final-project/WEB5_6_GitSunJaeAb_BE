@@ -24,6 +24,7 @@ public enum ResponseCode {
     NOT_FOUND("4040", HttpStatus.NOT_FOUND, "존재하지 않는 리소스 입니다."),
     EMAIL_NOT_FOUND("4041", HttpStatus.NOT_FOUND, "존재하지 않는 이메일입니다."),
     MEMBER_NOT_FOUND("4042", HttpStatus.NOT_FOUND, "존재하지 않는 회원입니다."),
+    INTEREST_NOT_FOUND("4043", HttpStatus.NOT_FOUND, "존재하지 않는 관심분야 입니다."),
 
 
     CONFLICT("4090", HttpStatus.CONFLICT, "충돌이 발생하였습니다."),

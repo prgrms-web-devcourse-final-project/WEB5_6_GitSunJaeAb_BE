@@ -130,10 +130,9 @@ public class MemberInterestService {
         return result;
     }
 
-    // 관심분야 생성
+    // 사용자 관심분야 생성
+    @Transactional
     public void createMemberInterests(Long memberId, @Valid MemberInterestRequest memberInterestRequest) {
-
-        MemberInterest memberInterest = new MemberInterest();
 
         final Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CommonException(ResponseCode.MEMBER_NOT_FOUND));
@@ -141,11 +140,40 @@ public class MemberInterestService {
         for (Long categoryId : memberInterestRequest.getCategoryId()) {
 
             Category category = categoryRepository.findById(categoryId)
-                    .orElseThrow(() -> new NotFoundException("interest not found")); // todo 리스폰스 코드 추가 및 공통 예외 처리 예정
+                    .orElseThrow(() -> new CommonException(ResponseCode.INTEREST_NOT_FOUND));
+
+            MemberInterest memberInterest = new MemberInterest();
 
             memberInterest.setCategory(category);
             memberInterest.setMember(member);
             memberInterest.setCreatedAt(OffsetDateTime.now());
+
+            memberInterestRepository.save(memberInterest);
+
+        }
+    }
+
+    // 사용자 관심분야 수정
+    @Transactional
+    public void updateMemberInterests(Long memberId, @Valid MemberInterestRequest memberInterestRequest) {
+
+        final Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new CommonException(ResponseCode.MEMBER_NOT_FOUND));
+
+        // 기존 관심 분야 삭제
+        memberInterestRepository.deleteByMemberId(memberId);
+
+        for (Long categoryId : memberInterestRequest.getCategoryId()) {
+
+            Category category = categoryRepository.findById(categoryId)
+                    .orElseThrow(() -> new CommonException(ResponseCode.INTEREST_NOT_FOUND));
+
+            MemberInterest memberInterest = new MemberInterest();
+
+            memberInterest.setCategory(category);
+            memberInterest.setMember(member);
+            memberInterest.setCreatedAt(OffsetDateTime.now());
+
             memberInterestRepository.save(memberInterest);
 
         }

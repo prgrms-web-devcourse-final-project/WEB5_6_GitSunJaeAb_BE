@@ -24,6 +24,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -219,30 +220,20 @@ public class MemberController {
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "관심분야 선택 완료"));
     }
 
-
     // 회원 관심분야 수정 (본인만)
-    @PutMapping("/interests/{memberInterestId}")
+    @Transactional
+    @PutMapping("/interests")
     @Operation(summary = "회원 관심분야 수정", description = "[사용자 전용] 본인만 접근 가능한 관심분야 수정")
-    public ResponseEntity<ApiResponse> updateMemberInterest(
-            @Parameter(description = "관심분야 ID")
-            @PathVariable Long memberInterestId,
-            @Valid @RequestBody MemberInterestRequest request) {
-        
-        // Request를 DTO로 변환
-//        MemberInterestDTO memberInterestDTO = convertToMemberInterestDTO(request);
-//
-//        memberInterestService.update(memberInterestId, memberInterestDTO);
-        
+    public ResponseEntity<ApiResponse> updateMemberInterest(@Valid @RequestBody MemberInterestRequest memberInterestRequest) {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Long memberId = Long.parseLong(auth.getName());
+
+        memberInterestService.updateMemberInterests(memberId,memberInterestRequest);
+
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "관심분야 수정 완료"));
     }
 
-    // Request를 DTO로 변환하는 임시 메서드
-//    private MemberInterestDTO convertToMemberInterestDTO(MemberInterestRequest request) {
-//        MemberInterestDTO dto = new MemberInterestDTO();
-//        dto.setCategory(request.getCategoryId());
-//        dto.setMember(request.getMemberId());
-//        dto.setCreatedAt(java.time.OffsetDateTime.now()); // 현재 시간으로 설정
-//        return dto;
-//    }
+
 
 }
