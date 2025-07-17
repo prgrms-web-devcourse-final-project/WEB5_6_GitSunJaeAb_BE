@@ -166,7 +166,7 @@ public class MemberService {
 
     public Long create(final MemberDTO memberDTO) {
         final Member member = new Member();
-        roadmapToEntity(memberDTO, member);
+        DTOToEntity(memberDTO, member);
         return memberRepository.save(member).getId();
     }
 
@@ -211,7 +211,7 @@ public class MemberService {
     }
 
     // 엔티티 -> dto
-    private MemberDTO roadmapToDTO(final Member member, final MemberDTO memberDTO) {
+    private MemberDTO enityToDTO(final Member member, final MemberDTO memberDTO) {
         memberDTO.setId(member.getId());
         memberDTO.setName(member.getName());
         memberDTO.setNickname(member.getNickname());
@@ -230,7 +230,7 @@ public class MemberService {
     }
 
     // dto -> 엔티티
-    private Member roadmapToEntity(final MemberDTO memberDTO, final Member member) {
+    private Member DTOToEntity(final MemberDTO memberDTO, final Member member) {
         member.setName(memberDTO.getName());
         member.setNickname(memberDTO.getNickname());
         member.setEmail(memberDTO.getEmail());
@@ -249,97 +249,6 @@ public class MemberService {
 
     public boolean emailExists(final String email) {
         return memberRepository.existsByEmailIgnoreCase(email);
-    }
-
-    public ReferencedWarning getReferencedWarning(final Long id) {
-        final ReferencedWarning referencedWarning = new ReferencedWarning();
-        final Member member = memberRepository.findById(id)
-                .orElseThrow(NotFoundException::new);
-        final Roadmap memberMap = roadmapRepository.findFirstByMember(member);
-        if (memberMap != null) {
-            referencedWarning.setKey("member.map.member.referenced");
-            referencedWarning.addParam(memberMap.getId());
-            return referencedWarning;
-        }
-        final RoadmapEditor memberMapEditor = roadmapEditorRepository.findFirstByMember(member);
-        if (memberMapEditor != null) {
-            referencedWarning.setKey("member.mapEditor.member.referenced");
-            referencedWarning.addParam(memberMapEditor.getId());
-            return referencedWarning;
-        }
-        final RoadmapEditor invitedByMapEditor = roadmapEditorRepository.findFirstByInvitedBy(member);
-        if (invitedByMapEditor != null) {
-            referencedWarning.setKey("member.mapEditor.invitedBy.referenced");
-            referencedWarning.addParam(invitedByMapEditor.getId());
-            return referencedWarning;
-        }
-        final Layer memberLayer = layerRepository.findFirstByMember(member);
-        if (memberLayer != null) {
-            referencedWarning.setKey("member.layer.member.referenced");
-            referencedWarning.addParam(memberLayer.getId());
-            return referencedWarning;
-        }
-        final Marker memberMarker = markerRepository.findFirstByMember(member);
-        if (memberMarker != null) {
-            referencedWarning.setKey("member.marker.member.referenced");
-            referencedWarning.addParam(memberMarker.getId());
-            return referencedWarning;
-        }
-        final Comment memberComment = commentRepository.findFirstByMember(member);
-        if (memberComment != null) {
-            referencedWarning.setKey("member.comment.member.referenced");
-            referencedWarning.addParam(memberComment.getId());
-            return referencedWarning;
-        }
-        final Bookmark memberBookmark = bookmarkRepository.findFirstByMember(member);
-        if (memberBookmark != null) {
-            referencedWarning.setKey("member.bookmark.member.referenced");
-            referencedWarning.addParam(memberBookmark.getId());
-            return referencedWarning;
-        }
-        final MemberInterest memberMemberInterest = memberInterestRepository.findFirstByMember(member);
-        if (memberMemberInterest != null) {
-            referencedWarning.setKey("member.memberInterest.member.referenced");
-            referencedWarning.addParam(memberMemberInterest.getId());
-            return referencedWarning;
-        }
-        final Report reporterReport = reportRepository.findFirstByReporter(member);
-        if (reporterReport != null) {
-            referencedWarning.setKey("member.report.reporter.referenced");
-            referencedWarning.addParam(reporterReport.getId());
-            return referencedWarning;
-        }
-        final Report reportedMemberReport = reportRepository.findFirstByReportedMember(member);
-        if (reportedMemberReport != null) {
-            referencedWarning.setKey("member.report.reportedMember.referenced");
-            referencedWarning.addParam(reportedMemberReport.getId());
-            return referencedWarning;
-        }
-        final Quest memberQuest = questRepository.findFirstByMember(member);
-        if (memberQuest != null) {
-            referencedWarning.setKey("member.quest.member.referenced");
-            referencedWarning.addParam(memberQuest.getId());
-            return referencedWarning;
-        }
-        final MemberQuest memberMemberQuest = memberQuestRepository.findFirstByMember(member);
-        if (memberMemberQuest != null) {
-            referencedWarning.setKey("member.memberQuest.member.referenced");
-            referencedWarning.addParam(memberMemberQuest.getId());
-            return referencedWarning;
-        }
-        final QuestRank memberQuestRank = questRankRepository.findFirstByMember(member);
-        if (memberQuestRank != null) {
-            referencedWarning.setKey("member.questRank.member.referenced");
-            referencedWarning.addParam(memberQuestRank.getId());
-            return referencedWarning;
-        }
-        final LayerLibrary memberLayerLibrary = layerLibraryRepository.findFirstByMember(member);
-        if (memberLayerLibrary != null) {
-            referencedWarning.setKey("member.layerLibrary.member.referenced");
-            referencedWarning.addParam(memberLayerLibrary.getId());
-            return referencedWarning;
-        }
-        return null;
     }
 
     // 마이페이지 - 회원 정보 조회
