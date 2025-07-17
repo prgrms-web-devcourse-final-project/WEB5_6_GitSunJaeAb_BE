@@ -5,6 +5,7 @@ import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapListResponse;
 import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapRequest;
 import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapResponse;
+import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.category.Category;
 import com.gitsunjaeab.mapick.domain.category.CategoryRepository;
 import com.gitsunjaeab.mapick.domain.member.Member;
@@ -26,6 +27,7 @@ import com.gitsunjaeab.mapick.domain.roadmap.RoadmapHashtagRelation;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapHashtagRelationRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapType;
+import com.gitsunjaeab.mapick.infra.error.exceptions.RoadMapDeleteException;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import com.gitsunjaeab.mapick.util.ReferencedWarning;
 import jakarta.persistence.EntityNotFoundException;
@@ -108,6 +110,24 @@ public class RoadmapService {
         roadmap.setCategory(category);
     }
 
+    // 로드맵 삭제
+    @Transactional
+    public void delete(Long roadmapId, Member member) {
+        Roadmap roadmap = (Roadmap) roadmapRepository.findByIdAndDeletedAtIsNull(roadmapId)
+                .orElseThrow(() -> new RoadMapDeleteException(ResponseCode.NOT_FOUND));
+
+        boolean isOwner = roadmap.getMember().getId().equals(member.getId());
+        boolean isAdmin = member.getRole().equals("ROLE_ADMIN");
+
+        boolean isReported = reportRepository.existsByRoadmapId(roadmapId);
+
+        if (!(isOwner || (isAdmin && isReported))) {
+            throw new AccessDeniedException("삭제 권한이 없습니다.");
+        }
+
+        roadmap.setDeletedAt(OffsetDateTime.now());
+    }
+
 
     @Transactional(readOnly = true)
     public RoadmapListResponse getAllRoadmaps() {
@@ -186,9 +206,7 @@ public class RoadmapService {
 //        roadmapRepository.save(roadmap);
 //    }
 
-    public void delete(final Long id) {
-        roadmapRepository.deleteById(id);
-    }
+
 
     private RoadmapDTO roadmapToDTO(final Roadmap roadmap, final RoadmapDTO roadmapDTO) {
         roadmapDTO.setId(roadmap.getId());
@@ -204,7 +222,6 @@ public class RoadmapService {
         roadmapDTO.setUpdatedAt(roadmap.getUpdatedAt());
         roadmapDTO.setDeletedAt(roadmap.getDeletedAt());
         roadmapDTO.setMember(roadmap.getMember() == null ? null : new MemberSimpleDTO(roadmap.getMember()));
-        roadmapDTO.setOriginalRoadmap(roadmap.getOriginalRoadmap() == null ? null : roadmap.getOriginalRoadmap().getId());
         return roadmapDTO;
     }
 
@@ -248,12 +265,12 @@ public class RoadmapService {
         final ReferencedWarning referencedWarning = new ReferencedWarning();
         final Roadmap roadmap = roadmapRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
-        final Roadmap originalMapMap = roadmapRepository.findFirstByOriginalRoadmapAndIdNot(roadmap, roadmap.getId());
-        if (originalMapMap != null) {
-            referencedWarning.setKey("roadmap.roadmap.originalMap.referenced");
-            referencedWarning.addParam(originalMapMap.getId());
-            return referencedWarning;
-        }
+//        final Roadmap originalMapMap = roadmapRepository.findFirstByOriginalRoadmapAndIdNot(roadmap, roadmap.getId());
+//        if (originalMapMap != null) {
+//            referencedWarning.setKey("roadmap.roadmap.originalMap.referenced");
+//            referencedWarning.addParam(originalMapMap.getId());
+//            return referencedWarning;
+//        }
         final RoadmapEditor mapMapEditor = roadmapEditorRepository.findFirstByRoadmap(roadmap);
         if (mapMapEditor != null) {
             referencedWarning.setKey("map.mapEditor.map.referenced");

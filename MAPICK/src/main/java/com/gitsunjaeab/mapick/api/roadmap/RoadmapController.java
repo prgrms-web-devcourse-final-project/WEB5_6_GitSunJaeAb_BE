@@ -8,6 +8,10 @@ import com.gitsunjaeab.mapick.application.roadmap.RoadmapService;
 import com.gitsunjaeab.mapick.common.response.ApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.auth.Principal;
+import com.gitsunjaeab.mapick.domain.member.Member;
+import com.gitsunjaeab.mapick.infra.error.exceptions.RoadMapDeleteException;
+import com.gitsunjaeab.mapick.util.ReferencedException;
+import com.gitsunjaeab.mapick.util.ReferencedWarning;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -148,12 +152,18 @@ public class RoadmapController {
     @DeleteMapping("/{roadmapId}")
     @Operation(summary = "로드맵/공유지도 삭제", description = "[사용자/관리자용] 생성자나 관리자가 로드맵이나 공유지도를 삭제")
     public ResponseEntity<ApiResponse> deleteRoadmap(
-        @PathVariable(name = "roadmapId") final Long roadmapId) {
-//        final ReferencedWarning referencedWarning = roadmapService.getReferencedWarning(roadmapId);
-//        if (referencedWarning != null) {
-//            throw new ReferencedException(referencedWarning);
-//        }
-//        roadmapService.delete(roadmapId);
+        @PathVariable(name = "roadmapId") final Long roadmapId,
+        @AuthenticationPrincipal Principal principal) {
+
+        if (principal == null) {
+            throw new RoadMapDeleteException(ResponseCode.UNAUTHORIZED);
+        }
+        Member member = principal.getMember();
+        final ReferencedWarning referencedWarning = roadmapService.getReferencedWarning(roadmapId);
+        if (referencedWarning != null) {
+            throw new ReferencedException(referencedWarning);
+        }
+        roadmapService.delete(roadmapId, member);
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "삭제 완료"));
     }
 }

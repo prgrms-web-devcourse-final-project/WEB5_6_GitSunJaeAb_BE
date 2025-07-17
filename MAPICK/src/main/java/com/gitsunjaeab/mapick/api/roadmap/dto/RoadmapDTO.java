@@ -80,6 +80,5 @@ public class RoadmapDTO {
         this.updatedAt = roadmap.getUpdatedAt();
         this.deletedAt = roadmap.getDeletedAt();
         this.member = roadmap.getMember() != null ? new MemberSimpleDTO(roadmap.getMember()) : null;
-        this.originalRoadmap = roadmap.getOriginalRoadmap() != null ? roadmap.getOriginalRoadmap().getId() : null;
     }
 }
