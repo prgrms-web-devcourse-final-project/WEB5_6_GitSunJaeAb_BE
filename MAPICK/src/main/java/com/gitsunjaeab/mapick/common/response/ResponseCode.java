@@ -46,7 +46,8 @@ public enum ResponseCode {
     SIGNUP_SUCCESS("2001", HttpStatus.OK, "회원가입 성공입니다."),
     SIGNIN_SUCCESS("2002", HttpStatus.OK, "로그인 성공입니다."),
     SOCIAL_SIGNIN_SUCCESS("2003", HttpStatus.OK, "소셜 로그인 성공입니다."),
-    LOGOUT_SUCCESS("2004", HttpStatus.OK, "로그아웃 되었습니다.");
+    VERITY_PASSWORD_SUCCESS("2004", HttpStatus.OK, "비밀번호 검증 성공 입니다."),
+    LOGOUT_SUCCESS("200", HttpStatus.OK, "로그아웃 되었습니다.");
 
 
     private final String code;

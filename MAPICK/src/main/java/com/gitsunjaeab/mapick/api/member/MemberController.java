@@ -191,23 +191,20 @@ public class MemberController {
     }
 
     // ===== 회원 비밀번호 관리 API =====
-    // 미완성
 
     // 마이페이지 - 비밀번호 확인 (본인만)
     @PostMapping("/password/verify")
     @Operation(summary = "비밀번호 확인", description = "[사용자 전용] 본인만 접근 가능한 비밀번호 확인")
-    public ResponseEntity<SimpleMessageResponse> verifyPassword(@Valid @RequestBody PasswordRequest request) {
+    public ResponseEntity<ApiResponse> verifyPassword(@Valid @RequestBody PasswordRequest request) {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Long memberId = Long.parseLong(auth.getName());
 
-        boolean isValid = memberService.verifyPassword(memberId, request.getPassword());
+        memberService.verifyPassword(memberId, request.getPassword());
 
-        if (isValid) {
-            return ResponseEntity.ok(SimpleMessageResponse.of("비밀번호가 일치합니다."));
-        } else {
-            return ResponseEntity.badRequest().body(SimpleMessageResponse.of("비밀번호가 일치하지 않습니다."));
-        }
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.of(ResponseCode.VERITY_PASSWORD_SUCCESS));
     }
 
     // 마이페이지 - 비밀번호 수정 (본인만)
