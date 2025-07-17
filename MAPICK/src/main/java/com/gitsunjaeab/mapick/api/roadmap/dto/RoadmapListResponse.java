@@ -41,7 +41,8 @@ public class RoadmapListResponse implements BaseApiResponse {
                 r.getRoadmapType(),
                 r.getLikeCount(),
                 r.getViewCount(),
-                citationCountMap.getOrDefault(r.getId(), 0L).intValue()
+                citationCountMap.getOrDefault(r.getId(), 0L).intValue(),
+                    r.getCreatedAt()
             )).toList();
 
         return new RoadmapListResponse(
