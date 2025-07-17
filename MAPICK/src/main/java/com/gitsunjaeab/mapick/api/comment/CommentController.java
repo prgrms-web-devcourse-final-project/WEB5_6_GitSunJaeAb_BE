@@ -5,12 +5,14 @@ import com.gitsunjaeab.mapick.api.comment.dto.CommentRequest;
 import com.gitsunjaeab.mapick.application.comment.CommentService;
 import com.gitsunjaeab.mapick.common.response.ApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
+import com.gitsunjaeab.mapick.domain.auth.Principal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,10 +40,9 @@ public class CommentController {
     @PostMapping("/roadmaps")
     @Operation(summary = "지도 댓글 생성", description = "[모든 사용자] 특정 로드맵/공유지도의 댓글 생성")
     public ResponseEntity<ApiResponse> createComment(
-//        @AuthenticationPrincipal Principal principal,
+        @AuthenticationPrincipal Principal principal,
         @RequestBody @Valid final CommentRequest request) {
-//        Long memberId = principal.getMember().getId();
-        Long memberId = 3L;
+        Long memberId = principal.getMember().getId();
         commentService.create(request, memberId);
 
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "댓글 작성 완료"));
@@ -62,10 +63,9 @@ public class CommentController {
     @PostMapping("/quests")
     @Operation(summary = "퀘스트 댓글 생성", description = "[모든 사용자] 특정 퀘스트의 댓글 생성")
     public ResponseEntity<ApiResponse> createQuestComment(
-//        @AuthenticationPrincipal Principal principal,
+        @AuthenticationPrincipal Principal principal,
         @RequestBody @Valid final CommentRequest request) {
-//        Long memberId = principal.getMember().getId();
-        Long memberId = 3L;
+        Long memberId = principal.getMember().getId();
         commentService.create(request, memberId);
 
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "퀘스트 댓글 생성 완료"));
