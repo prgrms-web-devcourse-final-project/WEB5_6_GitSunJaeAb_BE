@@ -209,12 +209,13 @@ public class MemberController {
     // 회원 관심분야 선택 (본인만)
     @PostMapping("/interests")
     @Operation(summary = "회원 관심분야 선택", description = "[사용자 전용] 본인만 접근 가능한 관심분야 선택")
-    public ResponseEntity<ApiResponse> createMemberInterest(@Valid @RequestBody MemberInterestRequest request) {
+    public ResponseEntity<ApiResponse> createMemberInterest(@Valid @RequestBody MemberInterestRequest memberInterestRequest) {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Long memberId = Long.parseLong(auth.getName());
 
-        memberInterestService.createMemberInterests(request);
+        memberInterestService.createMemberInterests(memberId,memberInterestRequest);
+
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "관심분야 선택 완료"));
     }
 
@@ -236,12 +237,12 @@ public class MemberController {
     }
 
     // Request를 DTO로 변환하는 임시 메서드
-    private MemberInterestDTO convertToMemberInterestDTO(MemberInterestRequest request) {
-        MemberInterestDTO dto = new MemberInterestDTO();
-        dto.setCategory(request.getCategoryId());
-        dto.setMember(request.getMemberId());
-        dto.setCreatedAt(java.time.OffsetDateTime.now()); // 현재 시간으로 설정
-        return dto;
-    }
+//    private MemberInterestDTO convertToMemberInterestDTO(MemberInterestRequest request) {
+//        MemberInterestDTO dto = new MemberInterestDTO();
+//        dto.setCategory(request.getCategoryId());
+//        dto.setMember(request.getMemberId());
+//        dto.setCreatedAt(java.time.OffsetDateTime.now()); // 현재 시간으로 설정
+//        return dto;
+//    }
 
 }

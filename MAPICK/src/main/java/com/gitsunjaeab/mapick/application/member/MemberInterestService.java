@@ -1,5 +1,7 @@
 package com.gitsunjaeab.mapick.application.member;
 
+import com.gitsunjaeab.mapick.api.member.dto.request.MemberInterestRequest;
+import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.category.Category;
 import com.gitsunjaeab.mapick.domain.category.CategoryRepository;
 import com.gitsunjaeab.mapick.domain.member.Member;
@@ -7,11 +9,15 @@ import com.gitsunjaeab.mapick.domain.member.MemberInterestRepository;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
 import com.gitsunjaeab.mapick.api.member.dto.MemberInterestDTO;
 import com.gitsunjaeab.mapick.domain.member.MemberInterest;
+import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
 import com.gitsunjaeab.mapick.util.NotFoundException;
+
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -122,5 +128,26 @@ public class MemberInterestService {
         }
 
         return result;
+    }
+
+    // 관심분야 생성
+    public void createMemberInterests(Long memberId, @Valid MemberInterestRequest memberInterestRequest) {
+
+        MemberInterest memberInterest = new MemberInterest();
+
+        final Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new CommonException(ResponseCode.MEMBER_NOT_FOUND));
+
+        for (Long categoryId : memberInterestRequest.getCategoryId()) {
+
+            Category category = categoryRepository.findById(categoryId)
+                    .orElseThrow(() -> new NotFoundException("interest not found")); // todo 리스폰스 코드 추가 및 공통 예외 처리 예정
+
+            memberInterest.setCategory(category);
+            memberInterest.setMember(member);
+            memberInterest.setCreatedAt(OffsetDateTime.now());
+            memberInterestRepository.save(memberInterest);
+
+        }
     }
 }
