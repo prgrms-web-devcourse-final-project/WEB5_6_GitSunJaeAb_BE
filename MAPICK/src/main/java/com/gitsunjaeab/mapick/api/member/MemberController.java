@@ -50,6 +50,22 @@ public class MemberController {
      *
      */
 
+
+    // 전체 회원 조회 (관리자 전용) -> 완성
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/list")
+    @Operation(summary = "전체 회원 조회 (관리자)", description = "[관리자 전용] 관리자만 접근 가능한 전체 회원 목록 조회" )
+    public ResponseEntity<MemberListResponse> getAllMembers() {
+
+        // todo 관리자 만 해당 url 사용 할 수 있도록 시큐리티 컨피그에 추가 필요
+
+        MemberListResponse response = memberService.findAll();
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(response);
+    }
+
     // 특정 회원 상세 조회 (관리자) -> 완성
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("{memberId}")
@@ -61,19 +77,6 @@ public class MemberController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(response);
-    }
-
-    // 전체 회원 조회 (관리자 전용)
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/list")
-    @Operation(summary = "전체 회원 조회 (관리자)", description = "[관리자 전용] 관리자만 접근 가능한 전체 회원 목록 조회" )
-    public ResponseEntity<MemberListResponse> getAllMembers() {
-
-        // todo 관리자 만 해당 url 사용 할 수 있도록 시큐리티 컨피그에 추가 필요
-
-        MemberListResponse response = memberService.findAll();
-
-        return ResponseEntity.ok(response);
     }
 
     // 회원의 블랙리스트 여부 수정 (관리자 전용) -> 완성
@@ -115,6 +118,8 @@ public class MemberController {
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "회원 삭제 완료"));
     }
 
+
+
     /**
      *
      * 사용자
@@ -135,6 +140,19 @@ public class MemberController {
     }
 
 
+    // 회원 정보 수정 -> 완성
+    @PutMapping
+    @Operation(summary = "회원 정보 수정", description = "사용자 회원 정보 수정")
+    public ResponseEntity<ApiResponse> updateMember(@RequestBody @Valid final MemberUpdateRequest memberUpdateRequest) {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Long memberId = Long.parseLong(auth.getName());
+
+        memberService.updateMemberProfile(memberId, memberUpdateRequest);
+
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "회원 정보 수정 완료"));
+    }
+
     // 회원 탈퇴 (사용자) -> 완성
     @DeleteMapping ("/withdraw")// 실제로 delete 되지 않는데 delete 로 두어도 되는지 질문 예정
     @Operation(summary = "회원 탈퇴", description = "회원 탈퇴")
@@ -146,19 +164,6 @@ public class MemberController {
         memberService.deleteMember(memberId); // 소프트 딜리트
 
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "회원 탈퇴 완료"));
-    }
-
-    // 회원 정보 수정
-    @PutMapping
-    @Operation(summary = "회원 정보 수정", description = "사용자 회원 정보 수정")
-    public ResponseEntity<ApiResponse> updateMember(@RequestBody @Valid final MemberUpdateRequest memberUpdateRequest) {
-
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Long memberId = Long.parseLong(auth.getName());
-
-        memberService.updateMemberProfile(memberId, memberUpdateRequest);
-
-        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "회원 정보 수정 완료"));
     }
 
 
@@ -183,8 +188,7 @@ public class MemberController {
     // 마이페이지 - 비밀번호 수정 (본인만)
     @PutMapping("/password")
     @Operation(summary = "비밀번호 수정", description = "[사용자 전용] 본인만 접근 가능한 비밀번호 변경")
-    public ResponseEntity<SimpleMessageResponse> updatePassword(
-            @Valid @RequestBody PasswordUpdateRequest request) {
+    public ResponseEntity<SimpleMessageResponse> updatePassword(@Valid @RequestBody PasswordUpdateRequest request) {
 
         Long memberId = 1L;
         
@@ -194,15 +198,23 @@ public class MemberController {
     }
 
 
+
+
+
+
+
+
     // ===== 회원 관심분야 관리 API =====
 
     // 회원 관심분야 선택 (본인만)
     @PostMapping("/interests")
     @Operation(summary = "회원 관심분야 선택", description = "[사용자 전용] 본인만 접근 가능한 관심분야 선택")
-    public ResponseEntity<ApiResponse> createMemberInterest(
-        @Valid @RequestBody MemberInterestRequest request) {
+    public ResponseEntity<ApiResponse> createMemberInterest(@Valid @RequestBody MemberInterestRequest request) {
 
-//        memberInterestService.createMemberInterests(request);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Long memberId = Long.parseLong(auth.getName());
+
+        memberInterestService.createMemberInterests(request);
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "관심분야 선택 완료"));
     }
 
@@ -211,7 +223,8 @@ public class MemberController {
     @PutMapping("/interests/{memberInterestId}")
     @Operation(summary = "회원 관심분야 수정", description = "[사용자 전용] 본인만 접근 가능한 관심분야 수정")
     public ResponseEntity<ApiResponse> updateMemberInterest(
-            @Parameter(description = "관심분야 ID") @PathVariable Long memberInterestId,
+            @Parameter(description = "관심분야 ID")
+            @PathVariable Long memberInterestId,
             @Valid @RequestBody MemberInterestRequest request) {
         
         // Request를 DTO로 변환

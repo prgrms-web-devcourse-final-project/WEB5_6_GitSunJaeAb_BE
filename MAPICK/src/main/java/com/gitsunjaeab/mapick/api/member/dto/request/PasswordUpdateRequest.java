@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * 비밀번호 수정 요청 DTO
+ * 회원 비밀번호 수정 요청 DTO
  */
 @Getter
 @Setter

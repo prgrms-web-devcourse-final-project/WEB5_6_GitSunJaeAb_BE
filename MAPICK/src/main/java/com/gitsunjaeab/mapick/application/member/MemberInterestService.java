@@ -11,24 +11,22 @@ import com.gitsunjaeab.mapick.util.NotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
+@RequiredArgsConstructor
 public class MemberInterestService {
 
     private final MemberInterestRepository memberInterestRepository;
     private final CategoryRepository categoryRepository;
     private final MemberRepository memberRepository;
 
-    public MemberInterestService(final MemberInterestRepository memberInterestRepository,
-            final CategoryRepository categoryRepository, final MemberRepository memberRepository) {
-        this.memberInterestRepository = memberInterestRepository;
-        this.categoryRepository = categoryRepository;
-        this.memberRepository = memberRepository;
-    }
+
 
     public List<MemberInterestDTO> findAll() {
         final List<MemberInterest> memberInterests = memberInterestRepository.findAll(Sort.by("id"));

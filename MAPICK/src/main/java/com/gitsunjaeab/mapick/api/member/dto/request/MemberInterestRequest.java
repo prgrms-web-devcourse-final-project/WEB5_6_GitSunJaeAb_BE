@@ -15,7 +15,5 @@ public class MemberInterestRequest {
     @NotNull(message = "카테고리는 필수입니다.")
     private List<Long> categoryId;
 
-    @NotNull(message = "회원 ID는 필수입니다.")
-    private Long memberId;
 
 }

@@ -170,6 +170,7 @@ public class MemberService {
         return memberRepository.save(member).getId();
     }
 
+
     // 사용자 정보 수정
     @Transactional // 이걸 달까 말까
     public void updateMemberProfile(final Long memberId, final MemberUpdateRequest memberUpdateRequest) {
@@ -179,7 +180,11 @@ public class MemberService {
 
         member.setIsBlacklisted(memberUpdateRequest.isBlacklisted());
         member.setName(memberUpdateRequest.getName());
-        member.setNickname(memberUpdateRequest.getNickname());
+
+        if (memberUpdateRequest.getName() != null && !memberUpdateRequest.getName().trim().isEmpty()) {
+            member.setNickname(memberUpdateRequest.getName());
+        }
+
         member.setEmail(memberUpdateRequest.getEmail());
         member.setPassword(memberUpdateRequest.getPassword());
         member.setLoginType(LoginType.valueOf(memberUpdateRequest.getLoginType()));
@@ -260,21 +265,7 @@ public class MemberService {
         return MemberProfileResponse.of(member);
     }
 
-    // 마이페이지 - 회원 정보 수정
-    public Member updateMemberProfile(Long memberId, String nickname, String profileImage) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
 
-        if (nickname != null && !nickname.trim().isEmpty()) {
-            member.setNickname(nickname);
-        }
-        if (profileImage != null) {
-            member.setProfileImage(profileImage);
-        }
-
-        member.updateTimestamp();
-        return memberRepository.save(member);
-    }
 
     // 마이페이지 - 비밀번호 확인
     public boolean verifyPassword(Long memberId, String currentPassword) {

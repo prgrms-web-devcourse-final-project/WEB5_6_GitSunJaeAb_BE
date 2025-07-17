@@ -4,7 +4,9 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
-
+/**
+ * 회원 프로필 정보 수정 요청 DTO
+ */
 @Getter
 @Setter
 public class MemberProfileUpdateRequest {
