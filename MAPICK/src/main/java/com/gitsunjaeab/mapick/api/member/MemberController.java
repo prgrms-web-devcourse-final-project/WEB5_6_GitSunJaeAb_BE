@@ -1,6 +1,5 @@
 package com.gitsunjaeab.mapick.api.member;
 
-import com.gitsunjaeab.mapick.api.member.dto.MemberDTO;
 import com.gitsunjaeab.mapick.api.member.dto.MemberInterestDTO;
 import com.gitsunjaeab.mapick.api.member.dto.request.MemberInterestRequest;
 import com.gitsunjaeab.mapick.api.member.dto.response.MemberListResponse;
@@ -14,10 +13,8 @@ import com.gitsunjaeab.mapick.application.member.MemberInterestService;
 import com.gitsunjaeab.mapick.application.member.MemberService;
 import com.gitsunjaeab.mapick.common.response.ApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
-import com.gitsunjaeab.mapick.domain.member.Member;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -47,6 +44,12 @@ public class MemberController {
     private final MemberInterestService memberInterestService;
 
 
+    /**
+     *
+     * 관리자
+     *
+     */
+
     // 특정 회원 상세 조회 (관리자) -> 완성
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("{memberId}")
@@ -60,20 +63,7 @@ public class MemberController {
                 .body(response);
     }
 
-    // 본인 회원 정보 조회 (프로필) -> 완성
-    @GetMapping
-    @Operation(summary = "회원 프로필 조회", description = "[사용자 전용] 본인만 접근 가능한 프로필 조회" )
-    public ResponseEntity<MemberProfileResponse> getMemberProfile() {
-
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Long memberId = Long.parseLong(auth.getName());
-
-        MemberProfileResponse response = memberService.getMemberProfile(memberId);
-
-        return ResponseEntity.ok(response);
-    }
-
-    // 전체 회원 조회 (관리자 전용) -> 완성
+    // 전체 회원 조회 (관리자 전용)
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/list")
     @Operation(summary = "전체 회원 조회 (관리자)", description = "[관리자 전용] 관리자만 접근 가능한 전체 회원 목록 조회" )
@@ -114,9 +104,9 @@ public class MemberController {
 
     // 회원 삭제 (관리자) -> 완성
     @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping // 실제로 delete 되지 않는데 delete 로 두어도 되는지 질문 예정
+    @DeleteMapping("{memberId}") // 실제로 delete 되지 않는데 delete 로 두어도 되는지 질문 예정
     @Operation(summary = "회원 삭제(관리자)", description = "회원 삭제")
-    public ResponseEntity<ApiResponse> deleteMember(final Long memberId) {
+    public ResponseEntity<ApiResponse> deleteMember(@PathVariable(name = "memberId") final Long memberId) {
 
         // todo 관리자 만 해당 url 사용 할 수 있도록 시큐리티 컨피그에 추가 필요
 
@@ -124,6 +114,26 @@ public class MemberController {
 
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "회원 삭제 완료"));
     }
+
+    /**
+     *
+     * 사용자
+     *
+     */
+
+    // 본인 회원 정보 조회 (프로필) -> 완성
+    @GetMapping
+    @Operation(summary = "회원 프로필 조회", description = "[사용자 전용] 본인만 접근 가능한 프로필 조회" )
+    public ResponseEntity<MemberProfileResponse> getMemberProfile() {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Long memberId = Long.parseLong(auth.getName());
+
+        MemberProfileResponse response = memberService.getMemberProfile(memberId);
+
+        return ResponseEntity.ok(response);
+    }
+
 
     // 회원 탈퇴 (사용자) -> 완성
     @DeleteMapping ("/withdraw")// 실제로 delete 되지 않는데 delete 로 두어도 되는지 질문 예정

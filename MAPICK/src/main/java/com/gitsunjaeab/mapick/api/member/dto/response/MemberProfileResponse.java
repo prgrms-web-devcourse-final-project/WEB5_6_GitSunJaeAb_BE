@@ -44,6 +44,7 @@ public class MemberProfileResponse implements BaseApiResponse {
         private OffsetDateTime createdAt;
         private OffsetDateTime updatedAt;
         private OffsetDateTime deletedAt;
+        // todo 관심 분야 추가 필요
     }
 
     public static MemberProfileResponse of(Member member) {
