@@ -83,7 +83,7 @@ public class CommentController {
      * 댓글 수정, 삭제 (공통)
      */
 
-    // 지도 댓글 수정
+    // 댓글 수정
     @PutMapping("/{commentId}")
     @Operation(summary = "댓글 수정", description = "[댓글 작성자/게시글 작성자] 특정 댓글 수정")
     public ResponseEntity<ApiResponse> updateRoadmapComment(
@@ -93,7 +93,7 @@ public class CommentController {
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "댓글 수정 완료"));
     }
 
-    // 지도 댓글 삭제
+    // 댓글 삭제
     @DeleteMapping("/{commentId}")
     @Operation(summary = "댓글 삭제", description = "[댓글 작성자/게시글 작성자] 댓글 삭제")
     public ResponseEntity<ApiResponse> deleteComment(@PathVariable(name = "commentId") final Long commentId) {
