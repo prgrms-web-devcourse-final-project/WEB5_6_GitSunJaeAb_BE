@@ -27,7 +27,7 @@ import com.gitsunjaeab.mapick.domain.roadmap.RoadmapHashtagRelation;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapHashtagRelationRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapType;
-import com.gitsunjaeab.mapick.infra.error.exceptions.RoadMapDeleteException;
+import com.gitsunjaeab.mapick.infra.error.exceptions.UnauthenticatedException;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import com.gitsunjaeab.mapick.util.ReferencedWarning;
 import jakarta.persistence.EntityNotFoundException;
@@ -35,7 +35,6 @@ import jakarta.persistence.EntityNotFoundException;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import jakarta.validation.Valid;
@@ -114,7 +113,7 @@ public class RoadmapService {
     @Transactional
     public void delete(Long roadmapId, Member member) {
         Roadmap roadmap = (Roadmap) roadmapRepository.findByIdAndDeletedAtIsNull(roadmapId)
-                .orElseThrow(() -> new RoadMapDeleteException(ResponseCode.NOT_FOUND));
+                .orElseThrow(() -> new UnauthenticatedException(ResponseCode.NOT_FOUND));
 
         boolean isOwner = roadmap.getMember().getId().equals(member.getId());
         boolean isAdmin = member.getRole().equals("ROLE_ADMIN");
@@ -136,13 +135,13 @@ public class RoadmapService {
     }
 
     @Transactional(readOnly = true)
-    public RoadmapListResponse getAllPersonalRoadmapsWithCitation() {
+    public RoadmapListResponse getAllPersonalRoadmapsWithCitation(Member member) {
         List<Roadmap> roadmaps = roadmapRepository.findAllByIsPublicTrueAndRoadmapType(RoadmapType.PERSONAL);
         return buildRoadmapListResponse(roadmaps);
     }
 
     @Transactional(readOnly = true)
-    public RoadmapListResponse getPersonalRoadmapsByCategory(Long categoryId) {
+    public RoadmapListResponse getPersonalRoadmapsByCategory(Long categoryId, Member member) {
         List<Roadmap> roadmaps = roadmapRepository.findAllByIsPublicTrueAndRoadmapTypeAndCategoryId(RoadmapType.PERSONAL, categoryId);
         return buildRoadmapListResponse(roadmaps);
     }
@@ -185,7 +184,7 @@ public class RoadmapService {
     }
 
     @Transactional
-    public RoadmapResponse get(final Long id) {
+    public RoadmapResponse get(final Long id, final Member member) {
         Roadmap roadmap = roadmapRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException("해당 로드맵이 존재하지 않습니다. id=" + id));
 

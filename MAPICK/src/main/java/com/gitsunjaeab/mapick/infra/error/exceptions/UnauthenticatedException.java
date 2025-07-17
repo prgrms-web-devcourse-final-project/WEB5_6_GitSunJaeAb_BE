@@ -4,11 +4,11 @@ import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import lombok.Getter;
 
 @Getter
-public class RoadMapDeleteException extends  RuntimeException {
+public class UnauthenticatedException extends  RuntimeException {
 
     private final ResponseCode code;
 
-    public RoadMapDeleteException(ResponseCode code) {
+    public UnauthenticatedException(ResponseCode code) {
         super(code.getMessage());
         this.code = code;
     }
