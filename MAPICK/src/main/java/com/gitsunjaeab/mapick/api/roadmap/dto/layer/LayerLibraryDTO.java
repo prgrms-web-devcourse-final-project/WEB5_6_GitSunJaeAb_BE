@@ -10,8 +10,10 @@ import lombok.Setter;
 public class LayerLibraryDTO {
 
     private Long id;
-    private OffsetDateTime createdAt;
     private Long member;
     private Long layer;
+    private OffsetDateTime createdAt;
+    private OffsetDateTime updatedAt;
+    private OffsetDateTime deletedAt;
 
 }

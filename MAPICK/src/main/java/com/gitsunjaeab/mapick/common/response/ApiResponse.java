@@ -3,9 +3,11 @@ package com.gitsunjaeab.mapick.common.response;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 public class ApiResponse implements BaseApiResponse {
     private String code;
     private String message;

@@ -1,38 +1,36 @@
 package com.gitsunjaeab.mapick.api.roadmap.dto.layer;
 
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapDTO;
+import com.gitsunjaeab.mapick.domain.roadmap.Layer;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
 
 @Getter
-@Setter
+@AllArgsConstructor
 public class LayerDTO {
 
     private Long id;
-
-    @NotNull
-    @Size(max = 255)
     private String name;
-
     private String description;
-
     private Integer layerSeq;
-
     private LocalDate layerTime;
-
-    @NotNull
     private OffsetDateTime createdAt;
-
     private OffsetDateTime updatedAt;
-
     private OffsetDateTime deletedAt;
+    private RoadmapDTO roadmap;
 
-    private Long member;
-
-    private Long roadmap;
-
+    public LayerDTO(Layer layer) {
+        this.id = layer.getId();
+        this.name = layer.getName();
+        this.description = layer.getDescription();
+        this.layerSeq = layer.getLayerSeq();
+        this.layerTime = layer.getLayerTime();
+        this.createdAt = layer.getCreatedAt();
+        this.updatedAt = layer.getUpdatedAt();
+        this.deletedAt = layer.getDeletedAt();
+        this.roadmap = new RoadmapDTO(layer.getRoadmap());
+    }
 }

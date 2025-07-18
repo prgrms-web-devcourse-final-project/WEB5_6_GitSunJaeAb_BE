@@ -10,6 +10,8 @@ import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.responses.ApiResponse;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
 import org.springdoc.core.customizers.OperationCustomizer;
 import org.springframework.context.annotation.Bean;
@@ -22,21 +24,32 @@ import java.util.List;
 public class SwaggerConfig {
 
     @Bean
-    public OpenAPI openApiSpec() {
-        return new OpenAPI().servers(List.of(new Server().url("/")))
-        .components(new Components()
-                .addSchemas("ApiErrorResponse", new ObjectSchema()
+    public OpenAPI openApi() {
+        return new OpenAPI()
+            .servers(List.of(new Server().url("/")))
+            .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
+            .components(
+                new Components()
+                    .addSecuritySchemes("bearerAuth",
+                        new SecurityScheme()
+                            .name("Authorization")
+                            .type(SecurityScheme.Type.HTTP)
+                            .scheme("bearer")
+                            .bearerFormat("JWT")
+                    )
+                    .addSchemas("ApiErrorResponse", new ObjectSchema()
                         .addProperty("status", new IntegerSchema())
                         .addProperty("code", new StringSchema())
                         .addProperty("message", new StringSchema())
                         .addProperty("fieldErrors", new ArraySchema().items(
-                                new Schema<ArraySchema>().$ref("ApiFieldError"))))
-                .addSchemas("ApiFieldError", new ObjectSchema()
+                            new Schema<ArraySchema>().$ref("ApiFieldError"))))
+                    .addSchemas("ApiFieldError", new ObjectSchema()
                         .addProperty("code", new StringSchema())
                         .addProperty("message", new StringSchema())
                         .addProperty("property", new StringSchema())
                         .addProperty("rejectedValue", new ObjectSchema())
-                        .addProperty("path", new StringSchema())));
+                        .addProperty("path", new StringSchema()))
+            );
     }
 
     @Bean
@@ -50,5 +63,4 @@ public class SwaggerConfig {
             return operation;
         };
     }
-
 }
