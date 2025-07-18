@@ -13,6 +13,7 @@ import com.gitsunjaeab.mapick.common.response.ApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.auth.RefreshTokenRepository;
 import com.gitsunjaeab.mapick.domain.auth.TokenDTO;
+import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.infra.auth.token.JwtProvider;
 import com.gitsunjaeab.mapick.infra.auth.token.TokenCookieFactory;
 import com.gitsunjaeab.mapick.infra.auth.token.code.GrantType;
@@ -135,8 +136,13 @@ public class AuthController {
         String accessToken = jwtProvider.resolveToken(request, TokenType.ACCESS_TOKEN);
         Claims claims = jwtProvider.parseClaim(accessToken);
         String jti = claims.getId();
-
         refreshTokenRepository.deleteByAccessTokenId(jti);
+
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        Long memberId = Long.parseLong(auth.getName());
+//        refreshTokenRepository.deleteByMemberId(memberId);
+
+        // todo db에 남아있는 토큰들 어찌 처리 할 것인지 고민...
 
         // 쿠키 굽기
         ResponseCookie expiredAccessToken = TokenCookieFactory.createExpiredToken(TokenType.ACCESS_TOKEN);

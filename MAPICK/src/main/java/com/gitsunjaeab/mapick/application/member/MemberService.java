@@ -9,7 +9,11 @@ import com.gitsunjaeab.mapick.api.member.dto.response.MemberResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.auth.LoginType;
 import com.gitsunjaeab.mapick.domain.auth.Role;
+import com.gitsunjaeab.mapick.domain.category.Category;
+import com.gitsunjaeab.mapick.domain.category.CategoryRepository;
 import com.gitsunjaeab.mapick.domain.member.Member;
+import com.gitsunjaeab.mapick.domain.member.MemberInterest;
+import com.gitsunjaeab.mapick.domain.member.MemberInterestRepository;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
 import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
 import com.gitsunjaeab.mapick.util.NotFoundException;
@@ -31,8 +35,10 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+    private final CategoryRepository categoryRepository;
+    private final MemberInterestRepository memberInterestRepository;
 
-   // 소셜 로그인 시 임시 닉네임 부여
+    // 소셜 로그인 시 임시 닉네임 부여
     public String generateUniqueSocialNickname(String provider) {
         String nickname;
         do {
@@ -130,7 +136,9 @@ public class MemberService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CommonException(ResponseCode.MEMBER_NOT_FOUND));
 
-        return MemberProfileResponse.of(member);
+        List<MemberInterest> memberInterests= memberInterestRepository.findAllByMemberId(memberId);
+
+        return MemberProfileResponse.of(member,memberInterests);
     }
 
     // 사용자 정보(프로필) 수정

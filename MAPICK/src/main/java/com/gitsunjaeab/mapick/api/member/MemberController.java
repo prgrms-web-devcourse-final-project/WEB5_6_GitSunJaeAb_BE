@@ -40,14 +40,11 @@ public class MemberController {
     private final MemberService memberService;
     private final MemberInterestService memberInterestService;
 
-
-
     /**
      *
      * 관리자
      *
      */
-
 
     // 전체 회원 조회 (관리자 전용) -> 완성(예외처리 필요)
     @PreAuthorize("hasRole('ADMIN')")
@@ -64,7 +61,7 @@ public class MemberController {
                 .body(response);
     }
 
-    // 특정 회원 상세 조회 (관리자) -> 완성(예외처리 필요)
+    // 특정 회원 상세 조회 (관리자 전용) -> 완성(예외처리 필요)
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("{memberId}")
     @Operation(summary = "특정 회원 조회(괸라자) ", description = " 특정 회원 정보 조회")

@@ -2,12 +2,16 @@ package com.gitsunjaeab.mapick.api.member.dto.response;
 
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
+import com.gitsunjaeab.mapick.domain.category.Category;
 import com.gitsunjaeab.mapick.domain.member.Member;
+import com.gitsunjaeab.mapick.domain.member.MemberInterest;
+import com.gitsunjaeab.mapick.domain.member.QMemberInterest;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.util.List;
 
 
 @Getter
@@ -41,13 +45,13 @@ public class MemberProfileResponse implements BaseApiResponse {
         private String role;
         private String status;
         private String profileImage;
+        private List<MemberInterest> memberInterests;
         private OffsetDateTime createdAt;
         private OffsetDateTime updatedAt;
         private OffsetDateTime deletedAt;
-        // todo 관심 분야 추가 필요
     }
 
-    public static MemberProfileResponse of(Member member) {
+    public static MemberProfileResponse of(Member member, List<MemberInterest> memberInterests) {
         MemberInfo memberInfo = new MemberInfo();
         memberInfo.setId(member.getId());
         memberInfo.setName(member.getName());
@@ -58,6 +62,7 @@ public class MemberProfileResponse implements BaseApiResponse {
         memberInfo.setRole(member.getRole());
         memberInfo.setStatus(member.getStatus());
         memberInfo.setProfileImage(member.getProfileImage());
+        memberInfo.setMemberInterests(memberInterests);
         memberInfo.setCreatedAt(member.getCreatedAt());
         memberInfo.setUpdatedAt(member.getUpdatedAt());
         memberInfo.setDeletedAt(member.getDeletedAt());
