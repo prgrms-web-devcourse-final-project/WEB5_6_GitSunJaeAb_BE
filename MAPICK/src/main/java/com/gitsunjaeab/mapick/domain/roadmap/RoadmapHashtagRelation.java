@@ -12,6 +12,7 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import java.time.OffsetDateTime;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
@@ -19,6 +20,7 @@ import lombok.Setter;
 @Table(name = "RoadmapHashtagRelations")
 @Getter
 @Setter
+@NoArgsConstructor
 public class RoadmapHashtagRelation {
 
     @Id
@@ -27,7 +29,7 @@ public class RoadmapHashtagRelation {
         name = "primary_sequence",
         sequenceName = "primary_sequence",
         allocationSize = 1,
-        initialValue = 1
+        initialValue = 100
     )
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
@@ -46,4 +48,8 @@ public class RoadmapHashtagRelation {
     @JoinColumn(name = "roadmap_id")
     private Roadmap roadmap;
 
+    public RoadmapHashtagRelation(Roadmap roadmap, Hashtag hashtag) {
+        this.roadmap = roadmap;
+        this.hashtag = hashtag;
+    }
 }

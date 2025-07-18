@@ -1,29 +1,30 @@
 package com.gitsunjaeab.mapick.api.comment.dto;
 
-import jakarta.validation.constraints.NotNull;
-import java.time.OffsetDateTime;
+import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
+import com.gitsunjaeab.mapick.common.response.ResponseCode;
+import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
+/**
+ * 단일 댓글 반환 Response
+ */
 
 @Getter
-@Setter
-public class CommentResponse {
+@AllArgsConstructor
+public class CommentResponse implements BaseApiResponse {
 
-    private Long id;
+    private String code;
+    private String message;
+    private LocalDateTime timestamp;
+    private CommentDTO comment;
 
-    @NotNull
-    private String content;
-
-    @NotNull
-    private OffsetDateTime createdAt;
-
-    private OffsetDateTime updatedAt;
-
-    private Long roadmapId;
-
-    private Long questId;
-
-    private Long member;
-
+    public static CommentResponse of(CommentDTO dto) {
+        return new CommentResponse(
+            ResponseCode.OK.getCode(),
+            "댓글 조회 성공",
+            LocalDateTime.now(),
+            dto
+        );
+    }
 }

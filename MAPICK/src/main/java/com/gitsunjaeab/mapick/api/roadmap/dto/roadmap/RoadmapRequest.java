@@ -1,10 +1,14 @@
-package com.gitsunjaeab.mapick.api.roadmap.dto;
+package com.gitsunjaeab.mapick.api.roadmap.dto.roadmap;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.gitsunjaeab.mapick.api.roadmap.dto.hashtag.HashtagRequest;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Getter
@@ -25,6 +29,8 @@ public class RoadmapRequest {
     @NotNull
     @JsonProperty("isPublic")
     private Boolean isPublic;
+
+    private List<HashtagRequest> hashtags = new ArrayList<>();
 
 //    @NotNull
 //    @JsonProperty("isAnimated")

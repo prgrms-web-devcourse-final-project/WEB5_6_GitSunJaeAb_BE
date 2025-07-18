@@ -1,4 +1,4 @@
-package com.gitsunjaeab.mapick.api.roadmap.dto;
+package com.gitsunjaeab.mapick.api.roadmap.dto.roadmap;
 
 import com.gitsunjaeab.mapick.api.category.dto.SimpleCategoryDTO;
 import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
@@ -41,7 +41,8 @@ public class RoadmapListResponse implements BaseApiResponse {
                 r.getRoadmapType(),
                 r.getLikeCount(),
                 r.getViewCount(),
-                citationCountMap.getOrDefault(r.getId(), 0L).intValue()
+                citationCountMap.getOrDefault(r.getId(), 0L).intValue(),
+                    r.getCreatedAt()
             )).toList();
 
         return new RoadmapListResponse(

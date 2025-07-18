@@ -7,6 +7,7 @@ import com.gitsunjaeab.mapick.application.roadmap.HashtagService;
 import com.gitsunjaeab.mapick.api.roadmap.dto.hashtag.HashtagDTO;
 import com.gitsunjaeab.mapick.common.response.ApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
+import com.gitsunjaeab.mapick.domain.auth.Principal;
 import com.gitsunjaeab.mapick.util.ReferencedException;
 import com.gitsunjaeab.mapick.util.ReferencedWarning;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,6 +17,7 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -49,8 +51,16 @@ public class HashtagController {
     // 해시태그 생성
     @PostMapping
     @Operation(summary = "해시태그 생성", description = "[사용자용] 지도 위에 해시태그를 생성")
-    public ResponseEntity<ApiResponse> createHashtag(@RequestBody @Valid final HashtagRequest request) {
-//        hashtagService.create(request);
+    public ResponseEntity<ApiResponse> createHashtag(
+            @RequestBody @Valid final HashtagRequest request,
+            @AuthenticationPrincipal final Principal principal) {
+
+        if (principal == null) {
+            throw new IllegalStateException("로그인되지 않았습니다.");
+        }
+
+        Long memberId = principal.getMember().getId();
+//        hashtagService.create(request, memberId);
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "해시태그 생성 완료"));
     }
 

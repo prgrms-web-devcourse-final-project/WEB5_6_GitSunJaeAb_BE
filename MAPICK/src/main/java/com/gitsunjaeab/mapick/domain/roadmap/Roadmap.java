@@ -36,7 +36,7 @@ public class Roadmap {
         name = "primary_sequence",
         sequenceName = "primary_sequence",
         allocationSize = 1,
-        initialValue = 1
+        initialValue = 100
     )
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
@@ -85,10 +85,6 @@ public class Roadmap {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "original_roadmap_id")
-    private Roadmap originalRoadmap;
 
     @OneToMany(mappedBy = "roadmap")
     private Set<RoadmapEditor> roadmapEditors = new HashSet<>();
