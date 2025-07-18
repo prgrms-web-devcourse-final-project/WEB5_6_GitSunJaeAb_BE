@@ -2,6 +2,10 @@ package com.gitsunjaeab.mapick.application.member;
 
 import com.gitsunjaeab.mapick.api.auth.dto.SocialUserInfo;
 import com.gitsunjaeab.mapick.api.auth.dto.request.SignupRequest;
+import com.gitsunjaeab.mapick.api.member.dto.CategorySimpleDTO;
+import com.gitsunjaeab.mapick.api.member.dto.MemberDTO;
+import com.gitsunjaeab.mapick.api.member.dto.MemberDetailDto;
+import com.gitsunjaeab.mapick.api.member.dto.MemberInterestDTO;
 import com.gitsunjaeab.mapick.api.member.dto.request.MemberProfileUpdateRequest;
 import com.gitsunjaeab.mapick.api.member.dto.response.MemberListResponse;
 import com.gitsunjaeab.mapick.api.member.dto.response.MemberProfileResponse;
@@ -131,14 +135,50 @@ public class MemberService {
     }
 
     // 사용자 정보 조회(간략 버전) -사용자
-    public MemberProfileResponse getMemberProfile(Long memberId) {
+    @Transactional
+    public MemberDetailDto getMemberProfile(Long memberId) {
 
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CommonException(ResponseCode.MEMBER_NOT_FOUND));
 
-        List<MemberInterest> memberInterests= memberInterestRepository.findAllByMemberId(memberId);
+        List<MemberInterest> memberInterests = memberInterestRepository.findAllByMemberId(memberId);
 
-        return MemberProfileResponse.of(member,memberInterests);
+        List<MemberInterestDTO> memberInterestDTOList = memberInterests.stream()
+                .map(memberInterest -> MemberInterestDTO.builder()
+                        .id(memberInterest.getId())
+                        .createdAt(memberInterest.getCreatedAt())
+                        .categories(
+                                List.of(
+                                        CategorySimpleDTO.builder()
+                                                .id(memberInterest.getCategory().getId())
+                                                .name(memberInterest.getCategory().getName())
+                                                .build()
+                                )
+                        )
+                        .build()
+                )
+              .toList();
+
+        MemberDetailDto memberDetailDto = MemberDetailDto.builder()
+                .id(member.getId())
+                .isBlacklisted(member.getIsBlacklisted())
+                .name(member.getName())
+                .nickname(member.getNickname())
+                .email(member.getEmail())
+                .password(member.getPassword())
+                .loginType(member.getLoginType().name())
+                .provider(member.getProvider())
+                .role(member.getRole())
+                .status(member.getStatus())
+                .profileImage(member.getProfileImage())
+                .lastLogin(member.getLastLogin())
+                .memberInterests(memberInterestDTOList)
+                .createdAt(member.getCreatedAt())
+                .updatedAt(member.getUpdatedAt())
+                .deletedAt(member.getDeletedAt())
+                .build();
+
+        return memberDetailDto;
     }
 
     // 사용자 정보(프로필) 수정

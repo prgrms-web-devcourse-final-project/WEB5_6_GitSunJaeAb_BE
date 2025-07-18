@@ -1,12 +1,12 @@
 package com.gitsunjaeab.mapick.api.member;
 
+import com.gitsunjaeab.mapick.api.member.dto.MemberDetailDto;
 import com.gitsunjaeab.mapick.api.member.dto.request.MemberInterestRequest;
 import com.gitsunjaeab.mapick.api.member.dto.request.MemberProfileUpdateRequest;
 import com.gitsunjaeab.mapick.api.member.dto.request.PasswordRequest;
 import com.gitsunjaeab.mapick.api.member.dto.response.MemberListResponse;
 import com.gitsunjaeab.mapick.api.member.dto.response.MemberProfileResponse;
 import com.gitsunjaeab.mapick.api.member.dto.response.MemberResponse;
-import com.gitsunjaeab.mapick.api.member.dto.response.SimpleMessageResponse;
 import com.gitsunjaeab.mapick.application.member.MemberInterestService;
 import com.gitsunjaeab.mapick.application.member.MemberService;
 import com.gitsunjaeab.mapick.common.response.ApiResponse;
@@ -129,7 +129,9 @@ public class MemberController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Long memberId = Long.parseLong(auth.getName());
 
-        MemberProfileResponse response = memberService.getMemberProfile(memberId);
+        MemberDetailDto memberDetailDto = memberService.getMemberProfile(memberId);
+
+        MemberProfileResponse response = MemberProfileResponse.of(memberDetailDto);
 
         return ResponseEntity.ok(response);
     }
