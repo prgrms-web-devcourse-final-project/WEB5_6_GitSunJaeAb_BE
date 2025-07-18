@@ -20,6 +20,7 @@ public enum ResponseCode {
 
 
     FORBIDDEN("4030", HttpStatus.FORBIDDEN, "접근 권한이 없습니다."),
+    FORBIDDEN_DELETE_BOOKMARK("4031", HttpStatus.FORBIDDEN, "북마크 해제 권한이 없습니다."),
 
     NOT_FOUND("4040", HttpStatus.NOT_FOUND, "존재하지 않는 리소스 입니다."),
     EMAIL_NOT_FOUND("4041", HttpStatus.NOT_FOUND, "존재하지 않는 이메일입니다."),
@@ -29,6 +30,7 @@ public enum ResponseCode {
     NICKNAME_DUPLICATED("4091", HttpStatus.CONFLICT, "중복된 닉네임입니다."),
     ALREADY_REGISTERED_EMAIL("4092", HttpStatus.CONFLICT, "이미 가입된 이메일입니다."),
     DB_CONSTRAINT_VIOLATION("4093", HttpStatus.CONFLICT, "DB 제약 조건에 위배되었습니다."),
+    BOOKMARK_DUPLICATED("4094", HttpStatus.CONFLICT, "중복 북마크입니다."),
 
 
     // 내부 오류

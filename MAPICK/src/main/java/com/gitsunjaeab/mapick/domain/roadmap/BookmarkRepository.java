@@ -1,7 +1,10 @@
 package com.gitsunjaeab.mapick.domain.roadmap;
 
 import com.gitsunjaeab.mapick.domain.member.Member;
+
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 
@@ -15,4 +18,8 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
     List<Bookmark> findByMemberId(Long memberId);
 
     List<Bookmark> findAllWithAllRoadmapRelationsByMemberId(Long memberId);
+
+    boolean existsByMemberAndRoadmap(Member member, Roadmap roadmap);
+
+    Optional<Bookmark> findByMemberAndRoadmap(Member member, Roadmap roadmap);
 }

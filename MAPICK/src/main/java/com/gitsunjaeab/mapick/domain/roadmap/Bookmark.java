@@ -1,23 +1,17 @@
 package com.gitsunjaeab.mapick.domain.roadmap;
 
 import com.gitsunjaeab.mapick.domain.member.Member;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.SequenceGenerator;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+
 import java.time.OffsetDateTime;
 import lombok.Getter;
 import lombok.Setter;
 
 
 @Entity
-@Table(name = "Bookmarks")
+@Table(name = "Bookmarks",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"member_id", "roadmap_id"})
+) // 북마크 중복 방지
 @Getter
 @Setter
 public class Bookmark {
