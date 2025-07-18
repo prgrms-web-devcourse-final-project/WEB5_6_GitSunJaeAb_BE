@@ -2,7 +2,7 @@ package com.gitsunjaeab.mapick.api.report.dto;
 
 import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
 import com.gitsunjaeab.mapick.api.quest.dto.QuestDTO;
-import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapDTO;
+import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.RoadmapDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.marker.MarkerDTO;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;

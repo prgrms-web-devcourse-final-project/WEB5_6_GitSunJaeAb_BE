@@ -19,8 +19,6 @@ public class HashtagDTO {
     @Size(max = 255)
     private String name;
 
-    private OffsetDateTime createdAt;
-
     public HashtagDTO(Long id, String name) {
         this.id = id;
         this.name = name;

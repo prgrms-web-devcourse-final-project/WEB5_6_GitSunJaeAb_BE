@@ -21,4 +21,6 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
     Report findFirstByMarker(Marker marker);
 
     Report findFirstByQuest(Quest quest);
+
+    boolean existsByRoadmapId(Long roadmapId);
 }

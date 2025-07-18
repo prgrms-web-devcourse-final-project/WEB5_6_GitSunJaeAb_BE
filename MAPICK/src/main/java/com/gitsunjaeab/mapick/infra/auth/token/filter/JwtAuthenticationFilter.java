@@ -8,6 +8,7 @@ import com.gitsunjaeab.mapick.infra.auth.token.TokenCookieFactory;
 import com.gitsunjaeab.mapick.infra.auth.token.code.TokenType;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -51,8 +52,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        Claims claims = jwtProvider.parseClaim(requestAccessToken);
-        
         try {
             if (jwtProvider.validateToken(requestAccessToken)) {
                 Authentication authentication = jwtProvider.generateAuthentication(requestAccessToken);
@@ -67,6 +66,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             RefreshToken newRefreshToken = renewingRefreshToken(ex.getClaims().getId(), newAccessToken.getId());
             responseToken(response, newAccessToken, newRefreshToken);
+        }  catch (Exception e) {
+            System.out.println("❌ 기타 JWT 예외 발생: " + e.getMessage());
         }
 
         filterChain.doFilter(request, response);

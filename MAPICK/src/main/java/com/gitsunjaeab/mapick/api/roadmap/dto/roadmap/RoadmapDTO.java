@@ -1,9 +1,7 @@
-package com.gitsunjaeab.mapick.api.roadmap.dto;
+package com.gitsunjaeab.mapick.api.roadmap.dto.roadmap;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
-import com.gitsunjaeab.mapick.domain.member.Member;
-import com.gitsunjaeab.mapick.domain.roadmap.Marker;
 import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapType;
 import jakarta.validation.constraints.NotNull;
@@ -80,6 +78,5 @@ public class RoadmapDTO {
         this.updatedAt = roadmap.getUpdatedAt();
         this.deletedAt = roadmap.getDeletedAt();
         this.member = roadmap.getMember() != null ? new MemberSimpleDTO(roadmap.getMember()) : null;
-        this.originalRoadmap = roadmap.getOriginalRoadmap() != null ? roadmap.getOriginalRoadmap().getId() : null;
     }
 }

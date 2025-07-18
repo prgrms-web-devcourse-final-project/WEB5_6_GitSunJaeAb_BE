@@ -1,9 +1,12 @@
 package com.gitsunjaeab.mapick.application.roadmap;
 
+import com.gitsunjaeab.mapick.api.member.dto.MemberResponse;
 import com.gitsunjaeab.mapick.api.roadmap.dto.hashtag.HashtagDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.hashtag.HashtagListResponse;
 import com.gitsunjaeab.mapick.api.roadmap.dto.hashtag.HashtagRequest;
 import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerListResponse;
+import com.gitsunjaeab.mapick.domain.member.Member;
+import com.gitsunjaeab.mapick.domain.member.MemberRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.Hashtag;
 import com.gitsunjaeab.mapick.domain.roadmap.HashtagRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.Layer;
@@ -11,23 +14,26 @@ import com.gitsunjaeab.mapick.domain.roadmap.RoadmapHashtagRelationRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapHashtagRelation;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import com.gitsunjaeab.mapick.util.ReferencedWarning;
+
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.convert.ReadingConverter;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
+@RequiredArgsConstructor
 public class HashtagService {
 
+    private final MemberRepository memberRepository;
     private final HashtagRepository hashtagRepository;
     private final RoadmapHashtagRelationRepository roadmapHashtagRelationRepository;
-
-    public HashtagService(final HashtagRepository hashtagRepository,
-            final RoadmapHashtagRelationRepository roadmapHashtagRelationRepository) {
-        this.hashtagRepository = hashtagRepository;
-        this.roadmapHashtagRelationRepository = roadmapHashtagRelationRepository;
-    }
 
     public HashtagListResponse findAllHashtagsOnRoadmap(Long roadmapId) {
         final List<Long> hashtagsId = roadmapHashtagRelationRepository.findAllByRoadmap_Id(roadmapId);
@@ -66,13 +72,11 @@ public class HashtagService {
     private HashtagDTO roadmapToDTO(final Hashtag hashtag, final HashtagDTO hashtagDTO) {
         hashtagDTO.setId(hashtag.getId());
         hashtagDTO.setName(hashtag.getName());
-        hashtagDTO.setCreatedAt(hashtag.getCreatedAt());
         return hashtagDTO;
     }
 
     private Hashtag roadmapToEntity(final HashtagDTO hashtagDTO, final Hashtag hashtag) {
         hashtag.setName(hashtagDTO.getName());
-        hashtag.setCreatedAt(hashtagDTO.getCreatedAt());
         return hashtag;
     }
 
@@ -89,4 +93,25 @@ public class HashtagService {
         return null;
     }
 
+    @Transactional
+    public List<Hashtag> findOrCreateHashtags(List<HashtagRequest> hashtagDto) {
+        if (hashtagDto == null || hashtagDto.isEmpty()) {
+            return List.of();
+        }
+
+        List<Hashtag> result = new ArrayList<>();
+
+        for (HashtagRequest dto : hashtagDto) {
+            String hashTagName = dto.getName();
+            if (hashTagName == null || hashTagName.isBlank()) {
+                continue;
+            }
+            Hashtag tag = hashtagRepository.findByName(hashTagName.trim())
+                    .orElseGet(() -> hashtagRepository.save(new Hashtag(hashTagName.trim())));
+
+            result.add(tag);
+        }
+
+        return result;
+    }
 }
