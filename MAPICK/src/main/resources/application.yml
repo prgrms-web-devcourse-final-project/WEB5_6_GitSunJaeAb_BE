@@ -6,6 +6,12 @@ jwt:
 server:
   port: ${PORT:80}
 
+supabase:
+  url: ${PUBLIC_SUPABASE_URL}
+  anon-key: ${PUBLIC_SUPABASE_ANON_KEY}
+  service-role-key: ${SUPABASE_SERVICE_ROLE}
+  bucket: ${PUBLIC_STORAGE_BUCKET}
+
 spring:
   datasource:
     url: ${JDBC_DATABASE_URL}
@@ -42,6 +48,7 @@ spring:
       max-file-size: 10MB
       max-request-size: 10MB     # 전체 요청 최대 크기
       enabled: true
+
 error:
   handling:
     http-status-in-json-response: true
@@ -55,6 +62,3 @@ springdoc:
   pathsToMatch: /**
   swagger-ui:
     path: /swagger
-
-file:
-  upload-dir: ${user.dir}/uploads
