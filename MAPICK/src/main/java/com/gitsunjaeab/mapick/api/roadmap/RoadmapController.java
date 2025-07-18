@@ -1,8 +1,8 @@
 package com.gitsunjaeab.mapick.api.roadmap;
 
-import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapListResponse;
-import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapRequest;
-import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapResponse;
+import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.RoadmapListResponse;
+import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.RoadmapRequest;
+import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.RoadmapResponse;
 import com.gitsunjaeab.mapick.application.roadmap.RoadmapService;
 import com.gitsunjaeab.mapick.common.response.ApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;

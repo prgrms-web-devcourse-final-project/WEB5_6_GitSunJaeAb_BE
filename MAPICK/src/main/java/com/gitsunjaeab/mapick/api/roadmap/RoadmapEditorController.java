@@ -1,29 +1,5 @@
 package com.gitsunjaeab.mapick.api.roadmap;
 
-import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
-import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
-import com.gitsunjaeab.mapick.application.roadmap.RoadmapEditorService;
-import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapEditorDTO;
-import com.gitsunjaeab.mapick.domain.member.Member;
-import com.gitsunjaeab.mapick.domain.member.MemberRepository;
-import com.gitsunjaeab.mapick.util.CustomCollectors;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import jakarta.validation.Valid;
-import java.util.List;
-import java.util.Map;
-import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 // NOTE 공유지도 참여자 (동시 수정자)를 어떻게 보이게 할지..정해지지 않아서 RoadmapController에 합치지 않음.
 //@RestController
 //@RequestMapping(value = "/roadmapEditors", produces = MediaType.APPLICATION_JSON_VALUE)

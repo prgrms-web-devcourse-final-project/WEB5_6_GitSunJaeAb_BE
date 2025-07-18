@@ -1,10 +1,10 @@
 package com.gitsunjaeab.mapick.application.roadmap;
 
 import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
-import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapDTO;
-import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapListResponse;
-import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapRequest;
-import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapResponse;
+import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.RoadmapDTO;
+import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.RoadmapListResponse;
+import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.RoadmapRequest;
+import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.RoadmapResponse;
 import com.gitsunjaeab.mapick.api.roadmap.dto.hashtag.HashtagRequest;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.category.Category;
