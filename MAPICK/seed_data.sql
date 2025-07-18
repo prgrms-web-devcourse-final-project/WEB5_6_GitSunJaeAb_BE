@@ -1,6 +1,7 @@
 -- Members 데이터
 INSERT INTO public.members (is_blacklisted, created_at, deleted_at, id, last_login, updated_at,
                             email, login_type, name, nickname, password,
+
                             profile_image, provider, role, status)
 VALUES
     (false, '2025-06-30 10:48:44.000000 +00:00', null, 1, null, null, 'aaa@aaa.com',
@@ -142,26 +143,16 @@ VALUES ('2025-07-13 17:19:57.332000 +00:00', 1, 1, 2),
 
 -- Quest 데이터
 INSERT INTO quests (is_active, completed_at, created_at, deleted_at, id, member_id, updated_at,
-                    description, quest_image, title)
+                    description, quest_image, title,deadline)
 VALUES (true, null, '2025-07-13 19:00:00+00:00', null, 1, 1, null,
-        '여기 어디게~? 2탄 장소에 대한 퀘스트입니다. 사진을 보고 맞혀보세요!', 'https://example.com/q2.jpg', '여기 어디게~? 2탄'),
+        '여기 어디게~? 2탄 장소에 대한 퀘스트입니다. 사진을 보고 맞혀보세요!', 'https://example.com/q2.jpg', '여기 어디게~? 2탄','2025-07-20 19:03:00+00:00'),
        (true, null, '2025-07-13 19:01:00+00:00', null, 2, 3, null,
-        '여기 어디게~? 3탄 장소에 대한 퀘스트입니다. 사진을 보고 맞혀보세요!', 'https://example.com/q3.jpg', '여기 어디게~? 3탄'),
+        '여기 어디게~? 3탄 장소에 대한 퀘스트입니다. 사진을 보고 맞혀보세요!', 'https://example.com/q3.jpg', '여기 어디게~? 3탄','2025-07-21 19:03:00+00:00'),
        (true, null, '2025-07-13 19:02:00+00:00', null, 3, 2, null,
-        '여기 어디게~? 4탄 장소에 대한 퀘스트입니다. 사진을 보고 맞혀보세요!', 'https://example.com/q4.jpg', '여기 어디게~? 4탄');
+        '여기 어디게~? 4탄 장소에 대한 퀘스트입니다. 사진을 보고 맞혀보세요!', 'https://example.com/q4.jpg', '여기 어디게~? 4탄','2025-07-22 19:03:00+00:00'),
+       (false, null, '2025-07-13 19:03:00+00:00', null, 4, 4, null,
+        '여기 어디게~? 5탄 장소에 대한 퀘스트입니다. 사진을 보고 맞혀보세요!', 'https://example.com/q4.jpg', '여기 어디게~? 5탄','2025-07-23 19:03:00+00:00')
 ;
-INSERT INTO quests (
-    is_active, completed_at, created_at, deleted_at, id, member_id, updated_at,
-    description, quest_image, title
-)
-VALUES (
-           false, null, '2025-07-13 19:03:00+00:00', null, 100, 1, null,
-           '여기 어디게~? 5탄 장소에 대한 퀘스트입니다. 사진을 보고 맞혀보세요!',
-           'https://example.com/q4.jpg',
-           '여기 어디게~? 5탄'
-       );
-
-
 
 -- MemberQuest 데이터
 INSERT INTO member_quests (completed_at, created_at, deleted_at, id, member_id, quest_id,

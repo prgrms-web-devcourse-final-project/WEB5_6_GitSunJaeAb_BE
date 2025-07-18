@@ -2,6 +2,7 @@ package com.gitsunjaeab.mapick.api.quest.dto;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import java.time.OffsetDateTime;
 import lombok.Getter;
 import lombok.Setter;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -23,17 +24,22 @@ public class QuestRequest {
 
     private String description;
 
+    private OffsetDateTime deadline;
+
     @NotNull
     @JsonProperty("isActive")
     private Boolean isActive;
 
-//    private OffsetDateTime createdAt;
-//
-//    private OffsetDateTime completedAt;
-//
+
+//    private OffsetDateTime createdAt; // 퀘스트 생성날짜
+
+//    private OffsetDateTim//e completedAt;  퀘스트 완료 처리된 시간
+
 //    private OffsetDateTime updatedAt;
+
 //
 //    private OffsetDateTime deletedAt;
+
 //
 //    private Long member;
 

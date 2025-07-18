@@ -34,6 +34,8 @@ public class QuestResponse {
 
     private String description;
 
+    private OffsetDateTime deadline;
+
     @NotNull
     @JsonProperty("isActive")
     private Boolean isActive;
@@ -58,6 +60,7 @@ public class QuestResponse {
         response.setTitle(questDTO.getTitle());
         response.setQuestImage(questDTO.getQuestImage());
         response.setDescription(questDTO.getDescription());
+        response.setDeadline(questDTO.getDeadline()); // 마감기한 추가
         response.setIsActive(questDTO.getIsActive());
         response.setCreatedAt(questDTO.getCreatedAt());
         response.setCompletedAt(questDTO.getCompletedAt());
@@ -75,6 +78,7 @@ public class QuestResponse {
             questResponse.getTitle(),
             questResponse.getQuestImage(),
             questResponse.getDescription(),
+            questResponse.getDeadline(),
             questResponse.getIsActive(),
             questResponse.getCreatedAt(),
             questResponse.getCompletedAt(),
@@ -92,6 +96,7 @@ public class QuestResponse {
             questResponse.getTitle(),
             questResponse.getQuestImage(),
             questResponse.getDescription(),
+            questResponse.getDeadline(),
             questResponse.getIsActive(),
             questResponse.getCreatedAt(),
             questResponse.getCompletedAt(),
@@ -109,6 +114,7 @@ public class QuestResponse {
             questResponse.getTitle(),
             questResponse.getQuestImage(),
             questResponse.getDescription(),
+            questResponse.getDeadline(),
             questResponse.getIsActive(),
             questResponse.getCreatedAt(),
             questResponse.getCompletedAt(),
@@ -126,6 +132,7 @@ public class QuestResponse {
             questDTO.getTitle(),
             questDTO.getQuestImage(),
             questDTO.getDescription(),
+            questDTO.getDeadline(),
             questDTO.getIsActive(),
             questDTO.getCreatedAt(),
             questDTO.getCompletedAt(),
@@ -142,6 +149,7 @@ public class QuestResponse {
             questDTO.getTitle(),
             questDTO.getQuestImage(),
             questDTO.getDescription(),
+            questDTO.getDeadline(),
             questDTO.getIsActive(),
             questDTO.getCreatedAt(),
             questDTO.getCompletedAt(),

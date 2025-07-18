@@ -86,6 +86,7 @@ public class QuestService {
         questResponse.setTitle(quest.getTitle());
         questResponse.setQuestImage(quest.getQuestImage());
         questResponse.setDescription(quest.getDescription());
+        questResponse.setDeadline(quest.getDeadline());
         questResponse.setIsActive(quest.getIsActive());
         questResponse.setCreatedAt(quest.getCreatedAt());
         questResponse.setCompletedAt(quest.getCompletedAt());
@@ -99,6 +100,7 @@ public class QuestService {
         quest.setTitle(questRequest.getTitle());
         quest.setQuestImage(questRequest.getQuestImage());
         quest.setDescription(questRequest.getDescription());
+        quest.setDeadline(questRequest.getDeadline());
         quest.setIsActive(questRequest.getIsActive() != null ? questRequest.getIsActive() : true);
         return quest;
     }
