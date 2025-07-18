@@ -2,18 +2,13 @@ package com.gitsunjaeab.mapick.application.member;
 
 import com.gitsunjaeab.mapick.api.auth.dto.SocialUserInfo;
 import com.gitsunjaeab.mapick.api.auth.dto.request.SignupRequest;
-import com.gitsunjaeab.mapick.api.member.dto.CategorySimpleDTO;
-import com.gitsunjaeab.mapick.api.member.dto.MemberDTO;
-import com.gitsunjaeab.mapick.api.member.dto.MemberDetailDto;
-import com.gitsunjaeab.mapick.api.member.dto.MemberInterestDTO;
+import com.gitsunjaeab.mapick.api.member.dto.*;
 import com.gitsunjaeab.mapick.api.member.dto.request.MemberProfileUpdateRequest;
 import com.gitsunjaeab.mapick.api.member.dto.response.MemberListResponse;
-import com.gitsunjaeab.mapick.api.member.dto.response.MemberProfileResponse;
 import com.gitsunjaeab.mapick.api.member.dto.response.MemberResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.auth.LoginType;
 import com.gitsunjaeab.mapick.domain.auth.Role;
-import com.gitsunjaeab.mapick.domain.category.Category;
 import com.gitsunjaeab.mapick.domain.category.CategoryRepository;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.member.MemberInterest;
@@ -118,11 +113,23 @@ public class MemberService {
     }
 
     // 멤버 리스트 조회
-    public MemberListResponse findAll() {
+    public List<MemberListDTO> findAll() {
 
         final List<Member> members = memberRepository.findAll(Sort.by("id"));
 
-        return MemberListResponse.of(members);
+        // todo DTO 내부로 정적 메서드로 넣기
+        List<MemberListDTO> memberListDTOs = members.stream()
+                .map(m -> new MemberListDTO(
+                        m.getId(),
+                        m.getIsBlacklisted(),
+                        m.getName(),
+                        m.getNickname(),
+                        m.getEmail(),
+                        m.getRole()
+                )).toList();
+
+
+        return memberListDTOs;
     }
 
     // 멤버 상세 조회(상세 버전) - 관리자
@@ -143,6 +150,7 @@ public class MemberService {
 
         List<MemberInterest> memberInterests = memberInterestRepository.findAllByMemberId(memberId);
 
+        // todo DTO 내부로 정적 메서드로 넣기
         List<MemberInterestDTO> memberInterestDTOList = memberInterests.stream()
                 .map(memberInterest -> MemberInterestDTO.builder()
                         .id(memberInterest.getId())
@@ -253,12 +261,6 @@ public class MemberService {
 
     }
 
-    /**
-     * 수정 중
-     * */
-
-
-
     // 마이페이지 - 비밀번호 확인
     public boolean verifyPassword(Long memberId, String password) {
 
@@ -271,7 +273,6 @@ public class MemberService {
 
         return member.getPassword().equals(password);
     }
-
 
 
     /**

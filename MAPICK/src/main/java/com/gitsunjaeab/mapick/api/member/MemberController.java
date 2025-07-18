@@ -1,6 +1,7 @@
 package com.gitsunjaeab.mapick.api.member;
 
 import com.gitsunjaeab.mapick.api.member.dto.MemberDetailDto;
+import com.gitsunjaeab.mapick.api.member.dto.MemberListDTO;
 import com.gitsunjaeab.mapick.api.member.dto.request.MemberInterestRequest;
 import com.gitsunjaeab.mapick.api.member.dto.request.MemberProfileUpdateRequest;
 import com.gitsunjaeab.mapick.api.member.dto.request.PasswordRequest;
@@ -30,6 +31,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 
 @RestController
 @RequestMapping(value = "/members", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -52,9 +55,8 @@ public class MemberController {
     @Operation(summary = "전체 회원 조회 (관리자)", description = "[관리자 전용] 관리자만 접근 가능한 전체 회원 목록 조회" )
     public ResponseEntity<MemberListResponse> getAllMembers() {
 
-        // todo 관리자 만 해당 url 사용 할 수 있도록 시큐리티 컨피그에 추가 필요
-
-        MemberListResponse response = memberService.findAll();
+        List<MemberListDTO> memberListDTOs = memberService.findAll();
+        MemberListResponse response = MemberListResponse.of(memberListDTOs);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
