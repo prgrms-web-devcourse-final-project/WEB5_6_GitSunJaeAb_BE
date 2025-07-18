@@ -54,6 +54,7 @@ public class CommentController {
     @GetMapping("/roadmaps")
     @Operation(summary = "지도 댓글 목록 조회", description = "[모든 사용자] 특정 로드맵/공유지도의 모든 댓글을 조회")
     public ResponseEntity<CommentListResponse> getAllCommentsInMaps(@RequestParam Long roadmapId) {
+
         return ResponseEntity.ok(commentService.findAllCommentsInRoadmaps(roadmapId));
     }
 
@@ -79,7 +80,6 @@ public class CommentController {
     public ResponseEntity<CommentListResponse> getQuestComments(@RequestParam Long questId) {
         return ResponseEntity.ok(commentService.findAllCommentsInQuest(questId));
     }
-
 
     /**
      * 댓글 조회, 수정, 삭제 (공통)
