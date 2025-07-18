@@ -15,6 +15,7 @@ import com.gitsunjaeab.mapick.domain.report.Report;
 import com.gitsunjaeab.mapick.domain.report.ReportRepository;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import com.gitsunjaeab.mapick.util.ReferencedWarning;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -24,7 +25,7 @@ import org.springframework.stereotype.Service;
 public class QuestService {
 
     private final QuestRepository questRepository;
-    private final MemberRepository memberRepository;
+//    private final MemberRepository memberRepository;
     private final ReportRepository reportRepository;
     private final MemberQuestRepository memberQuestRepository;
     private final QuestRankRepository questRankRepository;
@@ -34,26 +35,35 @@ public class QuestService {
             final MemberQuestRepository memberQuestRepository,
             final QuestRankRepository questRankRepository) {
         this.questRepository = questRepository;
-        this.memberRepository = memberRepository;
+//        this.memberRepository = memberRepository;
         this.reportRepository = reportRepository;
         this.memberQuestRepository = memberQuestRepository;
         this.questRankRepository = questRankRepository;
     }
+    //전체 퀘스트 조회
+    public List<QuestResponse> findAll(Boolean isActive) {
+        final List<Quest> all = questRepository.findAllWithMember();
+        final List<Quest> filtered = new ArrayList<>();
 
-    public List<QuestResponse> findAll() {
-        final List<Quest> quests = questRepository.findAllWithMember();
-        return quests.stream()
-                .map(this::questToResponse)
-                .toList();
+        for (Quest q : all) {
+            if (isActive == null || q.getIsActive().equals(isActive)) {
+                filtered.add(q);
+            }
+        }
+
+        return filtered.stream()
+            .map(this::questToResponse)
+            .toList();
     }
 
+    //특정 퀘스트 조회
     public QuestResponse get(final Long id) {
         return questRepository.findWithMemberById(id)
                 .map(this::questToResponse)
                 .orElseThrow(NotFoundException::new);
     }
 
-    public Long create(final QuestRequest questRequest) {
+    public Long create (final QuestRequest questRequest) {
         final Quest quest = new Quest();
         requestToEntity(questRequest, quest);
         return questRepository.save(quest).getId();

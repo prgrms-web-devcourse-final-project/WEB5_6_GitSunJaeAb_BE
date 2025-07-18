@@ -149,6 +149,19 @@ VALUES (true, null, '2025-07-13 19:00:00+00:00', null, 1, 1, null,
         '여기 어디게~? 3탄 장소에 대한 퀘스트입니다. 사진을 보고 맞혀보세요!', 'https://example.com/q3.jpg', '여기 어디게~? 3탄'),
        (true, null, '2025-07-13 19:02:00+00:00', null, 3, 2, null,
         '여기 어디게~? 4탄 장소에 대한 퀘스트입니다. 사진을 보고 맞혀보세요!', 'https://example.com/q4.jpg', '여기 어디게~? 4탄');
+;
+INSERT INTO quests (
+    is_active, completed_at, created_at, deleted_at, id, member_id, updated_at,
+    description, quest_image, title
+)
+VALUES (
+           false, null, '2025-07-13 19:03:00+00:00', null, 100, 1, null,
+           '여기 어디게~? 5탄 장소에 대한 퀘스트입니다. 사진을 보고 맞혀보세요!',
+           'https://example.com/q4.jpg',
+           '여기 어디게~? 5탄'
+       );
+
+
 
 -- MemberQuest 데이터
 INSERT INTO member_quests (completed_at, created_at, deleted_at, id, member_id, quest_id,

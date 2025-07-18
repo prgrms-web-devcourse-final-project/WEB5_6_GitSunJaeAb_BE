@@ -20,6 +20,7 @@ import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestEvidenceRequest;
 import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestEvidenceResponse;
 import com.gitsunjaeab.mapick.api.quest.dto.QuestRankResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
@@ -31,6 +32,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import com.gitsunjaeab.mapick.domain.quest.MemberQuest;
@@ -60,8 +62,8 @@ public class QuestController {
     @PostMapping
     @Operation(summary = "퀘스트 생성", description = "[출제자용] 새로운 퀘스트를 생성합니다. 본인만 접근 가능합니다.")
     public ResponseEntity<ApiResponse> createQuest(@RequestBody @Valid final QuestRequest questRequest) {
-//        Long questId = questService.create(questRequest);
-//        QuestResponse createdQuest = questService.get(questId);
+        Long questId = questService.create(questRequest);
+        QuestResponse createdQuest = questService.get(questId);
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "퀘스트 생성 완료"));
     }
 
@@ -99,8 +101,10 @@ public class QuestController {
     // 전체 퀘스트 조회 (참여자용)
     @GetMapping
     @Operation(summary = "전체 퀘스트 조회", description = "[참여자용] 활성화된 퀘스트 목록을 조회합니다.")
-    public ResponseEntity<QuestListResponse> getAllQuests() {
-        return ResponseEntity.ok(QuestListResponse.of(questService.findAll()));
+    public ResponseEntity<QuestListResponse> getAllQuests(
+        @RequestParam(required = false) Boolean isActive ) {
+
+        return ResponseEntity.ok(QuestListResponse.of(questService.findAll(isActive)));
     }
 
     // 특정 퀘스트 조회 (참여자용)

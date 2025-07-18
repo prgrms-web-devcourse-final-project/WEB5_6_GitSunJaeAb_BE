@@ -17,13 +17,9 @@ import java.time.OffsetDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-//implements BaseApiResponse
 public class MemberQuestResponse {
 
-    // 커스텀 응답 필드들
-//    private String code;
-//    private String message;
-//    private LocalDateTime timestamp;
+
     
     // 퀘스트 참여 데이터 필드들
     private Long id;
@@ -51,9 +47,6 @@ public class MemberQuestResponse {
     // 퀘스트 참여 생성 응답 
     public static MemberQuestResponse ofCreate(MemberQuest memberQuest) {
         return new MemberQuestResponse(
-//            ResponseCode.OK.getCode(),
-//            "퀘스트 참여 생성 완료",
-//            LocalDateTime.now(),
             memberQuest.getId(),
             memberQuest.getStatus(),
             memberQuest.getAnswer(),
@@ -70,9 +63,6 @@ public class MemberQuestResponse {
     // 퀘스트 참여 조회 응답 (커스텀 응답 + 데이터)
     public static MemberQuestResponse ofGetDetail(MemberQuestResponse memberQuestResponse) {
         return new MemberQuestResponse(
-//            ResponseCode.OK.getCode(),
-//            "퀘스트 참여 조회 완료",
-//            LocalDateTime.now(),
             memberQuestResponse.getId(),
             memberQuestResponse.getStatus(),
             memberQuestResponse.getAnswer(),
@@ -89,9 +79,6 @@ public class MemberQuestResponse {
     // 퀘스트 참여 목록 조회 응답 (커스텀 응답 + 데이터)
     public static MemberQuestResponse ofGetList(MemberQuestResponse memberQuestResponse) {
         return new MemberQuestResponse(
-//            ResponseCode.OK.getCode(),
-//            "퀘스트 참여 목록 조회 완료",
-//            LocalDateTime.now(),
             memberQuestResponse.getId(),
             memberQuestResponse.getStatus(),
             memberQuestResponse.getAnswer(),
