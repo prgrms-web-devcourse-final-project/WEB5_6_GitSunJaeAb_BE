@@ -1,7 +1,9 @@
 package com.gitsunjaeab.mapick.api.comment;
 
+import com.gitsunjaeab.mapick.api.comment.dto.CommentDTO;
 import com.gitsunjaeab.mapick.api.comment.dto.CommentListResponse;
 import com.gitsunjaeab.mapick.api.comment.dto.CommentRequest;
+import com.gitsunjaeab.mapick.api.comment.dto.CommentResponse;
 import com.gitsunjaeab.mapick.application.comment.CommentService;
 import com.gitsunjaeab.mapick.common.response.ApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
@@ -80,10 +82,22 @@ public class CommentController {
 
 
     /**
-     * 댓글 수정, 삭제 (공통)
+     * 댓글 조회, 수정, 삭제 (공통)
      */
 
-    // 지도 댓글 수정
+    // 특정 댓글 조회
+    @GetMapping("/{commentId}")
+    @Operation(summary = "특정 댓글 조회", description = "댓글 수정 시, 특정 댓글에 대한 정보 조회 필요")
+    public ResponseEntity<CommentResponse> getComment(
+        @PathVariable(name = "commentId") final Long commentId)
+    {
+        CommentDTO dto = commentService.getComment(commentId);
+        CommentResponse response = CommentResponse.of(dto);
+
+        return ResponseEntity.ok(response);
+    }
+
+    // 댓글 수정
     @PutMapping("/{commentId}")
     @Operation(summary = "댓글 수정", description = "[댓글 작성자/게시글 작성자] 특정 댓글 수정")
     public ResponseEntity<ApiResponse> updateRoadmapComment(
@@ -93,12 +107,11 @@ public class CommentController {
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "댓글 수정 완료"));
     }
 
-    // 지도 댓글 삭제
+    // 댓글 삭제
     @DeleteMapping("/{commentId}")
     @Operation(summary = "댓글 삭제", description = "[댓글 작성자/게시글 작성자] 댓글 삭제")
     public ResponseEntity<ApiResponse> deleteComment(@PathVariable(name = "commentId") final Long commentId) {
         commentService.delete(commentId);
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "댓글 삭제 완료"));
     }
-
 }
