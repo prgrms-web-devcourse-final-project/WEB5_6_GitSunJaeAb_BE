@@ -124,8 +124,9 @@ public class JwtProvider {
         try{
             Jwts.parser().verifyWith(getSecretKey()).build().parse(requestAccessToken);
             return true;
-        }catch(SecurityException | MalformedJwtException | UnsupportedJwtException | IllegalArgumentException e){
-            log.error(e.getMessage(), e);
+        }catch(SecurityException | MalformedJwtException | UnsupportedJwtException | IllegalArgumentException | ExpiredJwtException e){
+            System.out.println("❌ JWT 유효성 검사 실패: " + e.getClass().getSimpleName() + " - " + e.getMessage());
+            e.printStackTrace();
         }
         return false;
     }

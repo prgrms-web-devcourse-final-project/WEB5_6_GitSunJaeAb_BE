@@ -86,10 +86,6 @@ public class Roadmap {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "original_roadmap_id")
-    private Roadmap originalRoadmap;
-
     @OneToMany(mappedBy = "roadmap")
     private Set<RoadmapEditor> roadmapEditors = new HashSet<>();
 

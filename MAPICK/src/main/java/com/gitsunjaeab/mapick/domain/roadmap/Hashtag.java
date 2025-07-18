@@ -12,6 +12,8 @@ import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 
@@ -19,6 +21,7 @@ import lombok.Setter;
 @Table(name = "Hashtags")
 @Getter
 @Setter
+@NoArgsConstructor
 public class Hashtag {
 
     @Id
@@ -35,13 +38,18 @@ public class Hashtag {
     )
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
 
     @Column(nullable = false)
     private OffsetDateTime createdAt = OffsetDateTime.now();
 
     @OneToMany(mappedBy = "hashtag")
-    private Set<RoadmapHashtagRelation> RoadmapHashtags = new HashSet<>();
+    private Set<RoadmapHashtagRelation> roadmapHashtags = new HashSet<>();
+
+    public Hashtag(String name) {
+        this.name = name;
+        this.createdAt = OffsetDateTime.now();
+    }
 
 }

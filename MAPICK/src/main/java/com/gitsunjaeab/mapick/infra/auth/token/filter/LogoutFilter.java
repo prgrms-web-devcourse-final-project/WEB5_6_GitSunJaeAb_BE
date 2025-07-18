@@ -63,6 +63,7 @@ public class LogoutFilter extends OncePerRequestFilter {
             ObjectMapper objectMapper = new ObjectMapper(); // todo 매번 생성 시키는 거보다 주이 받아서 사용 하는 것이 좋을 듯 하다.
             objectMapper.registerModule(new JavaTimeModule()); // todo "이거 추가해야 500에러 안뜸", 안뜨는 이유 다시 봐야함, 구글 tasks 앱에 적어두고 공부 필요
 
+//          objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
             ApiResponse responseBody = ApiResponse.of(ResponseCode.LOGOUT_SUCCESS);
             String json = objectMapper.writeValueAsString(responseBody); // todo 예외 발생 가능성 있음, 여기서 전파되면 어떻게 될 지, 테스트 필요 , 직렬화 필요한 함수는 트라이-캐치 거는것이 좋다.
             response.getWriter().write(json);
