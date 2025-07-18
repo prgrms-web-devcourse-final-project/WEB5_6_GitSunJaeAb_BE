@@ -5,14 +5,16 @@ import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapSimpleDTO;
 import com.gitsunjaeab.mapick.domain.roadmap.Layer;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
+import lombok.Setter;
 
 @Getter
+@Setter
 @AllArgsConstructor
-public class LayerDTO {
-
+public class LayerZzimDTO {
+    
     private Long id;
     private String name;
     private String description;
@@ -21,10 +23,11 @@ public class LayerDTO {
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
     private OffsetDateTime deletedAt;
-    private MemberSimpleDTO member; // 레이어 작성자 정보
-    private RoadmapSimpleDTO roadmap; // RoadmapDTO -> RoadmapSimpleDTO
+    private MemberSimpleDTO member; // 레이어 작성자
+    private RoadmapSimpleDTO roadmap; // 레이어가 속한 로드맵
+    private List<LayerForkHistoryDTO> forkHistories; // 내 로드맵 적용이력
 
-    public LayerDTO(Layer layer) {
+    public LayerZzimDTO(Layer layer) {
         this.id = layer.getId();
         this.name = layer.getName();
         this.description = layer.getDescription();
@@ -33,7 +36,8 @@ public class LayerDTO {
         this.createdAt = layer.getCreatedAt();
         this.updatedAt = layer.getUpdatedAt();
         this.deletedAt = layer.getDeletedAt();
-        this.member = layer.getMember() != null ? new MemberSimpleDTO(layer.getMember()) : null; // 레이어 작성자 정보 설정
-        this.roadmap = new RoadmapSimpleDTO(layer.getRoadmap()); // RoadmapDTO -> RoadmapSimpleDTO
+        this.member = layer.getMember() != null ? new MemberSimpleDTO(layer.getMember()) : null;
+        this.roadmap = new RoadmapSimpleDTO(layer.getRoadmap());
+        // forkHistories는 별도로 설정
     }
-}
+} 

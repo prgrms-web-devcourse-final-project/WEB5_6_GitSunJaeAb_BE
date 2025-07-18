@@ -17,7 +17,6 @@ public class LayerResponse implements BaseApiResponse {
     private String message;
     private LocalDateTime timestamp;
     private LayerDetailDTO layer;
-    private boolean isZzim;
 
 
     public static LayerResponse of(Layer layer, boolean isZzim) {
@@ -25,8 +24,7 @@ public class LayerResponse implements BaseApiResponse {
             ResponseCode.OK.getCode(),
             "레이어 조회 성공",
             LocalDateTime.now(),
-            LayerDetailDTO.from(layer, isZzim),
-            isZzim
+            LayerDetailDTO.from(layer, isZzim)
         );
     }
 }

@@ -75,6 +75,19 @@ public class Layer {
     @Column(name = "deleted_at")
     private OffsetDateTime deletedAt;
 
+    @Column(name = "is_blocked")
+    private Boolean isBlocked = false; // 관리자 블록 여부
+
+    @Convert(converter = OffsetDateTimeConverter.class)
+    @Column(name = "blocked_at")
+    private OffsetDateTime blockedAt; // 블록 시간
+
+    @Column(name = "block_reason")
+    private String blockReason; // 블록 사유 (관리자용 메모)
+
+    @Column(name = "blocked_by")
+    private Long blockedBy; // 블록 처리한 관리자 ID
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;

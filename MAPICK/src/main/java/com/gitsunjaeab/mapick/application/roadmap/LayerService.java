@@ -1,13 +1,12 @@
 package com.gitsunjaeab.mapick.application.roadmap;
 
-import static com.gitsunjaeab.mapick.domain.roadmap.QLayer.layer;
-
 import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerListResponse;
 import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerRequest;
 import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerResponse;
 import com.gitsunjaeab.mapick.application.member.MemberService;
 import com.gitsunjaeab.mapick.common.response.ApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
+import com.gitsunjaeab.mapick.domain.auth.Role;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.Layer;
@@ -22,7 +21,6 @@ import com.gitsunjaeab.mapick.util.NotFoundException;
 import com.gitsunjaeab.mapick.util.ReferencedWarning;
 import jakarta.persistence.EntityNotFoundException;
 import java.nio.file.AccessDeniedException;
-import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
@@ -71,13 +69,23 @@ public class LayerService {
 
     // 레이어 상세 조회 (삭제되지 않은 것만 조회)
     @Transactional(readOnly = true)
-    public LayerResponse getLayerDetail(final Long id, boolean isZzim) {
-        Layer layer = layerRepository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("해당 레이어가 존재하지 않습니다. id=" + id));
+    public LayerResponse getLayerDetail(final Long layerId, final Long memberId) {
+        Layer layer = layerRepository.findById(layerId)
+            .orElseThrow(() -> new EntityNotFoundException("해당 레이어가 존재하지 않습니다. id=" + layerId));
 
         // 삭제된 레이어는 조회 불가
         if (layer.getDeletedAt() != null) {
-            throw new EntityNotFoundException("삭제된 레이어입니다. id=" + id);
+            throw new EntityNotFoundException("삭제된 레이어입니다. id=" + layerId);
+        }
+
+        // 현재 로그인한 사용자가 이 레이어를 찜했는지 확인
+        boolean isZzim = false;
+        if (memberId != null) {
+            Member member = memberRepository.findById(memberId)
+                .orElse(null);
+            if (member != null) {
+                isZzim = layerLibraryRepository.existsByMemberAndLayer(member, layer);
+            }
         }
 
         return LayerResponse.of(layer, isZzim);
@@ -134,57 +142,64 @@ public class LayerService {
                 .body(ApiResponse.of(ResponseCode.NOT_FOUND, "레이어가 존재하지 않습니다."));
         }
 
-
         Layer layer = optionalLayer.get();
 
-        // 소유자 검증
+        // 소유자 검증 및 관리자 권한 체크
         if (!layer.getMember().getId().equals(memberId)) {
+            // 관리자 권한 확인
+            if (isAdmin(memberId)) {
+                return blockLayer(layer, memberId, "부적절한 콘텐츠로 인한 관리자 블록 처리");
+            }
+            
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body (ApiResponse.of(ResponseCode.FORBIDDEN, "본인만 삭제 가능합니다."));
+                .body(ApiResponse.of(ResponseCode.FORBIDDEN, "본인만 삭제 가능합니다."));
         }
 
-        // 참조 무결성 검사 (마커/찜 에서 사용중인지 확인)
-        log.info("[DEBUG] getReferencedWarning 시작 - 레이어 ID: {}", layer.getId());
+        // 참조 무결성 검사
         ReferencedWarning warning = getReferencedWarning(layer.getId());
-        log.info("[DEBUG] getReferencedWarning 결과: {}", warning != null ? warning.getKey() : "null");
-
         if (warning != null) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(ApiResponse.of(ResponseCode.CONFLICT,
-                    "해당 레이어는 다른 객체에서 참조중입니다: " + warning.getKey()));
+                .body(ApiResponse.of(ResponseCode.CONFLICT, "해당 레이어는 다른 객체에서 참조중입니다"));
         }
 
-        // 🔍 [디버깅] 찜 여부 확인
-        List<LayerLibrary> libs = layerLibraryRepository.findAll();
-        libs.forEach(lib -> {
-            if (lib.getLayer() != null) {
-                log.info("[DEBUG] 찜된 layerId = {}", lib.getLayer().getId());
-            } else {
-                log.warn("[DEBUG] LayerLibrary 객체에 layer가 null입니다. libId = {}", lib.getId());
-            }
-        });
+        // 일반 사용자 삭제 처리
+        // 1. 찜한 기록 soft delete
+        layerLibraryRepository.softDeleteAllByLayer(layer.getId());
 
-        // 삭제 처리 (서버 시간으로 soft delete)
-        OffsetDateTime now = OffsetDateTime.now();
-        layer.setDeletedAt(now);
-
-        log.info(">>> 레이어 삭제 저장 직전 ID: {}, 삭제 시간: {}", layer.getId(), now);
-
-        // 찜한 기록 soft delete 추가
-        int deletedZzim = layerLibraryRepository.softDeleteAllByLayer(layer.getId());
-        log.info("찜 기록 soft delete 된 수: {}", deletedZzim);
-
-        // 레이어 소프트 딜리트
+        // 2. 레이어 소프트 딜리트
+        layer.setDeletedAt(java.time.OffsetDateTime.now());
         layerRepository.save(layer);
-        layerRepository.flush(); // 강제로 DB 반영
-        layerLibraryRepository.flush();
-
-        Layer check = layerRepository.findById(layer.getId()).orElseThrow();
-        log.info("✅ 저장 후 deletedAt 확인: {}", check.getDeletedAt());
+        layerRepository.flush();
 
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "레이어 삭제 완료"));
     }
 
+    // 관리자 블록 처리
+    @Transactional
+    public ResponseEntity<ApiResponse> blockLayer(Layer layer, Long adminId, String reason) {
+        // 블록 처리
+        layer.setIsBlocked(true);
+        layer.setBlockedAt(java.time.OffsetDateTime.now());
+        layer.setBlockReason(reason);
+        layer.setBlockedBy(adminId);
+        layerRepository.save(layer);
+
+        // TODO: 감사 로그 저장
+        // auditService.logAdminBlock(layer, adminId, reason);
+
+        // TODO: 사용자 알림 발송
+        // notificationService.sendBlockNotification(layer.getMember().getEmail(), 
+        //     "관리자가 비활성화한 콘텐츠입니다. 문의사항은 연락주시기 바랍니다.");
+
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "레이어가 블록 처리되었습니다."));
+    }
+
+    // 관리자 권한 확인
+    private boolean isAdmin(Long memberId) {
+        return memberRepository.findById(memberId)
+            .map(member -> Role.ROLE_ADMIN.name().equals(member.getRole()))
+            .orElse(false);
+    }
 
 
     // ===== 부가 기능 =====
@@ -207,16 +222,9 @@ public class LayerService {
         }
 
         // 해당 레이어를 찜한 기록이 하나라도 있는지 확인
-        log.info("[DEBUG] 찜 기록 검사 시작 - 레이어 ID: {}", layer.getId());
         final List<LayerLibrary> layerLibraries = layerLibraryRepository.findValidZzim(layer.getId());
-        log.info("[DEBUG] 찜 기록 검사 결과: 찜 기록 {}개 발견", layerLibraries.size());
-        
         if (!layerLibraries.isEmpty()) {
             LayerLibrary layerLibrary = layerLibraries.get(0);
-            log.info("[DEBUG] 찜 기록 상세: LibraryId={}, LayerId={}, MemberId={}, IsZzim={}", 
-                layerLibrary.getId(), layerLibrary.getLayer().getId(), 
-                layerLibrary.getMember().getId(), layerLibrary.isZzim());
-            
             referencedWarning.setKey("layer.layerLibrary.layer.referenced");
             referencedWarning.addParam(layerLibrary.getId());
             return referencedWarning;

@@ -10,6 +10,7 @@ import com.gitsunjaeab.mapick.application.roadmap.LayerService;
 import com.gitsunjaeab.mapick.common.response.ApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.auth.Principal;
+import com.gitsunjaeab.mapick.domain.member.Member;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -67,10 +68,12 @@ public class LayerController {
     @GetMapping("/{layerId}")
     @Operation(summary = "레이어 상세 조회", description = "[사용자용] 특정 레이어를 조회")
     public ResponseEntity<LayerResponse> getLayer(
-        @PathVariable(name = "layerId") final Long layerId, boolean isZzim
+        @PathVariable(name = "layerId") final Long layerId,
+        @AuthenticationPrincipal Principal principal
     ) {
-
-        return ResponseEntity.ok(layerService.getLayerDetail(layerId, isZzim));
+        // 현재 로그인한 사용자의 찜여부를 서버에서 자동 판단
+        Long memberId = principal != null ? principal.getMember().getId() : null;
+        return ResponseEntity.ok(layerService.getLayerDetail(layerId, memberId));
     }
 
     // 레이어 수정
@@ -99,9 +102,7 @@ public class LayerController {
         @AuthenticationPrincipal Principal principal
     ) throws AccessDeniedException {
         Long memberId = principal.getMember().getId();
-        layerService.delete(layerId, memberId);
-
-        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "레이어 삭제 완료"));
+        return layerService.delete(layerId, memberId); // LayerService의 응답을 직접 반환
     }
 
 
@@ -140,6 +141,20 @@ public class LayerController {
     ) {
         Long memberId = principal.getMember().getId();
         LayerZzimResponse response = layerLibraryService.removeLibrary(memberId, layerId);
+
+        return ResponseEntity.ok(response);
+    }
+
+    // 찜한 레이어를 내 로드맵에 포크
+    @PostMapping("/member/{layerId}/fork")
+    @Operation(summary = "찜한 레이어 포크", description = "[사용자용] 마이페이지 > 찜한 레이어를 내 로드맵에 포크")
+    public ResponseEntity<LayerZzimResponse> forkZzimedLayer(
+        @PathVariable(name = "layerId") final Long layerId,
+        @RequestParam Long targetRoadmapId,
+        @AuthenticationPrincipal Principal principal
+    ) {
+        Long memberId = principal.getMember().getId();
+        LayerZzimResponse response = layerLibraryService.forkLayer(memberId, layerId, targetRoadmapId);
 
         return ResponseEntity.ok(response);
     }
