@@ -1,9 +1,11 @@
-package com.gitsunjaeab.mapick.api.roadmap.dto;
+package com.gitsunjaeab.mapick.api.roadmap.dto.roadmap;
 
 import com.gitsunjaeab.mapick.api.category.dto.SimpleCategoryDTO;
 import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.hashtag.HashtagDTO;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapType;
+
+import java.time.OffsetDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,4 +28,5 @@ public class RoadmapListDTO {
     private Integer likeCount;
     private Integer viewCount;
     private Integer citationCount;
+    private OffsetDateTime createdAt;
 }

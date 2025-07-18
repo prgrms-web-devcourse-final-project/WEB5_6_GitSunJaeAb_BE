@@ -5,14 +5,14 @@ import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
-import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapEditorDTO;
+import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.RoadmapEditorDTO;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapEditor;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import java.util.List;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-
+// 공유지도
 @Service
 public class RoadmapEditorService {
 

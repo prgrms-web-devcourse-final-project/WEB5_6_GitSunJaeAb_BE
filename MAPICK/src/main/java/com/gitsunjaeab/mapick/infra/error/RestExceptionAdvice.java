@@ -3,6 +3,7 @@ package com.gitsunjaeab.mapick.infra.error;
 import com.gitsunjaeab.mapick.common.response.ApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
+import com.gitsunjaeab.mapick.infra.error.exceptions.UnauthenticatedException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -20,5 +21,12 @@ public class RestExceptionAdvice {
     public ApiResponse handleEtcException(Exception e) {
         e.printStackTrace(); // 디버깅용 로그
         return ApiResponse.of(ResponseCode.INTERNAL_ERROR);
+    }
+
+    @ExceptionHandler(UnauthenticatedException.class)
+    public ResponseEntity<ApiResponse> handleUnauthenticatedException(UnauthenticatedException e) {
+        return ResponseEntity
+                .status(e.getCode().getStatus())
+                .body(ApiResponse.of(e.getCode()));
     }
 }
