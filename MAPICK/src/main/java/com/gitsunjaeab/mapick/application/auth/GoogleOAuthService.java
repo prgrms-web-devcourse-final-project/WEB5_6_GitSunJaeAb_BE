@@ -1,40 +1,43 @@
 package com.gitsunjaeab.mapick.application.auth;
 
 import com.gitsunjaeab.mapick.api.auth.dto.SocialUserInfo;
-import java.util.Map;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.jackson2.JacksonFactory;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+
+import java.util.Collections;
 
 @Service
 @Slf4j
 public class GoogleOAuthService {
 
-    public SocialUserInfo getUserInfo(String accessToken) {
-        RestTemplate restTemplate = new RestTemplate();
+    public SocialUserInfo getUserInfo(String idTokenString) {
+        try {
+            GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
+                    new NetHttpTransport(),
+                    JacksonFactory.getDefaultInstance()
+            )
+                    .setAudience(Collections.singletonList("Google OAuth Client ID")) // aud 검증
+                    .build();
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(accessToken);
-        HttpEntity<Void> entity = new HttpEntity<>(headers);
+            GoogleIdToken idToken = verifier.verify(idTokenString);
+            if (idToken == null) {
+                throw new RuntimeException("ID Token 검증 실패: null");
+            }
 
-        ResponseEntity<Map> response = restTemplate.exchange(
-                "https://www.googleapis.com/oauth2/v3/userinfo",
-                HttpMethod.GET,
-                entity,
-                Map.class
-        );
+            GoogleIdToken.Payload payload = idToken.getPayload();
 
-        Map<String, Object> body = response.getBody();
-        log.info("Google 응답 정보: {}", body);
+            return new SocialUserInfo(
+                    (String) payload.get("name"),
+                    payload.getEmail(),
+                    (String) payload.get("picture")
+            );
 
-        return new SocialUserInfo(
-                (String) body.get("name"),
-                (String) body.get("email"),
-                (String) body.get("picture")
-        );
+        } catch (Exception e) {
+            throw new RuntimeException("Google ID Token 검증 중 오류 발생: " + e.getMessage(), e);
+        }
     }
 }

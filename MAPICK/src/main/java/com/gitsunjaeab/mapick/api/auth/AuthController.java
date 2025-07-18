@@ -56,7 +56,7 @@ public class AuthController {
                 dto.getRtExpiresIn()
         );
 
-//        response.addHeader("Set-Cookie", accessTokenCookie.toString());
+        response.addHeader("Set-Cookie", accessTokenCookie.toString());
         response.addHeader("Set-Cookie", refreshTokenCookie.toString());
 
 

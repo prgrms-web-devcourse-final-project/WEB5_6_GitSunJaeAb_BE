@@ -42,7 +42,7 @@ public class LogoutFilter extends OncePerRequestFilter {
 
         if(path.equals("/auth/logout")){
 
-            Claims claims  = jwtProvider.parseClaim(accessToken); // todo 관련 있는 코드 들이 근처에 있는 것이 좋다
+            Claims claims  = jwtProvider.parseClaim(accessToken); // 관련 있는 코드 들이 근처에 있는 것이 좋다
             refreshTokenService.deleteByAccessTokenId(claims.getId());
 
             ResponseCookie expiredAccessToken = TokenCookieFactory.createExpiredToken(TokenType.ACCESS_TOKEN);
