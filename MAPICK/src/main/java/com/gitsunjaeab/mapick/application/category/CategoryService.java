@@ -3,11 +3,11 @@ package com.gitsunjaeab.mapick.application.category;
 import com.gitsunjaeab.mapick.api.category.dto.CategoryRequest;
 import com.gitsunjaeab.mapick.domain.category.Category;
 import com.gitsunjaeab.mapick.domain.category.CategoryRepository;
-import com.gitsunjaeab.mapick.domain.member.MemberInterestRepository;
-import com.gitsunjaeab.mapick.infra.storage.FileStorageService;
+import com.gitsunjaeab.mapick.infra.storage.SupabaseStorageService;
 import jakarta.persistence.EntityNotFoundException;
 import java.time.OffsetDateTime;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,19 +16,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
-    private final MemberInterestRepository memberInterestRepository;
-    private final FileStorageService fileStorageService;
-
-    public CategoryService(final CategoryRepository categoryRepository,
-        final MemberInterestRepository memberInterestRepository,
-        FileStorageService fileStorageService) {
-        this.categoryRepository = categoryRepository;
-        this.memberInterestRepository = memberInterestRepository;
-        this.fileStorageService = fileStorageService;
-    }
+//    private final FileStorageService fileStorageService;
+    private final SupabaseStorageService supabaseStorageService;
 
     // 전체 카테고리 조회
     public List<Category> findAll() {
@@ -43,24 +36,21 @@ public class CategoryService {
 
 
     // 카테고리 생성
-    public Category create(final CategoryRequest request, final MultipartFile imageFile) {
-        final Category category = new Category();
-        roadmapToEntity(request, category);
+    public void create(CategoryRequest request, MultipartFile imageFile) {
+        Category category = new Category();
+        category.setName(request.getName());
+        category.setDescription(request.getDescription());
         category.setCreatedAt(OffsetDateTime.now());
 
-        // 파일 업로드 처리
+        System.out.println("imageFile = " + imageFile);
+
         if (imageFile != null && !imageFile.isEmpty()) {
-            try {
-                String imageUrl = fileStorageService.upload(imageFile);
-                category.setCategoryImage(imageUrl);
-            } catch (Exception e) {
-                throw new RuntimeException("파일 업로드 실패: " + e.getMessage());
-            }
+            String imageUrl = supabaseStorageService.upload(imageFile);
+            System.out.println("업로드 후 URL = " + imageUrl);
+            category.setCategoryImage(imageUrl); // DB에 퍼블릭 URL 저장
         }
-
-        return categoryRepository.save(category);
+        categoryRepository.save(category);
     }
-
 
     // 카테고리 수정
     @Transactional
@@ -69,26 +59,28 @@ public class CategoryService {
             .orElseThrow(() -> new EntityNotFoundException("해당 카테고리를 찾을 수 없습니다. id=" + id));
         roadmapToEntity(request, category);
 
-        // 파일 업로드 처리
-        if (imageFile != null && !imageFile.isEmpty()) {
-            try {
-                // 기존 파일 삭제
-                if (category.getCategoryImage() != null) {
-                    fileStorageService.delete(category.getCategoryImage());
-                }
-                // 새 파일 업로드
-                String imageUrl = fileStorageService.upload(imageFile);
-                category.setCategoryImage(imageUrl);
-            } catch (Exception e) {
-                throw new RuntimeException("파일 업로드 실패: " + e.getMessage());
-            }
-        }
+//        // 파일 업로드 처리
+//        if (imageFile != null && !imageFile.isEmpty()) {
+//            try {
+//                // 기존 파일 삭제
+//                if (category.getCategoryImage() != null) {
+//                    fileStorageService.delete(category.getCategoryImage());
+//                }
+//                // 새 파일 업로드
+//                String imageUrl = fileStorageService.upload(imageFile);
+//                category.setCategoryImage(imageUrl);
+//            } catch (Exception e) {
+//                throw new RuntimeException("파일 업로드 실패: " + e.getMessage());
+//            }
+//        }
 
         return categoryRepository.save(category);
     }
 
-    // 카테고리 삭제는 구현하지않음 (카테고리 삭제 시 연관된 로드맵 처리 문제 발생)
-
+    @Transactional
+    public void delete(final Long id){
+        categoryRepository.deleteById(id);
+    }
 
     private Category roadmapToEntity(final CategoryRequest request, final Category category) {
         // null이 아닌 경우에만 업데이트 (부분 업데이트 지원)
@@ -100,18 +92,4 @@ public class CategoryService {
         }
         return category;
     }
-
-//    public ReferencedWarning getReferencedWarning(final Long id) {
-//        final ReferencedWarning referencedWarning = new ReferencedWarning();
-//        final Category category = categoryRepository.findById(id)
-//                .orElseThrow(NotFoundException::new);
-//        final MemberInterest interestMemberInterest = memberInterestRepository.findFirstByCategory(category);
-//        if (interestMemberInterest != null) {
-//            referencedWarning.setKey("category.memberInterest.interest.referenced");
-//            referencedWarning.addParam(interestMemberInterest.getId());
-//            return referencedWarning;
-//        }
-//        return null;
-//    }
-
 }
