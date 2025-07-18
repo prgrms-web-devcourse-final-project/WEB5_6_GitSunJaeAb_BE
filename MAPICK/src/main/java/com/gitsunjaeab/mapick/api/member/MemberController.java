@@ -67,7 +67,7 @@ public class MemberController {
     // 특정 회원 상세 조회 (관리자) -> 완성(예외처리 필요)
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("{memberId}")
-    @Operation(summary = "특정 회원 조회 ", description = " 특정 회원 정보 조회")
+    @Operation(summary = "특정 회원 조회(괸라자) ", description = " 특정 회원 정보 조회")
     public ResponseEntity<MemberResponse> getMember(@PathVariable(name = "memberId") final Long memberId) {
 
         MemberResponse response = memberService.getMember(memberId);
@@ -126,7 +126,7 @@ public class MemberController {
 
     // 본인 회원 정보 조회 (프로필) -> 완성(예외처리 필요)
     @GetMapping
-    @Operation(summary = "회원 프로필 조회", description = "[사용자 전용] 본인만 접근 가능한 프로필 조회" )
+    @Operation(summary = "회원 정보 조회", description = "[사용자 전용] 본인만 접근 가능한 프로필 조회" )
     public ResponseEntity<MemberProfileResponse> getMemberProfile() {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -139,7 +139,7 @@ public class MemberController {
 
     // 회원 정보 수정 (프로필) -> 완성(예외처리 필요)
     @PutMapping
-    @Operation(summary = "회원 정보 수정", description = "사용자 회원 정보 수정")
+    @Operation(summary = "회원 정보 수정(프로필)", description = "사용자 회원 정보 수정")
     public ResponseEntity<ApiResponse> updateMember(@RequestBody @Valid final MemberProfileUpdateRequest MemberProfileUpdateRequest) {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -193,7 +193,7 @@ public class MemberController {
 
     // ===== 회원 비밀번호 관리 API =====
 
-    // 마이페이지 - 비밀번호 확인 (본인만)
+    // 마이페이지 - 비밀번호 확인 (본인만) -> 완성(예외처리 필요)
     @PostMapping("/password/verify")
     @Operation(summary = "비밀번호 확인", description = "[사용자 전용] 본인만 접근 가능한 비밀번호 확인")
     public ResponseEntity<ApiResponse> verifyPassword(@Valid @RequestBody PasswordRequest passwordRequest) {

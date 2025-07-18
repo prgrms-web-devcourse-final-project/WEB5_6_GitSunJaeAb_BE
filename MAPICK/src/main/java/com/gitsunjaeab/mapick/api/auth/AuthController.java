@@ -11,12 +11,16 @@ import com.gitsunjaeab.mapick.application.auth.AuthService;
 import com.gitsunjaeab.mapick.application.member.MemberService;
 import com.gitsunjaeab.mapick.common.response.ApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
+import com.gitsunjaeab.mapick.domain.auth.RefreshTokenRepository;
 import com.gitsunjaeab.mapick.domain.auth.TokenDTO;
+import com.gitsunjaeab.mapick.infra.auth.token.JwtProvider;
 import com.gitsunjaeab.mapick.infra.auth.token.TokenCookieFactory;
 import com.gitsunjaeab.mapick.infra.auth.token.code.GrantType;
 import com.gitsunjaeab.mapick.infra.auth.token.code.TokenType;
+import io.jsonwebtoken.Claims;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +41,8 @@ public class AuthController {
 
     private final AuthService authService;
     private final MemberService memberService;
+    private final JwtProvider jwtProvider;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     // 소셜 로그인
     @PostMapping("/socialLogin")
@@ -119,6 +125,33 @@ public class AuthController {
 
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.SIGNUP_SUCCESS));
 
+    }
+
+    // 로그아웃
+    @PostMapping("/logout")
+    @Operation(summary = "로그 아웃")
+    public ResponseEntity<ApiResponse> logout(HttpServletRequest request, HttpServletResponse response) {
+
+        String accessToken = jwtProvider.resolveToken(request, TokenType.ACCESS_TOKEN);
+        Claims claims = jwtProvider.parseClaim(accessToken);
+        String jti = claims.getId();
+
+        refreshTokenRepository.deleteByAccessTokenId(jti);
+
+        // 쿠키 굽기
+        ResponseCookie expiredAccessToken = TokenCookieFactory.createExpiredToken(TokenType.ACCESS_TOKEN);
+        ResponseCookie expiredRefreshToken = TokenCookieFactory.createExpiredToken(TokenType.REFRESH_TOKEN);
+        ResponseCookie expiredSessionId = TokenCookieFactory.createExpiredToken(TokenType.AUTH_SERVER_SESSION_ID);
+
+
+        // 응답 헤더에 추가
+        response.addHeader("Set-Cookie", expiredAccessToken.toString());
+        response.addHeader("Set-Cookie", expiredRefreshToken.toString());
+        response.addHeader("Set-Cookie", expiredSessionId.toString());
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.of(ResponseCode.LOGOUT_SUCCESS));
     }
 
 

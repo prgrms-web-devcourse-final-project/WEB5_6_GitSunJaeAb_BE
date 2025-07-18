@@ -58,3 +58,4 @@ springdoc:
 
 file:
   upload-dir: ${user.dir}/uploads
+
