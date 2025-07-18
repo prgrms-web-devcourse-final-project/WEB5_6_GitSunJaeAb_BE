@@ -36,7 +36,6 @@ public class CommentService {
         return commentRepository.save(comment).getId();
     }
 
-    @Transactional
     public CommentListResponse findAllCommentsInRoadmaps(Long roadmapId) {
         roadmapRepository.findById(roadmapId)
             .orElseThrow(() -> new NotFoundException("해당 로드맵이 존재하지 않습니다."));
@@ -45,7 +44,6 @@ public class CommentService {
         return CommentListResponse.of(comments);
     }
 
-    @Transactional
     public CommentListResponse findAllCommentsInQuest(Long questId) {
         questRepository.findById(questId)
             .orElseThrow(() -> new NotFoundException("해당 퀘스트가 존재하지 않습니다."));

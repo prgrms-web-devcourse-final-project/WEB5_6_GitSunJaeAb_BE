@@ -1,6 +1,6 @@
 package com.gitsunjaeab.mapick.api.roadmap.dto;
 
-import com.gitsunjaeab.mapick.api.category.dto.SimpleCategoryDTO;
+import com.gitsunjaeab.mapick.api.category.dto.CategorySimpleDTO;
 import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.hashtag.HashtagDTO;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapType;
@@ -15,7 +15,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public class RoadmapListDTO {
     private Long id;
-    private SimpleCategoryDTO category;
+    private CategorySimpleDTO category;
     private MemberSimpleDTO member;
     private String title;
     private String description;
