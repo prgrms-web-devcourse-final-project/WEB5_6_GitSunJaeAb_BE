@@ -20,11 +20,11 @@ public class CommentListResponse implements BaseApiResponse {
     private String code;
     private String message;
     private LocalDateTime timestamp;
-    private List<CommentResponse> comments;
+    private List<CommentDTO> comments;
 
     public static CommentListResponse of(List<Comment> commentEntities) {
-        List<CommentResponse> commentLists = commentEntities.stream()
-            .map(c -> new CommentResponse(
+        List<CommentDTO> commentLists = commentEntities.stream()
+            .map(c -> new CommentDTO(
                 c.getId(),
                 new MemberSimpleDTO(c.getMember()),
                 c.getContent(),
