@@ -99,7 +99,7 @@ public class RoadmapController {
 
     // 개인 로드맵 생성 NOTE 완
     @PostMapping("/personal")
-    @Operation(summary = "로드맵 생성", description = "[사용자용] 레이어, 마커 제외 지도 관련 속성만 저장")
+    @Operation(summary = "로드맵 생성", description = "[사용자용] 레이어, 마커 제외 지도 관련 속성만 저장 + 해시태그 생성 ")
     public ResponseEntity<ApiResponse> createRoadmap(
             @RequestBody @Valid final RoadmapRequest request,
             @AuthenticationPrincipal final Principal principal

@@ -5,6 +5,7 @@ import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapListResponse;
 import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapRequest;
 import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapResponse;
+import com.gitsunjaeab.mapick.api.roadmap.dto.hashtag.HashtagRequest;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.category.Category;
 import com.gitsunjaeab.mapick.domain.category.CategoryRepository;
@@ -12,29 +13,20 @@ import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
 import com.gitsunjaeab.mapick.domain.report.Report;
 import com.gitsunjaeab.mapick.domain.report.ReportRepository;
-import com.gitsunjaeab.mapick.domain.roadmap.Bookmark;
-import com.gitsunjaeab.mapick.domain.roadmap.BookmarkRepository;
+import com.gitsunjaeab.mapick.domain.roadmap.*;
 import com.gitsunjaeab.mapick.domain.comment.Comment;
 import com.gitsunjaeab.mapick.domain.comment.CommentRepository;
-import com.gitsunjaeab.mapick.domain.roadmap.Layer;
-import com.gitsunjaeab.mapick.domain.roadmap.LayerLibraryRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.LayerLibraryRepository.RoadmapCitationProjection;
-import com.gitsunjaeab.mapick.domain.roadmap.LayerRepository;
-import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
-import com.gitsunjaeab.mapick.domain.roadmap.RoadmapEditor;
-import com.gitsunjaeab.mapick.domain.roadmap.RoadmapEditorRepository;
-import com.gitsunjaeab.mapick.domain.roadmap.RoadmapHashtagRelation;
-import com.gitsunjaeab.mapick.domain.roadmap.RoadmapHashtagRelationRepository;
-import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
-import com.gitsunjaeab.mapick.domain.roadmap.RoadmapType;
 import com.gitsunjaeab.mapick.infra.error.exceptions.UnauthenticatedException;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import com.gitsunjaeab.mapick.util.ReferencedWarning;
 import jakarta.persistence.EntityNotFoundException;
 
 import java.time.OffsetDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import jakarta.validation.Valid;
@@ -62,6 +54,8 @@ public class RoadmapService {
     @Autowired
     private LayerLibraryRepository layerLibraryRepository;
     private final CategoryRepository categoryRepository;
+    private final HashtagService hashtagService;
+    private final HashtagRepository hashtagRepository;
 
     // 개인 로드맵 생성
     @Transactional
@@ -86,6 +80,24 @@ public class RoadmapService {
         roadmap.setCreatedAt(OffsetDateTime.now());
 
         roadmapRepository.save(roadmap);
+
+        List<HashtagRequest> hashtagDto = request.getHashtags();
+        if (hashtagDto != null && !hashtagDto.isEmpty()) {
+            Set<Long> seen = new HashSet<>();
+            List<Hashtag> hashtags = hashtagService.findOrCreateHashtags(hashtagDto);
+
+            for (Hashtag tag : hashtags) {
+                if (!seen.add(tag.getId())) continue;
+                RoadmapHashtagRelation relation = new RoadmapHashtagRelation();
+                relation.setRoadmap(roadmap);
+                relation.setHashtag(tag);
+
+                roadmap.getRoadmapMapHashtags().add(relation);
+                tag.getRoadmapHashtags().add(relation);
+            }
+
+            roadmapHashtagRelationRepository.saveAll(roadmap.getRoadmapMapHashtags());
+        }
     }
 
     // 개인 로드맵 수정
@@ -107,12 +119,29 @@ public class RoadmapService {
         roadmap.setThumbnail(request.getThumbnail());
         roadmap.setIsPublic(request.getIsPublic());
         roadmap.setCategory(category);
+
+        // 해시태그 수정: null이 아닐 때만 처리
+        if (request.getHashtags() != null) {
+            // 기존 연결 삭제
+            roadmapHashtagRelationRepository.deleteByRoadmap(roadmap);
+
+            // 새 해시태그 연결 (비어있으면 아무것도 연결하지 않음)
+            List<RoadmapHashtagRelation> newRelations = request.getHashtags().stream()
+                    .map(dto -> {
+                        Hashtag hashtag = hashtagRepository.findByName(dto.getName())
+                                .orElseGet(() -> hashtagRepository.save(new Hashtag(dto.getName())));
+                        return new RoadmapHashtagRelation(roadmap, hashtag);
+                    })
+                    .collect(Collectors.toList());
+
+            roadmapHashtagRelationRepository.saveAll(newRelations);
+        }
     }
 
     // 로드맵 삭제
     @Transactional
     public void delete(Long roadmapId, Member member) {
-        Roadmap roadmap = (Roadmap) roadmapRepository.findByIdAndDeletedAtIsNull(roadmapId)
+        Roadmap roadmap = roadmapRepository.findByIdAndDeletedAtIsNull(roadmapId)
                 .orElseThrow(() -> new UnauthenticatedException(ResponseCode.NOT_FOUND));
 
         boolean isOwner = roadmap.getMember().getId().equals(member.getId());
@@ -123,6 +152,8 @@ public class RoadmapService {
         if (!(isOwner || (isAdmin && isReported))) {
             throw new AccessDeniedException("삭제 권한이 없습니다.");
         }
+
+        roadmapHashtagRelationRepository.deleteByRoadmap(roadmap);
 
         roadmap.setDeletedAt(OffsetDateTime.now());
     }
@@ -294,12 +325,13 @@ public class RoadmapService {
             referencedWarning.addParam(mapBookmark.getId());
             return referencedWarning;
         }
-        final RoadmapHashtagRelation mapRoadmapHashtagRelation = roadmapHashtagRelationRepository.findFirstByRoadmap(roadmap);
-        if (mapRoadmapHashtagRelation != null) {
-            referencedWarning.setKey("roadmap.mapHashtagRelation.roadmap.referenced");
-            referencedWarning.addParam(mapRoadmapHashtagRelation.getId());
-            return referencedWarning;
-        }
+        // roadMap 삭제 기능 시 roadmap 과 hashtag 사이의 중간 테이블 칼럼 삭제
+//        final RoadmapHashtagRelation mapRoadmapHashtagRelation = roadmapHashtagRelationRepository.findFirstByRoadmap(roadmap);
+//        if (mapRoadmapHashtagRelation != null) {
+//            referencedWarning.setKey("roadmap.mapHashtagRelation.roadmap.referenced");
+//            referencedWarning.addParam(mapRoadmapHashtagRelation.getId());
+//            return referencedWarning;
+//        }
         final Report mapReport = reportRepository.findFirstByRoadmap(roadmap);
         if (mapReport != null) {
             referencedWarning.setKey("roadmap.report.roadmap.referenced");

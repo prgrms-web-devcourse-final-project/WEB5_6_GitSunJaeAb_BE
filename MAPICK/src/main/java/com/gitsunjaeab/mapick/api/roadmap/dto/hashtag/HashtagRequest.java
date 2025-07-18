@@ -9,8 +9,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class HashtagRequest {
-
-    @NotNull
     @Size(max = 255)
     private String name;
 

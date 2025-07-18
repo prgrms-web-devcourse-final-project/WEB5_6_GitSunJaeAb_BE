@@ -23,6 +23,6 @@ public interface RoadmapRepository extends JpaRepository<Roadmap, Long> {
 
     List<Roadmap> findAllByMember_Id(Long memberId);
 
-    Optional<Object> findByIdAndDeletedAtIsNull(Long roadmapId);
+    Optional<Roadmap> findByIdAndDeletedAtIsNull(Long roadmapId);
     List<Roadmap> findAllByMemberAndDeletedAtIsNull(Member member);
 }

@@ -1,6 +1,7 @@
 package com.gitsunjaeab.mapick.infra.auth.token.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.gitsunjaeab.mapick.application.auth.RefreshTokenService;
 import com.gitsunjaeab.mapick.common.response.ApiResponse;
@@ -56,6 +57,7 @@ public class LogoutFilter extends OncePerRequestFilter {
 
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.registerModule(new JavaTimeModule());
+//            objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
             ApiResponse responseBody = ApiResponse.of(ResponseCode.LOGOUT_SUCCESS);
             String json = objectMapper.writeValueAsString(responseBody);
             response.getWriter().write(json);
