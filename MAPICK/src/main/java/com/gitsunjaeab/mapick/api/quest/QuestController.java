@@ -10,6 +10,7 @@ import com.gitsunjaeab.mapick.application.quest.MemberQuestService;
 import com.gitsunjaeab.mapick.application.quest.QuestRankService;
 import com.gitsunjaeab.mapick.application.quest.QuestService;
 import com.gitsunjaeab.mapick.application.quest.MemberQuestEvidenceService;
+import com.gitsunjaeab.mapick.domain.auth.Principal;
 import com.gitsunjaeab.mapick.util.ReferencedException;
 import com.gitsunjaeab.mapick.util.ReferencedWarning;
 import com.gitsunjaeab.mapick.common.response.ApiResponse;
@@ -25,6 +26,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -61,7 +63,15 @@ public class QuestController {
     // 퀘스트 생성 (출제자용)
     @PostMapping
     @Operation(summary = "퀘스트 생성", description = "[출제자용] 새로운 퀘스트를 생성합니다. 본인만 접근 가능합니다.")
-    public ResponseEntity<ApiResponse> createQuest(@RequestBody @Valid final QuestRequest questRequest) {
+    public ResponseEntity<ApiResponse> createQuest(
+        @RequestBody @Valid final QuestRequest questRequest,
+        @AuthenticationPrincipal Principal principal) {
+
+        if (principal == null){
+            throw new IllegalStateException("인증된 유저 정보 없음");
+        }
+
+        Long memberId = principal.getMember().getId();
         Long questId = questService.create(questRequest);
         QuestResponse createdQuest = questService.get(questId);
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "퀘스트 생성 완료"));
