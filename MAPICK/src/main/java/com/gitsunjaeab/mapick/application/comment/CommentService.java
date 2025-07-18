@@ -1,7 +1,9 @@
 package com.gitsunjaeab.mapick.application.comment;
 
+import com.gitsunjaeab.mapick.api.comment.dto.CommentDTO;
 import com.gitsunjaeab.mapick.api.comment.dto.CommentListResponse;
 import com.gitsunjaeab.mapick.api.comment.dto.CommentRequest;
+import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
 import com.gitsunjaeab.mapick.domain.comment.Comment;
 import com.gitsunjaeab.mapick.domain.comment.CommentRepository;
 import com.gitsunjaeab.mapick.domain.member.Member;
@@ -55,10 +57,26 @@ public class CommentService {
     }
 
     @Transactional
+    public CommentDTO getComment(final Long id){
+        Comment comment = commentRepository.findById(id)
+            .orElseThrow(() -> new NotFoundException("해당 댓글이 존재하지 않습니다."));
+
+        return new CommentDTO(
+            comment.getId(),
+            new MemberSimpleDTO(comment.getMember()),
+            comment.getContent(),
+            comment.getCreatedAt(),
+            comment.getRoadmap() == null ?  null : comment.getRoadmap().getId(),
+            comment.getQuest() == null ? null : comment.getQuest().getId()
+        );
+    }
+
+    @Transactional
     public void update(Long commentId, @Valid CommentRequest request) {
         final Comment comment = commentRepository.findById(commentId)
             .orElseThrow(() -> new NotFoundException("존재하지 않는 댓글 ID 입니다."));
         comment.setContent(request.getContent());
+        comment.setUpdatedAt(OffsetDateTime.now());
 
         commentRepository.save(comment);
     }
