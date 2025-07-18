@@ -4,12 +4,9 @@ import com.gitsunjaeab.mapick.api.auth.dto.SocialUserInfo;
 import com.gitsunjaeab.mapick.api.auth.dto.request.SignupRequest;
 import com.gitsunjaeab.mapick.api.member.dto.*;
 import com.gitsunjaeab.mapick.api.member.dto.request.MemberProfileUpdateRequest;
-import com.gitsunjaeab.mapick.api.member.dto.response.MemberListResponse;
-import com.gitsunjaeab.mapick.api.member.dto.response.MemberResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.auth.LoginType;
 import com.gitsunjaeab.mapick.domain.auth.Role;
-import com.gitsunjaeab.mapick.domain.category.CategoryRepository;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.member.MemberInterest;
 import com.gitsunjaeab.mapick.domain.member.MemberInterestRepository;
@@ -34,7 +31,6 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
-    private final CategoryRepository categoryRepository;
     private final MemberInterestRepository memberInterestRepository;
 
     // 소셜 로그인 시 임시 닉네임 부여
@@ -112,7 +108,7 @@ public class MemberService {
         }
     }
 
-    // 멤버 리스트 조회
+    // 멤버 리스트 조회 // todo DTO 내부로 정적 메서드로 넣기
     public List<MemberListDTO> findAll() {
 
         final List<Member> members = memberRepository.findAll(Sort.by("id"));
@@ -132,25 +128,42 @@ public class MemberService {
         return memberListDTOs;
     }
 
-    // 멤버 상세 조회(상세 버전) - 관리자
-    public MemberResponse getMember(final Long memberId) {
+    // 멤버 상세 조회(상세 버전) - 관리자 // todo DTO 내부로 정적 메서드로 넣기
+    public MemberDTO getMember(final Long memberId) {
 
         final Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CommonException(ResponseCode.MEMBER_NOT_FOUND));
 
-        return MemberResponse.of(member);
+        MemberDTO memberDTO = MemberDTO.builder()
+                .id(member.getId())
+                .isBlacklisted(member.getIsBlacklisted())
+                .name(member.getName())
+                .nickname(member.getNickname())
+                .email(member.getEmail())
+                .password(member.getPassword())
+                .loginType(member.getLoginType().toString())
+                .provider(member.getProvider())
+                .role(member.getRole())
+                .status(member.getStatus())
+                .profileImage(member.getProfileImage())
+                .lastLogin(member.getLastLogin())
+                .createdAt(member.getCreatedAt())
+                .updatedAt(member.getUpdatedAt())
+                .deletedAt(member.getDeletedAt())
+                .build();
+
+        return memberDTO;
     }
 
-    // 사용자 정보 조회(간략 버전) -사용자
+    // 사용자 정보 조회 -사용자 // todo DTO 내부로 정적 메서드로 넣기
     @Transactional
-    public MemberDetailDto getMemberProfile(Long memberId) {
+    public MemberDetailDTO getMemberProfile(Long memberId) {
 
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CommonException(ResponseCode.MEMBER_NOT_FOUND));
 
         List<MemberInterest> memberInterests = memberInterestRepository.findAllByMemberId(memberId);
 
-        // todo DTO 내부로 정적 메서드로 넣기
         List<MemberInterestDTO> memberInterestDTOList = memberInterests.stream()
                 .map(memberInterest -> MemberInterestDTO.builder()
                         .id(memberInterest.getId())
@@ -167,7 +180,7 @@ public class MemberService {
                 )
               .toList();
 
-        MemberDetailDto memberDetailDto = MemberDetailDto.builder()
+        MemberDetailDTO memberDetailDto = MemberDetailDTO.builder()
                 .id(member.getId())
                 .isBlacklisted(member.getIsBlacklisted())
                 .name(member.getName())
@@ -181,6 +194,7 @@ public class MemberService {
                 .profileImage(member.getProfileImage())
                 .lastLogin(member.getLastLogin())
                 .memberInterests(memberInterestDTOList)
+                .loginCount(member.getLoginCount())
                 .createdAt(member.getCreatedAt())
                 .updatedAt(member.getUpdatedAt())
                 .deletedAt(member.getDeletedAt())
@@ -242,7 +256,7 @@ public class MemberService {
 
     }
 
-    // 관리자 - 특정 유저 관리자 설정
+    // 관리자 - 유저 관리자 권한 부여
     @Transactional
     public void setMemberRoleAdmin(Long memberId) {
         try{
@@ -261,7 +275,7 @@ public class MemberService {
 
     }
 
-    // 마이페이지 - 비밀번호 확인
+    // 비밀번호 검증
     public boolean verifyPassword(Long memberId, String password) {
 
         Member member = memberRepository.findById(memberId)
@@ -272,16 +286,6 @@ public class MemberService {
         }
 
         return member.getPassword().equals(password);
-    }
-
-
-    /**
-     * 쓸까 말까 고민중
-     * */
-
-    // 이메일 중복 검사
-    public boolean emailExists(final String email) {
-        return memberRepository.existsByEmailIgnoreCase(email);
     }
 
 }

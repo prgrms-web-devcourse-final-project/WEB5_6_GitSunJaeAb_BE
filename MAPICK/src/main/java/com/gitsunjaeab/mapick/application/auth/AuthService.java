@@ -95,6 +95,8 @@ public class AuthService {
         }
 
         member.setLastLogin(OffsetDateTime.now()); // last login 날짜 추가
+        member.setLoginCount(member.getLoginCount() + 1);
+        memberRepository.save(member);
 
         authenticateMember(email, password); // 인증 객체 생성 및 Spring Security 등록
 

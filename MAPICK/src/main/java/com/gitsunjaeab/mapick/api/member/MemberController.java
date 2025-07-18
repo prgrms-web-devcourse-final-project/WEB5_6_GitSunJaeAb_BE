@@ -1,6 +1,7 @@
 package com.gitsunjaeab.mapick.api.member;
 
-import com.gitsunjaeab.mapick.api.member.dto.MemberDetailDto;
+import com.gitsunjaeab.mapick.api.member.dto.MemberDTO;
+import com.gitsunjaeab.mapick.api.member.dto.MemberDetailDTO;
 import com.gitsunjaeab.mapick.api.member.dto.MemberListDTO;
 import com.gitsunjaeab.mapick.api.member.dto.request.MemberInterestRequest;
 import com.gitsunjaeab.mapick.api.member.dto.request.MemberProfileUpdateRequest;
@@ -49,13 +50,14 @@ public class MemberController {
      *
      */
 
-    // 전체 회원 조회 (관리자 전용) -> 완성(예외처리 필요)
+    // 전체 회원 조회 (관리자 전용) -> todo 완성(예외처리 필요)
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/list")
     @Operation(summary = "전체 회원 조회 (관리자)", description = "[관리자 전용] 관리자만 접근 가능한 전체 회원 목록 조회" )
     public ResponseEntity<MemberListResponse> getAllMembers() {
 
         List<MemberListDTO> memberListDTOs = memberService.findAll();
+
         MemberListResponse response = MemberListResponse.of(memberListDTOs);
 
         return ResponseEntity
@@ -63,59 +65,53 @@ public class MemberController {
                 .body(response);
     }
 
-    // 특정 회원 상세 조회 (관리자 전용) -> 완성(예외처리 필요)
+    // 특정 회원 상세 조회 (관리자 전용) -> todo 완성(예외처리 필요)
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("{memberId}")
     @Operation(summary = "특정 회원 조회(괸라자) ", description = " 특정 회원 정보 조회")
     public ResponseEntity<MemberResponse> getMember(@PathVariable(name = "memberId") final Long memberId) {
 
-        MemberResponse response = memberService.getMember(memberId);
+        MemberDTO memberDTO = memberService.getMember(memberId);
+
+        MemberResponse response = MemberResponse.of(memberDTO);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(response);
     }
 
-    // 회원의 블랙리스트 여부 수정 (관리자 전용) -> 완성(예외처리 필요)
+    // 회원의 블랙리스트 여부 수정 (관리자 전용) -> todo 완성(예외처리 필요)
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/blacklist/{memberId}")
     @Operation(summary = "블랙리스트 여부 변경 (관리자)", description = "[관리자 전용] 회원의 블랙 리스트 여부 수정")
     public ResponseEntity<ApiResponse> updateMemberBlackList(@PathVariable(name = "memberId") final Long memberId) {
-
-        // todo 관리자 만 해당 url 사용 할 수 있도록 시큐리티 컨피그에 추가 필요
 
         memberService.setMemberBlackList(memberId);
 
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "블랙리스트 설정 완료"));
     }
 
-    // 회원의 관리자로 설정 (관리자 전용) -> 완성(예외처리 필요)
+    // 회원의 관리자로 설정 (관리자 전용) -> todo 완성(예외처리 필요)
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/role/{memberId}")
     @Operation(summary = "회원 role 변경 (관리자)", description = "[관리자 전용] 회원의 role 수정")
     public ResponseEntity<ApiResponse> updateMemberRole(@PathVariable(name = "memberId") final Long memberId) {
-
-        // todo 관리자 만 해당 url 사용 할 수 있도록 시큐리티 컨피그에 추가 필요
 
         memberService.setMemberRoleAdmin(memberId);
 
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "회원의 role 수정 완료"));
     }
 
-    // 회원 삭제 (관리자 전용) -> 완성(예외처리 필요)
+    // 회원 삭제 (관리자 전용) -> todo 완성(예외처리 필요)
     @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("{memberId}") // 실제로 delete 되지 않는데 delete 로 두어도 되는지 질문 예정
+    @DeleteMapping("{memberId}")
     @Operation(summary = "회원 삭제(관리자)", description = "회원 삭제")
     public ResponseEntity<ApiResponse> deleteMember(@PathVariable(name = "memberId") final Long memberId) {
-
-        // todo 관리자 만 해당 url 사용 할 수 있도록 시큐리티 컨피그에 추가 필요
 
         memberService.deleteMember(memberId); // 소프트 딜리트
 
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "회원 삭제 완료"));
     }
-
-
 
     /**
      *
@@ -123,7 +119,7 @@ public class MemberController {
      *
      */
 
-    // 본인 회원 정보 조회 (프로필) -> 완성(예외처리 필요)
+    // 본인 회원 정보 조회 (프로필) -> todo 완성(예외처리 필요)
     @GetMapping
     @Operation(summary = "회원 정보 조회", description = "[사용자 전용] 본인만 접근 가능한 프로필 조회" )
     public ResponseEntity<MemberProfileResponse> getMemberProfile() {
@@ -131,14 +127,16 @@ public class MemberController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Long memberId = Long.parseLong(auth.getName());
 
-        MemberDetailDto memberDetailDto = memberService.getMemberProfile(memberId);
+        MemberDetailDTO memberDetailDto = memberService.getMemberProfile(memberId);
 
         MemberProfileResponse response = MemberProfileResponse.of(memberDetailDto);
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(response);
     }
 
-    // 회원 정보 수정 (프로필) -> 완성(예외처리 필요)
+    // 회원 정보 수정 (프로필) -> todo 완성(예외처리 필요)
     @PutMapping
     @Operation(summary = "회원 정보 수정(프로필)", description = "사용자 회원 정보 수정")
     public ResponseEntity<ApiResponse> updateMember(@RequestBody @Valid final MemberProfileUpdateRequest MemberProfileUpdateRequest) {
@@ -148,10 +146,12 @@ public class MemberController {
 
         memberService.updateMemberProfile(memberId, MemberProfileUpdateRequest);
 
-        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "회원 정보 수정 완료"));
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.of(ResponseCode.OK, "회원 정보 수정 완료"));
     }
 
-    // 회원 탈퇴 (사용자) -> 완성(예외처리 필요)
+    // 회원 탈퇴 (사용자) -> todo 완성(예외처리 필요)
     @DeleteMapping ("/withdraw")
     @Operation(summary = "회원 탈퇴", description = "회원 탈퇴")
     public ResponseEntity<ApiResponse> withdrawMember() {
@@ -161,12 +161,14 @@ public class MemberController {
 
         memberService.deleteMember(memberId); // 소프트 딜리트
 
-        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "회원 탈퇴 완료"));
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.of(ResponseCode.OK, "회원 탈퇴 완료"));
     }
 
     // ===== 회원 관심분야 관리 API =====
 
-    // 회원 관심분야 선택 (본인만) -> 완성(예외처리 필요)
+    // 회원 관심분야 선택 (본인만) -> todo 완성(예외처리 필요)
     @PostMapping("/interests")
     @Operation(summary = "회원 관심분야 선택", description = "[사용자 전용] 본인만 접근 가능한 관심분야 선택")
     public ResponseEntity<ApiResponse> createMemberInterest(@Valid @RequestBody MemberInterestRequest memberInterestRequest) {
@@ -176,10 +178,12 @@ public class MemberController {
 
         memberInterestService.createMemberInterests(memberId,memberInterestRequest);
 
-        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "관심분야 선택 완료"));
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.of(ResponseCode.OK, "관심분야 선택 완료"));
     }
 
-    // 회원 관심분야 수정 (본인만) -> 완성(예외처리 필요)
+    // 회원 관심분야 수정 (본인만) -> todo 완성(예외처리 필요)
     @PutMapping("/interests")
     @Operation(summary = "회원 관심분야 수정", description = "[사용자 전용] 본인만 접근 가능한 관심분야 수정")
     public ResponseEntity<ApiResponse> updateMemberInterest(@Valid @RequestBody MemberInterestRequest memberInterestRequest) {
@@ -189,12 +193,14 @@ public class MemberController {
 
         memberInterestService.updateMemberInterests(memberId,memberInterestRequest);
 
-        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "관심분야 수정 완료"));
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.of(ResponseCode.OK, "관심분야 수정 완료"));
     }
 
     // ===== 회원 비밀번호 관리 API =====
 
-    // 마이페이지 - 비밀번호 확인 (본인만) -> 완성(예외처리 필요)
+    // 마이페이지 - 비밀번호 확인 (본인만) -> todo 완성(예외처리 필요)
     @PostMapping("/password/verify")
     @Operation(summary = "비밀번호 확인", description = "[사용자 전용] 본인만 접근 가능한 비밀번호 확인")
     public ResponseEntity<ApiResponse> verifyPassword(@Valid @RequestBody PasswordRequest passwordRequest) {

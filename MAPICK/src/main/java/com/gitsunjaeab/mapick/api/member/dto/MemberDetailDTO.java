@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MemberDetailDto {
+public class MemberDetailDTO {
 
     private Long id;
 
@@ -27,7 +27,6 @@ public class MemberDetailDto {
     private String nickname;
 
     @Size(max = 255)
-    @MemberEmailUnique
     private String email;
 
     @Size(max = 255)
@@ -52,8 +51,10 @@ public class MemberDetailDto {
 
     private OffsetDateTime lastLogin;
 
+    private Long loginCount;
+
     @Size(max = 255)
-    private List<MemberInterestDTO> memberInterests;
+    private List<MemberInterestDTO> memberInterests; // 회원의 관심 분야
 
     @NotNull
     private OffsetDateTime createdAt;

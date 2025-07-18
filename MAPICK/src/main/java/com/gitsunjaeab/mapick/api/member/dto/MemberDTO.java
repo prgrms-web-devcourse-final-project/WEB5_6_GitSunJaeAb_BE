@@ -1,17 +1,17 @@
 package com.gitsunjaeab.mapick.api.member.dto;
 
-import com.gitsunjaeab.mapick.domain.member.Member;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.OffsetDateTime;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+
+import lombok.*;
 
 
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class MemberDTO {
 
     private Long id;
@@ -27,7 +27,6 @@ public class MemberDTO {
     private String nickname;
 
     @Size(max = 255)
-    @MemberEmailUnique
     private String email;
 
     @Size(max = 255)

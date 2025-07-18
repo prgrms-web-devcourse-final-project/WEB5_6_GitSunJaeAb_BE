@@ -23,7 +23,6 @@ public class MemberSimpleDTO {
     private String nickname;
 
     @Size(max = 255)
-    @MemberEmailUnique
     private String email;
 
     @Size(max = 255)

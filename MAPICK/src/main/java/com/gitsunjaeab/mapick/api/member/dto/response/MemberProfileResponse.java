@@ -1,6 +1,6 @@
 package com.gitsunjaeab.mapick.api.member.dto.response;
 
-import com.gitsunjaeab.mapick.api.member.dto.MemberDetailDto;
+import com.gitsunjaeab.mapick.api.member.dto.MemberDetailDTO;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import lombok.AllArgsConstructor;
@@ -9,6 +9,9 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+/**
+ * 회원 + 회원의 관심분야 DTO 반환 Response
+ */
 
 @Getter
 @Setter
@@ -19,9 +22,9 @@ public class MemberProfileResponse implements BaseApiResponse {
     private String code;
     private String message;
     private LocalDateTime timestamp;
-    private MemberDetailDto memberDetailDto;
+    private MemberDetailDTO memberDetailDto;
 
-    public static MemberProfileResponse of(MemberDetailDto memberDetailDto) {
+    public static MemberProfileResponse of(MemberDetailDTO memberDetailDto) {
 
         return new MemberProfileResponse(
             ResponseCode.OK.getCode(),

@@ -9,11 +9,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * 회원 목록(List) 반환 Response
+ * 회원 목록(List) DTO 반환 Response
  */
+
 @Getter
 @AllArgsConstructor
 public class MemberListResponse implements BaseApiResponse {
+
     private String code;
     private String message;
     private LocalDateTime timestamp;
