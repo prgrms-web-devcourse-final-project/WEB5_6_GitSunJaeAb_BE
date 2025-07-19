@@ -17,6 +17,7 @@ import com.gitsunjaeab.mapick.domain.roadmap.*;
 import com.gitsunjaeab.mapick.domain.comment.Comment;
 import com.gitsunjaeab.mapick.domain.comment.CommentRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.LayerLibraryRepository.RoadmapCitationProjection;
+import com.gitsunjaeab.mapick.infra.auth.AuthHelper;
 import com.gitsunjaeab.mapick.infra.error.exceptions.UnauthenticatedException;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import com.gitsunjaeab.mapick.util.ReferencedWarning;
@@ -56,6 +57,7 @@ public class RoadmapService {
     private final CategoryRepository categoryRepository;
     private final HashtagService hashtagService;
     private final HashtagRepository hashtagRepository;
+    private final AuthHelper authHelper;
 
     // 개인 로드맵 생성
     @Transactional
@@ -168,6 +170,7 @@ public class RoadmapService {
     @Transactional(readOnly = true)
     public RoadmapListResponse getAllPersonalRoadmapsWithCitation(Member member) {
         List<Roadmap> roadmaps = roadmapRepository.findAllByIsPublicTrueAndRoadmapType(RoadmapType.PERSONAL);
+        Set<Long> bookmarkedIds = bookmarkRepository.findRoadmapIdsByMemberId(member.getId()).stream().collect(Collectors.toSet());
         return buildRoadmapListResponse(roadmaps);
     }
 
@@ -211,7 +214,10 @@ public class RoadmapService {
                 RoadmapCitationProjection::getCitationCount
             ));
 
-        return RoadmapListResponse.of(roadmaps, citationCountMap);
+        Long memberId = authHelper.getCurrentMemberId();
+        Set<Long> bookmarkedIds = new HashSet<>(bookmarkRepository.findRoadmapIdsByMemberId(memberId));
+
+        return RoadmapListResponse.of(roadmaps, citationCountMap, bookmarkedIds);
     }
 
     @Transactional

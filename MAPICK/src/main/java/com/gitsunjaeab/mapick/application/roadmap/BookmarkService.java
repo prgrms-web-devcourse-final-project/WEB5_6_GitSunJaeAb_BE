@@ -15,6 +15,9 @@ import com.gitsunjaeab.mapick.util.NotFoundException;
 import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -72,7 +75,10 @@ public class BookmarkService {
             .map(Bookmark::getRoadmap)
             .toList();
 
-        return RoadmapListResponse.of(roadmaps, Collections.emptyMap());
+        Set<Long> bookmarkedIds = roadmaps.stream()
+                .map(Roadmap::getId)
+                .collect(Collectors.toSet());
+        return RoadmapListResponse.of(roadmaps, Collections.emptyMap(), bookmarkedIds);
     }
 
     public List<BookmarkDTO> findAll() {
