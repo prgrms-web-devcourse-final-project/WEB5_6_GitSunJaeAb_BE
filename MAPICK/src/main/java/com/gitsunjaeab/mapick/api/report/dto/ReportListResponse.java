@@ -1,21 +1,14 @@
 package com.gitsunjaeab.mapick.api.report.dto;
 
-import com.fasterxml.jackson.databind.ser.Serializers.Base;
-import com.gitsunjaeab.mapick.api.member.dto.MemberList;
-import com.gitsunjaeab.mapick.api.member.dto.MemberListResponse;
 import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
-import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.report.Report;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
 /**
  * 신고 목록(List) 반환 Response

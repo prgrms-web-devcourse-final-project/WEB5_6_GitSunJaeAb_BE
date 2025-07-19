@@ -6,26 +6,32 @@ import com.gitsunjaeab.mapick.api.auth.dto.request.SocialLoginRequest;
 import com.gitsunjaeab.mapick.api.auth.dto.response.SocialTokenResponse;
 import com.gitsunjaeab.mapick.api.auth.dto.response.LocalTokenResponse;
 import com.gitsunjaeab.mapick.api.auth.dto.response.TokenResponse;
+import com.gitsunjaeab.mapick.api.member.dto.request.PasswordRequest;
 import com.gitsunjaeab.mapick.application.auth.AuthService;
 import com.gitsunjaeab.mapick.application.member.MemberService;
 import com.gitsunjaeab.mapick.common.response.ApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
+import com.gitsunjaeab.mapick.domain.auth.RefreshTokenRepository;
 import com.gitsunjaeab.mapick.domain.auth.TokenDTO;
+import com.gitsunjaeab.mapick.domain.member.Member;
+import com.gitsunjaeab.mapick.infra.auth.token.JwtProvider;
 import com.gitsunjaeab.mapick.infra.auth.token.TokenCookieFactory;
 import com.gitsunjaeab.mapick.infra.auth.token.code.GrantType;
 import com.gitsunjaeab.mapick.infra.auth.token.code.TokenType;
+import io.jsonwebtoken.Claims;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
@@ -36,6 +42,8 @@ public class AuthController {
 
     private final AuthService authService;
     private final MemberService memberService;
+    private final JwtProvider jwtProvider;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     // 소셜 로그인
     @PostMapping("/socialLogin")
@@ -55,7 +63,7 @@ public class AuthController {
                 dto.getRtExpiresIn()
         );
 
-//        response.addHeader("Set-Cookie", accessTokenCookie.toString());
+        response.addHeader("Set-Cookie", accessTokenCookie.toString());
         response.addHeader("Set-Cookie", refreshTokenCookie.toString());
 
 
@@ -118,6 +126,54 @@ public class AuthController {
 
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.SIGNUP_SUCCESS));
 
+    }
+
+    // 로그아웃
+    @PostMapping("/logout")
+    @Operation(summary = "로그 아웃")
+    public ResponseEntity<ApiResponse> logout(HttpServletRequest request, HttpServletResponse response) {
+
+        String accessToken = jwtProvider.resolveToken(request, TokenType.ACCESS_TOKEN);
+        Claims claims = jwtProvider.parseClaim(accessToken);
+        String jti = claims.getId();
+        refreshTokenRepository.deleteByAccessTokenId(jti);
+
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        Long memberId = Long.parseLong(auth.getName());
+//        refreshTokenRepository.deleteByMemberId(memberId);
+
+        // todo db에 남아있는 토큰들 어찌 처리 할 것인지 고민...
+
+        // 쿠키 굽기
+        ResponseCookie expiredAccessToken = TokenCookieFactory.createExpiredToken(TokenType.ACCESS_TOKEN);
+        ResponseCookie expiredRefreshToken = TokenCookieFactory.createExpiredToken(TokenType.REFRESH_TOKEN);
+        ResponseCookie expiredSessionId = TokenCookieFactory.createExpiredToken(TokenType.AUTH_SERVER_SESSION_ID);
+
+
+        // 응답 헤더에 추가
+        response.addHeader("Set-Cookie", expiredAccessToken.toString());
+        response.addHeader("Set-Cookie", expiredRefreshToken.toString());
+        response.addHeader("Set-Cookie", expiredSessionId.toString());
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.of(ResponseCode.LOGOUT_SUCCESS));
+    }
+
+
+    // 마이페이지 - 비밀번호 수정 (본인만)
+    @PutMapping("/password")
+    @Operation(summary = "비밀번호 수정", description = "[사용자 전용] 본인만 접근 가능한 비밀번호 변경")
+    public ResponseEntity<ApiResponse> updatePassword(@Valid @RequestBody PasswordRequest passwordRequest) {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Long memberId = Long.parseLong(auth.getName());
+
+        authService.updatePassword(memberId, passwordRequest.getPassword());
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.of(ResponseCode.CHANGE_PASSWORD_SUCCESS));
     }
 
 }

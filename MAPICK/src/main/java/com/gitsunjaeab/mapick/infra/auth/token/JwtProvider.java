@@ -131,9 +131,11 @@ public class JwtProvider {
         return false;
     }
 
+    // HTTP 요청에서 특정 토큰 꺼내기
     public String resolveToken(HttpServletRequest request, TokenType tokenType) {
         String headerToken = request.getHeader("Authorization");
-        if (headerToken != null && headerToken.startsWith("Bearer")) {
+        if (headerToken != null && headerToken.startsWith("Bearer ")) {
+
             return headerToken.substring(7);
         }
 

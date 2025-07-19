@@ -2,15 +2,19 @@ package com.gitsunjaeab.mapick.api.member.dto;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
+import java.time.OffsetDateTime;
+import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
-public class MemberUpdateRequest {
+@AllArgsConstructor
+@Builder
+public class MemberDetailDTO {
+
+    private Long id;
 
     @NotNull
     private boolean isBlacklisted;
@@ -23,7 +27,6 @@ public class MemberUpdateRequest {
     private String nickname;
 
     @Size(max = 255)
-    @MemberEmailUnique
     private String email;
 
     @Size(max = 255)
@@ -45,4 +48,18 @@ public class MemberUpdateRequest {
 
     @Size(max = 255)
     private String profileImage;
-} 
+
+    private OffsetDateTime lastLogin;
+
+    private Long loginCount;
+
+    @Size(max = 255)
+    private List<MemberInterestDTO> memberInterests; // 회원의 관심 분야
+
+    @NotNull
+    private OffsetDateTime createdAt;
+
+    private OffsetDateTime updatedAt;
+
+    private OffsetDateTime deletedAt;
+}

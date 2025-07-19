@@ -1,38 +1,31 @@
 package com.gitsunjaeab.mapick.api.roadmap.dto.layer;
 
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-import java.time.LocalDate;
-import java.time.OffsetDateTime;
+import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
+import com.gitsunjaeab.mapick.common.response.ResponseCode;
+import com.gitsunjaeab.mapick.domain.roadmap.Layer;
+import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
 
 @Getter
-@Setter
-public class LayerResponse {
+@AllArgsConstructor
+public class LayerResponse implements BaseApiResponse {
 
-    private Long id;
+    // 커스텀 응답 필드들
+    private String code;
+    private String message;
+    private LocalDateTime timestamp;
+    private LayerDetailDTO layer;
 
-    @NotNull
-    @Size(max = 255)
-    private String name;
 
-    private String description;
-
-    private Integer layerSeq;
-
-    private LocalDate layerTime;
-
-    @NotNull
-    private OffsetDateTime createdAt;
-
-    private OffsetDateTime updatedAt;
-
-    private OffsetDateTime deletedAt;
-
-    private Long member;
-
-    private Long roadmap;
-
+    public static LayerResponse of(Layer layer, boolean isZzim) {
+        return new LayerResponse(
+            ResponseCode.OK.getCode(),
+            "레이어 조회 성공",
+            LocalDateTime.now(),
+            LayerDetailDTO.from(layer, isZzim)
+        );
+    }
 }
+

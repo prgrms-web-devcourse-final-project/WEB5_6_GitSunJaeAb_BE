@@ -68,6 +68,7 @@ public class BookmarkService {
         bookmarkRepository.delete(bookmark);
     }
 
+    @Transactional(readOnly = true)
     public RoadmapListResponse getBookmarkedRoadmaps(Long memberId) {
         List<Bookmark> bookmarks = bookmarkRepository.findAllWithAllRoadmapRelationsByMemberId(memberId);
 

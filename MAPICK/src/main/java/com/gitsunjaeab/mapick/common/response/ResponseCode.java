@@ -24,14 +24,21 @@ public enum ResponseCode {
 
     NOT_FOUND("4040", HttpStatus.NOT_FOUND, "존재하지 않는 리소스 입니다."),
     EMAIL_NOT_FOUND("4041", HttpStatus.NOT_FOUND, "존재하지 않는 이메일입니다."),
+    MEMBER_NOT_FOUND("4042", HttpStatus.NOT_FOUND, "존재하지 않는 회원입니다."),
+    INTEREST_NOT_FOUND("4043", HttpStatus.NOT_FOUND, "존재하지 않는 관심분야 입니다."),
 
 
     CONFLICT("4090", HttpStatus.CONFLICT, "충돌이 발생하였습니다."),
     NICKNAME_DUPLICATED("4091", HttpStatus.CONFLICT, "중복된 닉네임입니다."),
     ALREADY_REGISTERED_EMAIL("4092", HttpStatus.CONFLICT, "이미 가입된 이메일입니다."),
-    DB_CONSTRAINT_VIOLATION("4093", HttpStatus.CONFLICT, "DB 제약 조건에 위배되었습니다."),
-    BOOKMARK_DUPLICATED("4094", HttpStatus.CONFLICT, "중복 북마크입니다."),
 
+    DB_CONSTRAINT_VIOLATION("4093", HttpStatus.CONFLICT, "DB 제약 조건에 위배되었습니다."),
+    ALREADY_REGISTERED_BLACKLIST("4094", HttpStatus.CONFLICT, "이미 블랙리스트에 등록된 회원 입니다."),
+    ALREADY_REGISTERED_ADMIN("4095", HttpStatus.CONFLICT, "이미 관리자로 등록된 회원 입니다."),
+    ALREADY_DELETED_USER("4096", HttpStatus.CONFLICT, "이미 삭제된 회원 입니다."),
+    BOOKMARK_DUPLICATED("4097", HttpStatus.CONFLICT, "중복 북마크입니다."),
+    ALREADY_ZZIMMED("4098", HttpStatus.CONFLICT, "이미 찜한 레이어입니다."),
+    NOT_ZZIMMED_YET("4099", HttpStatus.CONFLICT, "찜하지 않은 레이어입니다."),
 
     // 내부 오류
     INTERNAL_ERROR("5000", HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류입니다."),
@@ -42,10 +49,12 @@ public enum ResponseCode {
     SIGNUP_SUCCESS("2001", HttpStatus.OK, "회원가입 성공입니다."),
     SIGNIN_SUCCESS("2002", HttpStatus.OK, "로그인 성공입니다."),
     SOCIAL_SIGNIN_SUCCESS("2003", HttpStatus.OK, "소셜 로그인 성공입니다."),
-    LOGOUT_SUCCESS("2004", HttpStatus.OK, "로그아웃 되었습니다.");
+    VERITY_PASSWORD_SUCCESS("2004", HttpStatus.OK, "비밀번호 검증 성공 입니다."),
+    CHANGE_PASSWORD_SUCCESS("2005", HttpStatus.OK, "비밀번호 변경 성공 입니다."),
+    LOGOUT_SUCCESS("2006", HttpStatus.OK, "로그아웃 되었습니다.");
 
 
     private final String code;
     private final HttpStatus status;
     private final String message;
-}
+    }

@@ -6,7 +6,6 @@ import com.gitsunjaeab.mapick.domain.category.Category;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
@@ -61,15 +60,5 @@ public class CategoryListResponse implements BaseApiResponse {
         private String categoryImage;
         private String description;
         private OffsetDateTime createdAt;
-    }
-
-    // 데이터 없이 메시지만 반환할 때
-    public static CategoryListResponse withoutData(ResponseCode responseCode, String message) {
-        return new CategoryListResponse(
-            responseCode.getCode(),
-            message,
-            LocalDateTime.now(),
-            Collections.emptyList()
-        );
     }
 }
