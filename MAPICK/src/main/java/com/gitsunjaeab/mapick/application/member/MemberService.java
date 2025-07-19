@@ -97,6 +97,7 @@ public class MemberService {
             .role(String.valueOf(Role.ROLE_USER))
             .status("ACTIVE")
             .profileImage(null)
+                .loginCount(0L)
             .createdAt(OffsetDateTime.now())
             .updatedAt(OffsetDateTime.now())
             .build();
