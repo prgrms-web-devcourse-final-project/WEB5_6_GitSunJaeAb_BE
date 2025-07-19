@@ -20,6 +20,7 @@ public enum ResponseCode {
 
 
     FORBIDDEN("4030", HttpStatus.FORBIDDEN, "접근 권한이 없습니다."),
+    FORBIDDEN_DELETE_BOOKMARK("4031", HttpStatus.FORBIDDEN, "북마크 해제 권한이 없습니다."),
 
     NOT_FOUND("4040", HttpStatus.NOT_FOUND, "존재하지 않는 리소스 입니다."),
     EMAIL_NOT_FOUND("4041", HttpStatus.NOT_FOUND, "존재하지 않는 이메일입니다."),
@@ -35,9 +36,9 @@ public enum ResponseCode {
     ALREADY_REGISTERED_BLACKLIST("4094", HttpStatus.CONFLICT, "이미 블랙리스트에 등록된 회원 입니다."),
     ALREADY_REGISTERED_ADMIN("4095", HttpStatus.CONFLICT, "이미 관리자로 등록된 회원 입니다."),
     ALREADY_DELETED_USER("4096", HttpStatus.CONFLICT, "이미 삭제된 회원 입니다."),
-
-    ALREADY_ZZIMMED("4094", HttpStatus.CONFLICT, "이미 찜한 레이어입니다."),
-    NOT_ZZIMMED_YET("4095", HttpStatus.CONFLICT, "찜하지 않은 레이어입니다."),
+    BOOKMARK_DUPLICATED("4097", HttpStatus.CONFLICT, "중복 북마크입니다."),
+    ALREADY_ZZIMMED("4098", HttpStatus.CONFLICT, "이미 찜한 레이어입니다."),
+    NOT_ZZIMMED_YET("4099", HttpStatus.CONFLICT, "찜하지 않은 레이어입니다."),
 
     // 내부 오류
     INTERNAL_ERROR("5000", HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류입니다."),

@@ -1,6 +1,6 @@
 package com.gitsunjaeab.mapick.api.roadmap.dto.roadmap;
 
-import com.gitsunjaeab.mapick.api.category.dto.SimpleCategoryDTO;
+import com.gitsunjaeab.mapick.api.category.dto.CategorySimpleDTO;
 import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.hashtag.HashtagDTO;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapType;
@@ -17,7 +17,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public class RoadmapListDTO {
     private Long id;
-    private SimpleCategoryDTO category;
+    private CategorySimpleDTO category;
     private MemberSimpleDTO member;
     private String title;
     private String description;
@@ -29,4 +29,6 @@ public class RoadmapListDTO {
     private Integer viewCount;
     private Integer citationCount;
     private OffsetDateTime createdAt;
+    // 사용자가 북마크했는지 안 했는지
+    private Boolean isBookmarked;
 }

@@ -13,7 +13,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class SimpleCategoryDTO {
+public class CategorySimpleDTO {
 
     private Long id;
 
@@ -21,7 +21,7 @@ public class SimpleCategoryDTO {
     @Size(max = 255)
     private String name;
 
-    public SimpleCategoryDTO(Category category) {
+    public CategorySimpleDTO(Category category) {
         this.id = category.getId();
         this.name = category.getName();
     }

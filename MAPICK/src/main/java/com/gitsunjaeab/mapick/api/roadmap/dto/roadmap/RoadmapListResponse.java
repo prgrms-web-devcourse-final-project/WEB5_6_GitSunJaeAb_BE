@@ -1,6 +1,6 @@
 package com.gitsunjaeab.mapick.api.roadmap.dto.roadmap;
 
-import com.gitsunjaeab.mapick.api.category.dto.SimpleCategoryDTO;
+import com.gitsunjaeab.mapick.api.category.dto.CategorySimpleDTO;
 import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
@@ -9,6 +9,7 @@ import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,11 +26,11 @@ public class RoadmapListResponse implements BaseApiResponse {
     private List<RoadmapListDTO> roadmaps;
 
     // 데이터 포함 반환
-    public static RoadmapListResponse of(List<Roadmap> roadmapEntities, Map<Long, Long> citationCountMap) {
+    public static RoadmapListResponse of(List<Roadmap> roadmapEntities, Map<Long, Long> citationCountMap, Set<Long> bookmarkedRoadmapIds) {
         List<RoadmapListDTO> roadmapDtos = roadmapEntities.stream()
             .map(r -> new RoadmapListDTO(
                 r.getId(),
-                new SimpleCategoryDTO(r.getCategory()),
+                new CategorySimpleDTO(r.getCategory()),
                 new MemberSimpleDTO(r.getMember()),
                 r.getTitle(),
                 r.getDescription(),
@@ -42,7 +43,8 @@ public class RoadmapListResponse implements BaseApiResponse {
                 r.getLikeCount(),
                 r.getViewCount(),
                 citationCountMap.getOrDefault(r.getId(), 0L).intValue(),
-                    r.getCreatedAt()
+                    r.getCreatedAt(),
+                    bookmarkedRoadmapIds.contains(r.getId())
             )).toList();
 
         return new RoadmapListResponse(
