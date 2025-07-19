@@ -18,54 +18,44 @@ import java.time.OffsetDateTime;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-
 @Entity
-@Table(name = "LayerLibraries")
+@Table(name = "LayerForkHistories")
 @Getter
 @Setter
-@EntityListeners(AuditingEntityListener.class) // JPA Auditing 기능 활성화
-public class LayerLibrary {
+@EntityListeners(AuditingEntityListener.class)
+public class LayerForkHistory {
 
     @Id
     @Column(nullable = false, updatable = false)
-        @SequenceGenerator(
+    @SequenceGenerator(
         name = "primary_sequence",
         sequenceName = "primary_sequence",
         allocationSize = 1,
         initialValue = 100
     )
     @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
-            generator = "primary_sequence"
+        strategy = GenerationType.SEQUENCE,
+        generator = "primary_sequence"
     )
     private Long id;
 
-    @CreatedDate // 생성 시간 서버 자동처리
+    @CreatedDate // 포크 시간 자동 처리
     @Convert(converter = OffsetDateTimeConverter.class)
     @Column(nullable = false, updatable = false)
-    private OffsetDateTime createdAt;
-
-    @LastModifiedDate // 수정 시간 서버 자동처리
-    @Convert(converter = OffsetDateTimeConverter.class)
-    @Column
-    private OffsetDateTime updatedAt;
-
-    @Convert(converter = OffsetDateTimeConverter.class)
-    @Column(name = "deleted_at")
-    private OffsetDateTime deletedAt; // 소프트 딜리트용 컬럼 추가
+    private OffsetDateTime forkedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
+    @JoinColumn(name = "original_layer_id", nullable = false)
+    private Layer originalLayer; // 찜한 원본 레이어
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "layer_id")
-    private Layer layer;
+    @JoinColumn(name = "forked_layer_id", nullable = false)
+    private Layer forkedLayer; // 내 로드맵에 복사된 레이어
 
-    @Column(nullable = false)
-    private boolean isZzim = false; // 기본값 : 찜 안한 상태
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member; // 포크한 사용자
 
-}
+} 

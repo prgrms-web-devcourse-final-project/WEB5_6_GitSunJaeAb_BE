@@ -79,11 +79,12 @@ public class SecurityConfig {
                 .requestMatchers("/css/**", "/js/**", "/img/**").permitAll()
                 .requestMatchers("/index", "/auth/signin", "/auth/signup", "/auth/socialLogin").anonymous() // 로그인 하지 않은 사용자만 접근 가능
                 .requestMatchers(HttpMethod.POST, "/auth/signin", "/auth/signup" , "/auth/socialLogin","/auth/logout").permitAll() // 누구나 이 URL로 요청 가능
+                .requestMatchers("/swagger-ui/**","/v3/api-docs/**").permitAll() // 누구나 이 URL로 요청 가능
 //              .requestMatchers("/home", "/interests/**", "/mypage/**","/maps/**","/layers/**","/markers/**").hasAnyRole("USER", "ADMIN") // 사용자페이지 접근 권한
-                .anyRequest().permitAll() // 그 외 전부 로그인 필요
+                .anyRequest().permitAll()
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-            .addFilterBefore(logoutFilter, JwtAuthenticationFilter.class)
+//            .addFilterBefore(logoutFilter, JwtAuthenticationFilter.class)
             .addFilterBefore(authExceptionFilter, JwtAuthenticationFilter.class);
 
         return http.build();
@@ -127,4 +128,5 @@ public class SecurityConfig {
         builder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
         return builder.build();
     }
+
 }
