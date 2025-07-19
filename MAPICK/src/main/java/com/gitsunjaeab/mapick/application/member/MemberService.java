@@ -1,93 +1,37 @@
 package com.gitsunjaeab.mapick.application.member;
 
+import com.gitsunjaeab.mapick.api.auth.dto.SocialUserInfo;
 import com.gitsunjaeab.mapick.api.auth.dto.request.SignupRequest;
-import com.gitsunjaeab.mapick.api.member.dto.MemberListResponse;
-import com.gitsunjaeab.mapick.api.member.dto.SocialUserInfo;
+import com.gitsunjaeab.mapick.api.member.dto.*;
+import com.gitsunjaeab.mapick.api.member.dto.request.MemberProfileUpdateRequest;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.auth.LoginType;
 import com.gitsunjaeab.mapick.domain.auth.Role;
-import com.gitsunjaeab.mapick.domain.roadmap.Bookmark;
-import com.gitsunjaeab.mapick.domain.roadmap.BookmarkRepository;
-import com.gitsunjaeab.mapick.domain.comment.Comment;
-import com.gitsunjaeab.mapick.domain.comment.CommentRepository;
 import com.gitsunjaeab.mapick.domain.member.Member;
-import com.gitsunjaeab.mapick.domain.member.MemberRepository;
-import com.gitsunjaeab.mapick.domain.roadmap.Layer;
-import com.gitsunjaeab.mapick.domain.roadmap.LayerRepository;
-import com.gitsunjaeab.mapick.domain.roadmap.LayerLibrary;
-import com.gitsunjaeab.mapick.domain.roadmap.LayerLibraryRepository;
-import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
-import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
-import com.gitsunjaeab.mapick.domain.roadmap.RoadmapEditor;
-import com.gitsunjaeab.mapick.domain.roadmap.RoadmapEditorRepository;
-import com.gitsunjaeab.mapick.domain.roadmap.Marker;
-import com.gitsunjaeab.mapick.domain.roadmap.MarkerRepository;
-import com.gitsunjaeab.mapick.api.member.dto.MemberDTO;
 import com.gitsunjaeab.mapick.domain.member.MemberInterest;
 import com.gitsunjaeab.mapick.domain.member.MemberInterestRepository;
-import com.gitsunjaeab.mapick.domain.quest.MemberQuest;
-import com.gitsunjaeab.mapick.domain.quest.MemberQuestRepository;
-import com.gitsunjaeab.mapick.domain.quest.Quest;
-import com.gitsunjaeab.mapick.domain.quest.QuestRepository;
-import com.gitsunjaeab.mapick.domain.quest.QuestRank;
-import com.gitsunjaeab.mapick.domain.quest.QuestRankRepository;
-import com.gitsunjaeab.mapick.domain.report.Report;
-import com.gitsunjaeab.mapick.domain.report.ReportRepository;
+import com.gitsunjaeab.mapick.domain.member.MemberRepository;
 import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
 import com.gitsunjaeab.mapick.util.NotFoundException;
-import com.gitsunjaeab.mapick.util.ReferencedWarning;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.util.List;
-import java.util.UUID;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
+import java.util.List;
+import java.util.UUID;
+
 
 @Service
+@RequiredArgsConstructor
 public class MemberService {
 
     private final MemberRepository memberRepository;
-    private final RoadmapRepository roadmapRepository;
-    private final RoadmapEditorRepository roadmapEditorRepository;
-    private final LayerRepository layerRepository;
-    private final MarkerRepository markerRepository;
-    private final CommentRepository commentRepository;
-    private final BookmarkRepository bookmarkRepository;
-    private final MemberInterestRepository memberInterestRepository;
-    private final ReportRepository reportRepository;
-    private final QuestRepository questRepository;
-    private final MemberQuestRepository memberQuestRepository;
-    private final QuestRankRepository questRankRepository;
-    private final LayerLibraryRepository layerLibraryRepository;
     private final PasswordEncoder passwordEncoder;
-
-    public MemberService(final MemberRepository memberRepository, final RoadmapRepository roadmapRepository,
-            final RoadmapEditorRepository roadmapEditorRepository, final LayerRepository layerRepository,
-            final MarkerRepository markerRepository, final CommentRepository commentRepository,
-            final BookmarkRepository bookmarkRepository,
-            final MemberInterestRepository memberInterestRepository,
-            final ReportRepository reportRepository, final QuestRepository questRepository,
-            final MemberQuestRepository memberQuestRepository,
-            final QuestRankRepository questRankRepository,
-            final LayerLibraryRepository layerLibraryRepository, PasswordEncoder passwordEncoder) {
-        this.memberRepository = memberRepository;
-        this.roadmapRepository = roadmapRepository;
-        this.roadmapEditorRepository = roadmapEditorRepository;
-        this.layerRepository = layerRepository;
-        this.markerRepository = markerRepository;
-        this.commentRepository = commentRepository;
-        this.bookmarkRepository = bookmarkRepository;
-        this.memberInterestRepository = memberInterestRepository;
-        this.reportRepository = reportRepository;
-        this.questRepository = questRepository;
-        this.memberQuestRepository = memberQuestRepository;
-        this.questRankRepository = questRankRepository;
-        this.layerLibraryRepository = layerLibraryRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
+    private final MemberInterestRepository memberInterestRepository;
 
     // 소셜 로그인 시 임시 닉네임 부여
     public String generateUniqueSocialNickname(String provider) {
@@ -164,222 +108,184 @@ public class MemberService {
         }
     }
 
-    public MemberListResponse findAll() {
+    // 멤버 리스트 조회 // todo DTO 내부로 정적 메서드로 넣기
+    public List<MemberListDTO> findAll() {
+
         final List<Member> members = memberRepository.findAll(Sort.by("id"));
-        return MemberListResponse.of(members);
+
+        // todo DTO 내부로 정적 메서드로 넣기
+        List<MemberListDTO> memberListDTOs = members.stream()
+                .map(m -> new MemberListDTO(
+                        m.getId(),
+                        m.getIsBlacklisted(),
+                        m.getName(),
+                        m.getNickname(),
+                        m.getEmail(),
+                        m.getRole()
+                )).toList();
+
+
+        return memberListDTOs;
     }
 
-    public MemberDTO get(final Long id) {
-        return memberRepository.findById(id)
-                .map(member -> roadmapToDTO(member, new MemberDTO()))
-                .orElseThrow(NotFoundException::new);
-    }
+    // 멤버 상세 조회(상세 버전) - 관리자 // todo DTO 내부로 정적 메서드로 넣기
+    public MemberDTO getMember(final Long memberId) {
 
-    public Long create(final MemberDTO memberDTO) {
-        final Member member = new Member();
-        roadmapToEntity(memberDTO, member);
-        return memberRepository.save(member).getId();
-    }
+        final Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new CommonException(ResponseCode.MEMBER_NOT_FOUND));
 
-    public void update(final Long id, final MemberDTO memberDTO) {
-        final Member member = memberRepository.findById(id)
-                .orElseThrow(NotFoundException::new);
-        roadmapToEntity(memberDTO, member);
-        memberRepository.save(member);
-    }
+        MemberDTO memberDTO = MemberDTO.builder()
+                .id(member.getId())
+                .isBlacklisted(member.getIsBlacklisted())
+                .name(member.getName())
+                .nickname(member.getNickname())
+                .email(member.getEmail())
+                .password(member.getPassword())
+                .loginType(member.getLoginType().toString())
+                .provider(member.getProvider())
+                .role(member.getRole())
+                .status(member.getStatus())
+                .profileImage(member.getProfileImage())
+                .lastLogin(member.getLastLogin())
+                .createdAt(member.getCreatedAt())
+                .updatedAt(member.getUpdatedAt())
+                .deletedAt(member.getDeletedAt())
+                .build();
 
-    public void delete(final Long id) {
-        memberRepository.deleteById(id);
-    }
-
-    private MemberDTO roadmapToDTO(final Member member, final MemberDTO memberDTO) {
-        memberDTO.setId(member.getId());
-        memberDTO.setName(member.getName());
-        memberDTO.setNickname(member.getNickname());
-        memberDTO.setEmail(member.getEmail());
-        memberDTO.setPassword(member.getPassword());
-        memberDTO.setLoginType(member.getLoginType().name());
-        memberDTO.setProvider(member.getProvider());
-        memberDTO.setRole(member.getRole());
-        memberDTO.setStatus(member.getStatus());
-        memberDTO.setProfileImage(member.getProfileImage());
-        memberDTO.setLastLogin(member.getLastLogin());
-        memberDTO.setCreatedAt(member.getCreatedAt());
-        memberDTO.setUpdatedAt(member.getUpdatedAt());
-        memberDTO.setDeletedAt(member.getDeletedAt());
         return memberDTO;
     }
 
-    private Member roadmapToEntity(final MemberDTO memberDTO, final Member member) {
-        member.setName(memberDTO.getName());
-        member.setNickname(memberDTO.getNickname());
-        member.setEmail(memberDTO.getEmail());
-        member.setPassword(memberDTO.getPassword());
-        member.setLoginType(LoginType.valueOf(memberDTO.getLoginType()));
-        member.setProvider(memberDTO.getProvider());
-        member.setRole(memberDTO.getRole());
-        member.setStatus(memberDTO.getStatus());
-        member.setProfileImage(memberDTO.getProfileImage());
-        member.setLastLogin(memberDTO.getLastLogin());
-        member.setCreatedAt(memberDTO.getCreatedAt());
-        member.setUpdatedAt(memberDTO.getUpdatedAt());
-        member.setDeletedAt(memberDTO.getDeletedAt());
-        return member;
+    // 사용자 정보 조회 -사용자 // todo DTO 내부로 정적 메서드로 넣기
+    @Transactional
+    public MemberDetailDTO getMemberProfile(Long memberId) {
+
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new CommonException(ResponseCode.MEMBER_NOT_FOUND));
+
+        List<MemberInterest> memberInterests = memberInterestRepository.findAllByMemberId(memberId);
+
+        List<MemberInterestDTO> memberInterestDTOList = memberInterests.stream()
+                .map(memberInterest -> MemberInterestDTO.builder()
+                        .id(memberInterest.getId())
+                        .createdAt(memberInterest.getCreatedAt())
+                        .categories(
+                                List.of(
+                                        CategorySimpleDTO.builder()
+                                                .id(memberInterest.getCategory().getId())
+                                                .name(memberInterest.getCategory().getName())
+                                                .build()
+                                )
+                        )
+                        .build()
+                )
+              .toList();
+
+        MemberDetailDTO memberDetailDto = MemberDetailDTO.builder()
+                .id(member.getId())
+                .isBlacklisted(member.getIsBlacklisted())
+                .name(member.getName())
+                .nickname(member.getNickname())
+                .email(member.getEmail())
+                .password(member.getPassword())
+                .loginType(member.getLoginType().name())
+                .provider(member.getProvider())
+                .role(member.getRole())
+                .status(member.getStatus())
+                .profileImage(member.getProfileImage())
+                .lastLogin(member.getLastLogin())
+                .memberInterests(memberInterestDTOList)
+                .loginCount(member.getLoginCount())
+                .createdAt(member.getCreatedAt())
+                .updatedAt(member.getUpdatedAt())
+                .deletedAt(member.getDeletedAt())
+                .build();
+
+        return memberDetailDto;
     }
 
-    public boolean emailExists(final String email) {
-        return memberRepository.existsByEmailIgnoreCase(email);
+    // 사용자 정보(프로필) 수정
+    @Transactional
+    public void updateMemberProfile(final Long memberId, final MemberProfileUpdateRequest memberProfileUpdateRequest) {
+
+        final Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new CommonException(ResponseCode.MEMBER_NOT_FOUND));
+
+        member.setNickname(memberProfileUpdateRequest.getNickname());
+        member.setProfileImage(memberProfileUpdateRequest.getProfileImage());
+        member.setUpdatedAt(OffsetDateTime.now());
+
+        try{
+            memberRepository.save(member);
+        }catch (DataIntegrityViolationException e){
+            throw new CommonException(ResponseCode.DB_CONSTRAINT_VIOLATION); // DB 제약 조건 위배
+        }
     }
 
-    public ReferencedWarning getReferencedWarning(final Long id) {
-        final ReferencedWarning referencedWarning = new ReferencedWarning();
+    // 회원 삭제/탈퇴(관리자/사용자) - 소프트 딜리트
+    @Transactional
+    public void deleteMember(final Long id) {
+
         final Member member = memberRepository.findById(id)
-                .orElseThrow(NotFoundException::new);
-        final Roadmap memberMap = roadmapRepository.findFirstByMember(member);
-        if (memberMap != null) {
-            referencedWarning.setKey("member.map.member.referenced");
-            referencedWarning.addParam(memberMap.getId());
-            return referencedWarning;
+                .orElseThrow(() -> new NotFoundException("해당 회원이 없습니다."));
+
+        if (member.getDeletedAt() != null) {
+            throw new CommonException(ResponseCode.ALREADY_DELETED_USER);
         }
-        final RoadmapEditor memberMapEditor = roadmapEditorRepository.findFirstByMember(member);
-        if (memberMapEditor != null) {
-            referencedWarning.setKey("member.mapEditor.member.referenced");
-            referencedWarning.addParam(memberMapEditor.getId());
-            return referencedWarning;
-        }
-        final RoadmapEditor invitedByMapEditor = roadmapEditorRepository.findFirstByInvitedBy(member);
-        if (invitedByMapEditor != null) {
-            referencedWarning.setKey("member.mapEditor.invitedBy.referenced");
-            referencedWarning.addParam(invitedByMapEditor.getId());
-            return referencedWarning;
-        }
-        final Layer memberLayer = layerRepository.findFirstByMember(member);
-        if (memberLayer != null) {
-            referencedWarning.setKey("member.layer.member.referenced");
-            referencedWarning.addParam(memberLayer.getId());
-            return referencedWarning;
-        }
-        final Marker memberMarker = markerRepository.findFirstByMember(member);
-        if (memberMarker != null) {
-            referencedWarning.setKey("member.marker.member.referenced");
-            referencedWarning.addParam(memberMarker.getId());
-            return referencedWarning;
-        }
-        final Comment memberComment = commentRepository.findFirstByMember(member);
-        if (memberComment != null) {
-            referencedWarning.setKey("member.comment.member.referenced");
-            referencedWarning.addParam(memberComment.getId());
-            return referencedWarning;
-        }
-        final Bookmark memberBookmark = bookmarkRepository.findFirstByMember(member);
-        if (memberBookmark != null) {
-            referencedWarning.setKey("member.bookmark.member.referenced");
-            referencedWarning.addParam(memberBookmark.getId());
-            return referencedWarning;
-        }
-        final MemberInterest memberMemberInterest = memberInterestRepository.findFirstByMember(member);
-        if (memberMemberInterest != null) {
-            referencedWarning.setKey("member.memberInterest.member.referenced");
-            referencedWarning.addParam(memberMemberInterest.getId());
-            return referencedWarning;
-        }
-        final Report reporterReport = reportRepository.findFirstByReporter(member);
-        if (reporterReport != null) {
-            referencedWarning.setKey("member.report.reporter.referenced");
-            referencedWarning.addParam(reporterReport.getId());
-            return referencedWarning;
-        }
-        final Report reportedMemberReport = reportRepository.findFirstByReportedMember(member);
-        if (reportedMemberReport != null) {
-            referencedWarning.setKey("member.report.reportedMember.referenced");
-            referencedWarning.addParam(reportedMemberReport.getId());
-            return referencedWarning;
-        }
-        final Quest memberQuest = questRepository.findFirstByMember(member);
-        if (memberQuest != null) {
-            referencedWarning.setKey("member.quest.member.referenced");
-            referencedWarning.addParam(memberQuest.getId());
-            return referencedWarning;
-        }
-        final MemberQuest memberMemberQuest = memberQuestRepository.findFirstByMember(member);
-        if (memberMemberQuest != null) {
-            referencedWarning.setKey("member.memberQuest.member.referenced");
-            referencedWarning.addParam(memberMemberQuest.getId());
-            return referencedWarning;
-        }
-        final QuestRank memberQuestRank = questRankRepository.findFirstByMember(member);
-        if (memberQuestRank != null) {
-            referencedWarning.setKey("member.questRank.member.referenced");
-            referencedWarning.addParam(memberQuestRank.getId());
-            return referencedWarning;
-        }
-        final LayerLibrary memberLayerLibrary = layerLibraryRepository.findFirstByMember(member);
-        if (memberLayerLibrary != null) {
-            referencedWarning.setKey("member.layerLibrary.member.referenced");
-            referencedWarning.addParam(memberLayerLibrary.getId());
-            return referencedWarning;
-        }
-        return null;
+
+//        member.setStatus("WITHDRAWN");
+        member.setDeletedAt(OffsetDateTime.now()); // 삭제 날짜에 현재 시간 입력
     }
 
-    // 마이페이지 - 회원 정보 조회
-    public Member getMemberProfile(Long memberId) {
-        return memberRepository.findById(memberId)
-                .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
-    }
+    // 관리자 - 특정 유저 블랙 리스트 설정
+    @Transactional
+    public void setMemberBlackList(Long memberId) {
+        try{
 
-    // 마이페이지 - 회원 정보 수정
-    public Member updateMemberProfile(Long memberId, String nickname, String profileImage) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
 
-        if (nickname != null && !nickname.trim().isEmpty()) {
-            member.setNickname(nickname);
-        }
-        if (profileImage != null) {
-            member.setProfileImage(profileImage);
+        if (member.getIsBlacklisted() == true){
+            throw new CommonException(ResponseCode.ALREADY_REGISTERED_BLACKLIST);
         }
 
-        member.updateTimestamp();
-        return memberRepository.save(member);
+
+            member.setIsBlacklisted(true);
+        }catch (DataIntegrityViolationException e){
+            throw new CommonException(ResponseCode.DB_CONSTRAINT_VIOLATION); // DB 제약 조건 위배
+        }
+
     }
 
-    // 마이페이지 - 비밀번호 확인
-    public boolean verifyPassword(Long memberId, String currentPassword) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
-        
-        // 실제 구현에서는 암호화된 비밀번호와 비교해야 함
-        return member.getPassword().equals(currentPassword);
-    }
+    // 관리자 - 유저 관리자 권한 부여
+    @Transactional
+    public void setMemberRoleAdmin(Long memberId) {
+        try{
 
-    // 마이페이지 - 비밀번호 수정
-    public void updatePassword(Long memberId, String newPassword) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
-
-        // 실제 구현에서는 비밀번호를 암호화해야 함
-        member.setPassword(newPassword);
-        member.updateTimestamp();
-        memberRepository.save(member);
-    }
-
-    // 마이페이지 - 회원 탈퇴
-    public void withdrawMember(Long memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
 
-        member.setDeletedAt(OffsetDateTime.now());
-        member.setStatus("WITHDRAWN");
-        memberRepository.save(member);
+        if ("ROLE_ADMIN".equals(member.getRole())) { // 리터럴을 앞에 두어 null 방지
+            throw new CommonException(ResponseCode.ALREADY_REGISTERED_ADMIN);
+        }
+
+        member.setRole("ROLE_ADMIN");
+        }catch (DataIntegrityViolationException e){
+            throw new CommonException(ResponseCode.DB_CONSTRAINT_VIOLATION); // DB 제약 조건 위배
+        }
+
     }
 
-    // 마이페이지 - 회원 지도 목록 조회
-    public List<Roadmap> getMemberRoadmaps(Long memberId) {
+    // 비밀번호 검증
+    public boolean verifyPassword(Long memberId, String password) {
+
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
 
-        return roadmapRepository.findByMember(member);
+        if (!passwordEncoder.matches(password, member.getPassword())) {
+            throw new CommonException(ResponseCode.INVALID_PASSWORD);
+        }
+
+        return member.getPassword().equals(password);
     }
 
 }

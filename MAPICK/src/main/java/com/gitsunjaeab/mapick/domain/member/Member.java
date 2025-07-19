@@ -88,6 +88,9 @@ public class Member {
     @Column
     private OffsetDateTime lastLogin;
 
+    @Column(nullable = false, columnDefinition = "BIGINT DEFAULT 0")
+    private Long loginCount = 0L;
+
     @Column(nullable = false)
     private OffsetDateTime createdAt;
 

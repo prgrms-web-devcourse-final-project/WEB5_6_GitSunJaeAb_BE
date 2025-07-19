@@ -1,6 +1,6 @@
 package com.gitsunjaeab.mapick.application.roadmap;
 
-import com.gitsunjaeab.mapick.api.member.dto.MemberResponse;
+
 import com.gitsunjaeab.mapick.api.roadmap.dto.hashtag.HashtagDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.hashtag.HashtagListResponse;
 import com.gitsunjaeab.mapick.api.roadmap.dto.hashtag.HashtagRequest;

@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class ApiResponse implements BaseApiResponse {
     private String code;
     private String message;
-//    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime timestamp;
 
     // 데이터 없이 상태코드와 메시지만 반환
