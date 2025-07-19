@@ -15,6 +15,7 @@ import com.gitsunjaeab.mapick.domain.report.Report;
 import com.gitsunjaeab.mapick.domain.report.ReportRepository;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import com.gitsunjaeab.mapick.util.ReferencedWarning;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.data.domain.Sort;
@@ -72,6 +73,8 @@ public class QuestService {
         final Quest quest = new Quest();
         requestToEntity(questRequest, quest);
         quest.setMember(member); // 작성자
+        quest.setCreatedAt(OffsetDateTime.now());
+
         return questRepository.save(quest).getId();
     }
 
@@ -85,6 +88,7 @@ public class QuestService {
         }
 
         requestToEntity(questRequest, quest);
+        quest.setUpdatedAt(OffsetDateTime.now());
         questRepository.save(quest);
     }
 
