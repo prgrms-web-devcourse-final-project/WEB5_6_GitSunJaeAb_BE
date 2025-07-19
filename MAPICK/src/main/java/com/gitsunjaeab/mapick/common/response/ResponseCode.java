@@ -36,6 +36,8 @@ public enum ResponseCode {
     ALREADY_REGISTERED_ADMIN("4095", HttpStatus.CONFLICT, "이미 관리자로 등록된 회원 입니다."),
     ALREADY_DELETED_USER("4096", HttpStatus.CONFLICT, "이미 삭제된 회원 입니다."),
 
+    ALREADY_ZZIMMED("4094", HttpStatus.CONFLICT, "이미 찜한 레이어입니다."),
+    NOT_ZZIMMED_YET("4095", HttpStatus.CONFLICT, "찜하지 않은 레이어입니다."),
 
     // 내부 오류
     INTERNAL_ERROR("5000", HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류입니다."),
@@ -54,4 +56,4 @@ public enum ResponseCode {
     private final String code;
     private final HttpStatus status;
     private final String message;
-}
+    }
