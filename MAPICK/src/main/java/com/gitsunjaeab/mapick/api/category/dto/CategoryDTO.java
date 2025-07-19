@@ -27,4 +27,11 @@ public class CategoryDTO {
 
     @NotNull
     private OffsetDateTime createdAt;
+
+    public CategoryDTO(Category category) {
+        this.id = category.getId();
+        this.name = category.getName();
+        this.description = category.getDescription();
+        this.categoryImage = category.getCategoryImage();
+    }
 }

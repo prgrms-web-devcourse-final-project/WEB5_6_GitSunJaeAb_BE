@@ -1,7 +1,7 @@
 package com.gitsunjaeab.mapick.api.roadmap.dto.roadmap;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.gitsunjaeab.mapick.api.category.dto.SimpleCategoryDTO;
+import com.gitsunjaeab.mapick.api.category.dto.CategorySimpleDTO;
 import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.hashtag.HashtagDTO;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
@@ -37,7 +37,7 @@ public class RoadmapResponse implements BaseApiResponse {
         @Size(max = 255)
         private String title;
 
-        private SimpleCategoryDTO category;
+        private CategorySimpleDTO category;
 
         private String description;
 
@@ -65,7 +65,7 @@ public class RoadmapResponse implements BaseApiResponse {
     public static RoadmapResponse of(Roadmap r) {
         RoadmapInfo roadmapInfo = new RoadmapInfo();
         roadmapInfo.setTitle(r.getTitle());
-        roadmapInfo.setCategory(new SimpleCategoryDTO(r.getCategory()));
+        roadmapInfo.setCategory(new CategorySimpleDTO(r.getCategory()));
         roadmapInfo.setDescription(r.getDescription());
         roadmapInfo.setThumbnail(r.getThumbnail());
         roadmapInfo.setMember(new MemberSimpleDTO(r.getMember()));
