@@ -72,7 +72,7 @@ public class QuestController {
             throw new IllegalStateException("인증된 유저 정보 없음");
         }
 
-        Member member = principal.getMember(); // 현재 로그인된 멤버 객체
+        Member member = principal.getMember(); //현재 로그인된 멤버 객체
         Long questId = questService.create(questRequest,member);
         QuestResponse createdQuest = questService.get(questId);
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "퀘스트 생성 완료"));
@@ -97,12 +97,16 @@ public class QuestController {
     // 퀘스트 삭제 (출제자용)
     @DeleteMapping("/{questsId}")
     @Operation(summary = "퀘스트 삭제", description = "[출제자용] 본인이 생성한 퀘스트를 삭제합니다.")
-    public ResponseEntity<ApiResponse> deleteQuest(@PathVariable(name = "questsId") final Long questsId) {
-//        final ReferencedWarning referencedWarning = questService.getReferencedWarning(questsId);
-//        if (referencedWarning != null) {
-//            throw new ReferencedException(referencedWarning);
-//        }
-//        questService.delete(questsId);
+    public ResponseEntity<ApiResponse> deleteQuest(@PathVariable(name = "questsId") final Long questsId,
+        @AuthenticationPrincipal Principal principal) {
+
+        //참조된 데이터 확인
+        final ReferencedWarning referencedWarning = questService.getReferencedWarning(questsId);
+        if (referencedWarning != null) {
+            throw new ReferencedException(referencedWarning);
+        }
+
+        questService.delete(questsId,principal.getMember().getEmail());
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "퀘스트 삭제 완료"));
     }
 

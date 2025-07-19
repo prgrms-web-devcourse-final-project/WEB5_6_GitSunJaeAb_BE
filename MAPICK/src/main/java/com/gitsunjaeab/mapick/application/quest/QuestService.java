@@ -92,8 +92,17 @@ public class QuestService {
         questRepository.save(quest);
     }
 
-    public void delete(final Long id) {
-        questRepository.deleteById(id);
+    public void delete(final Long id, final String currentMemberEmail) {
+        final Quest quest = questRepository.findWithMemberById(id)
+                .orElseThrow(NotFoundException::new);
+
+        if (!quest.getMember().getEmail().equals(currentMemberEmail)) {
+            throw new RuntimeException("작성자만 퀘스트를 삭제 할 수 있습니다.");
+        }
+
+        quest.setDeletedAt(OffsetDateTime.now()); // DeletedAt의 값이 들어있는 것을 통해 판단
+        questRepository.save(quest); // 변경 내용 명시적으로 저장
+//        questRepository.deleteById(id); //SoftDelete임을 가정하고 일단 주석처리
     }
 
     private QuestResponse questToResponse(final Quest quest) {
