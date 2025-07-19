@@ -2,16 +2,22 @@ package com.gitsunjaeab.mapick.application.roadmap;
 
 import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.RoadmapListResponse;
 import com.gitsunjaeab.mapick.api.roadmap.dto.bookmark.BookmarkDTO;
+import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.Bookmark;
 import com.gitsunjaeab.mapick.domain.roadmap.BookmarkRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
+import com.gitsunjaeab.mapick.infra.error.exceptions.DuplicatedBookmarkException;
+import com.gitsunjaeab.mapick.infra.error.exceptions.ForbiddenException;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,10 +44,9 @@ public class BookmarkService {
         Member member = memberRepository.findById(memberId)
             .orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다."));
 
-        // 서비스에서 아래 예외 상황은 발생하지 않을 듯
-//        if (bookmarkRepository.existsByRoadmapAndMember(roadmap, member)) {
-//            throw new ConflictException("이미 북마크한 로드맵입니다.");
-//        }
+        if (bookmarkRepository.existsByMemberAndRoadmap(member, roadmap)) {
+            throw new DuplicatedBookmarkException(ResponseCode.BOOKMARK_DUPLICATED);
+        }
 
         Bookmark bookmark = new Bookmark();
         bookmark.setRoadmap(roadmap);
@@ -52,8 +57,15 @@ public class BookmarkService {
     }
 
     @Transactional
-    public void delete(final Long id) {
-        bookmarkRepository.deleteById(id);
+    public void delete(Long bookmarkId, Long memberId) {
+        Bookmark bookmark = bookmarkRepository.findById(bookmarkId)
+                .orElseThrow(() -> new NotFoundException("북마크가 존재하지 않습니다."));
+
+        if (!bookmark.getMember().getId().equals(memberId)) {
+            throw new ForbiddenException(ResponseCode.FORBIDDEN);
+        }
+
+        bookmarkRepository.delete(bookmark);
     }
 
     @Transactional(readOnly = true)
@@ -64,7 +76,10 @@ public class BookmarkService {
             .map(Bookmark::getRoadmap)
             .toList();
 
-        return RoadmapListResponse.of(roadmaps, Collections.emptyMap());
+        Set<Long> bookmarkedIds = roadmaps.stream()
+                .map(Roadmap::getId)
+                .collect(Collectors.toSet());
+        return RoadmapListResponse.of(roadmaps, Collections.emptyMap(), bookmarkedIds);
     }
 
     public List<BookmarkDTO> findAll() {
