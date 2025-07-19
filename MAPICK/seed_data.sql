@@ -137,9 +137,9 @@ VALUES (37.512817, 127.102496, 1, '2025-07-13 16:28:29.510000 +00:00', null, 1, 
         '야시장 분위기', NULL, '방이전통시장');
 
 -- LayerLibraries 데이터
-INSERT INTO public.layer_libraries (created_at, id, layer_id, member_id)
-VALUES ('2025-07-13 17:19:57.332000 +00:00', 1, 1, 2),
-       ('2025-07-13 17:20:10.760000 +00:00', 2, 2, 2);
+INSERT INTO public.layer_libraries (created_at, id, layer_id, member_id, is_zzim)
+VALUES ('2025-07-13 17:19:57.332000 +00:00', 1, 1, 2, true),
+       ('2025-07-13 17:20:10.760000 +00:00', 2, 2, 2, true);
 
 -- Quest 데이터
 INSERT INTO quests (is_active, completed_at, created_at, deleted_at, id, member_id, updated_at,

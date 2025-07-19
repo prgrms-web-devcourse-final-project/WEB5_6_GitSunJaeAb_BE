@@ -29,7 +29,8 @@ public enum ResponseCode {
     NICKNAME_DUPLICATED("4091", HttpStatus.CONFLICT, "중복된 닉네임입니다."),
     ALREADY_REGISTERED_EMAIL("4092", HttpStatus.CONFLICT, "이미 가입된 이메일입니다."),
     DB_CONSTRAINT_VIOLATION("4093", HttpStatus.CONFLICT, "DB 제약 조건에 위배되었습니다."),
-
+    ALREADY_ZZIMMED("4094", HttpStatus.CONFLICT, "이미 찜한 레이어입니다."),
+    NOT_ZZIMMED_YET("4095", HttpStatus.CONFLICT, "찜하지 않은 레이어입니다."),
 
     // 내부 오류
     INTERNAL_ERROR("5000", HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류입니다."),
@@ -42,8 +43,7 @@ public enum ResponseCode {
     SOCIAL_SIGNIN_SUCCESS("2003", HttpStatus.OK, "소셜 로그인 성공입니다."),
     LOGOUT_SUCCESS("2004", HttpStatus.OK, "로그아웃 되었습니다.");
 
-
     private final String code;
     private final HttpStatus status;
     private final String message;
-}
+    }

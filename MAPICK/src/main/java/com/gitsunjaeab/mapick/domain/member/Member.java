@@ -28,6 +28,7 @@ import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
@@ -108,45 +109,59 @@ public class Member {
     }
 
     @OneToMany(mappedBy = "member")
+    @Builder.Default
     private Set<Roadmap> memberRoadmaps = new HashSet<>();
 
     @OneToMany(mappedBy = "member")
+    @Builder.Default
     private Set<RoadmapEditor> memberRoadmapEditors = new HashSet<>();
 
     @OneToMany(mappedBy = "invitedBy")
+    @Builder.Default
     private Set<RoadmapEditor> invitedByRoadmapEditors = new HashSet<>();
 
     @OneToMany(mappedBy = "member")
+    @Builder.Default
     private Set<Layer> memberLayers = new HashSet<>();
 
     @OneToMany(mappedBy = "member")
+    @Builder.Default
     private Set<Marker> memberMarkers = new HashSet<>();
 
     @OneToMany(mappedBy = "member")
+    @Builder.Default
     private Set<Comment> memberComments = new HashSet<>();
 
     @OneToMany(mappedBy = "member")
+    @Builder.Default
     private Set<Bookmark> memberLikes = new HashSet<>();
 
     @OneToMany(mappedBy = "member")
+    @Builder.Default
     private Set<MemberInterest> memberMemberInterests = new HashSet<>();
 
     @OneToMany(mappedBy = "reporter")
+    @Builder.Default
     private Set<Report> reporterReports = new HashSet<>();
 
     @OneToMany(mappedBy = "reportedMember")
+    @Builder.Default
     private Set<Report> reportedMemberReports = new HashSet<>();
 
     @OneToMany(mappedBy = "member")
+    @Builder.Default
     private Set<Quest> memberQuests = new HashSet<>();
 
     @OneToMany(mappedBy = "member")
+    @Builder.Default
     private Set<MemberQuest> memberMemberQuests = new HashSet<>();
 
     @OneToMany(mappedBy = "member")
+    @Builder.Default
     private Set<QuestRank> memberQuestTopSubmitters = new HashSet<>();
 
     @OneToMany(mappedBy = "member")
+    @Builder.Default
     private Set<LayerLibrary> memberLayerLibraries = new HashSet<>();
 
 }

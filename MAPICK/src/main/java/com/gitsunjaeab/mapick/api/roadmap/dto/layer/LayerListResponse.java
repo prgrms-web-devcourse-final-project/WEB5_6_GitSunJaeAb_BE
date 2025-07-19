@@ -23,6 +23,9 @@ public class LayerListResponse implements BaseApiResponse {
     private LocalDateTime timestamp;
     private List<LayerListDTO> layers;
 
+
+
+    // 공통 처리 로직
     public static LayerListResponse of(List<Layer> layerEntities) {
         List<LayerListDTO> layerDTOs = layerEntities.stream()
             .map(l -> {
@@ -33,7 +36,7 @@ public class LayerListResponse implements BaseApiResponse {
                 dto.setLayerSeq(l.getLayerSeq());
                 dto.setLayerTime(l.getLayerTime());
                 dto.setCreatedAt(l.getCreatedAt());
-                dto.setMember(new MemberSimpleDTO(l.getMember()));
+                dto.setMember(l.getMember() != null ? new MemberSimpleDTO(l.getMember()) : null);
                 dto.setRoadmap(l.getRoadmap() != null ? l.getRoadmap().getId() : null);
                 return dto;
             })
