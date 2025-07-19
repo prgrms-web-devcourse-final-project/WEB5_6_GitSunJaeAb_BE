@@ -1,8 +1,10 @@
 package com.gitsunjaeab.mapick.application.category;
 
+import com.gitsunjaeab.mapick.api.category.dto.CategoryDTO;
 import com.gitsunjaeab.mapick.api.category.dto.CategoryRequest;
 import com.gitsunjaeab.mapick.domain.category.Category;
 import com.gitsunjaeab.mapick.domain.category.CategoryRepository;
+import com.gitsunjaeab.mapick.domain.roadmap.BookmarkRepository;
 import com.gitsunjaeab.mapick.infra.storage.SupabaseStorageService;
 import jakarta.persistence.EntityNotFoundException;
 import java.time.OffsetDateTime;
@@ -20,6 +22,7 @@ public class CategoryService {
 
     private final CategoryRepository categoryRepository;
     private final SupabaseStorageService supabaseStorageService;
+    private final BookmarkRepository bookmarkRepository;
 
     @Transactional
     public void create(CategoryRequest request, MultipartFile imageFile) {
@@ -37,6 +40,14 @@ public class CategoryService {
 
     public List<Category> findAll() {
         return categoryRepository.findAll(Sort.by("id"));
+    }
+
+
+    public List<CategoryDTO> getTop5List() {
+        List<Category> categories = categoryRepository.findTop5Categories();
+
+        return categories.stream().map(CategoryDTO::new)
+            .toList();
     }
 
     @Transactional

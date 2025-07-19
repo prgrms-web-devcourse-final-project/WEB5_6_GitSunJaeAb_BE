@@ -1,7 +1,9 @@
 package com.gitsunjaeab.mapick.api.category;
 
+import com.gitsunjaeab.mapick.api.category.dto.CategoryDTO;
 import com.gitsunjaeab.mapick.api.category.dto.CategoryListResponse;
 import com.gitsunjaeab.mapick.api.category.dto.CategoryRequest;
+import com.gitsunjaeab.mapick.api.category.dto.Top5CategoriesResponse;
 import com.gitsunjaeab.mapick.application.category.CategoryService;
 import com.gitsunjaeab.mapick.common.response.ApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
@@ -51,6 +53,16 @@ public class CategoryController {
     public ResponseEntity<CategoryListResponse> getCategoryList() {
         List<Category> categories = categoryService.findAll();
         CategoryListResponse response = CategoryListResponse.of(categories);
+
+        return ResponseEntity.ok(response);
+    }
+
+    // 인기 카테고리 조회 (상위 5개)
+    @GetMapping("/top5")
+    @Operation(summary = "인기 카테고리 top5 조회", description = "[모든 사용자] 북마크 된 로드맵들의 카테고리 기준, 최대 상위 5개 조회")
+    public ResponseEntity<Top5CategoriesResponse> getTop5Categories() {
+        List<CategoryDTO> categoryDTOS = categoryService.getTop5List();
+        Top5CategoriesResponse response = Top5CategoriesResponse.of(categoryDTOS);
 
         return ResponseEntity.ok(response);
     }
