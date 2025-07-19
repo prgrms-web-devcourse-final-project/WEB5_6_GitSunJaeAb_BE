@@ -11,6 +11,7 @@ import com.gitsunjaeab.mapick.application.quest.QuestRankService;
 import com.gitsunjaeab.mapick.application.quest.QuestService;
 import com.gitsunjaeab.mapick.application.quest.MemberQuestEvidenceService;
 import com.gitsunjaeab.mapick.domain.auth.Principal;
+import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.util.ReferencedException;
 import com.gitsunjaeab.mapick.util.ReferencedWarning;
 import com.gitsunjaeab.mapick.common.response.ApiResponse;
@@ -71,8 +72,8 @@ public class QuestController {
             throw new IllegalStateException("인증된 유저 정보 없음");
         }
 
-        Long memberId = principal.getMember().getId();
-        Long questId = questService.create(questRequest);
+        Member member = principal.getMember(); // 현재 로그인된 멤버 객체
+        Long questId = questService.create(questRequest,member);
         QuestResponse createdQuest = questService.get(questId);
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "퀘스트 생성 완료"));
     }
@@ -81,9 +82,15 @@ public class QuestController {
     @PutMapping("/{questsId}")
     @Operation(summary = "퀘스트 수정", description = "[출제자용] 본인이 생성한 퀘스트의 정보를 수정합니다.")
     public ResponseEntity<ApiResponse> updateQuest(@PathVariable(name = "questsId") final Long questsId,
-            @RequestBody @Valid final QuestRequest questRequest) {
-//        questService.update(questsId, questRequest);
-//        QuestResponse updatedQuest = questService.get(questsId);
+            @RequestBody @Valid final QuestRequest questRequest,
+            @AuthenticationPrincipal Principal principal) {
+
+        if(principal == null){
+            throw new IllegalStateException("인증된 유저 정보 없음");
+        }
+
+        questService.update(questsId, questRequest, principal.getMember().getEmail());
+        QuestResponse updatedQuest = questService.get(questsId);
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "퀘스트 수정 완료"));
     }
 

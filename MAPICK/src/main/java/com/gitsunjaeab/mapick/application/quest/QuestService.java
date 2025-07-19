@@ -29,16 +29,21 @@ public class QuestService {
     private final ReportRepository reportRepository;
     private final MemberQuestRepository memberQuestRepository;
     private final QuestRankRepository questRankRepository;
+    private final MemberRepository memberRepository;
 
     public QuestService(final QuestRepository questRepository,
-            final MemberRepository memberRepository, final ReportRepository reportRepository,
+            final MemberRepository memberRepository,
+            final ReportRepository reportRepository,
             final MemberQuestRepository memberQuestRepository,
-            final QuestRankRepository questRankRepository) {
+            final QuestRankRepository questRankRepository
+//        ,MemberRepository memberRepository 임시로 주석처리
+     ) {
         this.questRepository = questRepository;
 //        this.memberRepository = memberRepository;
         this.reportRepository = reportRepository;
         this.memberQuestRepository = memberQuestRepository;
         this.questRankRepository = questRankRepository;
+        this.memberRepository = memberRepository;
     }
     //전체 퀘스트 조회
     public List<QuestResponse> findAll(Boolean isActive) {
@@ -63,15 +68,22 @@ public class QuestService {
                 .orElseThrow(NotFoundException::new);
     }
 
-    public Long create (final QuestRequest questRequest) {
+    public Long create (final QuestRequest questRequest, final Member member) {
         final Quest quest = new Quest();
         requestToEntity(questRequest, quest);
+        quest.setMember(member); // 작성자
         return questRepository.save(quest).getId();
     }
 
-    public void update(final Long id, final QuestRequest questRequest) {
-        final Quest quest = questRepository.findById(id)
+    //퀘스트 수정
+    public void update(final Long id, final QuestRequest questRequest, final String currentMemberEmail) {
+        final Quest quest = questRepository.findWithMemberById(id)
                 .orElseThrow(NotFoundException::new);
+
+        if (!quest.getMember().getEmail().equals(currentMemberEmail)) {
+            throw new RuntimeException("작성자만 퀘스트를 수정할 수 있습니다.");
+        }
+
         requestToEntity(questRequest, quest);
         questRepository.save(quest);
     }
