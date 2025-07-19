@@ -29,4 +29,6 @@ public class RoadmapListDTO {
     private Integer viewCount;
     private Integer citationCount;
     private OffsetDateTime createdAt;
+    // 사용자가 북마크했는지 안 했는지
+    private Boolean isBookmarked;
 }
