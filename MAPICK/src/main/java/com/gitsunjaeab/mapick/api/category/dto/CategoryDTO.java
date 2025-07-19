@@ -33,5 +33,6 @@ public class CategoryDTO {
         this.name = category.getName();
         this.description = category.getDescription();
         this.categoryImage = category.getCategoryImage();
+        this.createdAt = category.getCreatedAt();
     }
 }
