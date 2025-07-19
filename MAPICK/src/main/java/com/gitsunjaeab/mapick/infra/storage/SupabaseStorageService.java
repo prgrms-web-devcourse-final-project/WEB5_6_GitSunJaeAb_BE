@@ -29,7 +29,8 @@ public class SupabaseStorageService {
                 throw new IllegalArgumentException("파일 이름이 비어 있습니다.");
             }
 
-            String safeFilename = UUID.randomUUID() + "_" + originalFilename;
+//            String safeFilename = UUID.randomUUID() + "_" + originalFilename;  한글파일명은 업로드 불가
+            String safeFilename = String.valueOf(UUID.randomUUID());
 
             // Supabase는 object key에 URL encoding을 하지 않아야 함
             String objectPath = supabaseProperties.getBucket() + "/" + safeFilename;
@@ -50,14 +51,12 @@ public class SupabaseStorageService {
             );
 
             if (!response.getStatusCode().is2xxSuccessful()) {
-                log.error("Supabase 업로드 실패: {}", response);
                 throw new RuntimeException("Supabase 파일 업로드 실패");
             }
 
             return generatePublicUrl(safeFilename);
 
         } catch (Exception e) {
-            log.error("Supabase 업로드 중 예외 발생", e);
             throw new RuntimeException("Supabase 파일 업로드 중 오류", e);
         }
     }
