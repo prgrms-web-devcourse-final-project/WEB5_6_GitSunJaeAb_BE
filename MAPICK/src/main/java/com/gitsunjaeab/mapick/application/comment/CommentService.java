@@ -61,14 +61,7 @@ public class CommentService {
         Comment comment = commentRepository.findById(id)
             .orElseThrow(() -> new NotFoundException("해당 댓글이 존재하지 않습니다."));
 
-        return new CommentDTO(
-            comment.getId(),
-            new MemberSimpleDTO(comment.getMember()),
-            comment.getContent(),
-            comment.getCreatedAt(),
-            comment.getRoadmap() == null ?  null : comment.getRoadmap().getId(),
-            comment.getQuest() == null ? null : comment.getQuest().getId()
-        );
+        return new CommentDTO(comment);
     }
 
     @Transactional
