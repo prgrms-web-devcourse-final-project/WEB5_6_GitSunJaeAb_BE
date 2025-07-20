@@ -26,7 +26,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update    # create # create
+      ddl-auto: create    # update # create
     open-in-view: false
     properties:
       hibernate:
@@ -37,8 +37,8 @@ spring:
         id:
           new_generator_mappings: true
 
-  config:
-    import: sm://
+#  config:
+#    import: sm://
 
   web:
     resources:
