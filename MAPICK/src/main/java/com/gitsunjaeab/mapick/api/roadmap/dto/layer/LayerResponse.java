@@ -27,5 +27,14 @@ public class LayerResponse implements BaseApiResponse {
             LayerDetailDTO.from(layer, isZzim)
         );
     }
+
+    public static LayerResponse of(LayerDetailDTO layerDetailDTO, String message) {
+        return new LayerResponse(
+            ResponseCode.OK.getCode(),
+            message,
+            LocalDateTime.now(),
+            layerDetailDTO
+        );
+    }
 }
 

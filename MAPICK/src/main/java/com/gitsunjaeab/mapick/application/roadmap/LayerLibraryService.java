@@ -72,7 +72,7 @@ public class LayerLibraryService {
     public LayerLibrary addLibrary(Long memberId, Long layerId) {
         Member member = memberRepository.findById(memberId)
             .orElseThrow(() -> new CommonException(ResponseCode.MEMBER_NOT_FOUND));
-        Layer layer = layerRepository.findById(layerId)
+        Layer layer = layerRepository.findByIdWithMember(layerId)
             .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND));
 
         // 삭제된 레이어 체크
@@ -91,7 +91,7 @@ public class LayerLibraryService {
         layerLibrary.setZzim(true);
         layerLibraryRepository.save(layerLibrary);
 
-        return layerLibraryRepository.findWithMemberById(layerLibrary.getId())
+        return layerLibraryRepository.findByIdWithAllAssociations(layerLibrary.getId())
             .orElseThrow(() -> new CommonException(ResponseCode.SAVE_FAILED));
     }
 
@@ -101,7 +101,7 @@ public class LayerLibraryService {
     public LayerLibrary removeLibrary(Long memberId, Long layerId) {
         Member member = memberRepository.findById(memberId)
             .orElseThrow(() -> new CommonException(ResponseCode.MEMBER_NOT_FOUND));
-        Layer layer = layerRepository.findById(layerId)
+        Layer layer = layerRepository.findByIdWithMember(layerId)
             .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND));
 
         LayerLibrary library = layerLibraryRepository.findByMemberAndLayer(member, layer)
@@ -121,7 +121,7 @@ public class LayerLibraryService {
         Member member = memberRepository.findById(memberId)
             .orElseThrow(() -> new CommonException(ResponseCode.MEMBER_NOT_FOUND));
 
-        Layer originalLayer = layerRepository.findById(layerId)
+        Layer originalLayer = layerRepository.findByIdWithMember(layerId)
             .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND));
 
         // 삭제된 레이어 체크

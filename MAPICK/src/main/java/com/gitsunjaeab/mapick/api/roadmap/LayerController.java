@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.gitsunjaeab.mapick.domain.roadmap.Layer;
 import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
 import com.gitsunjaeab.mapick.domain.roadmap.LayerLibrary;
-import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerDetailSimpleDTO;
+import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerDetailDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerZzimSimpleDTO;
 
 import java.util.List;
@@ -53,8 +53,17 @@ public class LayerController {
     // 레이어 생성
     @PostMapping
     @Operation(summary = "레이어 생성", description = "[사용자용] 지도 위에 레이어를 생성")
-    public ResponseEntity<LayerResponse> createLayer(@RequestBody @Valid final LayerRequest request) {
-        final Layer createdLayer = layerService.create(request);
+    public ResponseEntity<LayerResponse> createLayer(
+        @RequestBody @Valid final LayerRequest request,
+        @RequestParam Long roadmapId,
+        @AuthenticationPrincipal Principal principal
+    ) {
+        if (principal == null) {
+            throw new CommonException(ResponseCode.UNAUTHORIZED);
+        }
+        Long memberId = principal.getMember().getId();
+        
+        final Layer createdLayer = layerService.create(request, memberId, roadmapId);
         
         return ResponseEntity.ok(LayerResponse.of(createdLayer, false, "레이어 생성 성공"));
     }
@@ -78,9 +87,9 @@ public class LayerController {
         @AuthenticationPrincipal Principal principal
     ) {
         Long memberId = principal != null ? principal.getMember().getId() : null;
-        LayerDetailSimpleDTO layerDetailSimpleDTO = layerService.getLayerDetail(layerId, memberId);
+        LayerDetailDTO layerDetailDTO = layerService.getLayerDetail(layerId, memberId);
         
-        return ResponseEntity.ok(LayerResponse.of(layerDetailSimpleDTO.getLayer(), layerDetailSimpleDTO.isZzim(), "레이어 상세 조회 성공"));
+        return ResponseEntity.ok(LayerResponse.of(layerDetailDTO, "레이어 상세 조회 성공"));
     }
 
     // 레이어 수정

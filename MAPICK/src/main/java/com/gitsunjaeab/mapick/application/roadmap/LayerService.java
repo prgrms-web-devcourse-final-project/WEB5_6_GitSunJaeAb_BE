@@ -1,8 +1,7 @@
 package com.gitsunjaeab.mapick.application.roadmap;
 
-import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerDetailSimpleDTO;
+import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerDetailDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerRequest;
-import com.gitsunjaeab.mapick.application.member.MemberService;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.auth.Role;
 import com.gitsunjaeab.mapick.domain.member.Member;
@@ -19,12 +18,10 @@ import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import com.gitsunjaeab.mapick.util.ReferencedWarning;
 import java.util.List;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Slf4j
 public class LayerService {
 
     private final LayerRepository layerRepository;
@@ -50,18 +47,18 @@ public class LayerService {
     @Transactional(readOnly = true)
     public List<Layer> findAllLayersOnRoadmap(Long roadmapId) {
         if (roadmapId == null) {
-            // 전체 레이어 조회 (삭제되지 않은 것만 조회)
-            return layerRepository.findAllNotDeleted();
+            // 전체 레이어 조회 (삭제되지 않은 것만 조회) - 모든 연관 엔티티 함께 조회
+            return layerRepository.findAllNotDeletedWithAssociations();
         } else {
-            // 특정 로드맵 레이어 조회
-            return layerRepository.findAllByRoadmap_Id(roadmapId);
+            // 특정 로드맵 레이어 조회 - 모든 연관 엔티티 함께 조회
+            return layerRepository.findAllByRoadmap_IdWithAssociations(roadmapId);
         }
     }
 
     // 레이어 상세 조회 (삭제되지 않은 것만 조회) 
     @Transactional(readOnly = true)
-    public LayerDetailSimpleDTO getLayerDetail(final Long layerId, final Long memberId) {
-        Layer layer = layerRepository.findById(layerId)
+    public LayerDetailDTO getLayerDetail(final Long layerId, final Long memberId) {
+        Layer layer = layerRepository.findByIdWithMember(layerId)
             .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND));
 
         // 삭제된 레이어 체크
@@ -78,16 +75,16 @@ public class LayerService {
             }
         }
 
-        return new LayerDetailSimpleDTO(layer, isZzim);
+        return LayerDetailDTO.from(layer, isZzim);
     }
 
 
     // 레이어 생성
-    public Layer create(final LayerRequest request) {
+    public Layer create(final LayerRequest request, Long memberId, Long roadmapId) {
         // 연관 Entity 조회
-        Member member = memberRepository.findById(request.getMemberId())
+        Member member = memberRepository.findById(memberId)
             .orElseThrow(() -> new CommonException(ResponseCode.MEMBER_NOT_FOUND));
-        Roadmap roadmap = roadmapRepository.findById(request.getRoadmapId())
+        Roadmap roadmap = roadmapRepository.findById(roadmapId)
             .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND));
 
         // 요청 DTO -> Entity 변환
@@ -101,8 +98,8 @@ public class LayerService {
     // 레이어 수정
     @Transactional
     public Layer update(Long id, LayerRequest request, Long memberId) {
-        // 기존 레이어 조회
-        Layer layer = layerRepository.findById(id)
+        // 기존 레이어 조회 (Member와 함께 조회하여 LazyInitializationException 방지)
+        Layer layer = layerRepository.findByIdWithMember(id)
             .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND));
 
         // 본인만 수정 가능
@@ -124,7 +121,7 @@ public class LayerService {
     // 레이어 삭제
     @Transactional
     public Layer delete(Long id, Long memberId) {
-        Layer layer = layerRepository.findById(id)
+        Layer layer = layerRepository.findByIdWithMember(id)
             .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND));
 
         // 이미 삭제된 레이어 체크
@@ -153,7 +150,7 @@ public class LayerService {
         layer.setDeletedAt(java.time.OffsetDateTime.now()); // 레이어 소프트 딜리트
         layerRepository.save(layer);
         layerRepository.flush();
-        
+
         // 소프트 딜리트된 엔티티 반환
         return layer;
     }
