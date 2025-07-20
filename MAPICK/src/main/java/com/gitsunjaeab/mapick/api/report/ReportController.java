@@ -12,6 +12,7 @@ import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -20,26 +21,27 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(value = "/reports", produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "신고 관리 API")
+@RequiredArgsConstructor
 public class ReportController {
 
     private final ReportService reportService;
-
-    public ReportController(ReportService reportService) {
-        this.reportService = reportService;
-    }
 
     // ===== 관리자용 API =====
     
     // 전체 신고 조회 (관리자)
     @GetMapping
+    // @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "전체 신고 조회", description = "[관리자용] 모든 신고 내역을 조회합니다.")
     public ResponseEntity<ReportListResponse> getAllReports() {
+
         ReportListResponse response = reportService.findAll();
+
         return ResponseEntity.ok(response);
     }
 
     // 특정 신고 상세 조회 (관리자)
     @GetMapping("/{reportId}")
+    // @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "특정 신고 상세 조회", description = "[관리자용] 특정 신고의 상세 정보를 조회합니다.")
     public ResponseEntity<ReportResponse> getReport(@PathVariable(name = "reportId") final Long reportId) {
         return ResponseEntity.ok(reportService.getReportDetail(reportId));
@@ -47,6 +49,7 @@ public class ReportController {
 
     // 신고 처리 완료 (관리자)
     @PutMapping("/admin/{reportId}")
+    // @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "신고 처리 완료", description = "[관리자용] 신고 상태를 변경하여 처리 완료합니다.")
     public ResponseEntity<ApiResponse> processReport(@PathVariable(name = "reportId") final Long reportId,
             @RequestBody @Valid final ReportProcessRequest request) {

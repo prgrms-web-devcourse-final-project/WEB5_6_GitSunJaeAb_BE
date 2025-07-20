@@ -13,6 +13,7 @@ import lombok.Getter;
 /**
  * 신고 목록(List) 반환 Response
  */
+
 @Getter
 @AllArgsConstructor
 public class ReportListResponse implements BaseApiResponse {

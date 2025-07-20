@@ -23,13 +23,15 @@ import com.gitsunjaeab.mapick.util.NotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import java.time.OffsetDateTime;
 import java.util.List;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
-@Transactional
+@RequiredArgsConstructor
 public class ReportService {
 
     private final ReportRepository reportRepository;
@@ -38,19 +40,11 @@ public class ReportService {
     private final MarkerRepository markerRepository;
     private final QuestRepository questRepository;
 
-    public ReportService(final ReportRepository reportRepository,
-            final MemberRepository memberRepository, final RoadmapRepository roadmapRepository,
-            final MarkerRepository markerRepository, final QuestRepository questRepository) {
-        this.reportRepository = reportRepository;
-        this.memberRepository = memberRepository;
-        this.roadmapRepository = roadmapRepository;
-        this.markerRepository = markerRepository;
-        this.questRepository = questRepository;
-    }
-
     @Transactional(readOnly = true)
     public ReportListResponse findAll() {
+
         final List<Report> reports = reportRepository.findAll(Sort.by("id"));
+
         return ReportListResponse.of(reports);
     }
 
