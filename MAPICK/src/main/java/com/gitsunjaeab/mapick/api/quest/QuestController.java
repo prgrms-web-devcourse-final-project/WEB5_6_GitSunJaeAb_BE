@@ -61,7 +61,7 @@ public class QuestController {
 
     // ===== 출제자용 API (퀘스트 관리) =====
     
-    // 퀘스트 생성 (출제자용)
+    // 퀘스트 생성 (출제자용) //완료
     @PostMapping
     @Operation(summary = "퀘스트 생성", description = "[출제자용] 새로운 퀘스트를 생성합니다. 본인만 접근 가능합니다.")
     public ResponseEntity<ApiResponse> createQuest(
@@ -78,7 +78,7 @@ public class QuestController {
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "퀘스트 생성 완료"));
     }
 
-    // 퀘스트 수정 (출제자용)
+    // 퀘스트 수정 (출제자용) //완료
     @PutMapping("/{questsId}")
     @Operation(summary = "퀘스트 수정", description = "[출제자용] 본인이 생성한 퀘스트의 정보를 수정합니다.")
     public ResponseEntity<ApiResponse> updateQuest(@PathVariable(name = "questsId") final Long questsId,
@@ -94,7 +94,7 @@ public class QuestController {
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "퀘스트 수정 완료"));
     }
 
-    // 퀘스트 삭제 (출제자용)
+    // 퀘스트 삭제 (출제자용) //완료
     @DeleteMapping("/{questsId}")
     @Operation(summary = "퀘스트 삭제", description = "[출제자용] 본인이 생성한 퀘스트를 삭제합니다.")
     public ResponseEntity<ApiResponse> deleteQuest(@PathVariable(name = "questsId") final Long questsId,
@@ -119,7 +119,7 @@ public class QuestController {
 
     // ===== 참여자용 API (퀘스트 참여 및 조회) =====
     
-    // 전체 퀘스트 조회 (참여자용)
+    // 전체 퀘스트 조회 (참여자용) //완료
     @GetMapping
     @Operation(summary = "전체 퀘스트 조회", description = "[참여자용] 활성화된 퀘스트 목록을 조회합니다.")
     public ResponseEntity<QuestListResponse> getAllQuests(
@@ -128,7 +128,7 @@ public class QuestController {
         return ResponseEntity.ok(QuestListResponse.of(questService.findAll(isActive)));
     }
 
-    // 특정 퀘스트 조회 (참여자용)
+    // 특정 퀘스트 상세조회 (참여자용) //완료
     @GetMapping("/{questsId}")
     @Operation(summary = "퀘스트 상세 조회", description = "[참여자용] 특정 퀘스트의 상세 정보를 조회합니다.")
     public ResponseEntity<QuestDetailResponse> getQuest(@PathVariable(name = "questsId") final Long questsId) {
@@ -143,15 +143,16 @@ public class QuestController {
         return ResponseEntity.ok(questRankService.findByQuestId(questId));
     }
 
-    // 퀘스트 참여자 목록 조회 (참여자용)
+    // 퀘스트 참여자 목록 조회 (참여자용) //완료
     @GetMapping("/{questId}/memberQuest")
     @Operation(summary = "퀘스트 참여자 조회", description = "[참여자용] 특정 퀘스트의 참여자 목록을 조회합니다.")
-    public ResponseEntity<MemberQuestListResponse> getQuestParticipants(@PathVariable(name = "questId") final Long questId) {
+    public ResponseEntity<MemberQuestListResponse> getQuestParticipants(
+        @PathVariable(name = "questId") final Long questId) {
         List<MemberQuestResponse> memberQuests = memberQuestService.findByQuestId(questId);
         return ResponseEntity.ok(MemberQuestListResponse.of(memberQuests));
     }
 
-    // 퀘스트 참여 신청 (참여자용)
+    // 퀘스트 참여 신청 (참여자용) //완료
     @PostMapping("/{questId}/memberQuest")
     @Operation(summary = "퀘스트 참여 신청", description = "[참여자용] 특정 퀘스트에 참여 신청을 합니다.")
     public ResponseEntity<ApiResponse> participateInQuest(
@@ -167,7 +168,7 @@ public class QuestController {
         MemberQuest created = memberQuestService.createAndReturnEntity(request);
 
         //리팩토링 때 재확인 필요
-        MemberQuestResponse response = MemberQuestResponse.ofCreate(created);
+//        MemberQuestResponse response = MemberQuestResponse.ofCreate(created);
 
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "퀘스트 침여 완료"));
     }
