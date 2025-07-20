@@ -1,6 +1,7 @@
-package com.gitsunjaeab.mapick.api.report.dto;
+package com.gitsunjaeab.mapick.api.report.dto.response;
 
 import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
+import com.gitsunjaeab.mapick.api.report.dto.ReportDTO;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.report.Report;
@@ -20,22 +21,10 @@ public class ReportListResponse implements BaseApiResponse {
     private String code;
     private String message;
     private LocalDateTime timestamp;
-    private List<ReportDTO> reports;
+    private List<ReportDTO> reportDTOS;
 
-    public static ReportListResponse of(List<Report> reportEntities){
-        List<ReportDTO> reportDTOS = reportEntities.stream()
-            .map(r -> new ReportDTO(
-                r.getId(),
-                new MemberSimpleDTO(r.getReporter()),
-                new MemberSimpleDTO(r.getReportedMember()),
-                r.getDescription(),
-                r.getRoadmap() != null ? r.getRoadmap().getId() : null,
-                r.getMarker() != null ? r.getMarker().getId() : null,
-                r.getQuest() != null ? r.getQuest().getId() : null,
-                r.getStatus(),
-                r.getCreatedAt(),
-                r.getResolvedAt()
-            )).toList();
+    public static ReportListResponse of(List<ReportDTO> reportDTOS){
+
 
         return new ReportListResponse(
             ResponseCode.OK.getCode(),

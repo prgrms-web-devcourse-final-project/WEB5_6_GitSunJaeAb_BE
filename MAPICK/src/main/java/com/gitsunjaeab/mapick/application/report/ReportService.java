@@ -2,7 +2,6 @@ package com.gitsunjaeab.mapick.application.report;
 
 import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
 import com.gitsunjaeab.mapick.api.report.dto.ReportResponse;
-import com.gitsunjaeab.mapick.api.report.dto.ReportListResponse;
 import com.gitsunjaeab.mapick.api.report.dto.MapReportRequest;
 import com.gitsunjaeab.mapick.api.report.dto.QuestReportRequest;
 import com.gitsunjaeab.mapick.api.report.dto.MarkerReportRequest;
@@ -40,12 +39,29 @@ public class ReportService {
     private final MarkerRepository markerRepository;
     private final QuestRepository questRepository;
 
+    // [관리자] 전체 신고 조회
     @Transactional(readOnly = true)
-    public ReportListResponse findAll() {
+    public List<ReportDTO> findAll() {
 
         final List<Report> reports = reportRepository.findAll(Sort.by("id"));
 
-        return ReportListResponse.of(reports);
+        // todo 정적 메서드로 넣기 , 빌더로 변경 하기
+        List<ReportDTO> reportDTOS = reports.stream()
+                .map(r -> new ReportDTO(
+                        r.getId(),
+                        new MemberSimpleDTO(r.getReporter()),
+                        new MemberSimpleDTO(r.getReportedMember()),
+                        r.getDescription(),
+                        r.getRoadmap() != null ? r.getRoadmap().getId() : null,
+                        r.getMarker() != null ? r.getMarker().getId() : null,
+                        r.getQuest() != null ? r.getQuest().getId() : null,
+                        r.getStatus(),
+                        r.getCreatedAt(),
+                        r.getResolvedAt()
+                )
+                ).toList();
+
+        return reportDTOS;
     }
 
     @Transactional(readOnly = true)

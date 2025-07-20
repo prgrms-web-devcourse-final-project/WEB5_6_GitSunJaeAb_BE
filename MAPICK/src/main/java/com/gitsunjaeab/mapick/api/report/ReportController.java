@@ -1,14 +1,11 @@
 package com.gitsunjaeab.mapick.api.report;
 
-import com.gitsunjaeab.mapick.api.report.dto.ReportResponse;
-import com.gitsunjaeab.mapick.api.report.dto.ReportListResponse;
-import com.gitsunjaeab.mapick.api.report.dto.MapReportRequest;
-import com.gitsunjaeab.mapick.api.report.dto.QuestReportRequest;
-import com.gitsunjaeab.mapick.api.report.dto.MarkerReportRequest;
-import com.gitsunjaeab.mapick.api.report.dto.ReportProcessRequest;
+import com.gitsunjaeab.mapick.api.report.dto.*;
+import com.gitsunjaeab.mapick.api.report.dto.response.ReportListResponse;
 import com.gitsunjaeab.mapick.application.report.ReportService;
 import com.gitsunjaeab.mapick.common.response.ApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
+import com.gitsunjaeab.mapick.domain.report.Report;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -17,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/reports", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -31,10 +30,12 @@ public class ReportController {
     // 전체 신고 조회 (관리자)
     @GetMapping
     // @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "전체 신고 조회", description = "[관리자용] 모든 신고 내역을 조회합니다.")
+    @Operation(summary = "[관리자]전체 신고 조회", description = "[관리자용] 모든 신고 내역을 조회합니다.")
     public ResponseEntity<ReportListResponse> getAllReports() {
 
-        ReportListResponse response = reportService.findAll();
+        List<ReportDTO> reportDTOS = reportService.findAll();
+
+        ReportListResponse response = ReportListResponse.of(reportDTOS);
 
         return ResponseEntity.ok(response);
     }
