@@ -154,12 +154,24 @@ public class QuestController {
     // 퀘스트 참여 신청 (참여자용)
     @PostMapping("/{questId}/memberQuest")
     @Operation(summary = "퀘스트 참여 신청", description = "[참여자용] 특정 퀘스트에 참여 신청을 합니다.")
-    public ResponseEntity<ApiResponse> participateInQuest(@PathVariable(name = "questId") final Long questId) {
-//        // questId를 request에 설정
-//        memberQuestRequest.setQuest(questId);
-//        MemberQuest createdMemberQuest = memberQuestService.createAndReturnEntity(memberQuestRequest);
+    public ResponseEntity<ApiResponse> participateInQuest(
+        @PathVariable(name = "questId") final Long questId,
+        @AuthenticationPrincipal Principal principal
+    ) {
+
+        Member member = principal.getMember();
+
+        MemberQuestRequest request = new MemberQuestRequest();
+        request.setQuest(questId);
+        request.setMember(member.getId());
+        MemberQuest created = memberQuestService.createAndReturnEntity(request);
+
+        //리팩토링 때 재확인 필요
+        MemberQuestResponse response = MemberQuestResponse.ofCreate(created);
+
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "퀘스트 침여 완료"));
     }
+
 
     // 증빙 자료 제출 (참여자용)
     @PostMapping("/memberQuest/{memberQuestId}/evidence")
