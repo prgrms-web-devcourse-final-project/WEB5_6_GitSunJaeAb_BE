@@ -22,6 +22,10 @@ public interface LayerLibraryRepository extends JpaRepository<LayerLibrary, Long
     @Query("SELECT l FROM LayerLibrary l WHERE l.id = :id AND l.deletedAt IS NULL")
     Optional<LayerLibrary> findWithMemberById(@Param("id") Long id);
 
+    // 찜 등록 - 모든 연관 엔티티 함께 조회 (LazyInitializationException 방지)
+    @Query("SELECT ll FROM LayerLibrary ll JOIN FETCH ll.member JOIN FETCH ll.layer l JOIN FETCH l.member JOIN FETCH l.roadmap r JOIN FETCH r.member LEFT JOIN FETCH r.category WHERE ll.id = :id")
+    Optional<LayerLibrary> findByIdWithAllAssociations(@Param("id") Long id);
+
 
     // 찜 조회 - 삭제되지 않은 것만 조회
     @Query("SELECT ll.layer.id FROM LayerLibrary ll WHERE ll.member.id = :memberId AND ll.isZzim = true AND ll.deletedAt IS NULL")

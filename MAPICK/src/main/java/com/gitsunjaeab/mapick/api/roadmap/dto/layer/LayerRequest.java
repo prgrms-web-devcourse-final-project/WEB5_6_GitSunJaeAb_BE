@@ -18,7 +18,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class LayerRequest {
 
-    // 레이어 필드
+    // 레이어 필드만
     @NotNull
     @Size(max = 255)
     private String name;
@@ -26,9 +26,6 @@ public class LayerRequest {
     private String description;
     private Integer layerSeq;
     private LocalDate layerTime;
-
-    private Long memberId;
-    private Long roadmapId;
 
 
     // Entity 변환 메서드
