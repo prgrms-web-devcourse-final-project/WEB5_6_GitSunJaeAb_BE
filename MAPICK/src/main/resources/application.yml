@@ -62,3 +62,6 @@ springdoc:
   pathsToMatch: /**
   swagger-ui:
     path: /swagger
+oauth:
+  google:
+    client-id: ${GOOGLE_CLIENT_ID}
