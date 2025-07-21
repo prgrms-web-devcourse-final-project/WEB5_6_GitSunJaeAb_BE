@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * 지도(로드맵) 신고 요청 DTO
+ * 지도(로드맵) 신고 생성 요청 DTO
  */
 
 @Getter

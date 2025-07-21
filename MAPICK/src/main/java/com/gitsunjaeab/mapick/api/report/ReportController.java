@@ -4,6 +4,7 @@ import com.gitsunjaeab.mapick.api.report.dto.*;
 import com.gitsunjaeab.mapick.api.report.dto.request.MapReportRequest;
 import com.gitsunjaeab.mapick.api.report.dto.request.MarkerReportRequest;
 import com.gitsunjaeab.mapick.api.report.dto.request.QuestReportRequest;
+import com.gitsunjaeab.mapick.api.report.dto.response.MapReportResponse;
 import com.gitsunjaeab.mapick.api.report.dto.response.ReportListResponse;
 import com.gitsunjaeab.mapick.api.report.dto.response.ReportProcessResponse;
 import com.gitsunjaeab.mapick.api.report.dto.response.ReportResponse;
@@ -37,9 +38,9 @@ public class ReportController {
     @Operation(summary = "[관리자]전체 신고 조회", description = "[관리자용] 모든 신고 내역을 조회합니다.")
     public ResponseEntity<ReportListResponse> getAllReports() {
 
-        List<ReportDTO> reportDTOS = reportService.findAll();
+        List<ReportSimpleDTO> reportSimpleDTOS = reportService.findAll();
 
-        ReportListResponse response = ReportListResponse.of(reportDTOS);
+        ReportListResponse response = ReportListResponse.of(reportSimpleDTOS);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -62,7 +63,7 @@ public class ReportController {
     }
 
     // 특정 신고 처리 완료 (관리자) -> todo 완성(예외처리 필요)
-    @PutMapping("/admin/{reportId}")
+    @GetMapping("/admin/{reportId}")
     // @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "[관리자]신고 처리 완료", description = "[관리자용] 신고 상태를 변경하여 처리 완료합니다.")
     public ResponseEntity<ReportProcessResponse> processReport(@PathVariable(name = "reportId") final Long reportId) {
@@ -80,13 +81,15 @@ public class ReportController {
     // 지도(로드맵) 신고 생성
     @PostMapping("/maps/{roadmapId}")
     @Operation(summary = "[사용자]지도 신고 생성", description = "[사용자용] 특정 지도(로드맵)에 대한 신고를 접수합니다.")
-    public ResponseEntity<ApiResponse> reportMap(@PathVariable(name = "roadmapId") final Long roadmapId,
+    public ResponseEntity<MapReportResponse> reportMap(@PathVariable(name = "roadmapId") final Long roadmapId,
             @RequestBody @Valid final MapReportRequest mapReportRequest) {
 
-//        reportService.createMapReport(roadmapId, mapReportRequest);
+        ReportDTO reportDTO = reportService.createMapReport(roadmapId, mapReportRequest);
+        MapReportResponse response = MapReportResponse.of(reportDTO);
 
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.of(ResponseCode.OK, "지도 신고가 접수되었습니다."));
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(response);
     }
 
     // 퀘스트 신고 생성

@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * 마커 신고 요청 DTO
+ * 마커 신고 생성 요청 DTO
  */
 @Getter
 @Setter
