@@ -1,11 +1,16 @@
 package com.gitsunjaeab.mapick.application.report;
 
+import com.gitsunjaeab.mapick.api.member.dto.MemberDTO;
 import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
-import com.gitsunjaeab.mapick.api.report.dto.ReportResponse;
-import com.gitsunjaeab.mapick.api.report.dto.MapReportRequest;
-import com.gitsunjaeab.mapick.api.report.dto.QuestReportRequest;
-import com.gitsunjaeab.mapick.api.report.dto.MarkerReportRequest;
-import com.gitsunjaeab.mapick.api.report.dto.ReportProcessRequest;
+import com.gitsunjaeab.mapick.api.quest.dto.QuestReportDTO;
+import com.gitsunjaeab.mapick.api.report.dto.ReportDetailDTO;
+import com.gitsunjaeab.mapick.api.report.dto.response.ReportResponse;
+import com.gitsunjaeab.mapick.api.report.dto.request.MapReportRequest;
+import com.gitsunjaeab.mapick.api.report.dto.request.QuestReportRequest;
+import com.gitsunjaeab.mapick.api.report.dto.request.MarkerReportRequest;
+import com.gitsunjaeab.mapick.api.report.dto.request.ReportProcessRequest;
+import com.gitsunjaeab.mapick.api.roadmap.dto.marker.MarkerReportDTO;
+import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.RoadmapReportDTO;
 import com.gitsunjaeab.mapick.domain.report.ReportRepository;
 import com.gitsunjaeab.mapick.domain.report.ReportStatus;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
@@ -39,13 +44,13 @@ public class ReportService {
     private final MarkerRepository markerRepository;
     private final QuestRepository questRepository;
 
-    // [관리자] 전체 신고 조회
+    // [관리자] 전체 신고 조회 // todo 정적 메서드로 넣기 , 빌더로 변경 하기
     @Transactional(readOnly = true)
     public List<ReportDTO> findAll() {
 
         final List<Report> reports = reportRepository.findAll(Sort.by("id"));
 
-        // todo 정적 메서드로 넣기 , 빌더로 변경 하기
+
         List<ReportDTO> reportDTOS = reports.stream()
                 .map(r -> new ReportDTO(
                         r.getId(),
@@ -64,12 +69,29 @@ public class ReportService {
         return reportDTOS;
     }
 
+    // [관리자] 특정 신고 조회 // todo 정적 메서드로 넣기
     @Transactional(readOnly = true)
-    public ReportResponse getReportDetail(Long id) {
-        Report report = reportRepository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("해당 로드맵이 존재하지 않습니다. id=" + id));
+    public ReportDetailDTO getReportDetail(Long reportId) {
 
-        return ReportResponse.of(report);
+        Report report = reportRepository.findById(reportId)
+            .orElseThrow(() -> new EntityNotFoundException("해당 신고가 존재하지 않습니다. id=" + reportId));
+
+        ReportDetailDTO reportDetailDTO = ReportDetailDTO.builder()
+                .id(report.getId())
+                .description(report.getDescription())
+                .status(report.getStatus())
+                .resolvedAt(report.getResolvedAt())
+                .createdAt(report.getCreatedAt())
+                .resolvedAt(report.getResolvedAt())
+                .reporter(MemberDTO.of(report.getReporter()))
+                .reportedMember(MemberDTO.of(report.getReportedMember()))
+                .quest(report.getQuest() != null ? QuestReportDTO.of(report.getQuest()) : null)
+                .marker(report.getMarker() != null ? MarkerReportDTO.of(report.getMarker()) : null)
+                .roadmap(report.getRoadmap() != null ? RoadmapReportDTO.of(report.getRoadmap()) : null)
+                .build();
+
+
+        return reportDetailDTO;
     }
 
 
@@ -93,16 +115,18 @@ public class ReportService {
     // ===== 사용자용 신고 생성 메서드들 =====
     
     // 지도(로드맵) 신고 생성
-    public void createMapReport(Long mapId, MapReportRequest request) {
-        Member reporter = memberRepository.findById(request.getReporterId())
+    public void createMapReport(Long roadmapId, MapReportRequest mapReportRequest) {
+
+        Member reporter = memberRepository.findById(mapReportRequest.getReporterId())
                 .orElseThrow(() -> new NotFoundException("신고자를 찾을 수 없습니다"));
         
-        Roadmap roadmap = roadmapRepository.findById(mapId)
+        Roadmap roadmap = roadmapRepository.findById(roadmapId)
                 .orElseThrow(() -> new NotFoundException("지도를 찾을 수 없습니다"));
         
         Report report = new Report();
+
         report.setReporter(reporter);
-        report.setDescription(request.getDescription());
+        report.setDescription(mapReportRequest.getDescription());
         report.setRoadmap(roadmap);
         report.setStatus(ReportStatus.REPORTED);
         report.setCreatedAt(OffsetDateTime.now());
@@ -130,6 +154,7 @@ public class ReportService {
     
     // 마커 신고 생성
     public void createMarkerReport(Long markerId, MarkerReportRequest request) {
+
         Member reporter = memberRepository.findById(request.getReporterId())
                 .orElseThrow(() -> new NotFoundException("신고자를 찾을 수 없습니다"));
         

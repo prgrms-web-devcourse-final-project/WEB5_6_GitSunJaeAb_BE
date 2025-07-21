@@ -1,16 +1,16 @@
 package com.gitsunjaeab.mapick.api.report.dto;
 
-import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
+import com.gitsunjaeab.mapick.api.member.dto.MemberDTO;
+import com.gitsunjaeab.mapick.api.quest.dto.QuestReportDTO;
+import com.gitsunjaeab.mapick.api.roadmap.dto.marker.MarkerReportDTO;
+import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.RoadmapReportDTO;
 import com.gitsunjaeab.mapick.domain.report.ReportStatus;
-import jakarta.annotation.Nullable;
-import jakarta.persistence.Column;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-import java.time.OffsetDateTime;
-
 import lombok.*;
+
+import java.time.OffsetDateTime;
 
 
 @Getter
@@ -18,24 +18,24 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReportDTO {
+public class ReportDetailDTO {
 
     private Long id;
 
 //    @Size(max = 255)
 //    private String reportType;
 
-    private MemberSimpleDTO reporter;  // 신고자
+    private MemberDTO reporter;  // 신고자
 
-    private MemberSimpleDTO reportedMember;  // 피신고자
+    private MemberDTO reportedMember;  // 피신고자
 
     private String description;
 
-    private Long roadmap;
+    private RoadmapReportDTO roadmap;
 
-    private Long marker;
+    private MarkerReportDTO marker;
 
-    private Long quest;
+    private QuestReportDTO quest;
 
     @NotNull
     @Enumerated(EnumType.STRING)

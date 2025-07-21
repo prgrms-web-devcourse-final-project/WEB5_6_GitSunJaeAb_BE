@@ -1,11 +1,15 @@
 package com.gitsunjaeab.mapick.api.report;
 
 import com.gitsunjaeab.mapick.api.report.dto.*;
+import com.gitsunjaeab.mapick.api.report.dto.request.MapReportRequest;
+import com.gitsunjaeab.mapick.api.report.dto.request.MarkerReportRequest;
+import com.gitsunjaeab.mapick.api.report.dto.request.QuestReportRequest;
+import com.gitsunjaeab.mapick.api.report.dto.request.ReportProcessRequest;
 import com.gitsunjaeab.mapick.api.report.dto.response.ReportListResponse;
+import com.gitsunjaeab.mapick.api.report.dto.response.ReportResponse;
 import com.gitsunjaeab.mapick.application.report.ReportService;
 import com.gitsunjaeab.mapick.common.response.ApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
-import com.gitsunjaeab.mapick.domain.report.Report;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -27,7 +31,7 @@ public class ReportController {
 
     // ===== 관리자용 API =====
     
-    // 전체 신고 조회 (관리자)
+    // 전체 신고 조회 (관리자) -> todo 완성(예외처리 필요)
     @GetMapping
     // @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "[관리자]전체 신고 조회", description = "[관리자용] 모든 신고 내역을 조회합니다.")
@@ -37,21 +41,30 @@ public class ReportController {
 
         ReportListResponse response = ReportListResponse.of(reportDTOS);
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(response);
+
     }
 
-    // 특정 신고 상세 조회 (관리자)
+    // 특정 신고 상세 조회 (관리자) -> todo 완성(예외처리 필요)
     @GetMapping("/{reportId}")
     // @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "특정 신고 상세 조회", description = "[관리자용] 특정 신고의 상세 정보를 조회합니다.")
+    @Operation(summary = "[관리자]특정 신고 상세 조회", description = "[관리자용] 특정 신고의 상세 정보를 조회합니다.")
     public ResponseEntity<ReportResponse> getReport(@PathVariable(name = "reportId") final Long reportId) {
-        return ResponseEntity.ok(reportService.getReportDetail(reportId));
+
+        ReportDetailDTO reportDetailDTO = reportService.getReportDetail(reportId);
+        ReportResponse response = ReportResponse.of(reportDetailDTO);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(response);
     }
 
     // 신고 처리 완료 (관리자)
     @PutMapping("/admin/{reportId}")
     // @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "신고 처리 완료", description = "[관리자용] 신고 상태를 변경하여 처리 완료합니다.")
+    @Operation(summary = "[관리자]신고 처리 완료", description = "[관리자용] 신고 상태를 변경하여 처리 완료합니다.")
     public ResponseEntity<ApiResponse> processReport(@PathVariable(name = "reportId") final Long reportId,
             @RequestBody @Valid final ReportProcessRequest request) {
 //        reportService.processReport(reportId, request);
@@ -62,17 +75,19 @@ public class ReportController {
     
     // 지도(로드맵) 신고 생성
     @PostMapping("/maps/{roadmapId}")
-    @Operation(summary = "지도 신고 생성", description = "[사용자용] 특정 지도(로드맵)에 대한 신고를 접수합니다.")
+    @Operation(summary = "[사용자]지도 신고 생성", description = "[사용자용] 특정 지도(로드맵)에 대한 신고를 접수합니다.")
     public ResponseEntity<ApiResponse> reportMap(@PathVariable(name = "roadmapId") final Long roadmapId,
-            @RequestBody @Valid final MapReportRequest request) {
-//        reportService.createMapReport(mapId, request);
+            @RequestBody @Valid final MapReportRequest mapReportRequest) {
+
+//        reportService.createMapReport(roadmapId, mapReportRequest);
+
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.of(ResponseCode.OK, "지도 신고가 접수되었습니다."));
     }
 
     // 퀘스트 신고 생성
     @PostMapping("/quests/{questId}")
-    @Operation(summary = "퀘스트 신고 생성", description = "[사용자용] 특정 퀘스트에 대한 신고를 접수합니다.")
+    @Operation(summary = "[사용자]퀘스트 신고 생성", description = "[사용자용] 특정 퀘스트에 대한 신고를 접수합니다.")
     public ResponseEntity<ApiResponse> reportQuest(@PathVariable(name = "questId") final Long questId,
             @RequestBody @Valid final QuestReportRequest request) {
 //        reportService.createQuestReport(questId, request);
@@ -82,7 +97,7 @@ public class ReportController {
 
     // 마커 신고 생성
     @PostMapping("/markers/{markerId}")
-    @Operation(summary = "마커 신고 생성", description = "[사용자용] 특정 마커에 대한 신고를 접수합니다.")
+    @Operation(summary = "[사용자]마커 신고 생성", description = "[사용자용] 특정 마커에 대한 신고를 접수합니다.")
     public ResponseEntity<ApiResponse> reportMarker(@PathVariable(name = "markerId") final Long markerId,
             @RequestBody @Valid final MarkerReportRequest request) {
 //        reportService.createMarkerReport(markerId, request);

@@ -25,7 +25,6 @@ public class ReportListResponse implements BaseApiResponse {
 
     public static ReportListResponse of(List<ReportDTO> reportDTOS){
 
-
         return new ReportListResponse(
             ResponseCode.OK.getCode(),
             "전체 신고내역 조회 성공",

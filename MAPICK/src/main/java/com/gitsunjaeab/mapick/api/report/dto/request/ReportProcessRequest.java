@@ -1,4 +1,4 @@
-package com.gitsunjaeab.mapick.api.report.dto;
+package com.gitsunjaeab.mapick.api.report.dto.request;
 
 import com.gitsunjaeab.mapick.domain.report.ReportStatus;
 import jakarta.validation.constraints.NotNull;
