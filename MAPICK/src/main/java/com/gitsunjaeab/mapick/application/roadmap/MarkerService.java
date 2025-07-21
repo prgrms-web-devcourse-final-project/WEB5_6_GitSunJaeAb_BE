@@ -14,12 +14,14 @@ import com.gitsunjaeab.mapick.domain.report.ReportRepository;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import com.gitsunjaeab.mapick.util.ReferencedWarning;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
+@RequiredArgsConstructor
 public class MarkerService {
 
     private final MarkerRepository markerRepository;
@@ -27,25 +29,17 @@ public class MarkerService {
     private final LayerRepository layerRepository;
     private final ReportRepository reportRepository;
 
-    public MarkerService(final MarkerRepository markerRepository,
-            final MemberRepository memberRepository, final LayerRepository layerRepository,
-            final ReportRepository reportRepository) {
-        this.markerRepository = markerRepository;
-        this.memberRepository = memberRepository;
-        this.layerRepository = layerRepository;
-        this.reportRepository = reportRepository;
-    }
-
     @Transactional(readOnly = true)
     public MarkerListResponse findAllMarkersOnLayer(Long layerId) {
         final List<Marker> markers = markerRepository.findAllByLayer_Id(layerId);
         return MarkerListResponse.of(markers);
     }
 
-    public MarkerDTO get(final Long id) {
-        return markerRepository.findById(id)
-                .map(marker -> roadmapToDTO(marker, new MarkerDTO()))
-                .orElseThrow(NotFoundException::new);
+    public MarkerDTO getMarker(final Long markerId) {
+        Marker marker = markerRepository.findById(markerId)
+            .orElseThrow(() -> new NotFoundException("해당 마커가 존재하지 않습니다."));
+
+        return new MarkerDTO(marker);
     }
 
     public Long create(final MarkerDTO markerDTO) {

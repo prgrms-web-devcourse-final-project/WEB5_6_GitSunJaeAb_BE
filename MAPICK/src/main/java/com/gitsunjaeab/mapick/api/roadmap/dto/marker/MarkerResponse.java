@@ -1,37 +1,31 @@
 package com.gitsunjaeab.mapick.api.roadmap.dto.marker;
 
-import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
-import com.gitsunjaeab.mapick.domain.member.Member;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-import java.time.OffsetDateTime;
+import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
+import com.gitsunjaeab.mapick.common.response.ResponseCode;
+import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
+/**
+ * 단일 마커 반환 Response
+ */
 
 @Getter
-@Setter
-public class MarkerResponse {
+@AllArgsConstructor
+public class MarkerResponse implements BaseApiResponse {
 
-    @Size(max = 255)
-    private String name;
+    private String code;
+    private String message;
+    private LocalDateTime timestamp;
+    private MarkerDTO marker;
 
-    private String description;
-
-    @NotNull
-    private Double lat;
-
-    @NotNull
-    private Double lng;
-
-    @Size(max = 255)
-    private String color;
-
-    @Size(max = 255)
-    private String imageUrl;
-
-    private Integer markerSeq;
-
-    private Long layer;
+    public static MarkerResponse of(MarkerDTO dto) {
+        return new MarkerResponse(
+            ResponseCode.OK.getCode(),
+            "마커 조회 성공",
+            LocalDateTime.now(),
+            dto
+        );
+    }
 
 }
