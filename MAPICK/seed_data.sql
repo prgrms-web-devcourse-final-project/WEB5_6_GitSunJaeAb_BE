@@ -214,14 +214,13 @@ VALUES ('2025-07-13 19:00:00+00:00', null, 3, 3, null, '현장 인증입니다.'
         'https://example.com/evidence11.jpg');
 
 -- Reports 데이터
-INSERT INTO "public"."reports" (id, reporter_id, reported_member_id, roadmap_id, marker_id,
-                                quest_id, created_at, resolved_at, description, status)
-VALUES (1, 2, 1, 1, NULL, NULL, '2024-07-13 00:15:05.732000 +00:00', NULL, '잘못된 정보', 'REPORTED'),
-       (2, 3, 2, 2, NULL, NULL, '2025-07-14 09:00:00+00', NULL, '스팸성 콘텐츠입니다.', 'IN_PROGRESS'),
-       (3, 1, 3, NULL, 1, NULL, '2025-07-14 10:15:00+00', NULL, '장소가 잘못 지정됨', 'IN_PROGRESS'),
-       (4, 2, 1, 3, NULL, NULL, '2025-07-14 11:30:00+00', NULL, '무단 광고 포함됨', 'IN_PROGRESS'),
-       (5, 5, 4, 4, NULL, NULL, '2025-07-14 12:45:00+00', NULL, '설명이 부적절함', 'RESOLVED'),
-       (6, 4, 2, NULL, 2, NULL, '2025-07-14 13:15:00+00', NULL, '마커가 실제 장소와 다름', 'RESOLVED');
+INSERT INTO "public"."reports" ("created_at", "id", "marker_id", "quest_id", "reported_member_id", "reporter_id", "resolved_at", "roadmap_id", "description", "status")
+VALUES ('2024-07-13 00:15:05.732', '1', null, null, '1', '2', null, '1', '잘못된 정보', 'REPORTED'),
+       ('2025-07-14 09:00:00', '2', null, null, '2', '3', null, '2', '스팸성 콘텐츠입니다.', 'REPORTED'),
+       ('2025-07-14 10:15:00', '3', '1', null, '3', '1', null, null, '장소가 잘못 지정됨', 'REPORTED'),
+       ('2025-07-14 11:30:00', '4', null, '1', '1', '2', null, null, '무단 광고 포함됨', 'REPORTED'),
+       ('2025-07-14 12:45:00', '5', null, '3', '4', '5', null, null, '설명이 부적절함', 'RESOLVED'),
+       ('2025-07-14 13:15:00', '6', '2', null, '2', '4', null, null, '마커가 실제 장소와 다름', 'RESOLVED');
 
 -- Comments 데이터
 INSERT INTO "public"."comments" (created_at, id, member_id, roadmap_id, quest_id, content)
@@ -232,3 +231,4 @@ VALUES ('2025-07-13 15:14:28.674000 +00:00', 2, 2, 1, null, '오 이거 괜찮�
        ('2025-07-14 10:10:00+00', 5, 2, 3, NULL, '일정에 참고할게요!'),
        ('2025-07-14 10:15:00+00', 6, 4, 2, NULL, '정말 유용한 정보 감사합니다'),
        ('2025-07-14 10:20:00+00', 7, 5, NULL, 1, '재미있는 퀘스트였습니다');
+
