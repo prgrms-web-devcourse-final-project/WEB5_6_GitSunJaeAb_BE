@@ -104,7 +104,7 @@ public class ReportController {
                 .body(response);
     }
 
-    // 퀘스트 신고 생성 -> todo 완성(예외처리 필요)
+    // 퀘스트 신고 생성 -> todo org.hibernate.LazyInitializationException: 해결 필요
     @PostMapping("/quests/{questId}")
     @Operation(summary = "[사용자]퀘스트 신고 생성", description = "[사용자용] 특정 퀘스트에 대한 신고를 접수합니다.")
     public ResponseEntity<QuestReportResponse> reportQuest(@PathVariable(name = "questId") final Long questId,

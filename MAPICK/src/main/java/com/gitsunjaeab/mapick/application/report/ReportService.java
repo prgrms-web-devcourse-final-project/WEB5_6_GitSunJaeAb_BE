@@ -39,9 +39,6 @@ public class ReportService {
     private final MarkerRepository markerRepository;
     private final QuestRepository questRepository;
 
-
-
-
     // ===== 관리자용 메서드 =====
 
     // [관리자] 전체 신고 조회 // todo 정적 메서드로 넣기 , 빌더로 변경 하기
@@ -123,7 +120,8 @@ public class ReportService {
 
     }
 
-    // 마커 신고 생성
+    // 마커 신고 생성 -> todo org.hibernate.LazyInitializationException: 해결 필요
+    @Transactional
     public ReportDTO createMarkerReport(Long markerId, MarkerReportRequest markerReportRequest) {
 
         Member reporter = memberRepository.findById(markerReportRequest.getReporterId())
@@ -148,7 +146,8 @@ public class ReportService {
         return reportDTO;
     }
     
-    // 퀘스트 신고 생성
+    // 퀘스트 신고 생성 -> todo org.hibernate.LazyInitializationException: 해결 필요
+    @Transactional
     public ReportDTO createQuestReport(Long questId, QuestReportRequest questReportRequest) {
 
         Member reporter = memberRepository.findById(questReportRequest.getReporterId())
