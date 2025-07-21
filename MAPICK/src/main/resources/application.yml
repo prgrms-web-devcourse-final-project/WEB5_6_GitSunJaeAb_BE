@@ -24,6 +24,11 @@ spring:
       idle-timeout: 30000
       max-lifetime: 1800000
 
+  cloud:
+    gcp:
+      secretmanager:
+        enabled: true
+
   jpa:
     hibernate:
       ddl-auto: update    # update # create
@@ -37,8 +42,8 @@ spring:
         id:
           new_generator_mappings: true
 
-#  config:
-#    import: sm://
+  config:
+    import: sm://
 
   web:
     resources:
@@ -58,10 +63,13 @@ error:
       5xx: ERROR
     codes:
       MemberEmailUnique: MEMBER_EMAIL_UNIQUE
+
 springdoc:
   pathsToMatch: /**
   swagger-ui:
     path: /swagger
+
 oauth:
   google:
     client-id: ${GOOGLE_CLIENT_ID}
+
