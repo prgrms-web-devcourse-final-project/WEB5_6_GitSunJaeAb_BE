@@ -10,6 +10,7 @@ import lombok.Setter;
 /**
  * 지도(로드맵) 신고 요청 DTO
  */
+
 @Getter
 @Setter
 @AllArgsConstructor

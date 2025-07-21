@@ -1,16 +1,10 @@
 package com.gitsunjaeab.mapick.application.report;
 
-import com.gitsunjaeab.mapick.api.member.dto.MemberDTO;
 import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
-import com.gitsunjaeab.mapick.api.quest.dto.QuestReportDTO;
 import com.gitsunjaeab.mapick.api.report.dto.ReportDetailDTO;
-import com.gitsunjaeab.mapick.api.report.dto.response.ReportResponse;
 import com.gitsunjaeab.mapick.api.report.dto.request.MapReportRequest;
 import com.gitsunjaeab.mapick.api.report.dto.request.QuestReportRequest;
 import com.gitsunjaeab.mapick.api.report.dto.request.MarkerReportRequest;
-import com.gitsunjaeab.mapick.api.report.dto.request.ReportProcessRequest;
-import com.gitsunjaeab.mapick.api.roadmap.dto.marker.MarkerReportDTO;
-import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.RoadmapReportDTO;
 import com.gitsunjaeab.mapick.domain.report.ReportRepository;
 import com.gitsunjaeab.mapick.domain.report.ReportStatus;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
@@ -69,7 +63,7 @@ public class ReportService {
         return reportDTOS;
     }
 
-    // [관리자] 특정 신고 조회 // todo 정적 메서드로 넣기
+    // [관리자] 특정 신고 조회
     @Transactional(readOnly = true)
     public ReportDetailDTO getReportDetail(Long reportId) {
 
@@ -85,16 +79,14 @@ public class ReportService {
     // ===== 관리자용 메서드 =====
     
     // 신고 처리 완료 (관리자용)
-    public void processReport(Long reportId, ReportProcessRequest request) {
+    @Transactional
+    public void processReport(Long reportId) {
+
         Report report = reportRepository.findById(reportId)
                 .orElseThrow(() -> new NotFoundException("신고를 찾을 수 없습니다"));
         
-        report.setStatus(request.getStatus());
-        
-        // 처리 완료 시 해결 시간 설정
-        if (request.getStatus() == ReportStatus.RESOLVED) {
-            report.setResolvedAt(OffsetDateTime.now());
-        }
+        report.setStatus(ReportStatus.RESOLVED);
+        report.setResolvedAt(OffsetDateTime.now());
         
         reportRepository.save(report);
     }

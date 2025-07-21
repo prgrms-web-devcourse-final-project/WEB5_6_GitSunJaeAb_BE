@@ -4,8 +4,8 @@ import com.gitsunjaeab.mapick.api.report.dto.*;
 import com.gitsunjaeab.mapick.api.report.dto.request.MapReportRequest;
 import com.gitsunjaeab.mapick.api.report.dto.request.MarkerReportRequest;
 import com.gitsunjaeab.mapick.api.report.dto.request.QuestReportRequest;
-import com.gitsunjaeab.mapick.api.report.dto.request.ReportProcessRequest;
 import com.gitsunjaeab.mapick.api.report.dto.response.ReportListResponse;
+import com.gitsunjaeab.mapick.api.report.dto.response.ReportProcessResponse;
 import com.gitsunjaeab.mapick.api.report.dto.response.ReportResponse;
 import com.gitsunjaeab.mapick.application.report.ReportService;
 import com.gitsunjaeab.mapick.common.response.ApiResponse;
@@ -61,14 +61,18 @@ public class ReportController {
                 .body(response);
     }
 
-    // 신고 처리 완료 (관리자)
+    // 특정 신고 처리 완료 (관리자) -> todo 완성(예외처리 필요)
     @PutMapping("/admin/{reportId}")
     // @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "[관리자]신고 처리 완료", description = "[관리자용] 신고 상태를 변경하여 처리 완료합니다.")
-    public ResponseEntity<ApiResponse> processReport(@PathVariable(name = "reportId") final Long reportId,
-            @RequestBody @Valid final ReportProcessRequest request) {
-//        reportService.processReport(reportId, request);
-        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "신고 처리가 완료되었습니다."));
+    public ResponseEntity<ReportProcessResponse> processReport(@PathVariable(name = "reportId") final Long reportId) {
+
+        reportService.processReport(reportId);
+        ReportProcessResponse response = ReportProcessResponse.of();
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(response);
     }
 
     // ===== 사용자용 API (신고 생성) =====
