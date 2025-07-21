@@ -59,6 +59,48 @@ public class RoadmapService {
     private final HashtagRepository hashtagRepository;
     private final AuthHelper authHelper;
 
+    // 공유 지도 생성
+    @Transactional
+    public void createSharedRoadmap(RoadmapRequest request, Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new NotFoundException("멤버 없음"));
+
+        Category category = categoryRepository.findById(request.getCategoryId())
+                .orElseThrow(() -> new NotFoundException("카테고리 없음"));
+
+        Roadmap roadmap = new Roadmap();
+        roadmap.setCategory(category);
+        roadmap.setTitle(request.getTitle());
+        roadmap.setDescription(request.getDescription());
+        roadmap.setThumbnail(request.getThumbnail());
+        roadmap.setIsPublic(request.getIsPublic());
+        roadmap.setIsAnimated(false);
+        roadmap.setRoadmapType(RoadmapType.SHARED);
+        roadmap.setCreatedAt(OffsetDateTime.now());
+        roadmap.setLikeCount(0);
+        roadmap.setViewCount(0);
+        roadmap.setMember(member);
+
+        roadmapRepository.save(roadmap);
+        // 로드맵 생성 시 해시태그
+        List<HashtagRequest> hashtagDto = request.getHashtags();
+        if (hashtagDto != null && !hashtagDto.isEmpty()) {
+            Set<Long> seen = new HashSet<>();
+            List<Hashtag> hashtags = hashtagService.findOrCreateHashtags(hashtagDto);
+
+            for (Hashtag tag : hashtags) {
+                if (!seen.add(tag.getId())) continue;
+                RoadmapHashtagRelation relation = new RoadmapHashtagRelation();
+                relation.setRoadmap(roadmap);
+                relation.setHashtag(tag);
+
+                roadmap.getRoadmapMapHashtags().add(relation);
+                tag.getRoadmapHashtags().add(relation);
+            }
+
+            roadmapHashtagRelationRepository.saveAll(roadmap.getRoadmapMapHashtags());
+        }
+    }
     // 개인 로드맵 생성
     @Transactional
     public void create(@Valid RoadmapRequest request, Long memberId) {
@@ -70,19 +112,19 @@ public class RoadmapService {
 
         Roadmap roadmap = new Roadmap();
         roadmap.setCategory(category);
-        roadmap.setMember(member);
         roadmap.setTitle(request.getTitle());
         roadmap.setDescription(request.getDescription());
         roadmap.setThumbnail(request.getThumbnail());
         roadmap.setIsPublic(request.getIsPublic());
         roadmap.setIsAnimated(false); // 기본값
-        roadmap.setLikeCount(0);
-        roadmap.setViewCount(0);
         roadmap.setRoadmapType(RoadmapType.PERSONAL); // 개인 로드맵
         roadmap.setCreatedAt(OffsetDateTime.now());
+        roadmap.setLikeCount(0);
+        roadmap.setViewCount(0);
+        roadmap.setMember(member);
 
         roadmapRepository.save(roadmap);
-
+        // 로드맵 생성 시 해시태그
         List<HashtagRequest> hashtagDto = request.getHashtags();
         if (hashtagDto != null && !hashtagDto.isEmpty()) {
             Set<Long> seen = new HashSet<>();
