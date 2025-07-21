@@ -18,13 +18,21 @@ public interface LayerRepository extends JpaRepository<Layer, Long> {
     @Query("SELECT l FROM Layer l WHERE l.roadmap.id = :roadmapId AND l.deletedAt IS NULL AND (l.isBlocked = false OR l.isBlocked IS NULL)")
     List<Layer> findAllByRoadmap_Id(@Param("roadmapId") Long roadmapId);
 
+    // 레이어 조회 - 모든 연관 엔티티 함께 조회 (LazyInitializationException 방지)
+    @Query("SELECT l FROM Layer l JOIN FETCH l.member JOIN FETCH l.roadmap r JOIN FETCH r.member LEFT JOIN FETCH r.category WHERE l.roadmap.id = :roadmapId AND l.deletedAt IS NULL AND (l.isBlocked = false OR l.isBlocked IS NULL)")
+    List<Layer> findAllByRoadmap_IdWithAssociations(@Param("roadmapId") Long roadmapId);
+
 
 
     // ===== 마이페이지 =====
 
-    // 찜 조회 - LazyInitializationException 방지 (삭제되지 않고 블록되지 않은 것만 조회)
-    @Query("SELECT l FROM Layer l JOIN FETCH l.member WHERE l.id IN :ids AND l.deletedAt IS NULL AND (l.isBlocked = false OR l.isBlocked IS NULL)")
+    // 찜 조회 - 모든 연관 엔티티 함께 조회 (LazyInitializationException 방지)
+    @Query("SELECT l FROM Layer l JOIN FETCH l.member JOIN FETCH l.roadmap r JOIN FETCH r.member LEFT JOIN FETCH r.category WHERE l.id IN :ids AND l.deletedAt IS NULL AND (l.isBlocked = false OR l.isBlocked IS NULL)")
     List<Layer> findAllByIdWithMember(@Param("ids") List<Long> ids);
+
+    // 단일 레이어 조회 - 모든 연관 엔티티 함께 조회 (LazyInitializationException 방지)
+    @Query("SELECT l FROM Layer l JOIN FETCH l.member JOIN FETCH l.roadmap r JOIN FETCH r.member LEFT JOIN FETCH r.category WHERE l.id = :id")
+    java.util.Optional<Layer> findByIdWithMember(@Param("id") Long id);
 
 
 
@@ -46,6 +54,10 @@ public interface LayerRepository extends JpaRepository<Layer, Long> {
     // findAll (soft delete 및 블록 제외하고 삭제되지 않은 레이어만 조회)
     @Query("SELECT l FROM Layer l WHERE l.deletedAt IS NULL AND (l.isBlocked = false OR l.isBlocked IS NULL)")
     List<Layer> findAllNotDeleted();
+
+    // findAll - 모든 연관 엔티티 함께 조회 (LazyInitializationException 방지)
+    @Query("SELECT l FROM Layer l JOIN FETCH l.member JOIN FETCH l.roadmap r JOIN FETCH r.member LEFT JOIN FETCH r.category WHERE l.deletedAt IS NULL AND (l.isBlocked = false OR l.isBlocked IS NULL)")
+    List<Layer> findAllNotDeletedWithAssociations();
 
     // JPA 쿼리로 레이어 소프트 딜리트 (더 확실한 방법)
     @Transactional

@@ -8,10 +8,9 @@ import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
 import com.gitsunjaeab.mapick.infra.error.exceptions.DuplicatedBookmarkException;
 import com.gitsunjaeab.mapick.infra.error.exceptions.ForbiddenException;
-import com.gitsunjaeab.mapick.infra.error.exceptions.ZzimException;
+import com.gitsunjaeab.mapick.infra.error.exceptions.UnauthenticatedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
-import com.gitsunjaeab.mapick.infra.error.exceptions.UnauthenticatedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -92,12 +91,5 @@ public class RestExceptionAdvice {
     public ResponseEntity<BaseApiResponse> handleForbiddenFromBookMarkDelete(ForbiddenException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new BookmarkDeleteResponse("4001", ex.getMessage(), LocalDateTime.now()));
-    }
-
-    @ExceptionHandler(ZzimException.class)
-    public ResponseEntity<ApiResponse> handleZzimException(ZzimException e) {
-        return ResponseEntity
-            .status(e.code().getStatus())
-            .body(ApiResponse.of(e.code()));
     }
 }

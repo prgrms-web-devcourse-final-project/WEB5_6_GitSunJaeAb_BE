@@ -37,12 +37,13 @@ public enum ResponseCode {
     ALREADY_REGISTERED_ADMIN("4095", HttpStatus.CONFLICT, "이미 관리자로 등록된 회원 입니다."),
     ALREADY_DELETED_USER("4096", HttpStatus.CONFLICT, "이미 삭제된 회원 입니다."),
     BOOKMARK_DUPLICATED("4097", HttpStatus.CONFLICT, "중복 북마크입니다."),
-    ALREADY_ZZIMMED("4098", HttpStatus.CONFLICT, "이미 찜한 레이어입니다."),
-    NOT_ZZIMMED_YET("4099", HttpStatus.CONFLICT, "찜하지 않은 레이어입니다."),
+    ALREADY_PROCESSED("4098", HttpStatus.CONFLICT, "이미 처리 되었습니다."),
+    
 
     // 내부 오류
     INTERNAL_ERROR("5000", HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류입니다."),
     FILE_UPLOAD_FAILED("5001", HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패했습니다."),
+    SAVE_FAILED("5002", HttpStatus.INTERNAL_SERVER_ERROR, "저장에 실패했습니다."),
 
     // 성공
     OK("2000", HttpStatus.OK, "정상적으로 완료되었습니다."),
