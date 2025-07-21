@@ -76,20 +76,7 @@ public class ReportService {
         Report report = reportRepository.findById(reportId)
             .orElseThrow(() -> new EntityNotFoundException("해당 신고가 존재하지 않습니다. id=" + reportId));
 
-        ReportDetailDTO reportDetailDTO = ReportDetailDTO.builder()
-                .id(report.getId())
-                .description(report.getDescription())
-                .status(report.getStatus())
-                .resolvedAt(report.getResolvedAt())
-                .createdAt(report.getCreatedAt())
-                .resolvedAt(report.getResolvedAt())
-                .reporter(MemberDTO.of(report.getReporter()))
-                .reportedMember(MemberDTO.of(report.getReportedMember()))
-                .quest(report.getQuest() != null ? QuestReportDTO.of(report.getQuest()) : null)
-                .marker(report.getMarker() != null ? MarkerReportDTO.of(report.getMarker()) : null)
-                .roadmap(report.getRoadmap() != null ? RoadmapReportDTO.of(report.getRoadmap()) : null)
-                .build();
-
+        ReportDetailDTO reportDetailDTO = ReportDetailDTO.of(report);
 
         return reportDetailDTO;
     }

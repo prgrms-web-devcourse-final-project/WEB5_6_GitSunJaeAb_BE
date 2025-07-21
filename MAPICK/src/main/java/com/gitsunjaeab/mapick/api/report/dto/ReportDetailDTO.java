@@ -4,6 +4,7 @@ import com.gitsunjaeab.mapick.api.member.dto.MemberDTO;
 import com.gitsunjaeab.mapick.api.quest.dto.QuestReportDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.marker.MarkerReportDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.RoadmapReportDTO;
+import com.gitsunjaeab.mapick.domain.report.Report;
 import com.gitsunjaeab.mapick.domain.report.ReportStatus;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -44,4 +45,20 @@ public class ReportDetailDTO {
     private OffsetDateTime createdAt;
 
     private OffsetDateTime resolvedAt;
+
+    public static ReportDetailDTO of(Report report ) {
+        return ReportDetailDTO.builder()
+                .id(report.getId())
+                .description(report.getDescription())
+                .status(report.getStatus())
+                .resolvedAt(report.getResolvedAt())
+                .createdAt(report.getCreatedAt())
+                .resolvedAt(report.getResolvedAt())
+                .reporter(MemberDTO.of(report.getReporter()))
+                .reportedMember(MemberDTO.of(report.getReportedMember()))
+                .quest(report.getQuest() != null ? QuestReportDTO.of(report.getQuest()) : null)
+                .marker(report.getMarker() != null ? MarkerReportDTO.of(report.getMarker()) : null)
+                .roadmap(report.getRoadmap() != null ? RoadmapReportDTO.of(report.getRoadmap()) : null)
+                .build();
+    }
 }
