@@ -4,10 +4,7 @@ import com.gitsunjaeab.mapick.api.report.dto.*;
 import com.gitsunjaeab.mapick.api.report.dto.request.MapReportRequest;
 import com.gitsunjaeab.mapick.api.report.dto.request.MarkerReportRequest;
 import com.gitsunjaeab.mapick.api.report.dto.request.QuestReportRequest;
-import com.gitsunjaeab.mapick.api.report.dto.response.MapReportResponse;
-import com.gitsunjaeab.mapick.api.report.dto.response.ReportListResponse;
-import com.gitsunjaeab.mapick.api.report.dto.response.ReportProcessResponse;
-import com.gitsunjaeab.mapick.api.report.dto.response.ReportResponse;
+import com.gitsunjaeab.mapick.api.report.dto.response.*;
 import com.gitsunjaeab.mapick.application.report.ReportService;
 import com.gitsunjaeab.mapick.common.response.ApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
@@ -78,7 +75,7 @@ public class ReportController {
 
     // ===== 사용자용 API (신고 생성) =====
     
-    // 지도(로드맵) 신고 생성
+    // 지도(로드맵) 신고 생성 -> todo 완성(예외처리 필요)
     @PostMapping("/maps/{roadmapId}")
     @Operation(summary = "[사용자]지도 신고 생성", description = "[사용자용] 특정 지도(로드맵)에 대한 신고를 접수합니다.")
     public ResponseEntity<MapReportResponse> reportMap(@PathVariable(name = "roadmapId") final Long roadmapId,
@@ -92,24 +89,36 @@ public class ReportController {
                 .body(response);
     }
 
+
+    // 마커 신고 생성 -> todo org.hibernate.LazyInitializationException: 해결 필요
+    @PostMapping("/markers/{markerId}")
+    @Operation(summary = "[사용자]마커 신고 생성", description = "[사용자용] 특정 마커에 대한 신고를 접수합니다.")
+    public ResponseEntity<MarkerReportResponse> reportMarker(@PathVariable(name = "markerId") final Long markerId,
+                                                    @RequestBody @Valid final MarkerReportRequest markerReportRequest) {
+
+        ReportDTO reportDTO = reportService.createMarkerReport(markerId, markerReportRequest);
+        MarkerReportResponse response = MarkerReportResponse.of(reportDTO);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(response);
+    }
+
     // 퀘스트 신고 생성
     @PostMapping("/quests/{questId}")
     @Operation(summary = "[사용자]퀘스트 신고 생성", description = "[사용자용] 특정 퀘스트에 대한 신고를 접수합니다.")
-    public ResponseEntity<ApiResponse> reportQuest(@PathVariable(name = "questId") final Long questId,
-            @RequestBody @Valid final QuestReportRequest request) {
-//        reportService.createQuestReport(questId, request);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.of(ResponseCode.OK, "퀘스트 신고가 접수되었습니다."));
+    public ResponseEntity<MapReportResponse> reportQuest(@PathVariable(name = "questId") final Long questId,
+            @RequestBody @Valid final QuestReportRequest questReportRequest) {
+
+
+        ReportDTO reportDTO = reportService.createQuestReport(questId, questReportRequest);
+        MapReportResponse response = MapReportResponse.of(reportDTO);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(response);
     }
 
-    // 마커 신고 생성
-    @PostMapping("/markers/{markerId}")
-    @Operation(summary = "[사용자]마커 신고 생성", description = "[사용자용] 특정 마커에 대한 신고를 접수합니다.")
-    public ResponseEntity<ApiResponse> reportMarker(@PathVariable(name = "markerId") final Long markerId,
-            @RequestBody @Valid final MarkerReportRequest request) {
-//        reportService.createMarkerReport(markerId, request);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.of(ResponseCode.OK, "마커 신고가 접수되었습니다."));
-    }
+
 }
 

@@ -120,43 +120,58 @@ public class ReportService {
         return reportDTO;
 
     }
+
+    // 마커 신고 생성
+    public ReportDTO createMarkerReport(Long markerId, MarkerReportRequest markerReportRequest) {
+
+        Member reporter = memberRepository.findById(markerReportRequest.getReporterId())
+                .orElseThrow(() -> new NotFoundException("신고자를 찾을 수 없습니다"));
+
+        Marker marker = markerRepository.findById(markerId)
+                .orElseThrow(() -> new NotFoundException("마커를 찾을 수 없습니다"));
+
+        Report report = Report.builder()
+                .reporter(reporter)
+                .reportedMember(marker.getMember())
+                .description(markerReportRequest.getDescription())
+                .marker(marker)
+                .status(ReportStatus.REPORTED)
+                .createdAt(OffsetDateTime.now())
+                .build();
+
+        reportRepository.save(report);
+
+        ReportDTO reportDTO = ReportDTO.of(report);
+
+        return reportDTO;
+    }
     
     // 퀘스트 신고 생성
-    public void createQuestReport(Long questId, QuestReportRequest request) {
-        Member reporter = memberRepository.findById(request.getReporterId())
+    public ReportDTO createQuestReport(Long questId, QuestReportRequest questReportRequest) {
+
+        Member reporter = memberRepository.findById(questReportRequest.getReporterId())
                 .orElseThrow(() -> new NotFoundException("신고자를 찾을 수 없습니다"));
         
         Quest quest = questRepository.findById(questId)
                 .orElseThrow(() -> new NotFoundException("퀘스트를 찾을 수 없습니다"));
-        
-        Report report = new Report();
-        report.setReporter(reporter);
-        report.setDescription(request.getDescription());
-        report.setQuest(quest);
-        report.setStatus(ReportStatus.REPORTED);
-        report.setCreatedAt(OffsetDateTime.now());
-        
+
+        Report report = Report.builder()
+                .reporter(reporter)
+                .reportedMember(quest.getMember())
+                .description(questReportRequest.getDescription())
+                .quest(quest)
+                .status(ReportStatus.REPORTED)
+                .createdAt(OffsetDateTime.now())
+                .build();
+
         reportRepository.save(report);
+
+        ReportDTO reportDTO = ReportDTO.of(report);
+
+        return reportDTO;
     }
     
-    // 마커 신고 생성
-    public void createMarkerReport(Long markerId, MarkerReportRequest request) {
 
-        Member reporter = memberRepository.findById(request.getReporterId())
-                .orElseThrow(() -> new NotFoundException("신고자를 찾을 수 없습니다"));
-        
-        Marker marker = markerRepository.findById(markerId)
-                .orElseThrow(() -> new NotFoundException("마커를 찾을 수 없습니다"));
-        
-        Report report = new Report();
-        report.setReporter(reporter);
-        report.setDescription(request.getDescription());
-        report.setMarker(marker);
-        report.setStatus(ReportStatus.REPORTED);
-        report.setCreatedAt(OffsetDateTime.now());
-        
-        reportRepository.save(report);
-    }
 
     // ===== 기존 메서드들 (하위 호환성 유지) =====
 
