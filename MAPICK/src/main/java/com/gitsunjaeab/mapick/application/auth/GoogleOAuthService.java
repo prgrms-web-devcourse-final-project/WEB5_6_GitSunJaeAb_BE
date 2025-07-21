@@ -6,6 +6,7 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -14,13 +15,18 @@ import java.util.Collections;
 @Slf4j
 public class GoogleOAuthService {
 
+
+    @Value("${oauth.google.client-id}")
+    private String googleClientId;
+
     public SocialUserInfo getUserInfo(String idTokenString) {
+
         try {
             GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
                     new NetHttpTransport(),
                     JacksonFactory.getDefaultInstance()
             )
-                    .setAudience(Collections.singletonList("Google OAuth Client ID")) // aud 검증
+                    .setAudience(Collections.singletonList(googleClientId)) // aud 검증
                     .build();
 
             GoogleIdToken idToken = verifier.verify(idTokenString);
