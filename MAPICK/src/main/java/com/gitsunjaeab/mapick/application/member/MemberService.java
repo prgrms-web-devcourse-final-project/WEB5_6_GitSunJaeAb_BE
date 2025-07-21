@@ -297,6 +297,25 @@ public class MemberService {
 
     }
 
+    // 관리자 - 유저 관리자 권한 회수
+    @Transactional
+    public void clearMemberRoleAdmin(Long memberId) {
+        try{
+
+            Member member = memberRepository.findById(memberId)
+                    .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
+
+            if ("ROLE_USER".equals(member.getRole())) { // 리터럴을 앞에 두어 null 방지
+                throw new CommonException(ResponseCode.ALREADY_REGISTERED_USER);
+            }
+
+            member.setRole("ROLE_USER");
+
+        }catch (DataIntegrityViolationException e){
+            throw new CommonException(ResponseCode.DB_CONSTRAINT_VIOLATION); // DB 제약 조건 위배
+        }
+    }
+
     // 비밀번호 검증
     public boolean verifyPassword(Long memberId, String password) {
 
@@ -309,6 +328,7 @@ public class MemberService {
 
         return member.getPassword().equals(password);
     }
+
 
 
 }
