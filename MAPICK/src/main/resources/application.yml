@@ -58,10 +58,12 @@ error:
       5xx: ERROR
     codes:
       MemberEmailUnique: MEMBER_EMAIL_UNIQUE
+
 springdoc:
   pathsToMatch: /**
   swagger-ui:
     path: /swagger
+
 oauth:
   google:
     client-id: ${GOOGLE_CLIENT_ID}
