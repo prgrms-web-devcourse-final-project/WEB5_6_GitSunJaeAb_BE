@@ -23,8 +23,6 @@ public class GoogleOAuthService {
 
     public SocialUserInfo getUserInfo(String idTokenString) {
 
-
-
         try {
             GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
                     new NetHttpTransport(),

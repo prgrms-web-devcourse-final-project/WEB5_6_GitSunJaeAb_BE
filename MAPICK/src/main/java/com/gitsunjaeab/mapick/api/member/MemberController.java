@@ -80,15 +80,26 @@ public class MemberController {
                 .body(response);
     }
 
-    // 회원의 블랙리스트 여부 수정 (관리자 전용) -> todo 완성(예외처리 필요)
+    // 회원의 블랙리스트 설정 (관리자 전용) -> todo 완성(예외처리 필요)
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/blacklist/{memberId}")
     @Operation(summary = "블랙리스트 여부 변경 (관리자)", description = "[관리자 전용] 회원의 블랙 리스트 여부 수정")
-    public ResponseEntity<ApiResponse> updateMemberBlackList(@PathVariable(name = "memberId") final Long memberId) {
+    public ResponseEntity<ApiResponse> addMemberBlackList(@PathVariable(name = "memberId") final Long memberId) {
 
         memberService.setMemberBlackList(memberId);
 
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "블랙리스트 설정 완료"));
+    }
+
+    // 회원의 블랙리스트 해제 (관리자 전용)
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/blacklist/{memberId}")
+    @Operation(summary = "블랙리스트 여부 변경 (관리자)", description = "[관리자 전용] 회원의 블랙 리스트 여부 수정")
+    public ResponseEntity<ApiResponse> removeMemberBlackList(@PathVariable(name = "memberId") final Long memberId) {
+
+        memberService.ClearMemberBlackList(memberId);
+
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "블랙리스트 해제 완료"));
     }
 
     // 회원의 관리자로 설정 (관리자 전용) -> todo 완성(예외처리 필요)
