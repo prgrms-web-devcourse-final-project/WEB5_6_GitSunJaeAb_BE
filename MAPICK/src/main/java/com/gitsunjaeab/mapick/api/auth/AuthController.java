@@ -3,6 +3,7 @@ package com.gitsunjaeab.mapick.api.auth;
 import com.gitsunjaeab.mapick.api.auth.dto.request.SigninRequest;
 import com.gitsunjaeab.mapick.api.auth.dto.request.SignupRequest;
 import com.gitsunjaeab.mapick.api.auth.dto.request.SocialLoginRequest;
+import com.gitsunjaeab.mapick.api.auth.dto.response.PasswordChangeResponse;
 import com.gitsunjaeab.mapick.api.auth.dto.response.SocialTokenResponse;
 import com.gitsunjaeab.mapick.api.auth.dto.response.LocalTokenResponse;
 import com.gitsunjaeab.mapick.api.auth.dto.response.TokenResponse;
@@ -164,16 +165,37 @@ public class AuthController {
     // 마이페이지 - 비밀번호 수정 (본인만)
     @PutMapping("/password")
     @Operation(summary = "비밀번호 수정", description = "[사용자 전용] 본인만 접근 가능한 비밀번호 변경")
-    public ResponseEntity<ApiResponse> updatePassword(@Valid @RequestBody PasswordRequest passwordRequest) {
+    public ResponseEntity<PasswordChangeResponse> updatePassword(@Valid @RequestBody PasswordRequest passwordRequest, HttpServletResponse response) {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Long memberId = Long.parseLong(auth.getName());
 
-        authService.updatePassword(memberId, passwordRequest.getPassword());
+        TokenDTO tokenDTO = authService.updatePassword(memberId, passwordRequest.getPassword());
+
+        ResponseCookie accessTokenCookie = TokenCookieFactory.create(
+                TokenType.ACCESS_TOKEN.name(),
+                tokenDTO.getAccessToken(),
+                tokenDTO.getAtExpiresIn()
+        );
+        ResponseCookie refreshTokenCookie = TokenCookieFactory.create(
+                TokenType.REFRESH_TOKEN.name(),
+                tokenDTO.getRefreshToken(),
+                tokenDTO.getRtExpiresIn()
+        );
+
+        response.addHeader("Set-Cookie", refreshTokenCookie.toString());
+
+        TokenResponse tokenResponseDto = TokenResponse.builder()
+                .accessToken(tokenDTO.getAccessToken())
+                .refreshToken(tokenDTO.getRefreshToken())
+                .expiresIn(tokenDTO.getAtExpiresIn())
+                .grantType(GrantType.BEARER)
+                .build();
+
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.of(ResponseCode.CHANGE_PASSWORD_SUCCESS));
+                .body(PasswordChangeResponse.of(tokenResponseDto));
     }
 
 }

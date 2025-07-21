@@ -10,11 +10,12 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ApiResponse implements BaseApiResponse {
+public class ApiResponse<T> implements BaseApiResponse {
     private String code;
     private String message;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime timestamp;
+
 
     // 데이터 없이 상태코드와 메시지만 반환
     public static ApiResponse of(ResponseCode responseCode, String message) {
@@ -22,6 +23,7 @@ public class ApiResponse implements BaseApiResponse {
             responseCode.getCode(),
             message,
             LocalDateTime.now()
+
         );
     }
 
@@ -30,7 +32,9 @@ public class ApiResponse implements BaseApiResponse {
             responseCode.getCode(),
             responseCode.getMessage(),
             LocalDateTime.now()
+
         );
     }
+
 }
 

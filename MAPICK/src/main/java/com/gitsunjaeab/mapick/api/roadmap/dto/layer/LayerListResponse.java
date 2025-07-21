@@ -4,29 +4,29 @@ import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.roadmap.Layer;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
 
 @Getter
 @AllArgsConstructor
 public class LayerListResponse implements BaseApiResponse {
+
     private String code;
     private String message;
     private LocalDateTime timestamp;
     private List<LayerListDTO> layers;
 
 
-
-    // 공통 처리 로직
+    // 공통 처리 로직 (기존 호환성)
     public static LayerListResponse of(List<Layer> layerEntities) {
+        return of(layerEntities, "레이어 목록 조회 성공");
+    }
+
+    // 생성 패턴용 (메시지 커스텀)
+    public static LayerListResponse of(List<Layer> layerEntities, String message) {
         List<LayerListDTO> layerDTOs = layerEntities.stream()
             .map(l -> {
                 LayerListDTO dto = new LayerListDTO();
@@ -44,7 +44,7 @@ public class LayerListResponse implements BaseApiResponse {
 
         return new LayerListResponse(
             ResponseCode.OK.getCode(),
-            "레이어 목록 조회 성공",
+            message,
             LocalDateTime.now(),
             layerDTOs
         );
