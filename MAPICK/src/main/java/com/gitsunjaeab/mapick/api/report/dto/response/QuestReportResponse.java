@@ -21,7 +21,7 @@ public class QuestReportResponse implements BaseApiResponse {
 
         return new QuestReportResponse(
             ResponseCode.OK.getCode(),
-            "마커 신고 성공",
+            "퀘스트 신고 성공",
             LocalDateTime.now(),
             reportDTO
         );

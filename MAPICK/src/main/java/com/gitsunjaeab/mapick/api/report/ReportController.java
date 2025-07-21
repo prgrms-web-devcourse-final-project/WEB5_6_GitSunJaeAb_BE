@@ -104,15 +104,15 @@ public class ReportController {
                 .body(response);
     }
 
-    // 퀘스트 신고 생성
+    // 퀘스트 신고 생성 -> todo 완성(예외처리 필요)
     @PostMapping("/quests/{questId}")
     @Operation(summary = "[사용자]퀘스트 신고 생성", description = "[사용자용] 특정 퀘스트에 대한 신고를 접수합니다.")
-    public ResponseEntity<MapReportResponse> reportQuest(@PathVariable(name = "questId") final Long questId,
+    public ResponseEntity<QuestReportResponse> reportQuest(@PathVariable(name = "questId") final Long questId,
             @RequestBody @Valid final QuestReportRequest questReportRequest) {
 
 
         ReportDTO reportDTO = reportService.createQuestReport(questId, questReportRequest);
-        MapReportResponse response = MapReportResponse.of(reportDTO);
+        QuestReportResponse response = QuestReportResponse.of(reportDTO);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)

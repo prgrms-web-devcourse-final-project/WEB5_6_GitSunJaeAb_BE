@@ -39,6 +39,11 @@ public class ReportService {
     private final MarkerRepository markerRepository;
     private final QuestRepository questRepository;
 
+
+
+
+    // ===== 관리자용 메서드 =====
+
     // [관리자] 전체 신고 조회 // todo 정적 메서드로 넣기 , 빌더로 변경 하기
     @Transactional(readOnly = true)
     public List<ReportSimpleDTO> findAll() {
@@ -48,17 +53,17 @@ public class ReportService {
 
         List<ReportSimpleDTO> reportSimpleDTOS = reports.stream()
                 .map(r -> new ReportSimpleDTO(
-                        r.getId(),
-                        new MemberSimpleDTO(r.getReporter()),
-                        new MemberSimpleDTO(r.getReportedMember()),
-                        r.getDescription(),
-                        r.getRoadmap() != null ? r.getRoadmap().getId() : null,
-                        r.getMarker() != null ? r.getMarker().getId() : null,
-                        r.getQuest() != null ? r.getQuest().getId() : null,
-                        r.getStatus(),
-                        r.getCreatedAt(),
-                        r.getResolvedAt()
-                )
+                                r.getId(),
+                                new MemberSimpleDTO(r.getReporter()),
+                                new MemberSimpleDTO(r.getReportedMember()),
+                                r.getDescription(),
+                                r.getRoadmap() != null ? r.getRoadmap().getId() : null,
+                                r.getMarker() != null ? r.getMarker().getId() : null,
+                                r.getQuest() != null ? r.getQuest().getId() : null,
+                                r.getStatus(),
+                                r.getCreatedAt(),
+                                r.getResolvedAt()
+                        )
                 ).toList();
 
         return reportSimpleDTOS;
@@ -69,16 +74,13 @@ public class ReportService {
     public ReportDetailDTO getReportDetail(Long reportId) {
 
         Report report = reportRepository.findById(reportId)
-            .orElseThrow(() -> new EntityNotFoundException("해당 신고가 존재하지 않습니다. id=" + reportId));
+                .orElseThrow(() -> new EntityNotFoundException("해당 신고가 존재하지 않습니다. id=" + reportId));
 
         ReportDetailDTO reportDetailDTO = ReportDetailDTO.of(report);
 
         return reportDetailDTO;
     }
 
-
-    // ===== 관리자용 메서드 =====
-    
     // 신고 처리 완료 (관리자용)
     @Transactional
     public void processReport(Long reportId) {
@@ -170,77 +172,6 @@ public class ReportService {
 
         return reportDTO;
     }
-    
 
-
-    // ===== 기존 메서드들 (하위 호환성 유지) =====
-
-    public Long create(final ReportSimpleDTO reportSimpleDTO) {
-        final Report report = new Report();
-        roadmapToEntity(reportSimpleDTO, report);
-        // 생성 시간이 설정되지 않은 경우 현재 시간으로 설정
-        if (report.getCreatedAt() == null) {
-            report.setCreatedAt(OffsetDateTime.now());
-        }
-        return reportRepository.save(report).getId();
-    }
-
-    public void update(final Long id, final ReportSimpleDTO reportSimpleDTO) {
-        final Report report = reportRepository.findById(id)
-                .orElseThrow(NotFoundException::new);
-        
-        // 기존 생성 시간 백업
-        final OffsetDateTime originalCreatedAt = report.getCreatedAt();
-        
-        roadmapToEntity(reportSimpleDTO, report);
-        
-        // 생성 시간은 업데이트하지 않고 기존 값 유지
-        report.setCreatedAt(originalCreatedAt);
-        
-        reportRepository.save(report);
-    }
-
-    public void delete(final Long id) {
-        reportRepository.deleteById(id);
-    }
-
-    private ReportSimpleDTO roadmapToDTO(final Report report, final ReportSimpleDTO reportSimpleDTO) {
-        reportSimpleDTO.setId(report.getId());
-//        reportDTO.setReportType(report.getReportType());
-        reportSimpleDTO.setDescription(report.getDescription());
-        reportSimpleDTO.setStatus(report.getStatus());
-        reportSimpleDTO.setCreatedAt(report.getCreatedAt());
-        reportSimpleDTO.setResolvedAt(report.getResolvedAt());
-        reportSimpleDTO.setReporter(new MemberSimpleDTO(report.getReporter()));
-        reportSimpleDTO.setReportedMember(new MemberSimpleDTO(report.getReportedMember()));
-        reportSimpleDTO.setRoadmap(report.getRoadmap() == null ? null : report.getRoadmap().getId());
-        reportSimpleDTO.setMarker(report.getMarker() == null ? null : report.getMarker().getId());
-        reportSimpleDTO.setQuest(report.getQuest() == null ? null : report.getQuest().getId());
-        return reportSimpleDTO;
-    }
-
-    private Report roadmapToEntity(final ReportSimpleDTO reportSimpleDTO, final Report report) {
-//        report.setReportType(reportDTO.getReportType());
-        report.setDescription(reportSimpleDTO.getDescription());
-        report.setStatus(reportSimpleDTO.getStatus());
-        report.setCreatedAt(reportSimpleDTO.getCreatedAt());
-        report.setResolvedAt(reportSimpleDTO.getResolvedAt());
-        final Member reporter = reportSimpleDTO.getReporter() == null ? null : memberRepository.findById(reportSimpleDTO.getReporter().getId())
-                .orElseThrow(() -> new NotFoundException("reporter not found"));
-        report.setReporter(reporter);
-        final Member reportedMember = reportSimpleDTO.getReportedMember() == null ? null : memberRepository.findById(reportSimpleDTO.getReportedMember().getId())
-                .orElseThrow(() -> new NotFoundException("reportedMember not found"));
-        report.setReportedMember(reportedMember);
-        final Roadmap roadmap = reportSimpleDTO.getRoadmap() == null ? null : roadmapRepository.findById(reportSimpleDTO.getRoadmap())
-                .orElseThrow(() -> new NotFoundException("map not found"));
-        report.setRoadmap(roadmap);
-        final Marker marker = reportSimpleDTO.getMarker() == null ? null : markerRepository.findById(reportSimpleDTO.getMarker())
-                .orElseThrow(() -> new NotFoundException("marker not found"));
-        report.setMarker(marker);
-        final Quest quest = reportSimpleDTO.getQuest() == null ? null : questRepository.findById(reportSimpleDTO.getQuest())
-                .orElseThrow(() -> new NotFoundException("quest not found"));
-        report.setQuest(quest);
-        return report;
-    }
 
 }

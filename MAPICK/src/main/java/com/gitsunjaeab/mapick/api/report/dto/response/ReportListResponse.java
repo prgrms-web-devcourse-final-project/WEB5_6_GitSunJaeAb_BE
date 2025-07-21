@@ -27,7 +27,7 @@ public class ReportListResponse implements BaseApiResponse {
             ResponseCode.OK.getCode(),
             "전체 신고내역 조회 성공",
             LocalDateTime.now(),
-                reportSimpleDTOS
+            reportSimpleDTOS
         );
     }
 }
