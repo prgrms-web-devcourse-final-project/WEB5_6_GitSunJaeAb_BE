@@ -21,7 +21,7 @@ public interface RoadmapRepository extends JpaRepository<Roadmap, Long> {
 
     List<Roadmap> findAllByIsPublicTrueAndRoadmapTypeAndCategoryId(RoadmapType roadmapType, Long categoryId);
 
-    List<Roadmap> findAllByMember_Id(Long memberId);
+    List<Roadmap> findAllByMember_IdAndDeletedAtIsNull(Long memberId);
 
     Optional<Roadmap> findByIdAndDeletedAtIsNull(Long roadmapId);
     List<Roadmap> findAllByMemberAndDeletedAtIsNull(Member member);
