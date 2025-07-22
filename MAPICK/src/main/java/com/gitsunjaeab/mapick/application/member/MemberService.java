@@ -112,22 +112,13 @@ public class MemberService {
         }
     }
 
-    // 멤버 리스트 조회 // todo DTO 내부로 정적 메서드로 넣기
+    // 멤버 리스트 조회
     public List<MemberListDTO> findAll() {
 
         final List<Member> members = memberRepository.findAllByDeletedAtIsNull(Sort.by("id"));
 
-        // todo DTO 내부로 정적 메서드로 넣기
         List<MemberListDTO> memberListDTOs = members.stream()
-                .map(m -> new MemberListDTO(
-                        m.getId(),
-                        m.getIsBlacklisted(),
-                        m.getName(),
-                        m.getNickname(),
-                        m.getEmail(),
-                        m.getRole()
-                )).toList();
-
+                .map(MemberListDTO::of).toList();
 
         return memberListDTOs;
     }
