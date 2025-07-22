@@ -93,7 +93,7 @@ dependencies {
 
 
 //    // Google Secret Manager
-    implementation 'com.google.cloud:spring-cloud-gcp-starter-secretmanager:3.5.2'
+//    implementation 'com.google.cloud:spring-cloud-gcp-starter-secretmanager:3.5.2'
 }
 
 
