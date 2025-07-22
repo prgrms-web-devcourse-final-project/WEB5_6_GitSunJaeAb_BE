@@ -35,7 +35,7 @@ public class MarkerDTO {
     private String color;
 
     @Size(max = 255)
-    private String imageUrl;
+    private String markerImage;
 
     private Integer markerSeq;
 
@@ -48,7 +48,7 @@ public class MarkerDTO {
         this.lat = marker.getLat();
         this.lng = marker.getLng();
         this.color = marker.getColor();
-        this.imageUrl = marker.getImageUrl();
+        this.markerImage = marker.getMarkerImage();
         this.markerSeq = marker.getMarkerSeq();
         this.layerId = marker.getLayer().getId();
     }

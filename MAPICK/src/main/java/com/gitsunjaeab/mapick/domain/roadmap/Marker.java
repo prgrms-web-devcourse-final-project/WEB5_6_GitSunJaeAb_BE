@@ -1,7 +1,9 @@
 package com.gitsunjaeab.mapick.domain.roadmap;
 
+import com.gitsunjaeab.mapick.api.roadmap.dto.marker.MarkerUpdateRequest;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.report.Report;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -56,7 +58,7 @@ public class Marker {
     private String color;
 
     @Column
-    private String imageUrl;
+    private String markerImage;
 
     @Column
     private Integer markerSeq;
@@ -78,7 +80,32 @@ public class Marker {
     @JoinColumn(name = "layer_id")
     private Layer layer;
 
-    @OneToMany(mappedBy = "marker")
+    @OneToMany(mappedBy = "marker", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<Report> markerReports = new HashSet<>();
 
+    public void updateInfo(MarkerUpdateRequest request) {
+        if (request.getName() != null) {
+            this.name = request.getName();
+        }
+        if (request.getDescription() != null) {
+            this.description = request.getDescription();
+        }
+        if (request.getLat() != null) {
+            this.lat = request.getLat();
+        }
+        if (request.getLng() != null) {
+            this.lng = request.getLng();
+        }
+        if (request.getColor() != null) {
+            this.color = request.getColor();
+        }
+        if (request.getMarkerSeq() != null) {
+            this.markerSeq = request.getMarkerSeq();
+        }
+        this.updatedAt = OffsetDateTime.now();
+    }
+
+    public void updateImage(String imageUrl) {
+        this.markerImage = imageUrl;
+    }
 }
