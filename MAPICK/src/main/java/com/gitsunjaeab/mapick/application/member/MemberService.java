@@ -144,7 +144,8 @@ public class MemberService {
         List<MemberInterest> memberInterests = memberInterestRepository.findAllByMemberId(memberId);
 
         List<MemberInterestDTO> memberInterestDTOList = memberInterests.stream()
-                .map(MemberInterestDTO::of).toList();
+                .map(MemberInterestDTO::of)
+                .toList();
 
         MemberDetailDTO memberDetailDto = MemberDetailDTO.of(member, memberInterestDTOList);
 
@@ -205,7 +206,7 @@ public class MemberService {
 
     // 관리자 - 특정 유저 블랙 리스트 해제
     @Transactional
-    public void ClearMemberBlackList(Long memberId) {
+    public void clearMemberBlackList(Long memberId) {
         try{
 
             Member member = memberRepository.findById(memberId)

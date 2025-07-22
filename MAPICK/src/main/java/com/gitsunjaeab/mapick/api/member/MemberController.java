@@ -88,7 +88,9 @@ public class MemberController {
 
         memberService.setMemberBlackList(memberId);
 
-        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "블랙리스트 설정 완료"));
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.of(ResponseCode.OK, "블랙리스트 설정 완료"));
     }
 
     // 회원의 블랙리스트 해제 (관리자 전용) -> todo 완성(예외처리 필요)
@@ -97,12 +99,14 @@ public class MemberController {
     @Operation(summary = "[관리자 전용] 블랙리스트 여부 변경 (관리자)", description = "[관리자 전용] 회원의 블랙 리스트 여부 수정")
     public ResponseEntity<ApiResponse> removeMemberBlackList(@PathVariable(name = "memberId") final Long memberId) {
 
-        memberService.ClearMemberBlackList(memberId);
+        memberService.clearMemberBlackList(memberId);
 
-        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "블랙리스트 해제 완료"));
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.of(ResponseCode.OK, "블랙리스트 해제 완료"));
     }
 
-    // 회원의 관리자로 설정 (관리자 전용) -> todo 완성(예외처리 필요)
+    // 회원 관리자 권한 부여 (관리자 전용) -> todo 완성(예외처리 필요)
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/role/{memberId}")
     @Operation(summary = "[관리자 전용] 특정 회원 관리자 설정 (관리자)", description = "[관리자 전용] 특정 회원 관리자 설정 ")
@@ -110,18 +114,22 @@ public class MemberController {
 
         memberService.setMemberRoleAdmin(memberId);
 
-        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "회원의 관리자 권한 부여 완료"));
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.of(ResponseCode.OK, "회원의 관리자 권한 부여 완료"));
     }
 
-    // 회원의 관리자로 설정 (관리자 전용) -> todo 완성(예외처리 필요)
+    // 회원 관리자 권한 회수(관리자 전용) -> todo 완성(예외처리 필요)
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/role/{memberId}")
+    @DeleteMapping("/role/{memberId}")
     @Operation(summary = "[관리자 전용] 특정 회원 관리자 권한 회수 (관리자)", description = "[관리자 전용] 특정 회원 관리자 권한 회수 ")
     public ResponseEntity<ApiResponse> removeMemberRole(@PathVariable(name = "memberId") final Long memberId) {
 
         memberService.clearMemberRoleAdmin(memberId);
 
-        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "회원의 관리자 권한 회수 완료"));
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.of(ResponseCode.OK, "회원의 관리자 권한 회수 완료"));
     }
 
     // 회원 삭제 (관리자 전용) -> todo 완성(예외처리 필요)
@@ -132,7 +140,9 @@ public class MemberController {
 
         memberService.deleteMember(memberId); // 소프트 딜리트
 
-        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "회원 삭제 완료"));
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.of(ResponseCode.OK, "회원 삭제 완료"));
     }
 
     /**
