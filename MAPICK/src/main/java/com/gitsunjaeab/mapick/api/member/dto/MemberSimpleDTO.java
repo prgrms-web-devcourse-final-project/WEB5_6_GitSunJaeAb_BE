@@ -3,14 +3,14 @@ package com.gitsunjaeab.mapick.api.member.dto;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class MemberSimpleDTO {
 
     private Long id;
@@ -41,4 +41,17 @@ public class MemberSimpleDTO {
         return new MemberSimpleDTO(member);
     }
 
+    public static MemberSimpleDTO of(Member member ) {
+        return MemberSimpleDTO.builder()
+                .id(member.getId())
+                .name(member.getName())
+                .nickname(member.getNickname())
+                .email(member.getEmail())
+                .profileImage(member.getProfileImage())
+                .build();
+    }
+
+
 }
+
+
