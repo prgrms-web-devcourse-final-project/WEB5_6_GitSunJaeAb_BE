@@ -123,29 +123,13 @@ public class MemberService {
         return memberListDTOs;
     }
 
-    // 멤버 상세 조회(상세 버전) - 관리자 // todo DTO 내부로 정적 메서드로 넣기
+    // 멤버 상세 조회(상세 버전) - 관리자
     public MemberDTO getMember(final Long memberId) {
 
         final Member member = memberRepository.findByIdAndDeletedAtIsNull(memberId)
                 .orElseThrow(() -> new CommonException(ResponseCode.MEMBER_NOT_FOUND));
 
-        MemberDTO memberDTO = MemberDTO.builder()
-                .id(member.getId())
-                .isBlacklisted(member.getIsBlacklisted())
-                .name(member.getName())
-                .nickname(member.getNickname())
-                .email(member.getEmail())
-                .password(member.getPassword())
-                .loginType(member.getLoginType().toString())
-                .provider(member.getProvider())
-                .role(member.getRole())
-                .status(member.getStatus())
-                .profileImage(member.getProfileImage())
-                .lastLogin(member.getLastLogin())
-                .createdAt(member.getCreatedAt())
-                .updatedAt(member.getUpdatedAt())
-                .deletedAt(member.getDeletedAt())
-                .build();
+        MemberDTO memberDTO = MemberDTO.of(member);
 
         return memberDTO;
     }
