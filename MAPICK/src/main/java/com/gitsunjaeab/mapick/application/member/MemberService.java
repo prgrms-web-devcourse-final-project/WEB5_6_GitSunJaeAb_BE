@@ -134,7 +134,7 @@ public class MemberService {
         return memberDTO;
     }
 
-    // 사용자 정보 조회 -사용자 // todo DTO 내부로 정적 메서드로 넣기
+    // 사용자 정보 조회 -사용자
     @Transactional
     public MemberDetailDTO getMemberProfile(Long memberId) {
 
@@ -144,40 +144,9 @@ public class MemberService {
         List<MemberInterest> memberInterests = memberInterestRepository.findAllByMemberId(memberId);
 
         List<MemberInterestDTO> memberInterestDTOList = memberInterests.stream()
-                .map(memberInterest -> MemberInterestDTO.builder()
-                        .id(memberInterest.getId())
-                        .createdAt(memberInterest.getCreatedAt())
-                        .categories(
-                                List.of(
-                                        CategorySimpleDTO.builder()
-                                                .id(memberInterest.getCategory().getId())
-                                                .name(memberInterest.getCategory().getName())
-                                                .build()
-                                )
-                        )
-                        .build()
-                )
-              .toList();
+                .map(MemberInterestDTO::of).toList();
 
-        MemberDetailDTO memberDetailDto = MemberDetailDTO.builder()
-                .id(member.getId())
-                .isBlacklisted(member.getIsBlacklisted())
-                .name(member.getName())
-                .nickname(member.getNickname())
-                .email(member.getEmail())
-                .password(member.getPassword())
-                .loginType(member.getLoginType().name())
-                .provider(member.getProvider())
-                .role(member.getRole())
-                .status(member.getStatus())
-                .profileImage(member.getProfileImage())
-                .lastLogin(member.getLastLogin())
-                .memberInterests(memberInterestDTOList)
-                .loginCount(member.getLoginCount())
-                .createdAt(member.getCreatedAt())
-                .updatedAt(member.getUpdatedAt())
-                .deletedAt(member.getDeletedAt())
-                .build();
+        MemberDetailDTO memberDetailDto = MemberDetailDTO.of(member, memberInterestDTOList);
 
         return memberDetailDto;
     }
