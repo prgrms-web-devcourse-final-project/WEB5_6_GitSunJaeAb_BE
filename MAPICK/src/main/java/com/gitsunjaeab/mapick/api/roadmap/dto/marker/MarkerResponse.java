@@ -1,37 +1,60 @@
 package com.gitsunjaeab.mapick.api.roadmap.dto.marker;
 
-import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
-import com.gitsunjaeab.mapick.domain.member.Member;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-import java.time.OffsetDateTime;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
+import com.gitsunjaeab.mapick.common.response.ResponseCode;
+import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
+/**
+ * 단일 마커 반환 Response
+ */
 
 @Getter
-@Setter
-public class MarkerResponse {
+@AllArgsConstructor
+public class MarkerResponse implements BaseApiResponse {
 
-    @Size(max = 255)
-    private String name;
+    private String code;
+    private String message;
+    private LocalDateTime timestamp;
 
-    private String description;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private MarkerDTO marker;
 
-    @NotNull
-    private Double lat;
+    public static MarkerResponse create() {
+        return new MarkerResponse(
+            ResponseCode.OK.getCode(),
+            "마커 생성 완료",
+            LocalDateTime.now(),
+            null
+        );
+    }
 
-    @NotNull
-    private Double lng;
+    public static MarkerResponse get(MarkerDTO dto) {
+        return new MarkerResponse(
+            ResponseCode.OK.getCode(),
+            "마커 조회 성공",
+            LocalDateTime.now(),
+            dto
+        );
+    }
 
-    @Size(max = 255)
-    private String color;
+    public static MarkerResponse update() {
+        return new MarkerResponse(
+            ResponseCode.OK.getCode(),
+            "마커 수정 완료",
+            LocalDateTime.now(),
+            null
+        );
+    }
 
-    @Size(max = 255)
-    private String imageUrl;
-
-    private Integer markerSeq;
-
-    private Long layer;
-
+    public static MarkerResponse delete() {
+        return new MarkerResponse(
+            ResponseCode.OK.getCode(),
+            "마커 삭제 완료",
+            LocalDateTime.now(),
+            null
+        );
+    }
 }

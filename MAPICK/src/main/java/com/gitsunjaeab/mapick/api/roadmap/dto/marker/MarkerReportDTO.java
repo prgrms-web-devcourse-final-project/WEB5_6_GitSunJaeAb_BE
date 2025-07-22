@@ -55,7 +55,7 @@ public class MarkerReportDTO {
                 .lat(marker.getLat())
                 .lng(marker.getLng())
                 .color(marker.getColor())
-                .imageUrl(marker.getImageUrl())
+                .imageUrl(marker.getMarkerImage())
                 .markerSeq(marker.getMarkerSeq())
                 .createdAt(marker.getCreatedAt())
                 .updatedAt(marker.getUpdatedAt())
