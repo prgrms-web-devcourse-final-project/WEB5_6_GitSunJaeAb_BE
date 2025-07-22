@@ -158,7 +158,7 @@ public class MemberController {
                 .body(response);
     }
 
-    // 회원 정보 수정 (프로필) -> todo 완성(예외처리 필요)
+    // 회원 정보 수정 (프로필) -> todo 프로필 사진 변경 되게 수정
     @PutMapping
     @Operation(summary = "[사용자]회원 정보 수정(프로필)", description = "사용자 회원 정보 수정")
     public ResponseEntity<ApiResponse> updateMember(@RequestBody @Valid final MemberProfileUpdateRequest MemberProfileUpdateRequest) {
@@ -236,7 +236,5 @@ public class MemberController {
                 .status(HttpStatus.OK)
                 .body(ApiResponse.of(ResponseCode.VERITY_PASSWORD_SUCCESS));
     }
-
-
 
 }
