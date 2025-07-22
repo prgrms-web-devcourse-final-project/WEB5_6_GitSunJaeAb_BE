@@ -1,10 +1,7 @@
 package com.gitsunjaeab.mapick.application.roadmap;
 
 import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
-import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.RoadmapDTO;
-import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.RoadmapListResponse;
-import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.RoadmapRequest;
-import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.RoadmapResponse;
+import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.*;
 import com.gitsunjaeab.mapick.api.roadmap.dto.hashtag.HashtagRequest;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.category.Category;
@@ -61,12 +58,16 @@ public class RoadmapService {
 
     // 공유 지도 생성
     @Transactional
-    public void createSharedRoadmap(RoadmapRequest request, Long memberId) {
+    public Long createSharedRoadmap(SharedRoadmapCreateRequest request, Long memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new NotFoundException("멤버 없음"));
 
         Category category = categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(() -> new NotFoundException("카테고리 없음"));
+
+        if (request.getRegionLatitude() == null || request.getRegionLongitude() == null || request.getParticipationEnd() == null) {
+            throw new IllegalArgumentException("공유 로드맵 생성 시 region 좌표 및 참여 종료일은 필수입니다.");
+        }
 
         Roadmap roadmap = new Roadmap();
         roadmap.setCategory(category);
@@ -80,6 +81,9 @@ public class RoadmapService {
         roadmap.setLikeCount(0);
         roadmap.setViewCount(0);
         roadmap.setMember(member);
+        roadmap.setRegionLatitude(request.getRegionLatitude());
+        roadmap.setRegionLongitude(request.getRegionLongitude());
+        roadmap.setParticipationEnd(request.getParticipationEnd());
 
         roadmapRepository.save(roadmap);
         // 로드맵 생성 시 해시태그
@@ -100,10 +104,11 @@ public class RoadmapService {
 
             roadmapHashtagRelationRepository.saveAll(roadmap.getRoadmapMapHashtags());
         }
+        return roadmap.getId();
     }
     // 개인 로드맵 생성
     @Transactional
-    public void create(@Valid RoadmapRequest request, Long memberId) {
+    public Long create(@Valid RoadmapRequest request, Long memberId) {
         Category category = categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카테고리입니다."));
 
@@ -142,6 +147,8 @@ public class RoadmapService {
 
             roadmapHashtagRelationRepository.saveAll(roadmap.getRoadmapMapHashtags());
         }
+
+        return roadmap.getId();
     }
 
     // 개인 로드맵 수정

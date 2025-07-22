@@ -14,12 +14,14 @@ public class RoadmapCreateResponse implements BaseApiResponse {
     private final String code;
     private final String message;
     private final LocalDateTime timestamp;
+    private final Long roadmapId;
 
-    public static RoadmapCreateResponse of(ResponseCode responseCode, String message) {
+    public static RoadmapCreateResponse of(ResponseCode responseCode, String message, Long roadmapId) {
         return new RoadmapCreateResponse(
                 responseCode.getCode(),
                 message,
-                LocalDateTime.now()
+                LocalDateTime.now(),
+                roadmapId
         );
     }
 }

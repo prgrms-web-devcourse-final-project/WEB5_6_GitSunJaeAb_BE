@@ -82,6 +82,16 @@ public class Roadmap {
     @Column
     private OffsetDateTime deletedAt;
 
+    @Column
+    private Double regionLatitude;
+
+    @Column
+    private Double regionLongitude;
+
+    @Column
+    private OffsetDateTime participationEnd;
+
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;

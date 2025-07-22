@@ -115,8 +115,4 @@ public class HashtagService {
 
         return result;
     }
-
-    public Hashtag findOrCreateByName(@Size(max = 255) String name) {
-        return null;
-    }
 }

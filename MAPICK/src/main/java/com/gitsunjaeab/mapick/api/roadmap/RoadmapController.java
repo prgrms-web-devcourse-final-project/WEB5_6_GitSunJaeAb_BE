@@ -1,9 +1,6 @@
 package com.gitsunjaeab.mapick.api.roadmap;
 
-import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.RoadmapCreateResponse;
-import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.RoadmapListResponse;
-import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.RoadmapRequest;
-import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.RoadmapResponse;
+import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.*;
 import com.gitsunjaeab.mapick.application.roadmap.RoadmapService;
 import com.gitsunjaeab.mapick.common.response.ApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
@@ -68,15 +65,15 @@ public class RoadmapController {
     @PostMapping("/shared")
     @Operation(summary = "공유지도 생성", description = "[사용자용] 레이어, 마커 제외 지도 관련 속성만 저장")
     public ResponseEntity<RoadmapCreateResponse> createSharedRoadmap(
-            @RequestBody @Valid final RoadmapRequest request,
+            @RequestBody @Valid final SharedRoadmapCreateRequest request,
             @AuthenticationPrincipal Principal principal) {
         if (principal == null) {
             throw new IllegalStateException("로그인되지 않았습니다.");
         }
 
         Long memberId = principal.getMember().getId();
-        roadmapService.createSharedRoadmap(request, memberId);
-        return ResponseEntity.ok(RoadmapCreateResponse.of(ResponseCode.OK, "공유지도 생성 완료"));
+        Long roadmapId = roadmapService.createSharedRoadmap(request, memberId);
+        return ResponseEntity.ok(RoadmapCreateResponse.of(ResponseCode.OK, "공유지도 생성 완료", roadmapId));
     }
 
     // 공유지도 수정
@@ -135,8 +132,8 @@ public class RoadmapController {
         }
 
         Long memberId = principal.getMember().getId();
-        roadmapService.create(request, memberId);
-        return ResponseEntity.ok(RoadmapCreateResponse.of(ResponseCode.OK, "로드맵 생성 완료"));
+        Long roadmapId = roadmapService.create(request, memberId);
+        return ResponseEntity.ok(RoadmapCreateResponse.of(ResponseCode.OK, "로드맵 생성 완료", roadmapId));
     }
 
     // 개인 로드맵 수정 NOTE 완
