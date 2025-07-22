@@ -2,6 +2,7 @@ package com.gitsunjaeab.mapick.domain.roadmap;
 
 
 import com.gitsunjaeab.mapick.infra.converter.OffsetDateTimeConverter;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Convert;
 import jakarta.persistence.EntityListeners;
 import org.springframework.data.annotation.CreatedDate;
@@ -96,10 +97,10 @@ public class Layer {
     @JoinColumn(name = "roadmap_id")
     private Roadmap roadmap;
 
-    @OneToMany(mappedBy = "layer")
+    @OneToMany(mappedBy = "layer", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<Marker> layerMarkers = new HashSet<>();
 
-    @OneToMany(mappedBy = "layer")
+    @OneToMany(mappedBy = "layer", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<LayerLibrary> layerLayerLibraries = new HashSet<>();
 
     public void updateFromRequest(LayerRequest request, Member member, Roadmap roadmap) {

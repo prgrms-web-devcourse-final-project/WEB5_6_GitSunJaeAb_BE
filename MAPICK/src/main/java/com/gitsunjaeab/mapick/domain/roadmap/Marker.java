@@ -2,6 +2,7 @@ package com.gitsunjaeab.mapick.domain.roadmap;
 
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.report.Report;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -16,14 +17,19 @@ import jakarta.persistence.Table;
 import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.Set;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 
 @Entity
 @Table(name = "Markers")
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Marker {
 
     @Id
@@ -56,7 +62,7 @@ public class Marker {
     private String color;
 
     @Column
-    private String imageUrl;
+    private String markerImage;
 
     @Column
     private Integer markerSeq;
@@ -78,7 +84,6 @@ public class Marker {
     @JoinColumn(name = "layer_id")
     private Layer layer;
 
-    @OneToMany(mappedBy = "marker")
+    @OneToMany(mappedBy = "marker", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<Report> markerReports = new HashSet<>();
-
 }

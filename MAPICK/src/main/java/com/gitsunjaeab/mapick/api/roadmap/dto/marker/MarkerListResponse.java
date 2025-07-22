@@ -26,7 +26,7 @@ public class MarkerListResponse implements BaseApiResponse {
                 m.getLat(),
                 m.getLng(),
                 m.getColor(),
-                m.getImageUrl(),
+                m.getMarkerImage(),
                 m.getMarkerSeq(),
                 m.getLayer() != null ? m.getLayer().getId() : null,
                 new MemberSimpleDTO(m.getMember())
