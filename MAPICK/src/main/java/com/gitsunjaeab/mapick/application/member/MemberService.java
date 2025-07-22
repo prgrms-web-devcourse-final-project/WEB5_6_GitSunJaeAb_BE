@@ -160,7 +160,7 @@ public class MemberService {
     public void updateMemberProfile(final Long memberId,
                                     final MemberProfileUpdateRequest memberProfileUpdateRequest,
                                     MultipartFile imageFile) {
-
+        try{
         final Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CommonException(ResponseCode.MEMBER_NOT_FOUND));
 
@@ -178,8 +178,7 @@ public class MemberService {
 
         member.setUpdatedAt(OffsetDateTime.now());
 
-        try{
-            memberRepository.save(member);
+
         }catch (DataIntegrityViolationException e){
             throw new CommonException(ResponseCode.DB_CONSTRAINT_VIOLATION); // DB 제약 조건 위배
         }
@@ -196,7 +195,7 @@ public class MemberService {
             throw new CommonException(ResponseCode.ALREADY_DELETED_USER);
         }
 
-//        member.setStatus("WITHDRAWN");
+        member.setStatus("WITHDRAWN");
         member.setDeletedAt(OffsetDateTime.now()); // 삭제 날짜에 현재 시간 입력
     }
 

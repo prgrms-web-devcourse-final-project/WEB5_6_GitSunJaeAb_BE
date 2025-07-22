@@ -13,7 +13,14 @@ import com.gitsunjaeab.mapick.application.member.MemberInterestService;
 import com.gitsunjaeab.mapick.application.member.MemberService;
 import com.gitsunjaeab.mapick.common.response.ApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
+import com.gitsunjaeab.mapick.domain.member.Member;
+import com.gitsunjaeab.mapick.domain.member.MemberRepository;
+import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
+import com.gitsunjaeab.mapick.util.NotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +44,8 @@ public class MemberController {
 
     private final MemberService memberService;
     private final MemberInterestService memberInterestService;
+
+    private final MemberRepository memberRepository;
 
     /**
      *
@@ -163,11 +172,26 @@ public class MemberController {
     }
 
     // 회원 정보 수정 (프로필) -> todo 프로필 사진 변경 되게 수정
-    @PutMapping
+    @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "[사용자]회원 정보 수정(프로필)", description = "사용자 회원 정보 수정")
     public ResponseEntity<ApiResponse> updateMember(
-            @RequestPart @Valid final MemberProfileUpdateRequest MemberProfileUpdateRequest,
-            @RequestPart(required = false) MultipartFile imageFile)
+            @Parameter(
+                    name = "member",
+                    description = "회원 정보 JSON",
+                    required = true,
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = MemberProfileUpdateRequest.class)
+                    )
+            )
+            @RequestPart(name = "member") @Valid final MemberProfileUpdateRequest MemberProfileUpdateRequest,
+            @Parameter(
+                    name = "imageFile",
+                    description = "프로필 이미지 파일 (선택)",
+                    required = false,
+                    content = @Content(mediaType = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+            )
+            @RequestPart(name = "imageFile", required = false) MultipartFile imageFile)
             {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -179,6 +203,26 @@ public class MemberController {
                 .status(HttpStatus.OK)
                 .body(ApiResponse.of(ResponseCode.OK, "회원 정보 수정 완료"));
     }
+
+    // 사진 확인
+    // 임시로 회원의 프로필 이미지 URL 반환
+    @GetMapping("/members/{id}/profile-image")
+    @Operation(summary = "회원 프로필 이미지 URL 조회(임시)", description = "회원의 프로필 이미지 주소를 반환합니다.")
+    public ResponseEntity<String> getProfileImageUrl(@PathVariable Long id) {
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
+
+        String imageUrl = member.getProfileImage(); // DB에 저장된 이미지 경로
+
+        if (imageUrl == null || imageUrl.isBlank()) {
+            throw new CommonException(ResponseCode.IMAGE_NOT_FOUND);
+        }
+
+        return ResponseEntity.ok(imageUrl);
+    }
+
+
+
 
     // 회원 탈퇴 (사용자) -> todo 완성(예외처리 필요)
     @DeleteMapping ("/withdraw")
