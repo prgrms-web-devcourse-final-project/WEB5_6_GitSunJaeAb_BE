@@ -194,7 +194,7 @@ public class RoadmapService {
 
     @Transactional(readOnly = true)
     public RoadmapListResponse findAllRoadmapsByMember(Long memberId) {
-        List<Roadmap> roadmaps = roadmapRepository.findAllByMember_Id(memberId);
+        List<Roadmap> roadmaps = roadmapRepository.findAllByMember_IdAndDeletedAtIsNull(memberId);
         return buildRoadmapListResponse(roadmaps);
     }
 

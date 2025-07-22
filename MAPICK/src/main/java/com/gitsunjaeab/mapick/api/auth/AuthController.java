@@ -167,6 +167,8 @@ public class AuthController {
     @Operation(summary = "비밀번호 수정", description = "[사용자 전용] 본인만 접근 가능한 비밀번호 변경")
     public ResponseEntity<PasswordChangeResponse> updatePassword(@Valid @RequestBody PasswordRequest passwordRequest, HttpServletResponse response) {
 
+        // todo 이전 엑세스 토큰의 블랙 리스트 처리 필요
+
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Long memberId = Long.parseLong(auth.getName());
 

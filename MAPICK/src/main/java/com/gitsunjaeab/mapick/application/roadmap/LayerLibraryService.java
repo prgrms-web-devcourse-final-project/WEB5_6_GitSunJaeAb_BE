@@ -1,9 +1,11 @@
 package com.gitsunjaeab.mapick.application.roadmap;
 
 import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerZzimSimpleDTO;
+import com.gitsunjaeab.mapick.application.notification.NotificationService;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
+import com.gitsunjaeab.mapick.domain.notification.NotificationType;
 import com.gitsunjaeab.mapick.domain.roadmap.Layer;
 import com.gitsunjaeab.mapick.domain.roadmap.LayerForkHistory;
 import com.gitsunjaeab.mapick.domain.roadmap.LayerForkHistoryRepository;
@@ -31,16 +33,19 @@ public class LayerLibraryService {
     private final MemberRepository memberRepository;
     private final RoadmapRepository roadmapRepository;
     private final LayerForkHistoryRepository layerForkHistoryRepository;
+    private final NotificationService notificationService;
 
     public LayerLibraryService(final LayerLibraryRepository layerLibraryRepository,
         LayerRepository layerRepository, MemberRepository memberRepository,
         RoadmapRepository roadmapRepository,
-        LayerForkHistoryRepository layerForkHistoryRepository) {
+        LayerForkHistoryRepository layerForkHistoryRepository,
+        NotificationService notificationService) {
         this.layerLibraryRepository = layerLibraryRepository;
         this.layerRepository = layerRepository;
         this.memberRepository = memberRepository;
         this.roadmapRepository = roadmapRepository;
         this.layerForkHistoryRepository = layerForkHistoryRepository;
+        this.notificationService = notificationService;
     }
 
     // ===== 마이페이지 : 레이어 찜 관리  =====
@@ -85,14 +90,29 @@ public class LayerLibraryService {
             throw new CommonException(ResponseCode.ALREADY_PROCESSED);
         }
 
+        // 찜 등록
         LayerLibrary layerLibrary = new LayerLibrary();
         layerLibrary.setMember(member);
         layerLibrary.setLayer(layer);
         layerLibrary.setZzim(true);
         layerLibraryRepository.save(layerLibrary);
 
-        return layerLibraryRepository.findByIdWithAllAssociations(layerLibrary.getId())
+        // 찜 기록 조회 (모든 연관 엔티티와 함께)
+        LayerLibrary savedLibrary = layerLibraryRepository.findByIdWithAllAssociations(layerLibrary.getId())
             .orElseThrow(() -> new CommonException(ResponseCode.SAVE_FAILED));
+
+        // 찜 알림 발송 로직 
+        Member layerOwner = layer.getMember();
+        notificationService.createNotification(
+            layerOwner,           // 알림 받을 대상 (레이어 소유자)
+            NotificationType.ZZIM, // 알림 타입
+            layer.getRoadmap(),   // 로드맵 정보
+            layer,                // 레이어 정보
+            savedLibrary,         // 찜 기록 정보
+            null                  // 퀘스트 정보 (없음)
+        );
+
+        return savedLibrary;
     }
 
 
@@ -167,6 +187,21 @@ public class LayerLibraryService {
         forkHistory.setForkedLayer(savedForkedLayer);
         forkHistory.setMember(member);
         layerForkHistoryRepository.save(forkHistory);
+
+        // 찜 기록 조회 (포크 알림 발송용)
+        LayerLibrary layerLibrary = layerLibraryRepository.findByMemberAndLayer(member, originalLayer)
+            .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND));
+
+        // 포크 알림 발송 로직 (찜 알림과 동일한 패턴)
+        Member layerOwner = originalLayer.getMember();
+        notificationService.createNotification(
+            layerOwner,           // 알림 받을 대상 (레이어 소유자)
+            NotificationType.FORK, // 알림 타입
+            targetRoadmap,        // 로드맵 정보
+            originalLayer,        // 레이어 정보
+            layerLibrary,         // 찜 기록 정보
+            null                  // 퀘스트 정보 (없음)
+        );
 
         // 찜 기록 조회해서 반환
         return layerLibraryRepository.findByMemberAndLayer(member, originalLayer)

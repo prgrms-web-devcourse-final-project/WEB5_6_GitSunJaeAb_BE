@@ -1,4 +1,4 @@
-package com.gitsunjaeab.mapick.api.report.dto;
+package com.gitsunjaeab.mapick.api.report.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -8,13 +8,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * 지도(로드맵) 신고 요청 DTO
+ * 퀘스트 신고 생성 요청 DTO
  */
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class MapReportRequest {
+public class QuestReportRequest {
 
     @NotNull(message = "신고자 ID는 필수입니다")
     private Long reporterId;  // 신고자 ID
@@ -22,5 +22,5 @@ public class MapReportRequest {
     @NotBlank(message = "신고 내용은 필수입니다")
     private String description;  // 신고 내용
 
-    // mapId는 URL path에서 받으므로 DTO에 포함하지 않음
+    // questId는 URL path에서 받으므로 DTO에 포함하지 않음
 } 
