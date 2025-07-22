@@ -2,6 +2,7 @@ package com.gitsunjaeab.mapick.domain.category;
 
 import com.gitsunjaeab.mapick.domain.member.MemberInterest;
 import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -49,10 +50,9 @@ public class Category {
     @Column(nullable = false)
     private OffsetDateTime createdAt;
 
-    @OneToMany(mappedBy = "category")
+    @OneToMany(mappedBy = "category", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<MemberInterest> interestMemberInterests = new HashSet<>();
 
-    @OneToMany(mappedBy = "category")
+    @OneToMany(mappedBy = "category", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<Roadmap> roadmaps = new HashSet<>();
-
 }

@@ -4,6 +4,7 @@ import com.gitsunjaeab.mapick.domain.category.Category;
 import com.gitsunjaeab.mapick.domain.comment.Comment;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.report.Report;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -86,21 +87,21 @@ public class Roadmap {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @OneToMany(mappedBy = "roadmap")
+    @OneToMany(mappedBy = "roadmap", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<RoadmapEditor> roadmapEditors = new HashSet<>();
 
-    @OneToMany(mappedBy = "roadmap")
+    @OneToMany(mappedBy = "roadmap", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<Layer> roadmapLayers = new HashSet<>();
 
-    @OneToMany(mappedBy = "roadmap")
+    @OneToMany(mappedBy = "roadmap", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<Comment> roadmapComments = new HashSet<>();
 
-    @OneToMany(mappedBy = "roadmap")
+    @OneToMany(mappedBy = "roadmap", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<Bookmark> roadmapLikes = new HashSet<>();
 
-    @OneToMany(mappedBy = "roadmap")
+    @OneToMany(mappedBy = "roadmap", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<RoadmapHashtagRelation> roadmapMapHashtags = new HashSet<>();
 
-    @OneToMany(mappedBy = "roadmap")
+    @OneToMany(mappedBy = "roadmap", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<Report> roadmapReports = new HashSet<>();
 }
