@@ -126,7 +126,7 @@ public class MemberService {
     // 멤버 상세 조회(상세 버전) - 관리자 // todo DTO 내부로 정적 메서드로 넣기
     public MemberDTO getMember(final Long memberId) {
 
-        final Member member = memberRepository.findById(memberId)
+        final Member member = memberRepository.findByIdAndDeletedAtIsNull(memberId)
                 .orElseThrow(() -> new CommonException(ResponseCode.MEMBER_NOT_FOUND));
 
         MemberDTO memberDTO = MemberDTO.builder()
