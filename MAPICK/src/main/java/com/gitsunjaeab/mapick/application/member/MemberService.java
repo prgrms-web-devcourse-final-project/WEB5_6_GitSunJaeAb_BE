@@ -12,6 +12,7 @@ import com.gitsunjaeab.mapick.domain.member.MemberInterest;
 import com.gitsunjaeab.mapick.domain.member.MemberInterestRepository;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
 import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
+import com.gitsunjaeab.mapick.infra.storage.SupabaseStorageService;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -34,6 +36,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final MemberInterestRepository memberInterestRepository;
+    private final SupabaseStorageService supabaseStorageService;
 
     // 소셜 로그인 시 임시 닉네임 부여
     public String generateUniqueSocialNickname(String provider) {
@@ -154,13 +157,25 @@ public class MemberService {
 
     // 사용자 정보(프로필) 수정
     @Transactional
-    public void updateMemberProfile(final Long memberId, final MemberProfileUpdateRequest memberProfileUpdateRequest) {
+    public void updateMemberProfile(final Long memberId,
+                                    final MemberProfileUpdateRequest memberProfileUpdateRequest,
+                                    MultipartFile imageFile) {
 
         final Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CommonException(ResponseCode.MEMBER_NOT_FOUND));
 
-        member.setNickname(memberProfileUpdateRequest.getNickname());
-        member.setProfileImage(memberProfileUpdateRequest.getProfileImage());
+        String nickname = memberProfileUpdateRequest.getNickname();
+
+
+        if (nickname != null && !nickname.isBlank()) {
+            member.setNickname(nickname);
+        }
+
+        if (imageFile != null && !imageFile.isEmpty()) {
+            String imageUrl = supabaseStorageService.upload(imageFile);
+            member.setProfileImage(imageUrl);
+        }
+
         member.setUpdatedAt(OffsetDateTime.now());
 
         try{
