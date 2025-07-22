@@ -1,5 +1,6 @@
 package com.gitsunjaeab.mapick.api.quest;
 
+import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestDTO;
 import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestListResponse;
 import com.gitsunjaeab.mapick.api.quest.dto.QuestDetailResponse;
 import com.gitsunjaeab.mapick.api.quest.dto.QuestResponse;
@@ -9,7 +10,7 @@ import com.gitsunjaeab.mapick.api.quest.dto.QuestDTO;
 import com.gitsunjaeab.mapick.application.quest.MemberQuestService;
 import com.gitsunjaeab.mapick.application.quest.QuestRankService;
 import com.gitsunjaeab.mapick.application.quest.QuestService;
-import com.gitsunjaeab.mapick.application.quest.MemberQuestEvidenceService;
+//import com.gitsunjaeab.mapick.application.quest.MemberQuestEvidenceService;
 import com.gitsunjaeab.mapick.domain.auth.Principal;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.util.ReferencedException;
@@ -18,8 +19,8 @@ import com.gitsunjaeab.mapick.common.response.ApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestRequest;
 import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestResponse;
-import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestEvidenceRequest;
-import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestEvidenceResponse;
+//import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestEvidenceRequest;
+//import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestEvidenceResponse;
 import com.gitsunjaeab.mapick.api.quest.dto.QuestRankResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -48,15 +49,16 @@ public class QuestController {
     private final QuestService questService;
     private final QuestRankService questRankService;
     private final MemberQuestService memberQuestService;
-    private final MemberQuestEvidenceService memberQuestEvidenceService;
+//    private final MemberQuestEvidenceService memberQuestEvidenceService;
 
     public QuestController(final QuestService questService, final QuestRankService questRankService,
-        final MemberQuestService memberQuestService,
-        final MemberQuestEvidenceService memberQuestEvidenceService) {
+        final MemberQuestService memberQuestService
+//        ,final MemberQuestEvidenceService memberQuestEvidenceService
+    ) {
         this.questService = questService;
         this.questRankService = questRankService;
         this.memberQuestService = memberQuestService;
-        this.memberQuestEvidenceService = memberQuestEvidenceService;
+//        this.memberQuestEvidenceService = memberQuestEvidenceService;
     }
 
     // ===== 출제자용 API (퀘스트 관리) =====
@@ -110,16 +112,18 @@ public class QuestController {
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "퀘스트 삭제 완료"));
     }
 
-    // 본인 퀘스트 증빙 자료 조회 (출제자용 - 정답 처리시 사용)
-    @GetMapping("/evidence")
-    @Operation(summary = "본인 퀘스트 증빙 자료 조회", description = "[출제자용] (추후 추가예정) 본인이 생성한 퀘스트의 모든 증빙 자료를 조회합니다. 정답 처리시 사용됩니다.")
-    public ResponseEntity<List<MemberQuestEvidenceResponse>> getAllEvidence() {
-        return ResponseEntity.ok(memberQuestEvidenceService.findAll());
-    }
+//    // 본인 퀘스트 증빙 자료 조회 (출제자용 - 정답 처리시 사용)
+//    @GetMapping("/evidence")
+//    @Operation(summary = "본인 퀘스트 증빙 자료 조회", description = "[출제자용] (추후 추가예정) 본인이 생성한 퀘스트의 모든 증빙 자료를 조회합니다. 정답 처리시 사용됩니다.")
+//    public ResponseEntity<List<MemberQuestEvidenceResponse>> getAllEvidence() {
+//        return ResponseEntity.ok(memberQuestEvidenceService.findAll());
+//    }
 
     // ===== 참여자용 API (퀘스트 참여 및 조회) =====
     
     // 전체 퀘스트 조회 (참여자용) //완료
+    //파라미터로 인기순 / 최신순 를 나눠주면 좋을것 같음
+    // 카테고리 등록하는거 없는데
     @GetMapping
     @Operation(summary = "전체 퀘스트 조회", description = "[참여자용] 활성화된 퀘스트 목록을 조회합니다.")
     public ResponseEntity<QuestListResponse> getAllQuests(
@@ -154,19 +158,26 @@ public class QuestController {
 
     // 퀘스트 참여 신청 (참여자용) //완료
     @PostMapping("/{questId}/memberQuest")
-    @Operation(summary = "퀘스트 참여 신청", description = "[참여자용] 특정 퀘스트에 참여 신청을 합니다.")
+    @Operation(summary = "퀘스트 참여 신청 및 증빙자료 제출", description = "[참여자용] 특정 퀘스트에 참여 신청을 합니다.")
     public ResponseEntity<ApiResponse> participateInQuest(
         @PathVariable(name = "questId") final Long questId,
-        @AuthenticationPrincipal Principal principal
+        @AuthenticationPrincipal Principal principal,
+        @RequestBody @Valid MemberQuestRequest request
+
     ) {
+        if(principal == null){
+            throw new IllegalStateException("인증된 유저 정보 없음");
+
+        }
 
         Member member = principal.getMember();
-
-        MemberQuestRequest request = new MemberQuestRequest();
         request.setQuest(questId);
         request.setMember(member.getId());
-        MemberQuest created = memberQuestService.createAndReturnEntity(request);
+        memberQuestService.create(request,member);
 
+//        MemberQuestRequest request = new MemberQuestRequest();
+//        request.setMember(member.getId());
+//        MemberQuest created = memberQuestService.createAndReturnEntity(request);
         //리팩토링 때 재확인 필요
 //        MemberQuestResponse response = MemberQuestResponse.ofCreate(created);
 
@@ -174,39 +185,39 @@ public class QuestController {
     }
 
 
-    // 증빙 자료 제출 (참여자용)
-    @PostMapping("/memberQuest/{memberQuestId}/evidence")
-    @Operation(summary = "증빙 자료 제출", description = "[참여자용] 퀘스트 참여에 대한 증빙 자료를 제출합니다.")
-    public ResponseEntity<ApiResponse> submitEvidence(@PathVariable(name = "memberQuestId") final Long memberQuestId,
-            @RequestBody @Valid final MemberQuestEvidenceRequest evidenceRequest) {
-        // memberQuestId를 request에 설정
-        evidenceRequest.setMemberQuest(memberQuestId);
-        memberQuestEvidenceService.create(evidenceRequest);
-        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "증빙 자료 제출 완료"));
-    }
-
-    // 참여자 증빙 자료 조회 (참여자용)
-    @GetMapping("/memberQuest/{memberQuestId}/evidence")
-    @Operation(summary = "참여자 증빙 자료 조회", description = "[참여자용] (추후 추가예정)특정 참여자의 증빙 자료를 조회합니다.")
-    public ResponseEntity<List<MemberQuestEvidenceResponse>> getParticipantEvidence(@PathVariable(name = "memberQuestId") final Long memberQuestId) {
-        return ResponseEntity.ok(memberQuestEvidenceService.findByMemberQuestId(memberQuestId));
-    }
-
-    // 증빙 자료 수정 (참여자용)
-    @PutMapping("/evidence/{evidenceId}")
-    @Operation(summary = "증빙 자료 수정", description = "[참여자용] 본인이 제출한 증빙 자료를 수정합니다.")
-    public ResponseEntity<ApiResponse> updateEvidence(@PathVariable(name = "evidenceId") final Long evidenceId,
-            @RequestBody @Valid final MemberQuestEvidenceRequest evidenceRequest) {
-        memberQuestEvidenceService.update(evidenceId, evidenceRequest);
-        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "증빙 자료 수정 완료"));
-    }
-
-    // 증빙 자료 삭제 (참여자용)
-    @DeleteMapping("/evidence/{evidenceId}")
-    @Operation(summary = "증빙 자료 삭제", description = "[참여자용] 본인이 제출한 증빙 자료를 삭제합니다.")
-    public ResponseEntity<ApiResponse> deleteEvidence(@PathVariable(name = "evidenceId") final Long evidenceId) {
-        memberQuestEvidenceService.delete(evidenceId);
-        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "증빙 자료 삭제 완료"));
-    }
+//    // 증빙 자료 제출 (참여자용)
+//    @PostMapping("/memberQuest/{memberQuestId}/evidence")
+//    @Operation(summary = "증빙 자료 제출", description = "[참여자용] 퀘스트 참여에 대한 증빙 자료를 제출합니다.")
+//    public ResponseEntity<ApiResponse> submitEvidence(@PathVariable(name = "memberQuestId") final Long memberQuestId,
+//            @RequestBody @Valid final MemberQuestEvidenceRequest evidenceRequest) {
+//        // memberQuestId를 request에 설정
+//        evidenceRequest.setMemberQuest(memberQuestId);
+//        memberQuestEvidenceService.create(evidenceRequest);
+//        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "증빙 자료 제출 완료"));
+//    }
+//
+//    // 참여자 증빙 자료 조회 (참여자용)
+//    @GetMapping("/memberQuest/{memberQuestId}/evidence")
+//    @Operation(summary = "참여자 증빙 자료 조회", description = "[참여자용] (추후 추가예정)특정 참여자의 증빙 자료를 조회합니다.")
+//    public ResponseEntity<List<MemberQuestEvidenceResponse>> getParticipantEvidence(@PathVariable(name = "memberQuestId") final Long memberQuestId) {
+//        return ResponseEntity.ok(memberQuestEvidenceService.findByMemberQuestId(memberQuestId));
+//    }
+//
+//    // 증빙 자료 수정 (참여자용)
+//    @PutMapping("/evidence/{evidenceId}")
+//    @Operation(summary = "증빙 자료 수정", description = "[참여자용] 본인이 제출한 증빙 자료를 수정합니다.")
+//    public ResponseEntity<ApiResponse> updateEvidence(@PathVariable(name = "evidenceId") final Long evidenceId,
+//            @RequestBody @Valid final MemberQuestEvidenceRequest evidenceRequest) {
+//        memberQuestEvidenceService.update(evidenceId, evidenceRequest);
+//        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "증빙 자료 수정 완료"));
+//    }
+//
+//    // 증빙 자료 삭제 (참여자용)
+//    @DeleteMapping("/evidence/{evidenceId}")
+//    @Operation(summary = "증빙 자료 삭제", description = "[참여자용] 본인이 제출한 증빙 자료를 삭제합니다.")
+//    public ResponseEntity<ApiResponse> deleteEvidence(@PathVariable(name = "evidenceId") final Long evidenceId) {
+//        memberQuestEvidenceService.delete(evidenceId);
+//        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "증빙 자료 삭제 완료"));
+//    }
 
 }

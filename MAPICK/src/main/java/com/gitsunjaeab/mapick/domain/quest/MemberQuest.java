@@ -37,16 +37,24 @@ public class MemberQuest {
             strategy = GenerationType.SEQUENCE,
             generator = "primary_sequence"
     )
+
+    //확인
     private Long id;
 
     @Column(nullable = false)
-    private String status;
+    private Boolean status;
 
-    @Column(nullable = true)  // 참여 신청 시에는 답변이 없어도 됨
-    private String answer;
-
+    //정답여부
     @Column(nullable = false)
     private String isRecognized;
+
+    //
+    @Column
+    private String title;
+
+    //확인
+    @Column(nullable = true)  // 참여 신청 시에는 답변이 없어도 됨
+    private String answer;
 
     @Column
     private OffsetDateTime createdAt;
@@ -60,15 +68,28 @@ public class MemberQuest {
     @Column
     private OffsetDateTime deletedAt;
 
+    @Column
+    private OffsetDateTime submitAt;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    @Column(name = "image_url", nullable = false)
+//    @Column(nullable = true) // 테스트용 배포시 false로 변환
+    private String imageUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "quest_id")
     private Quest quest;
 
-    @OneToMany(mappedBy = "memberQuest")
-    private Set<MemberQuestEvidence> memberQuestMemberQuestEvidences = new HashSet<>();
+
+    @Column(columnDefinition = "text")
+    private String description;
+
+
+    //잠시 주석 처리
+//    @OneToMany(mappedBy = "memberQuest")
+//    private Set<MemberQuestEvidence> memberQuestMemberQuestEvidences = new HashSet<>();
 
 }

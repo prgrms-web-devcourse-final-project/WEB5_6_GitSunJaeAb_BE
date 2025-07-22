@@ -21,4 +21,6 @@ public interface QuestRepository extends JpaRepository<Quest, Long> {
     // 전체 조회용: member까지 즉시 로딩하는 JPQL 쿼리
     @Query("SELECT q FROM Quest q JOIN FETCH q.member WHERE q.deletedAt IS NULL ORDER BY q.id ASC")
     List<Quest> findAllWithMember();
+
+
 }

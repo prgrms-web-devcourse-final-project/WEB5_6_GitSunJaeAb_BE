@@ -25,12 +25,14 @@ public class MemberQuestResponse {
     private Long id;
     
     @NotNull
-    private String status;
-    
-    private String answer;
+    private Boolean status;
     
     private String isRecognized;
-    
+
+    private String title;
+
+    private String answer;
+
     private OffsetDateTime createdAt;
     
     private OffsetDateTime completedAt;
@@ -38,25 +40,41 @@ public class MemberQuestResponse {
     private OffsetDateTime updatedAt;
     
     private OffsetDateTime deletedAt;
-    
-//    private Long member;
+
+    private OffsetDateTime submitAt;
+
+    private String imageUrl;
+
+    private String description;
 
     private MemberSimpleDTO member;
+
     private Long quest;
 
-    // 퀘스트 참여 생성 응답 
+   //private QuestDTO quest;
+
+
+    // 퀘스트 참여 생성 응답
     public static MemberQuestResponse ofCreate(MemberQuest memberQuest) {
         return new MemberQuestResponse(
             memberQuest.getId(),
             memberQuest.getStatus(),
-            memberQuest.getAnswer(),
             memberQuest.getIsRecognized(),
+            memberQuest.getTitle(),
+            memberQuest.getAnswer(),
             memberQuest.getCreatedAt(),
             memberQuest.getCompletedAt(),
             memberQuest.getUpdatedAt(),
             memberQuest.getDeletedAt(),
+            memberQuest.getSubmitAt(),
+            memberQuest.getImageUrl(),
+            memberQuest.getDescription(),
             memberQuest.getMember() != null ? new MemberSimpleDTO(memberQuest.getMember()) : null,
             memberQuest.getQuest() != null ? memberQuest.getQuest().getId() : null
+
+            //향후 프론트 요청에 따라 수정 할 예정
+            //memberQuest.getQuest() != null ? new QuestDTO(memberQuest.getQuest()) : null
+
         );
     }
 
@@ -65,12 +83,16 @@ public class MemberQuestResponse {
         return new MemberQuestResponse(
             memberQuestResponse.getId(),
             memberQuestResponse.getStatus(),
-            memberQuestResponse.getAnswer(),
             memberQuestResponse.getIsRecognized(),
+            memberQuestResponse.getTitle(),
+            memberQuestResponse.getAnswer(),
             memberQuestResponse.getCreatedAt(),
             memberQuestResponse.getCompletedAt(),
             memberQuestResponse.getUpdatedAt(),
             memberQuestResponse.getDeletedAt(),
+            memberQuestResponse.getSubmitAt(),
+            memberQuestResponse.getImageUrl(),
+            memberQuestResponse.getDescription(),
             memberQuestResponse.getMember(),
             memberQuestResponse.getQuest()
         );
@@ -81,12 +103,16 @@ public class MemberQuestResponse {
         return new MemberQuestResponse(
             memberQuestResponse.getId(),
             memberQuestResponse.getStatus(),
-            memberQuestResponse.getAnswer(),
             memberQuestResponse.getIsRecognized(),
+            memberQuestResponse.getTitle(),
+            memberQuestResponse.getAnswer(),
             memberQuestResponse.getCreatedAt(),
             memberQuestResponse.getCompletedAt(),
             memberQuestResponse.getUpdatedAt(),
             memberQuestResponse.getDeletedAt(),
+            memberQuestResponse.getSubmitAt(),
+            memberQuestResponse.getImageUrl(),
+            memberQuestResponse.getDescription(),
             memberQuestResponse.getMember(),
             memberQuestResponse.getQuest()
         );

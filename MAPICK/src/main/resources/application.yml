@@ -24,10 +24,11 @@ spring:
       idle-timeout: 30000
       max-lifetime: 1800000
 
-  cloud:
-    gcp:
-      secretmanager:
-        enabled: true
+  # //로컬 확인을 위한 false 처리
+#  cloud:
+#    gcp:
+#      secretmanager:
+#        enabled: true
 
   jpa:
     hibernate:
@@ -42,8 +43,9 @@ spring:
         id:
           new_generator_mappings: true
 
-  config:
-    import: sm://
+# //로컬 확인을 위한 주석처리
+#  config:
+#    import: sm://
 
   web:
     resources:
