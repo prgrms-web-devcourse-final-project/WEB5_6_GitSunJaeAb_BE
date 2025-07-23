@@ -5,8 +5,8 @@ import com.gitsunjaeab.mapick.api.auth.dto.request.SignupRequest;
 import com.gitsunjaeab.mapick.api.auth.dto.request.SocialLoginRequest;
 import com.gitsunjaeab.mapick.api.auth.dto.response.SigninResponse;
 import com.gitsunjaeab.mapick.api.auth.dto.response.PasswordChangeResponse;
-import com.gitsunjaeab.mapick.api.auth.dto.response.SocialSigninResponse;
 import com.gitsunjaeab.mapick.api.auth.dto.internal.TokenDTO;
+import com.gitsunjaeab.mapick.api.auth.dto.response.SignupResponse;
 import com.gitsunjaeab.mapick.api.member.dto.request.PasswordRequest;
 import com.gitsunjaeab.mapick.application.auth.AuthService;
 import com.gitsunjaeab.mapick.application.member.MemberService;
@@ -127,15 +127,16 @@ public class AuthController {
     }
 
     // 자체 회원가입
+    // complete
     @PostMapping("/signup")
     @Operation(summary = "자체 회원가입", description = "[회원가입] 자체 회원가입을 진행합니다.\n\n" + "**검증 조건:**\n" + "- 비밀번호는 8자 이상, 12자 이하 영문+숫자를 포함해야 합니다.\n" + "- 이메일은 중복 불가입니다.\n" + "- 닉네임은 중복 불가입니다.")
-    public ResponseEntity<?> signup(@RequestBody @Valid SignupRequest request) {
+    public ResponseEntity<SignupResponse> signup(@RequestBody @Valid SignupRequest request) {
 
         memberService.signup(request);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.of(ResponseCode.SIGNUP_SUCCESS));
+                .body(SignupResponse.signup());
 
     }
 
