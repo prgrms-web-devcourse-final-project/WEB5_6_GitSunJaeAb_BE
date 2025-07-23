@@ -27,11 +27,11 @@ public class NotificationService {
     public List<Notification> findByType(NotificationType type) {
         // 전체
         if (type == NotificationType.ALL) {
-            return notificationRepository.findAllByOrderByCreatedAtDesc();
+            // fetch join으로 N+1 문제 방지
+            return notificationRepository.findAllWithAllRelations();
         }
-
-        // 타입
-        return notificationRepository.findByNotificationTypeOrderByCreatedAtDesc(type);
+        // 타입별 조회도 fetch join + deletedAt 조건 쿼리 사용
+        return notificationRepository.findByNotificationTypeWithAllRelations(type);
     }
 
     // 자동 알림 생성

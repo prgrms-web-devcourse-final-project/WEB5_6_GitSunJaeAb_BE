@@ -111,6 +111,11 @@ public class Notification {
     @JoinColumn(name = "member_quest_id")
     private MemberQuest memberQuest;
 
+    // 공지(Announcement) 연관관계 추가
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "announcement_id")
+    private Announcement announcement;
+
 
     // ===== UTIL =====
     // Enum 값 저장 검증 로직
