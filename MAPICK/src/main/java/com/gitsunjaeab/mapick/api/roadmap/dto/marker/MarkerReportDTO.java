@@ -3,9 +3,12 @@ package com.gitsunjaeab.mapick.api.roadmap.dto.marker;
 import com.gitsunjaeab.mapick.domain.roadmap.Marker;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.*;
-
 import java.time.OffsetDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 
 @Getter
@@ -21,6 +24,8 @@ public class MarkerReportDTO {
     private String name;
 
     private String description;
+
+    private String address;
 
     @NotNull
     private Double lat;
@@ -49,20 +54,21 @@ public class MarkerReportDTO {
 
     public static MarkerReportDTO of(Marker marker) {
         return MarkerReportDTO.builder()
-                .id(marker.getId())
-                .name(marker.getName())
-                .description(marker.getDescription())
-                .lat(marker.getLat())
-                .lng(marker.getLng())
-                .color(marker.getColor())
-                .imageUrl(marker.getMarkerImage())
-                .markerSeq(marker.getMarkerSeq())
-                .createdAt(marker.getCreatedAt())
-                .updatedAt(marker.getUpdatedAt())
-                .deletedAt(marker.getDeletedAt())
-                .memberId(marker.getMember().getId())
-                .layerId(marker.getLayer().getId())
-                .build();
+            .id(marker.getId())
+            .name(marker.getName())
+            .description(marker.getDescription())
+            .address(marker.getAddress())
+            .lat(marker.getLat())
+            .lng(marker.getLng())
+            .color(marker.getColor())
+            .imageUrl(marker.getMarkerImage())
+            .markerSeq(marker.getMarkerSeq())
+            .createdAt(marker.getCreatedAt())
+            .updatedAt(marker.getUpdatedAt())
+            .deletedAt(marker.getDeletedAt())
+            .memberId(marker.getMember().getId())
+            .layerId(marker.getLayer().getId())
+            .build();
     }
 
 }

@@ -17,6 +17,8 @@ public class MarkerListDTO {
 
     private String description;
 
+    private String address;
+
     @NotNull
     private Double lat;
 

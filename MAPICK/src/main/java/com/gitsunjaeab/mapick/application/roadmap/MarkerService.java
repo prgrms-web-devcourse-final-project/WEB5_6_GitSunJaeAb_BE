@@ -73,6 +73,7 @@ public class MarkerService {
     private void applyUpdateRequestToMarker(Marker marker, MarkerUpdateRequest request) {
         if (request.getName() != null) marker.setName(request.getName());
         if (request.getDescription() != null) marker.setDescription(request.getDescription());
+        if (request.getAddress() != null) marker.setAddress(request.getAddress());
         if (request.getLat() != null) marker.setLat(request.getLat());
         if (request.getLng() != null) marker.setLng(request.getLng());
         if (request.getColor() != null) marker.setColor(request.getColor());

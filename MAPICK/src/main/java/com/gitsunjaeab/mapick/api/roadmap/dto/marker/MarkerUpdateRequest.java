@@ -16,6 +16,8 @@ public class MarkerUpdateRequest {
 
     private String description;
 
+    private String address;
+
     private Double lat;
 
     private Double lng;

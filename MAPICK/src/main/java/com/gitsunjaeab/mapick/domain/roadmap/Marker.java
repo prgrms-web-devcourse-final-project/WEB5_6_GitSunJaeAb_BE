@@ -52,6 +52,9 @@ public class Marker {
     @Column(columnDefinition = "text")
     private String description;
 
+    @Column(columnDefinition = "text")
+    private String address;
+
     @Column(nullable = false)
     private Double lat;
 

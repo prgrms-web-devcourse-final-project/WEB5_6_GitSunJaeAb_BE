@@ -23,6 +23,7 @@ public class MarkerListResponse implements BaseApiResponse {
                 m.getId(),
                 m.getName(),
                 m.getDescription(),
+                m.getAddress(),
                 m.getLat(),
                 m.getLng(),
                 m.getColor(),

@@ -20,6 +20,8 @@ public class MarkerCreateRequest {
 
     private String description;
 
+    private String address;
+
     private Double lat;
 
     private Double lng;
@@ -35,6 +37,7 @@ public class MarkerCreateRequest {
         return Marker.builder()
             .name(name)
             .description(description)
+            .address(address)
             .lat(lat)
             .lng(lng)
             .color(color)

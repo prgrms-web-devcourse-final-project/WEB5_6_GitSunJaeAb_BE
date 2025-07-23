@@ -25,6 +25,8 @@ public class MarkerDTO {
 
     private String description;
 
+    private String address;
+
     @NotNull
     private Double lat;
 
@@ -45,6 +47,7 @@ public class MarkerDTO {
         this.id = marker.getId();
         this.name = marker.getName();
         this.description = marker.getDescription();
+        this.address = marker.getAddress();
         this.lat = marker.getLat();
         this.lng = marker.getLng();
         this.color = marker.getColor();
