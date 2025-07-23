@@ -54,4 +54,7 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
        "WHERE n.deletedAt IS NULL AND n.notificationType = :type " +
        "ORDER BY n.createdAt DESC")
     List<Notification> findByNotificationTypeWithAllRelations(NotificationType type);
+
+    // 읽음 처리된 알림 중 readAt이 before보다 이전이고 deletedAt이 null인 알림 조회
+    java.util.List<Notification> findByIsReadTrueAndReadAtBeforeAndDeletedAtIsNull(java.time.OffsetDateTime before);
 }
