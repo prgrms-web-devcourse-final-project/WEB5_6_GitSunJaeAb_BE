@@ -1,6 +1,6 @@
 package com.gitsunjaeab.mapick.application.member;
 
-import com.gitsunjaeab.mapick.api.auth.dto.SocialUserInfo;
+import com.gitsunjaeab.mapick.api.auth.dto.internal.SocialUserInfo;
 import com.gitsunjaeab.mapick.api.auth.dto.request.SignupRequest;
 import com.gitsunjaeab.mapick.api.member.dto.*;
 import com.gitsunjaeab.mapick.api.member.dto.request.MemberProfileUpdateRequest;

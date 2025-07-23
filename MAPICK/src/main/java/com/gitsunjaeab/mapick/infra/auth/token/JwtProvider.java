@@ -2,7 +2,7 @@ package com.gitsunjaeab.mapick.infra.auth.token;
 
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.auth.Principal;
-import com.gitsunjaeab.mapick.domain.auth.TokenDTO;
+import com.gitsunjaeab.mapick.api.auth.dto.internal.TokenDTO;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
 import com.gitsunjaeab.mapick.infra.auth.token.code.TokenType;
@@ -45,11 +45,11 @@ public class JwtProvider {
 
     @Getter
     @Value("${jwt.access-expiration}")
-    private long atExpiration;
+    private long atExpiration; // access token 만료 시간
 
     @Getter
     @Value("${jwt.refresh-expiration}")
-    private long rtExpiration;
+    private long rtExpiration; // refresh token 만료 시간
 
     private SecretKey secretKey;
 
@@ -109,6 +109,7 @@ public class JwtProvider {
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 
+    //  Access Token 안에 있는 Claims (페이로드) 꺼내기
     public Claims parseClaim(String accessToken) {
         try{
             return Jwts.parser().verifyWith(getSecretKey()).build()
