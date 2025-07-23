@@ -2,6 +2,7 @@ package com.gitsunjaeab.mapick.domain.roadmap;
 
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.report.Report;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -16,14 +17,20 @@ import jakarta.persistence.Table;
 import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.Set;
+import javax.annotation.Nullable;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 
 @Entity
 @Table(name = "Markers")
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Marker {
 
     @Id
@@ -46,6 +53,9 @@ public class Marker {
     @Column(columnDefinition = "text")
     private String description;
 
+    @Column(columnDefinition = "text")
+    private String address;
+
     @Column(nullable = false)
     private Double lat;
 
@@ -54,9 +64,6 @@ public class Marker {
 
     @Column
     private String color;
-
-    @Column
-    private String imageUrl;
 
     @Column
     private Integer markerSeq;
@@ -78,7 +85,11 @@ public class Marker {
     @JoinColumn(name = "layer_id")
     private Layer layer;
 
-    @OneToMany(mappedBy = "marker")
-    private Set<Report> markerReports = new HashSet<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "custom_image_id")
+    @Nullable
+    private MarkerCustomImage customImage;
 
+    @OneToMany(mappedBy = "marker", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private Set<Report> markerReports = new HashSet<>();
 }

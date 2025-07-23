@@ -1,6 +1,7 @@
-package com.gitsunjaeab.mapick.api.notification.dto;
+package com.gitsunjaeab.mapick.api.notification.dto.response;
 
 import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
+import com.gitsunjaeab.mapick.api.notification.dto.NotificationPostsListDTO;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.notification.Notification;
@@ -9,26 +10,27 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+
 @Getter
 @AllArgsConstructor
-public class NotificationCommentsListResponse implements BaseApiResponse {
+public class NotificationPostsListResponse implements BaseApiResponse {
 
     private String code;
     private String message;
     private LocalDateTime timestamp;
-    private List<NotificationCommentsListDTO> notifications;
+    private List<NotificationPostsListDTO> notifications;
 
     // 공통 처리 로직
-    public static NotificationCommentsListResponse of(List<Notification> notificationEntities) {
+    public static NotificationPostsListResponse of(List<Notification> notificationEntities) {
         return of(notificationEntities, "알림 목록 조회 성공");
     }
 
     // 생성 패턴용
-    public static NotificationCommentsListResponse of(List<Notification> notificationEntities,
+    public static NotificationPostsListResponse of(List<Notification> notificationEntities,
         String message) {
-        List<NotificationCommentsListDTO> notificationCommentsListDTOs = notificationEntities.stream()
+        List<NotificationPostsListDTO> notificationPostsListDTOs = notificationEntities.stream()
             .map(n -> {
-                NotificationCommentsListDTO dto = new NotificationCommentsListDTO();
+                NotificationPostsListDTO dto = new NotificationPostsListDTO();
                 dto.setId(n.getId());
                 dto.setTitle(n.getTitle());
                 dto.setContent(n.getContent());
@@ -44,11 +46,11 @@ public class NotificationCommentsListResponse implements BaseApiResponse {
             })
             .toList();
 
-        return new NotificationCommentsListResponse(
+        return new NotificationPostsListResponse(
             ResponseCode.OK.getCode(),
             message,
             LocalDateTime.now(),
-            notificationCommentsListDTOs
+            notificationPostsListDTOs
         );
 
     }

@@ -11,18 +11,18 @@ import java.time.LocalDateTime;
 @Data
 @Builder
 // 클라이언트 응답용 DTO
-public class PasswordChangeResponse implements BaseApiResponse {
+public class SignupResponse implements BaseApiResponse {
     private String code;
     private String message;
     private LocalDateTime timestamp;
-    private TokenDTO tokenDTO;
 
-    public static PasswordChangeResponse of(TokenDTO tokenDTO) {
-        return new PasswordChangeResponse(
-            ResponseCode.CHANGE_PASSWORD_SUCCESS.getCode(),
-            ResponseCode.CHANGE_PASSWORD_SUCCESS.getMessage(),
-            LocalDateTime.now(),
-            tokenDTO
+    public static SignupResponse signup() {
+        return new SignupResponse(
+                ResponseCode.SIGNUP_SUCCESS.getCode(),
+                ResponseCode.SIGNUP_SUCCESS.getMessage(),
+                LocalDateTime.now()
         );
     }
+
+
 }

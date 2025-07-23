@@ -4,57 +4,55 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-/**
- * 단일 마커 반환 Response
- */
-
 @Getter
 @AllArgsConstructor
-public class MarkerResponse implements BaseApiResponse {
+public class MarkerCustomImageResponse implements BaseApiResponse {
 
     private String code;
     private String message;
     private LocalDateTime timestamp;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private MarkerDTO marker;
+    private List<MarkerCustomImageDTO> markerCustomImages;
 
-    public static MarkerResponse create() {
-        return new MarkerResponse(
+    public static MarkerCustomImageResponse create() {
+        return new MarkerCustomImageResponse(
             ResponseCode.OK.getCode(),
-            "마커 생성 완료",
+            "커스텀 마커 이미지 생성 완료",
             LocalDateTime.now(),
             null
         );
     }
 
-    public static MarkerResponse get(MarkerDTO dto) {
-        return new MarkerResponse(
+    public static MarkerCustomImageResponse getList(List<MarkerCustomImageDTO> markerCustomImages) {
+        return new MarkerCustomImageResponse(
             ResponseCode.OK.getCode(),
-            "마커 조회 성공",
+            "커스텀 마커 이미지 목록 조회 성공",
             LocalDateTime.now(),
-            dto
+            markerCustomImages
         );
     }
 
-    public static MarkerResponse update() {
-        return new MarkerResponse(
+    public static MarkerCustomImageResponse update() {
+        return new MarkerCustomImageResponse(
             ResponseCode.OK.getCode(),
-            "마커 수정 완료",
+            "커스텀 마커 이미지 수정 완료",
             LocalDateTime.now(),
             null
         );
     }
 
-    public static MarkerResponse delete() {
-        return new MarkerResponse(
+    public static MarkerCustomImageResponse delete() {
+        return new MarkerCustomImageResponse(
             ResponseCode.OK.getCode(),
-            "마커 삭제 완료",
+            "커스텀 마커 이미지 삭제 완료",
             LocalDateTime.now(),
             null
         );
     }
+
 }

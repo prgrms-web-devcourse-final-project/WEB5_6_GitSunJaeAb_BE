@@ -1,13 +1,12 @@
 package com.gitsunjaeab.mapick.application.auth;
 
-import com.gitsunjaeab.mapick.api.auth.dto.SocialUserInfo;
+import com.gitsunjaeab.mapick.api.auth.dto.internal.SocialUserInfo;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 

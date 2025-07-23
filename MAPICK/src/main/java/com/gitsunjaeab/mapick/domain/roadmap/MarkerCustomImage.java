@@ -1,7 +1,5 @@
-package com.gitsunjaeab.mapick.domain.category;
+package com.gitsunjaeab.mapick.domain.roadmap;
 
-import com.gitsunjaeab.mapick.domain.member.MemberInterest;
-import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,18 +9,22 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
-import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.Set;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
 @Entity
-@Table(name = "Categories")
+@Table(name = "MarkerCustomImages")
 @Getter
 @Setter
-public class Category {
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class MarkerCustomImage {
 
     @Id
     @Column(nullable = false, updatable = false)
@@ -38,21 +40,12 @@ public class Category {
     )
     private Long id;
 
-    @Column(nullable = false)
+    @Column
     private String name;
 
-    @Column(columnDefinition = "text")
-    private String description;
-
     @Column
-    private String categoryImage;
+    private String markerImage;
 
-    @Column(nullable = false)
-    private OffsetDateTime createdAt;
-
-    @OneToMany(mappedBy = "category", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private Set<MemberInterest> interestMemberInterests = new HashSet<>();
-
-    @OneToMany(mappedBy = "category", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private Set<Roadmap> roadmaps = new HashSet<>();
+    @OneToMany(mappedBy = "customImage", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private Set<Marker> markers = new HashSet<>();
 }

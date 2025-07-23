@@ -1,38 +1,35 @@
 package com.gitsunjaeab.mapick.api.roadmap.dto.marker;
 
-import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
 import jakarta.validation.constraints.Size;
+import javax.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
+
 
 @Getter
+@Setter
 @AllArgsConstructor
-public class MarkerListDTO {
-
-    private Long id;
+public class MarkerUpdateRequest {
 
     @Size(max = 255)
     private String name;
 
     private String description;
 
-    @NotNull
+    private String address;
+
     private Double lat;
 
-    @NotNull
     private Double lng;
 
     @Size(max = 255)
+    @Nullable
     private String color;
 
-    @Size(max = 255)
-    private String imageUrl;
+    @Nullable
+    private Long customImageId;
 
     private Integer markerSeq;
-
-    private Long layer;
-
-    private MemberSimpleDTO member;
-
 }
