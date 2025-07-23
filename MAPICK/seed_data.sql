@@ -153,6 +153,13 @@ VALUES (37.512817, 127.102496, 1, '2025-07-13 16:28:29.510000 +00:00', null, 1, 
        (37.512817, 127.102496, 3, '2025-07-14 10:40:00+00', NULL, 7, 6, 1, NULL, '#008080',
         '야시장 분위기', NULL, '방이전통시장');
 
+-- MarkerCustomImage 데이터
+INSERT INTO "public"."marker_custom_images" ("id", "marker_image", "name")
+VALUES ('103', 'https://lyrvpfgoxwppqtuuolav.supabase.co/storage/v1/object/public/mapick/5304e12e-8682-40d5-8ee3-3ddf44146aaa', '고양이'),
+       ('104', 'https://lyrvpfgoxwppqtuuolav.supabase.co/storage/v1/object/public/mapick/7a81e092-ad6a-498e-af06-d942b9e54050', '커피'),
+       ('119', 'https://lyrvpfgoxwppqtuuolav.supabase.co/storage/v1/object/public/mapick/105e8ca9-4f00-4e00-9b59-7f1c0b93f061', '음식'),
+       ('128', 'https://lyrvpfgoxwppqtuuolav.supabase.co/storage/v1/object/public/mapick/2d0f3f0a-b261-45f1-b0c0-9dbbfe26a20c', '커스텀마커');
+
 -- LayerLibraries 데이터
 INSERT INTO public.layer_libraries (created_at, id, layer_id, member_id, is_zzim)
 VALUES ('2025-07-13 17:19:57.332000 +00:00', 1, 1, 2, true),

@@ -1,6 +1,5 @@
 package com.gitsunjaeab.mapick.api.roadmap.dto.layer;
 
-import com.gitsunjaeab.mapick.api.roadmap.dto.marker.MarkerListDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -12,5 +11,5 @@ public class LayerSimpleListDto {
     private Long id;
     private String name;
     private String description;
-    private List<MarkerListDTO> markers;
+//    private List<MarkerListDTO> markers;
 }
