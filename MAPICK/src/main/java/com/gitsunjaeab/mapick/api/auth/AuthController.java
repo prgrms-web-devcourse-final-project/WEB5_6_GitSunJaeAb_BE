@@ -3,6 +3,7 @@ package com.gitsunjaeab.mapick.api.auth;
 import com.gitsunjaeab.mapick.api.auth.dto.request.SigninRequest;
 import com.gitsunjaeab.mapick.api.auth.dto.request.SignupRequest;
 import com.gitsunjaeab.mapick.api.auth.dto.request.SocialLoginRequest;
+import com.gitsunjaeab.mapick.api.auth.dto.response.LogoutResponse;
 import com.gitsunjaeab.mapick.api.auth.dto.response.SigninResponse;
 import com.gitsunjaeab.mapick.api.auth.dto.response.PasswordChangeResponse;
 import com.gitsunjaeab.mapick.api.auth.dto.internal.TokenDTO;
@@ -141,35 +142,39 @@ public class AuthController {
     }
 
     // 로그아웃
+    // complete
     @PostMapping("/logout")
     @Operation(summary = "로그 아웃")
-    public ResponseEntity<ApiResponse> logout(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<LogoutResponse> logout(HttpServletRequest request, HttpServletResponse response) {
 
+        // 계정에 존재하는 기존 refresh token 및 access token 삭제 1
         String accessToken = jwtProvider.resolveToken(request, TokenType.ACCESS_TOKEN);
         Claims claims = jwtProvider.parseClaim(accessToken);
         String jti = claims.getId();
+
         refreshTokenRepository.deleteByAccessTokenId(jti);
 
+        // 계정에 존재하는 기존 refresh token 및 access token 삭제 2
 //        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 //        Long memberId = Long.parseLong(auth.getName());
 //        refreshTokenRepository.deleteByMemberId(memberId);
 
-        // todo db에 남아있는 토큰들 어찌 처리 할 것인지 고민...
+        // todo 로그아웃 하지 않으면 refresh token 값이 삭제 되지 않음, 추후 어떻게 기존 db의 refresh 값을 삭제 할 것인지 고민
 
         // 쿠키 굽기
-        ResponseCookie expiredAccessToken = TokenCookieFactory.createExpiredToken(TokenType.ACCESS_TOKEN);
+//      ResponseCookie expiredAccessToken = TokenCookieFactory.createExpiredToken(TokenType.ACCESS_TOKEN);
         ResponseCookie expiredRefreshToken = TokenCookieFactory.createExpiredToken(TokenType.REFRESH_TOKEN);
-        ResponseCookie expiredSessionId = TokenCookieFactory.createExpiredToken(TokenType.AUTH_SERVER_SESSION_ID);
+//      ResponseCookie expiredSessionId = TokenCookieFactory.createExpiredToken(TokenType.AUTH_SERVER_SESSION_ID);
 
 
         // 응답 헤더에 추가
-        response.addHeader("Set-Cookie", expiredAccessToken.toString());
+//      response.addHeader("Set-Cookie", expiredAccessToken.toString());
         response.addHeader("Set-Cookie", expiredRefreshToken.toString());
-        response.addHeader("Set-Cookie", expiredSessionId.toString());
+//      response.addHeader("Set-Cookie", expiredSessionId.toString());
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.of(ResponseCode.LOGOUT_SUCCESS));
+                .body(LogoutResponse.logout());
     }
 
 
