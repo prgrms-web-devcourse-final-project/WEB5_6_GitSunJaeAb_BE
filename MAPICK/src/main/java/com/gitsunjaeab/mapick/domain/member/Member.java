@@ -2,6 +2,7 @@ package com.gitsunjaeab.mapick.domain.member;
 
 import com.gitsunjaeab.mapick.domain.achievement.MemberAchievement;
 import com.gitsunjaeab.mapick.domain.auth.LoginType;
+import com.gitsunjaeab.mapick.domain.auth.Role;
 import com.gitsunjaeab.mapick.domain.roadmap.Bookmark;
 import com.gitsunjaeab.mapick.domain.comment.Comment;
 import com.gitsunjaeab.mapick.domain.roadmap.Layer;
@@ -110,6 +111,11 @@ public class Member {
     // 업데이트 시간 설정
     public void updateTimestamp() {
         this.updatedAt = OffsetDateTime.now();
+    }
+
+    // 역할(Role) 체크 메서드
+    public boolean hasRole(Role role) {
+        return this.role != null && this.role.equals(role.name());
     }
 
     @OneToMany(mappedBy = "member")

@@ -1,13 +1,13 @@
 package com.gitsunjaeab.mapick.api.notification;
 
-import com.gitsunjaeab.mapick.api.notification.dto.NotificationAnnouncementsListResponse;
-import com.gitsunjaeab.mapick.api.notification.dto.NotificationCommentsListResponse;
-import com.gitsunjaeab.mapick.api.notification.dto.NotificationForkListResponse;
-import com.gitsunjaeab.mapick.api.notification.dto.NotificationQuestListResponse;
-import com.gitsunjaeab.mapick.api.notification.dto.NotificationZzimListResponse;
+import com.gitsunjaeab.mapick.api.notification.dto.response.NotificationAnnouncementsListResponse;
+import com.gitsunjaeab.mapick.api.notification.dto.response.NotificationCommentsListResponse;
+import com.gitsunjaeab.mapick.api.notification.dto.response.NotificationForkListResponse;
+import com.gitsunjaeab.mapick.api.notification.dto.response.NotificationQuestListResponse;
+import com.gitsunjaeab.mapick.api.notification.dto.response.NotificationZzimListResponse;
 import com.gitsunjaeab.mapick.domain.notification.NotificationType;
-import com.gitsunjaeab.mapick.api.notification.dto.NotificationListResponse;
-import com.gitsunjaeab.mapick.api.notification.dto.NotificationPostsListResponse;
+import com.gitsunjaeab.mapick.api.notification.dto.response.NotificationListResponse;
+import com.gitsunjaeab.mapick.api.notification.dto.response.NotificationPostsListResponse;
 import com.gitsunjaeab.mapick.application.notification.NotificationService;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.domain.notification.Notification;
