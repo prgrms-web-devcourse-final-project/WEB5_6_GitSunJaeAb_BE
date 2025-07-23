@@ -47,11 +47,16 @@ public class RoadmapController {
         return ResponseEntity.ok(response);
     }
 
-    // 공유지도(SHARED) 조회
+    // 공유지도(SHARED) 조회 NOTE 완
     @GetMapping("/shared")
     @Operation(summary = "공유지도 조회", description = "[사용자용] 전체 공유지도를 조회하거나 카테고리별 공유지도를 조회")
     public ResponseEntity<RoadmapListResponse> getSharedRoadmaps(
-            @RequestParam(required = false) Long categoryId) {
+            @RequestParam(required = false) Long categoryId,
+            @AuthenticationPrincipal Principal principal) {
+
+        if (principal == null || principal.getMember() == null) {
+            throw new UnauthenticatedException(ResponseCode.UNAUTHORIZED);
+        }
         if (categoryId == null) {
             // 전체 조회
             return ResponseEntity.ok(roadmapService.getAllSharedRoadmapsWithCitation());
@@ -61,7 +66,7 @@ public class RoadmapController {
         }
     }
 
-    // 공유지도 생성
+    // 공유지도 생성 NOTE 임시 완성
     @PostMapping("/shared")
     @Operation(summary = "공유지도 생성", description = "[사용자용] 레이어, 마커 제외 지도 관련 속성만 저장")
     public ResponseEntity<RoadmapCreateResponse> createSharedRoadmap(
@@ -79,11 +84,18 @@ public class RoadmapController {
     // 공유지도 수정
     @PutMapping("/shared/{roadmapId}")
     @Operation(summary = "공유지도 수정", description = "[사용자용] 레이어, 마커 제외 지도 관련 속성만 수정")
-    public ResponseEntity<ApiResponse> updateSharedRoadmap(
+    public ResponseEntity<SharedRoadmapUpdateResponse> updateSharedRoadmap(
             @PathVariable(name = "roadmapId") final Long roadmapId,
-            @RequestBody @Valid final RoadmapRequest request) {
-//        roadmapService.update(roadmapId, request);
-        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "공유지도 수정 완료"));
+            @RequestBody @Valid final SharedRoadmapUpdateRequest request,
+            @AuthenticationPrincipal Principal principal) {
+
+        if (principal == null) {
+            throw new IllegalStateException("로그인되지 않았습니다.");
+        }
+
+        Long memberId = principal.getMember().getId();
+        roadmapService.updateSharedRoadmap(request, roadmapId, memberId);
+        return ResponseEntity.ok(SharedRoadmapUpdateResponse.of(ResponseCode.OK, "공유지도 수정 완료"));
     }
 
     // 개인 로드맵(PERSONAL) 조회 NOTE 완
@@ -132,7 +144,7 @@ public class RoadmapController {
         }
 
         Long memberId = principal.getMember().getId();
-        Long roadmapId = roadmapService.create(request, memberId);
+        Long roadmapId = roadmapService.createRoadmap(request, memberId);
         return ResponseEntity.ok(RoadmapCreateResponse.of(ResponseCode.OK, "로드맵 생성 완료", roadmapId));
     }
 
@@ -149,7 +161,7 @@ public class RoadmapController {
         }
 
         Long memberId = principal.getMember().getId();
-        roadmapService.update(request, roadmapId, memberId);
+        roadmapService.updateRoadmap(request, roadmapId, memberId);
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "로드맵 수정 완료"));
     }
 

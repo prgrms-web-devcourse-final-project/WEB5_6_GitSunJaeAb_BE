@@ -13,7 +13,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws") // 클라이언트 연결 포인트
-                .setAllowedOrigins("*")
+                .setAllowedOriginPatterns("*") // 모든 origin 허용 (CORS 문제 방지)
                 .withSockJS(); // fallback 지원
     }
 

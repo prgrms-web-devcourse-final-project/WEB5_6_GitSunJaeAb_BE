@@ -15,6 +15,7 @@ import com.gitsunjaeab.mapick.domain.comment.Comment;
 import com.gitsunjaeab.mapick.domain.comment.CommentRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.LayerLibraryRepository.RoadmapCitationProjection;
 import com.gitsunjaeab.mapick.infra.auth.AuthHelper;
+import com.gitsunjaeab.mapick.infra.error.exceptions.InvalidRoadmapTypeException;
 import com.gitsunjaeab.mapick.infra.error.exceptions.UnauthenticatedException;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import com.gitsunjaeab.mapick.util.ReferencedWarning;
@@ -106,9 +107,56 @@ public class RoadmapService {
         }
         return roadmap.getId();
     }
+
+    // 공유 지도 수정
+    @Transactional
+    public void updateSharedRoadmap(@Valid SharedRoadmapUpdateRequest request, Long roadmapId, Long memberId) {
+        Roadmap roadmap = roadmapRepository.findById(roadmapId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 로드맵입니다."));
+
+        // 본인 소유인지 검증
+        if (!roadmap.getMember().getId().equals(memberId)) {
+            throw new AccessDeniedException("이 로드맵을 수정할 권한이 없습니다.");
+        }
+
+        Category category = categoryRepository.findById(request.getCategoryId())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카테고리입니다."));
+
+        if (roadmap.getRoadmapType() != RoadmapType.SHARED) {
+            throw new InvalidRoadmapTypeException("공유 로드맵이 아닙니다.");
+        }
+
+        roadmap.setTitle(request.getTitle());
+        roadmap.setDescription(request.getDescription());
+        roadmap.setThumbnail(request.getThumbnail());
+        roadmap.setRegionLatitude(request.getRegionLatitude());
+        roadmap.setRegionLongitude(request.getRegionLongitude());
+        roadmap.setParticipationEnd(request.getParticipationEnd());
+        roadmap.setIsPublic(request.getIsPublic());
+        roadmap.setCategory(category);
+        roadmap.setUpdatedAt(OffsetDateTime.now());
+
+        // 해시태그 수정: null이 아닐 때만 처리
+        if (request.getHashtags() != null) {
+            // 기존 연결 삭제
+            roadmapHashtagRelationRepository.deleteByRoadmap(roadmap);
+
+            // 새 해시태그 연결 (비어있으면 아무것도 연결하지 않음)
+            List<RoadmapHashtagRelation> newRelations = request.getHashtags().stream()
+                    .map(dto -> {
+                        Hashtag hashtag = hashtagRepository.findByName(dto.getName())
+                                .orElseGet(() -> hashtagRepository.save(new Hashtag(dto.getName())));
+                        return new RoadmapHashtagRelation(roadmap, hashtag);
+                    })
+                    .collect(Collectors.toList());
+
+            roadmapHashtagRelationRepository.saveAll(newRelations);
+        }
+    }
+
     // 개인 로드맵 생성
     @Transactional
-    public Long create(@Valid RoadmapRequest request, Long memberId) {
+    public Long createRoadmap(@Valid RoadmapRequest request, Long memberId) {
         Category category = categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카테고리입니다."));
 
@@ -153,7 +201,7 @@ public class RoadmapService {
 
     // 개인 로드맵 수정
     @Transactional
-    public void update(@Valid RoadmapRequest request, Long roadmapId, Long memberId) {
+    public void updateRoadmap(@Valid RoadmapRequest request, Long roadmapId, Long memberId) {
         Roadmap roadmap = roadmapRepository.findById(roadmapId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 로드맵입니다."));
 
@@ -165,11 +213,16 @@ public class RoadmapService {
         Category category = categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카테고리입니다."));
 
+        if (roadmap.getRoadmapType() != RoadmapType.PERSONAL) {
+            throw new InvalidRoadmapTypeException("개인 로드맵이 아닙니다.");
+        }
+
         roadmap.setTitle(request.getTitle());
         roadmap.setDescription(request.getDescription());
         roadmap.setThumbnail(request.getThumbnail());
         roadmap.setIsPublic(request.getIsPublic());
         roadmap.setCategory(category);
+        roadmap.setUpdatedAt(OffsetDateTime.now());
 
         // 해시태그 수정: null이 아닐 때만 처리
         if (request.getHashtags() != null) {

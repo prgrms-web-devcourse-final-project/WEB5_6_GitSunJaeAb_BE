@@ -12,6 +12,7 @@ public enum ResponseCode {
     INVALID_INPUT("4000", HttpStatus.BAD_REQUEST, "잘못된 요청 데이터입니다."),
     EMAIL_ALREADY_REGISTERED_LOCALLY("4014", HttpStatus.BAD_REQUEST, "이미 로컬로 가입된 이메일입니다."),
     PROVIDER_MISMATCH("4014", HttpStatus.BAD_REQUEST, "잘못된 provider 입니다."),
+    INVALID_ROADMAP_TYPE("4020",  HttpStatus.BAD_REQUEST,"로드맵 타입이 맞지 않습니다."),
 
     UNAUTHORIZED("4010", HttpStatus.UNAUTHORIZED, "인증이 필요합니다(토큰확인)"),
     INVALID_TOKEN("4011", HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다."),
