@@ -1,5 +1,6 @@
 package com.gitsunjaeab.mapick.api.member.dto;
 
+import com.gitsunjaeab.mapick.domain.member.MemberInterest;
 import jakarta.validation.constraints.NotNull;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -20,5 +21,13 @@ public class MemberInterestDTO {
     private OffsetDateTime createdAt;
 
     private List<CategorySimpleDTO> categories;
+
+    public static MemberInterestDTO of(MemberInterest memberInterest) {
+        return MemberInterestDTO.builder()
+                .id(memberInterest.getId())
+                .createdAt(memberInterest.getCreatedAt())
+                .categories(List.of(CategorySimpleDTO.of(memberInterest)))
+                .build();
+    }
 
 }

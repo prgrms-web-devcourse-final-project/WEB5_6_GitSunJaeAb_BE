@@ -2,6 +2,7 @@ package com.gitsunjaeab.mapick.domain.quest;
 
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.report.Report;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -64,17 +65,17 @@ public class Quest {
     @Column
     private OffsetDateTime deletedAt;
 
-    @OneToMany(mappedBy = "quest")
+    @OneToMany(mappedBy = "quest", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<Report> questReports = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @OneToMany(mappedBy = "quest")
+    @OneToMany(mappedBy = "quest", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<MemberQuest> questMemberQuests = new HashSet<>();
 
-    @OneToMany(mappedBy = "quest")
+    @OneToMany(mappedBy = "quest", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<QuestRank> questQuestTopSubmitters = new HashSet<>();
 
 }

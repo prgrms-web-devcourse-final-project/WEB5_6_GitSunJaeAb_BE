@@ -1,5 +1,6 @@
 package com.gitsunjaeab.mapick.api.member.dto;
 
+import com.gitsunjaeab.mapick.domain.member.MemberInterest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,4 +14,10 @@ public class CategorySimpleDTO {
     private Long id;
     private String name;
 
+    public static CategorySimpleDTO of(MemberInterest memberInterest) {
+        return CategorySimpleDTO.builder()
+                .id(memberInterest.getCategory().getId())
+                .name(memberInterest.getCategory().getName())
+                .build();
+    }
 }

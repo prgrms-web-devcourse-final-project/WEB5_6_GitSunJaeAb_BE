@@ -27,6 +27,8 @@ public enum ResponseCode {
     EMAIL_NOT_FOUND("4041", HttpStatus.NOT_FOUND, "존재하지 않는 이메일입니다."),
     MEMBER_NOT_FOUND("4042", HttpStatus.NOT_FOUND, "존재하지 않는 회원입니다."),
     INTEREST_NOT_FOUND("4043", HttpStatus.NOT_FOUND, "존재하지 않는 관심분야 입니다."),
+    IMAGE_NOT_FOUND("4044", HttpStatus.NOT_FOUND, "존재하지 않는 사진 입니다."),
+
 
 
     CONFLICT("4090", HttpStatus.CONFLICT, "충돌이 발생하였습니다."),
@@ -36,9 +38,10 @@ public enum ResponseCode {
     DB_CONSTRAINT_VIOLATION("4093", HttpStatus.CONFLICT, "DB 제약 조건에 위배되었습니다."),
     ALREADY_REGISTERED_BLACKLIST("4094", HttpStatus.CONFLICT, "이미 블랙리스트에 등록된 회원 입니다."),
     ALREADY_REGISTERED_ADMIN("4095", HttpStatus.CONFLICT, "이미 관리자로 등록된 회원 입니다."),
-    ALREADY_DELETED_USER("4096", HttpStatus.CONFLICT, "이미 삭제된 회원 입니다."),
-    BOOKMARK_DUPLICATED("4097", HttpStatus.CONFLICT, "중복 북마크입니다."),
-    ALREADY_PROCESSED("4098", HttpStatus.CONFLICT, "이미 처리 되었습니다."),
+    ALREADY_REGISTERED_USER("4096", HttpStatus.CONFLICT, "이미 사용자로 등록된 회원 입니다."),
+    ALREADY_DELETED_USER("4097", HttpStatus.CONFLICT, "이미 삭제된 회원 입니다."),
+    BOOKMARK_DUPLICATED("4098", HttpStatus.CONFLICT, "중복 북마크입니다."),
+    ALREADY_PROCESSED("4099", HttpStatus.CONFLICT, "이미 처리 되었습니다."),
     
 
     // 내부 오류

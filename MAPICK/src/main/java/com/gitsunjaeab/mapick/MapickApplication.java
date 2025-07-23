@@ -29,6 +29,8 @@ public class MapickApplication {
                 System.setProperty("JWT_SECRET", dotenv.get("JWT_SECRET"));
                 System.setProperty("JWT_ACCESS_EXPIRATION", dotenv.get("JWT_ACCESS_EXPIRATION"));
                 System.setProperty("JWT_REFRESH_EXPIRATION", dotenv.get("JWT_REFRESH_EXPIRATION"));
+
+                System.setProperty("GOOGLE_CLIENT_ID", dotenv.get("GOOGLE_CLIENT_ID"));
             }
         } catch (Exception e) {
             // GCP 환경에서는 .env가 없어도 무시하도록

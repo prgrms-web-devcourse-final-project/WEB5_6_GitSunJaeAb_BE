@@ -1,5 +1,6 @@
 package com.gitsunjaeab.mapick.api.member.dto;
 
+import com.gitsunjaeab.mapick.domain.member.Member;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -62,4 +63,27 @@ public class MemberDetailDTO {
     private OffsetDateTime updatedAt;
 
     private OffsetDateTime deletedAt;
+
+    public static MemberDetailDTO of(Member member,List<MemberInterestDTO> memberInterestDTOList ) {
+        return MemberDetailDTO.builder()
+                .id(member.getId())
+                .isBlacklisted(member.getIsBlacklisted())
+                .name(member.getName())
+                .nickname(member.getNickname())
+                .email(member.getEmail())
+                .password(member.getPassword())
+                .loginType(member.getLoginType().name())
+                .provider(member.getProvider())
+                .role(member.getRole())
+                .status(member.getStatus())
+                .profileImage(member.getProfileImage())
+                .lastLogin(member.getLastLogin())
+                .memberInterests(memberInterestDTOList)
+                .loginCount(member.getLoginCount())
+                .createdAt(member.getCreatedAt())
+                .updatedAt(member.getUpdatedAt())
+                .deletedAt(member.getDeletedAt())
+                .build();
+    }
+
 }

@@ -115,12 +115,7 @@ public class AuthController {
 
     // 자체 회원가입
     @PostMapping("/signup")
-    @Operation(summary = "자체 회원가입", 
-               description = "[회원가입] 자체 회원가입을 진행합니다.\n\n" +
-                           "**검증 조건:**\n" +
-                           "- 비밀번호는 8자 이상, 12자 이하 영문+숫자를 포함해야 합니다.\n" +
-                           "- 이메일은 중복 불가입니다.\n" +
-                           "- 닉네임은 중복 불가입니다.")
+    @Operation(summary = "자체 회원가입", description = "[회원가입] 자체 회원가입을 진행합니다.\n\n" + "**검증 조건:**\n" + "- 비밀번호는 8자 이상, 12자 이하 영문+숫자를 포함해야 합니다.\n" + "- 이메일은 중복 불가입니다.\n" + "- 닉네임은 중복 불가입니다.")
     public ResponseEntity<?> signup(@RequestBody @Valid SignupRequest request) {
 
         memberService.signup(request);
@@ -166,6 +161,8 @@ public class AuthController {
     @PutMapping("/password")
     @Operation(summary = "비밀번호 수정", description = "[사용자 전용] 본인만 접근 가능한 비밀번호 변경")
     public ResponseEntity<PasswordChangeResponse> updatePassword(@Valid @RequestBody PasswordRequest passwordRequest, HttpServletResponse response) {
+
+        // todo 이전 엑세스 토큰의 블랙 리스트 처리 필요
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Long memberId = Long.parseLong(auth.getName());
