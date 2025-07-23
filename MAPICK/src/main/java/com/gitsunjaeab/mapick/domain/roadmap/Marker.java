@@ -17,6 +17,7 @@ import jakarta.persistence.Table;
 import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.Set;
+import javax.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -65,9 +66,6 @@ public class Marker {
     private String color;
 
     @Column
-    private String markerImage;
-
-    @Column
     private Integer markerSeq;
 
     @Column(nullable = false)
@@ -86,6 +84,11 @@ public class Marker {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "layer_id")
     private Layer layer;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "custom_image_id")
+    @Nullable
+    private MarkerCustomImage customImage;
 
     @OneToMany(mappedBy = "marker", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<Report> markerReports = new HashSet<>();

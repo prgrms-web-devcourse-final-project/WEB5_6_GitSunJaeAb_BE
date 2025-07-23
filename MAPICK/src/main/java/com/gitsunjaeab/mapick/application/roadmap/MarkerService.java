@@ -91,11 +91,17 @@ public class MarkerService {
             .flatMap(memberRepository::findById)
             .orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다"));
 
-        final Marker marker = request.toEntity(layer, member);
+        MarkerCustomImage customImage = null;
+        if (request.getCustomImageId() != null) {
+            customImage = markerCustomImageRepository.findById(request.getCustomImageId())
+                .orElseThrow(() -> new NotFoundException("해당 커스텀 마커 이미지가 존재하지 않습니다."));
+        }
 
+        final Marker marker = request.toEntity(layer, member, customImage);
         markerRepository.save(marker);
     }
 
+    @Transactional
     public MarkerDTO get(final Long markerId) {
         Marker marker = markerRepository.findById(markerId)
             .orElseThrow(() -> new NotFoundException("해당 마커가 존재하지 않습니다."));
@@ -108,22 +114,30 @@ public class MarkerService {
         final Marker marker = markerRepository.findById(markerId)
             .orElseThrow(() -> new NotFoundException("존재하지 않는 마커 ID 입니다."));
 
-        applyUpdateRequestToMarker(marker, request);
+        MarkerCustomImage newCustomImage = null;
+        if (request.getCustomImageId() != null) {
+            newCustomImage = markerCustomImageRepository.findById(request.getCustomImageId())
+                .orElseThrow(() -> new NotFoundException("해당 커스텀 마커 이미지가 존재하지 않습니다."));
+        }
+
+        applyUpdateRequestToMarker(marker, request, newCustomImage);
     }
+
 
     @Transactional
     public void delete(final Long id) {
         markerRepository.deleteById(id);
     }
 
-    private void applyUpdateRequestToMarker(Marker marker, MarkerUpdateRequest request) {
+    private void applyUpdateRequestToMarker(Marker marker, MarkerUpdateRequest request, MarkerCustomImage customImage) {
         if (request.getName() != null) marker.setName(request.getName());
         if (request.getDescription() != null) marker.setDescription(request.getDescription());
         if (request.getAddress() != null) marker.setAddress(request.getAddress());
         if (request.getLat() != null) marker.setLat(request.getLat());
         if (request.getLng() != null) marker.setLng(request.getLng());
-        if (request.getColor() != null) marker.setColor(request.getColor());
+        marker.setColor(request.getColor());
         if (request.getMarkerSeq() != null) marker.setMarkerSeq(request.getMarkerSeq());
+        marker.setCustomImage(customImage);
 
         marker.setUpdatedAt(OffsetDateTime.now());
     }

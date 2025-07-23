@@ -61,7 +61,11 @@ public class MarkerReportDTO {
             .lat(marker.getLat())
             .lng(marker.getLng())
             .color(marker.getColor())
-            .imageUrl(marker.getMarkerImage())
+            .imageUrl(
+                marker.getCustomImage() != null
+                    ? marker.getCustomImage().getMarkerImage()
+                    : null
+            )
             .markerSeq(marker.getMarkerSeq())
             .createdAt(marker.getCreatedAt())
             .updatedAt(marker.getUpdatedAt())
@@ -70,5 +74,4 @@ public class MarkerReportDTO {
             .layerId(marker.getLayer().getId())
             .build();
     }
-
 }

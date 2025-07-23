@@ -21,9 +21,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -97,10 +97,10 @@ public class MarkerController {
      */
 
     // 마커 생성
-    @PostMapping (consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping
     @Operation(summary = "마커 생성", description = "[작성자] 레이어 위에 마커를 생성")
     public ResponseEntity<MarkerResponse> createMarker(
-        @RequestPart @Valid final MarkerCreateRequest request,
+        @RequestBody @Valid final MarkerCreateRequest request,
         @AuthenticationPrincipal Principal principal
         ) {
 
@@ -124,11 +124,11 @@ public class MarkerController {
     }
 
     // 마커 수정
-    @PutMapping(value = "/{markerId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping("/{markerId}")
     @Operation(summary = "마커 수정", description = "[작성자] 특정 마커를 수정")
     public ResponseEntity<MarkerResponse> updateMarker(
         @PathVariable(name = "markerId") final Long markerId,
-        @RequestPart @Valid MarkerUpdateRequest request)
+        @RequestBody @Valid MarkerUpdateRequest request)
         {
 
         markerService.update(markerId, request);
