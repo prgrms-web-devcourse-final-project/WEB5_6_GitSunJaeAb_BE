@@ -56,7 +56,7 @@ public class MarkerService {
 
         return customImages.stream()
             .map(MarkerCustomImageDTO::of)
-            .collect(Collectors.toList());
+            .toList();
     }
 
     @Transactional

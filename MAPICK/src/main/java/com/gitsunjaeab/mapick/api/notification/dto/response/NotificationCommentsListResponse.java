@@ -1,8 +1,7 @@
-package com.gitsunjaeab.mapick.api.notification.dto;
+package com.gitsunjaeab.mapick.api.notification.dto.response;
 
 import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
-import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapSimpleDTO;
-import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.RoadmapListResponse;
+import com.gitsunjaeab.mapick.api.notification.dto.NotificationCommentsListDTO;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.notification.Notification;
@@ -13,23 +12,24 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class NotificationForkListResponse implements BaseApiResponse {
+public class NotificationCommentsListResponse implements BaseApiResponse {
 
     private String code;
     private String message;
     private LocalDateTime timestamp;
-    private List<NotificationForkListDTO> notifications;
+    private List<NotificationCommentsListDTO> notifications;
 
     // 공통 처리 로직
-    public static NotificationForkListResponse of(List<Notification> notificationEntities) {
+    public static NotificationCommentsListResponse of(List<Notification> notificationEntities) {
         return of(notificationEntities, "알림 목록 조회 성공");
     }
 
     // 생성 패턴용
-    public static NotificationForkListResponse of(List<Notification> notificationEntities, String message) {
-        List<NotificationForkListDTO> notificationForkListDTOs = notificationEntities.stream()
+    public static NotificationCommentsListResponse of(List<Notification> notificationEntities,
+        String message) {
+        List<NotificationCommentsListDTO> notificationCommentsListDTOs = notificationEntities.stream()
             .map(n -> {
-                NotificationForkListDTO dto = new NotificationForkListDTO();
+                NotificationCommentsListDTO dto = new NotificationCommentsListDTO();
                 dto.setId(n.getId());
                 dto.setTitle(n.getTitle());
                 dto.setContent(n.getContent());
@@ -41,16 +41,15 @@ public class NotificationForkListResponse implements BaseApiResponse {
                 dto.setNotificationType(n.getNotificationType());
                 dto.setAnnouncementType(n.getAnnouncementType());
                 dto.setRead(n.isRead());
-                dto.setRoadmapSimpleDTO(n.getRoadmap() != null ? new RoadmapSimpleDTO(n.getRoadmap()) : null);
                 return dto;
             })
             .toList();
 
-        return new NotificationForkListResponse(
+        return new NotificationCommentsListResponse(
             ResponseCode.OK.getCode(),
             message,
             LocalDateTime.now(),
-            notificationForkListDTOs
+            notificationCommentsListDTOs
         );
 
     }

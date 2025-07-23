@@ -23,7 +23,7 @@ public class TokenCookieFactory {
 
         return from(tokenType.name(), "")
                 .httpOnly(true)
-                .maxAge(0)
+                .maxAge(0) // 유효 시간
                 .sameSite("None")
                 .secure(true) // true 인거 false 인거 하나씩
                 .path("/")

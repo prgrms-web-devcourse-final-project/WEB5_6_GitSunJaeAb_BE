@@ -42,8 +42,8 @@ spring:
         id:
           new_generator_mappings: true
 
-#  config:
-#    import: sm://
+  config:
+    import: sm://
 
   web:
     resources:

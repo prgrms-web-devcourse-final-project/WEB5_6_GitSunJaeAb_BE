@@ -137,7 +137,7 @@ VALUES (1, '2025-07-13', '2025-07-13 16:23:21.552000 +00:00', null, 1, 1, 1, nul
 
 -- Markers 데이터
 INSERT INTO public.markers (lat, lng, marker_seq, created_at, deleted_at, id, layer_id, member_id,
-                            updated_at, color, description, image_url, name)
+                            updated_at, color, description, custom_image_id, name)
 VALUES (37.512817, 127.102496, 1, '2025-07-13 16:28:29.510000 +00:00', null, 1, 1, 1, null,
         '#FF0000', '잠실 제일가는 함박 스테이크', null, '후쿠오카 함바그 롯데월드몰점'),
        (37.512817, 127.102496, 2, '2025-07-13 16:34:33.283000 +00:00', null, 2, 1, 1, null,

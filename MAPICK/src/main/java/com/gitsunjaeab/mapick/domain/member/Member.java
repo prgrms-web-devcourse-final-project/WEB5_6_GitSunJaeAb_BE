@@ -1,6 +1,8 @@
 package com.gitsunjaeab.mapick.domain.member;
 
+import com.gitsunjaeab.mapick.domain.achievement.MemberAchievement;
 import com.gitsunjaeab.mapick.domain.auth.LoginType;
+import com.gitsunjaeab.mapick.domain.auth.Role;
 import com.gitsunjaeab.mapick.domain.roadmap.Bookmark;
 import com.gitsunjaeab.mapick.domain.comment.Comment;
 import com.gitsunjaeab.mapick.domain.roadmap.Layer;
@@ -111,6 +113,11 @@ public class Member {
         this.updatedAt = OffsetDateTime.now();
     }
 
+    // 역할(Role) 체크 메서드
+    public boolean hasRole(Role role) {
+        return this.role != null && this.role.equals(role.name());
+    }
+
     @OneToMany(mappedBy = "member")
     @Builder.Default
     private Set<Roadmap> memberRoadmaps = new HashSet<>();
@@ -166,5 +173,9 @@ public class Member {
     @OneToMany(mappedBy = "member")
     @Builder.Default
     private Set<LayerLibrary> memberLayerLibraries = new HashSet<>();
+
+    @OneToMany(mappedBy = "member")
+    @Builder.Default
+    private Set<MemberAchievement> memberAchievements = new HashSet<>();
 
 }
