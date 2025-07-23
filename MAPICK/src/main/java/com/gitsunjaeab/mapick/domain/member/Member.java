@@ -1,5 +1,6 @@
 package com.gitsunjaeab.mapick.domain.member;
 
+import com.gitsunjaeab.mapick.domain.achievement.MemberAchievement;
 import com.gitsunjaeab.mapick.domain.auth.LoginType;
 import com.gitsunjaeab.mapick.domain.roadmap.Bookmark;
 import com.gitsunjaeab.mapick.domain.comment.Comment;
@@ -166,5 +167,9 @@ public class Member {
     @OneToMany(mappedBy = "member")
     @Builder.Default
     private Set<LayerLibrary> memberLayerLibraries = new HashSet<>();
+
+    @OneToMany(mappedBy = "member")
+    @Builder.Default
+    private Set<MemberAchievement> memberAchievements = new HashSet<>();
 
 }
