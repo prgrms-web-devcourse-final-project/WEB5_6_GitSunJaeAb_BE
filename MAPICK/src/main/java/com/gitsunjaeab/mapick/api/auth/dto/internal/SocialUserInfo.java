@@ -1,4 +1,4 @@
-package com.gitsunjaeab.mapick.api.auth.dto;
+package com.gitsunjaeab.mapick.api.auth.dto.internal;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

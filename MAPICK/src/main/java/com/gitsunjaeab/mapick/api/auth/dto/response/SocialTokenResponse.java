@@ -1,11 +1,12 @@
 package com.gitsunjaeab.mapick.api.auth.dto.response;
 
+import com.gitsunjaeab.mapick.api.auth.dto.internal.TokenDTO;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
-import com.gitsunjaeab.mapick.domain.auth.TokenDTO;
-import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Data;
+
+import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -14,9 +15,9 @@ public class SocialTokenResponse implements BaseApiResponse {
     private String code;
     private String message;
     private LocalDateTime timestamp;
-    private TokenResponse token;
+    private TokenDTO token;
 
-    public static SocialTokenResponse of(TokenResponse tokenDTO) {
+    public static SocialTokenResponse of(TokenDTO tokenDTO) {
         return new SocialTokenResponse(
             ResponseCode.SOCIAL_SIGNIN_SUCCESS.getCode(),
             ResponseCode.SOCIAL_SIGNIN_SUCCESS.getMessage(),

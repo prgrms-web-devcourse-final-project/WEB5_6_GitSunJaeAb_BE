@@ -3,18 +3,16 @@ package com.gitsunjaeab.mapick.api.auth;
 import com.gitsunjaeab.mapick.api.auth.dto.request.SigninRequest;
 import com.gitsunjaeab.mapick.api.auth.dto.request.SignupRequest;
 import com.gitsunjaeab.mapick.api.auth.dto.request.SocialLoginRequest;
+import com.gitsunjaeab.mapick.api.auth.dto.response.LocalTokenResponse;
 import com.gitsunjaeab.mapick.api.auth.dto.response.PasswordChangeResponse;
 import com.gitsunjaeab.mapick.api.auth.dto.response.SocialTokenResponse;
-import com.gitsunjaeab.mapick.api.auth.dto.response.LocalTokenResponse;
-import com.gitsunjaeab.mapick.api.auth.dto.response.TokenResponse;
+import com.gitsunjaeab.mapick.api.auth.dto.internal.TokenDTO;
 import com.gitsunjaeab.mapick.api.member.dto.request.PasswordRequest;
 import com.gitsunjaeab.mapick.application.auth.AuthService;
 import com.gitsunjaeab.mapick.application.member.MemberService;
 import com.gitsunjaeab.mapick.common.response.ApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.auth.RefreshTokenRepository;
-import com.gitsunjaeab.mapick.domain.auth.TokenDTO;
-import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.infra.auth.token.JwtProvider;
 import com.gitsunjaeab.mapick.infra.auth.token.TokenCookieFactory;
 import com.gitsunjaeab.mapick.infra.auth.token.code.GrantType;
@@ -53,6 +51,7 @@ public class AuthController {
 
         TokenDTO dto = authService.registerOrLoginSocialUser(request); // now returns TokenDto
 
+        // 쿠키 굽기
         ResponseCookie accessTokenCookie = TokenCookieFactory.create(
                 TokenType.ACCESS_TOKEN.name(),
                 dto.getAccessToken(),
@@ -64,14 +63,15 @@ public class AuthController {
                 dto.getRtExpiresIn()
         );
 
-        response.addHeader("Set-Cookie", accessTokenCookie.toString());
-        response.addHeader("Set-Cookie", refreshTokenCookie.toString());
+        // 응답 헤더에 추가
+//      response.addHeader("Set-Cookie", accessTokenCookie.toString()); // 엑세스 토큰 응답 헤더에 추가 -> json 응답으로 반환되기때문에 제외
+        response.addHeader("Set-Cookie", refreshTokenCookie.toString()); // 리프레시 토큰 응답 헤더에 추가
 
-
-        TokenResponse tokenResponseDto = TokenResponse.builder()
+        // 반환용 객체에 accessToken 전달
+        TokenDTO tokenResponseDto = TokenDTO.builder()
                 .accessToken(dto.getAccessToken())
                 .refreshToken(dto.getRefreshToken())
-                .expiresIn(dto.getAtExpiresIn())
+                .atExpiresIn(dto.getAtExpiresIn())
                 .grantType(GrantType.BEARER)
                 .build();
 
@@ -99,14 +99,14 @@ public class AuthController {
             );
 
             // 응답 헤더에 추가
-//            response.addHeader("Set-Cookie", accessTokenCookie.toString());
-            response.addHeader("Set-Cookie", refreshTokenCookie.toString());
+//          response.addHeader("Set-Cookie", accessTokenCookie.toString()); // 엑세스 토큰 응답 헤더에 추가
+            response.addHeader("Set-Cookie", refreshTokenCookie.toString()); // 리프레시 토큰 응답 헤더에 추가
 
             // 반환용 객체에 accessToken 전달
-            TokenResponse tokenResponseDto = TokenResponse.builder()
-                .accessToken(dto.getAccessToken())
-                .refreshToken(dto.getRefreshToken())
-                .expiresIn(dto.getAtExpiresIn())
+        TokenDTO tokenResponseDto = TokenDTO.builder()
+                .accessToken(dto.getAccessToken()) // access token 전달
+                .refreshToken(dto.getRefreshToken()) // refresh token 전달
+                .atExpiresIn(dto.getAtExpiresIn()) // access token 만료 시간 전달
                 .grantType(GrantType.BEARER)
                 .build();
 
@@ -182,10 +182,10 @@ public class AuthController {
 
         response.addHeader("Set-Cookie", refreshTokenCookie.toString());
 
-        TokenResponse tokenResponseDto = TokenResponse.builder()
+        TokenDTO tokenResponseDto = TokenDTO.builder()
                 .accessToken(tokenDTO.getAccessToken())
                 .refreshToken(tokenDTO.getRefreshToken())
-                .expiresIn(tokenDTO.getAtExpiresIn())
+                .atExpiresIn(tokenDTO.getAtExpiresIn())
                 .grantType(GrantType.BEARER)
                 .build();
 

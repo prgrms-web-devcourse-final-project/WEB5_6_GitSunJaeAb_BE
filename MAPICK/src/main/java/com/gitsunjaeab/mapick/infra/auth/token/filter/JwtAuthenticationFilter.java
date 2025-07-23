@@ -2,13 +2,12 @@ package com.gitsunjaeab.mapick.infra.auth.token.filter;
 
 import com.gitsunjaeab.mapick.application.auth.RefreshTokenService;
 import com.gitsunjaeab.mapick.domain.auth.RefreshToken;
-import com.gitsunjaeab.mapick.domain.auth.TokenDTO;
+import com.gitsunjaeab.mapick.api.auth.dto.internal.TokenDTO;
 import com.gitsunjaeab.mapick.infra.auth.token.JwtProvider;
 import com.gitsunjaeab.mapick.infra.auth.token.TokenCookieFactory;
 import com.gitsunjaeab.mapick.infra.auth.token.code.TokenType;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

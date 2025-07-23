@@ -1,13 +1,13 @@
 package com.gitsunjaeab.mapick.application.auth;
 
 import com.gitsunjaeab.mapick.api.auth.dto.request.SocialLoginRequest;
-import com.gitsunjaeab.mapick.api.auth.dto.SocialUserInfo;
+import com.gitsunjaeab.mapick.api.auth.dto.internal.SocialUserInfo;
 import com.gitsunjaeab.mapick.application.member.MemberService;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.auth.LoginType;
 import com.gitsunjaeab.mapick.domain.auth.RefreshToken;
 import com.gitsunjaeab.mapick.domain.auth.RefreshTokenRepository;
-import com.gitsunjaeab.mapick.domain.auth.TokenDTO;
+import com.gitsunjaeab.mapick.api.auth.dto.internal.TokenDTO;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
 import com.gitsunjaeab.mapick.infra.auth.token.JwtProvider;
