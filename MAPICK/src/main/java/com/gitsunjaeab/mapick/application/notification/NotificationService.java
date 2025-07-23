@@ -36,6 +36,15 @@ public class NotificationService {
         return notificationRepository.findByNotificationTypeWithAllRelations(type);
     }
 
+    // 타입+멤버 조회 (본인 알림만)
+    public List<Notification> findByTypeAndMember(NotificationType type, Long memberId) {
+        if (type == NotificationType.ALL) {
+            return notificationRepository.findAllWithAllRelationsByMemberId(memberId);
+        }
+        return notificationRepository.findByNotificationTypeWithAllRelationsAndMemberId(type,
+            memberId);
+    }
+
     // 자동 알림 생성
     public Notification createNotification(
         Member target,
@@ -51,7 +60,8 @@ public class NotificationService {
         switch (type) {
             case FORK:
                 title = "🍴포크 발생!";
-                content = layer.getName() + "을(를) " + layerLibrary.getMember().getNickname() + "님이 인용했어요!";
+                content = layer.getName() + "을(를) " + layerLibrary.getMember().getNickname()
+                    + "님이 인용했어요!";
                 break;
             case POST:
                 title = "🔥 로드맵 인기 급상승";
@@ -67,7 +77,8 @@ public class NotificationService {
                 break;
             case ZZIM:
                 title = "⭐ 찜 알림";
-                content = layerLibrary.getMember().getNickname() + "님이 내 " + layer.getName() + "을(를) 찜했어요!";
+                content = layerLibrary.getMember().getNickname() + "님이 내 " + layer.getName()
+                    + "을(를) 찜했어요!";
                 break;
             default:
                 title = "🔔 기타 알림";
@@ -91,7 +102,8 @@ public class NotificationService {
     }
 
     // 커스텀 알림
-    public Notification createCustomNotification(Member target, String title, String content, NotificationType type) {
+    public Notification createCustomNotification(Member target, String title, String content,
+        NotificationType type) {
         Notification notification = Notification.builder()
             .title(title)
             .content(content)
@@ -121,7 +133,8 @@ public class NotificationService {
     @Transactional
     public void deleteReadNotificationsAfterOneMinute() {
         OffsetDateTime oneMinuteAgo = OffsetDateTime.now().minusMinutes(1);
-        List<Notification> notifications = notificationRepository.findByIsReadTrueAndReadAtBeforeAndDeletedAtIsNull(oneMinuteAgo);
+        List<Notification> notifications = notificationRepository.findByIsReadTrueAndReadAtBeforeAndDeletedAtIsNull(
+            oneMinuteAgo);
         for (Notification n : notifications) {
             n.setDeletedAt(OffsetDateTime.now());
         }
