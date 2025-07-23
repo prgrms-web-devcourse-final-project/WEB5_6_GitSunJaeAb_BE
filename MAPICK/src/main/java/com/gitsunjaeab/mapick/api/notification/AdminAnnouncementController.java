@@ -87,4 +87,11 @@ public class AdminAnnouncementController {
         return ResponseEntity.ok(AnnouncementListResponse.of(announcements, "공지 목록 조회 성공"));
     }
 
+    // 공지 상세 조회
+    @GetMapping("/{id}")
+    @Operation(summary = "관리자 공지 상세 조회", description = "[관리자] 공지 상세 조회")
+    public ResponseEntity<AnnouncementResponse> getAnnouncementDetail(@PathVariable Long id) {
+        Announcement announcement = announcementService.findById(id);
+        return ResponseEntity.ok(AnnouncementResponse.of(announcement, "공지 상세 조회 성공"));
+    }
 }
