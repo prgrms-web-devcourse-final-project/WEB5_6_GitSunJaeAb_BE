@@ -3,9 +3,9 @@ package com.gitsunjaeab.mapick.api.auth;
 import com.gitsunjaeab.mapick.api.auth.dto.request.SigninRequest;
 import com.gitsunjaeab.mapick.api.auth.dto.request.SignupRequest;
 import com.gitsunjaeab.mapick.api.auth.dto.request.SocialLoginRequest;
-import com.gitsunjaeab.mapick.api.auth.dto.response.LocalTokenResponse;
+import com.gitsunjaeab.mapick.api.auth.dto.response.SigninResponse;
 import com.gitsunjaeab.mapick.api.auth.dto.response.PasswordChangeResponse;
-import com.gitsunjaeab.mapick.api.auth.dto.response.SocialTokenResponse;
+import com.gitsunjaeab.mapick.api.auth.dto.response.SocialSigninResponse;
 import com.gitsunjaeab.mapick.api.auth.dto.internal.TokenDTO;
 import com.gitsunjaeab.mapick.api.member.dto.request.PasswordRequest;
 import com.gitsunjaeab.mapick.application.auth.AuthService;
@@ -44,19 +44,24 @@ public class AuthController {
     private final JwtProvider jwtProvider;
     private final RefreshTokenRepository refreshTokenRepository;
 
+
     // 소셜 로그인
+    // complete
     @PostMapping("/socialLogin")
     @Operation(summary = "소셜 로그인", description = "첫 소셜 로그인 > 회원가입")
-    public ResponseEntity<SocialTokenResponse> socialLogin(@RequestBody SocialLoginRequest request, HttpServletResponse response) {
+    public ResponseEntity<SigninResponse> socialLogin(@RequestBody SocialLoginRequest request, HttpServletResponse response) {
 
-        TokenDTO dto = authService.registerOrLoginSocialUser(request); // now returns TokenDto
+        TokenDTO dto = authService.socialLogin(request); // 인증 정보로 로그인 처리 후, access/refresh 토큰 생성
 
         // 쿠키 굽기
-        ResponseCookie accessTokenCookie = TokenCookieFactory.create(
-                TokenType.ACCESS_TOKEN.name(),
-                dto.getAccessToken(),
-                dto.getAtExpiresIn()
-        );
+        // access token 쿠기 만들기
+//        ResponseCookie accessTokenCookie = TokenCookieFactory.create(
+//                TokenType.ACCESS_TOKEN.name(),
+//                dto.getAccessToken(),
+//                dto.getAtExpiresIn()
+//        );
+
+        // refresh token 쿠기 만들기
         ResponseCookie refreshTokenCookie = TokenCookieFactory.create(
                 TokenType.REFRESH_TOKEN.name(),
                 dto.getRefreshToken(),
@@ -64,45 +69,10 @@ public class AuthController {
         );
 
         // 응답 헤더에 추가
-//      response.addHeader("Set-Cookie", accessTokenCookie.toString()); // 엑세스 토큰 응답 헤더에 추가 -> json 응답으로 반환되기때문에 제외
+//      response.addHeader("Set-Cookie", accessTokenCookie.toString()); // 엑세스 토큰 응답 헤더에 추가 -> json 응답으로 반환 되기 때문에 제외
         response.addHeader("Set-Cookie", refreshTokenCookie.toString()); // 리프레시 토큰 응답 헤더에 추가
 
-        // 반환용 객체에 accessToken 전달
-        TokenDTO tokenResponseDto = TokenDTO.builder()
-                .accessToken(dto.getAccessToken())
-                .refreshToken(dto.getRefreshToken())
-                .atExpiresIn(dto.getAtExpiresIn())
-                .grantType(GrantType.BEARER)
-                .build();
-
-
-        return ResponseEntity.ok(SocialTokenResponse.of(tokenResponseDto));
-    }
-
-    // 자체 로그인
-    @PostMapping("/signin")
-    @Operation(summary = "자체 로그인")
-    public ResponseEntity<LocalTokenResponse> signin(@RequestBody SigninRequest request, HttpServletResponse response) {
-
-            TokenDTO dto = authService.signin(request.getEmail(), request.getPassword()); // 인증 정보로 로그인 처리 후, access/refresh 토큰 생성
-
-            // 쿠키 굽기
-            ResponseCookie accessTokenCookie = TokenCookieFactory.create(
-                    TokenType.ACCESS_TOKEN.name(),
-                    dto.getAccessToken(),
-                    dto.getAtExpiresIn()
-            );
-            ResponseCookie refreshTokenCookie = TokenCookieFactory.create(
-                    TokenType.REFRESH_TOKEN.name(),
-                    dto.getRefreshToken(),
-                    dto.getRtExpiresIn()
-            );
-
-            // 응답 헤더에 추가
-//          response.addHeader("Set-Cookie", accessTokenCookie.toString()); // 엑세스 토큰 응답 헤더에 추가
-            response.addHeader("Set-Cookie", refreshTokenCookie.toString()); // 리프레시 토큰 응답 헤더에 추가
-
-            // 반환용 객체에 accessToken 전달
+        // access token & refresh token 반환
         TokenDTO tokenResponseDto = TokenDTO.builder()
                 .accessToken(dto.getAccessToken()) // access token 전달
                 .refreshToken(dto.getRefreshToken()) // refresh token 전달
@@ -110,7 +80,50 @@ public class AuthController {
                 .grantType(GrantType.BEARER)
                 .build();
 
-        return ResponseEntity.ok(LocalTokenResponse.of(tokenResponseDto));
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(SigninResponse.social(tokenResponseDto));
+    }
+
+    // 자체 로그인
+    // complete
+    @PostMapping("/signin")
+    @Operation(summary = "자체 로그인")
+    public ResponseEntity<SigninResponse> signin(@RequestBody SigninRequest request, HttpServletResponse response) {
+
+        TokenDTO dto = authService.signin(request.getEmail(), request.getPassword()); // 인증 정보로 로그인 처리 후, access/refresh 토큰 생성
+
+        // 쿠키 굽기
+        // access token 쿠기 만들기
+        ResponseCookie accessTokenCookie = TokenCookieFactory.create(
+                TokenType.ACCESS_TOKEN.name(),
+                dto.getAccessToken(),
+                dto.getAtExpiresIn()
+        );
+
+        // refresh token 쿠기 만들기
+        ResponseCookie refreshTokenCookie = TokenCookieFactory.create(
+                TokenType.REFRESH_TOKEN.name(),
+                dto.getRefreshToken(),
+                dto.getRtExpiresIn()
+        );
+
+        // 응답 헤더에 추가
+//      response.addHeader("Set-Cookie", accessTokenCookie.toString()); // 엑세스 토큰 응답 헤더에 추가
+        response.addHeader("Set-Cookie", refreshTokenCookie.toString()); // 리프레시 토큰 응답 헤더에 추가
+
+        // access token & refresh token 반환
+        TokenDTO tokenResponseDto = TokenDTO.builder()
+                .accessToken(dto.getAccessToken()) // access token 전달
+                .refreshToken(dto.getRefreshToken()) // refresh token 전달
+                .atExpiresIn(dto.getAtExpiresIn()) // access token 만료 시간 전달
+                .grantType(GrantType.BEARER)
+                .build();
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(SigninResponse.local(tokenResponseDto));
     }
 
     // 자체 회원가입
@@ -120,7 +133,9 @@ public class AuthController {
 
         memberService.signup(request);
 
-        return ResponseEntity.ok(ApiResponse.of(ResponseCode.SIGNUP_SUCCESS));
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.of(ResponseCode.SIGNUP_SUCCESS));
 
     }
 

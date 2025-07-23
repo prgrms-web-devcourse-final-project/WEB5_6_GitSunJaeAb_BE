@@ -11,18 +11,17 @@ import java.time.LocalDateTime;
 @Data
 @Builder
 // 클라이언트 응답용 DTO
-public class LocalTokenResponse implements BaseApiResponse {
+public class LocalLogoutResponse implements BaseApiResponse {
     private String code;
     private String message;
     private LocalDateTime timestamp;
-    private TokenDTO token;
 
-    public static LocalTokenResponse of(TokenDTO tokenDTO) {
-        return new LocalTokenResponse(
-            ResponseCode.SIGNIN_SUCCESS.getCode(),
-            ResponseCode.SIGNIN_SUCCESS.getMessage(),
-            LocalDateTime.now(),
-            tokenDTO
+
+    public static LocalLogoutResponse of() {
+        return new LocalLogoutResponse(
+            ResponseCode.LOGOUT_SUCCESS.getCode(),
+            ResponseCode.LOGOUT_SUCCESS.getMessage(),
+            LocalDateTime.now()
         );
     }
 }

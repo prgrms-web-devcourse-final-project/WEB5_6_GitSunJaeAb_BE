@@ -45,7 +45,7 @@ public class AuthService {
 
     // 소셜 로그인
     @Transactional
-    public TokenDTO registerOrLoginSocialUser(SocialLoginRequest request) {
+    public TokenDTO socialLogin(SocialLoginRequest request) {
 
         SocialUserInfo userInfo = googleOAuthService.getUserInfo(request.getToken());
         String email = userInfo.getEmail();
@@ -147,8 +147,8 @@ public class AuthService {
         TokenDTO tokenDto = TokenDTO.builder()
                 .accessToken(accessToken.getAccessToken())
                 .refreshToken(refreshToken.getToken())
-                .atExpiresIn(jwtProvider.getAtExpiration())
-                .rtExpiresIn(jwtProvider.getRtExpiration())
+                .atExpiresIn(jwtProvider.getAtExpiration()) // access token의 만료 시간
+                .rtExpiresIn(jwtProvider.getRtExpiration()) // refresh token의 만료 시간
                 .grantType(GrantType.BEARER)
                 .build();
 
