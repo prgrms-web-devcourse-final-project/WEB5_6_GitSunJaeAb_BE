@@ -1,6 +1,8 @@
 package com.gitsunjaeab.mapick.domain.notification;
 
+import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -8,31 +10,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
 
-    @Query("SELECT n FROM Notification n " +
-        "LEFT JOIN FETCH n.member " +
-        "LEFT JOIN FETCH n.roadmap " +
-        "LEFT JOIN FETCH n.layerLibrary ll " +
-        "LEFT JOIN FETCH ll.member " +
-        "LEFT JOIN FETCH ll.layer " +
-        "LEFT JOIN FETCH n.memberQuest mq " +
-        "LEFT JOIN FETCH mq.member " +
-        "WHERE n.notificationType = :type " +
-        "ORDER BY n.createdAt DESC")
-    List<Notification> findByNotificationTypeOrderByCreatedAtDesc(NotificationType type);
 
-    @Query("SELECT n FROM Notification n " +
-        "LEFT JOIN FETCH n.member " +
-        "LEFT JOIN FETCH n.roadmap " +
-        "LEFT JOIN FETCH n.layerLibrary ll " +
-        "LEFT JOIN FETCH ll.member " +
-        "LEFT JOIN FETCH ll.layer " +
-        "LEFT JOIN FETCH n.memberQuest mq " +
-        "LEFT JOIN FETCH mq.member " +
-        "ORDER BY n.createdAt DESC")
-    List<Notification> findAllByOrderByCreatedAtDesc();
+    // ===== 기본 CRUD =====
 
     // 알림 전체를 연관 엔티티와 함께 fetch join으로 조회 (N+1 문제 방지, 삭제된 알림 제외)
-    @org.springframework.data.jpa.repository.Query("SELECT n FROM Notification n " +
+    @Query("SELECT n FROM Notification n " +
         "LEFT JOIN FETCH n.member " +
         "LEFT JOIN FETCH n.roadmap " +
         "LEFT JOIN FETCH n.layerLibrary " +
@@ -56,27 +38,78 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     List<Notification> findByNotificationTypeWithAllRelations(NotificationType type);
 
     // 읽음 처리된 알림 중 readAt이 before보다 이전이고 deletedAt이 null인 알림 조회
-    java.util.List<Notification> findByIsReadTrueAndReadAtBeforeAndDeletedAtIsNull(
-        java.time.OffsetDateTime before);
+    List<Notification> findByIsReadTrueAndReadAtBeforeAndDeletedAtIsNull(
+        OffsetDateTime before);
 
     // 본인(memberId) 알림 전체 fetch join (삭제된 알림 제외)
-    @org.springframework.data.jpa.repository.Query("SELECT n FROM Notification n " +
+    @Query("SELECT n FROM Notification n " +
         "LEFT JOIN FETCH n.member " +
         "LEFT JOIN FETCH n.roadmap " +
         "LEFT JOIN FETCH n.layerLibrary " +
         "LEFT JOIN FETCH n.memberQuest " +
         "WHERE n.deletedAt IS NULL AND n.member.id = :memberId " +
         "ORDER BY n.createdAt DESC")
-    java.util.List<Notification> findAllWithAllRelationsByMemberId(Long memberId);
+    List<Notification> findAllWithAllRelationsByMemberId(Long memberId);
 
     // 본인(memberId) 알림 타입별 fetch join (삭제된 알림 제외)
-    @org.springframework.data.jpa.repository.Query("SELECT n FROM Notification n " +
+    @Query("SELECT n FROM Notification n " +
         "LEFT JOIN FETCH n.member " +
         "LEFT JOIN FETCH n.roadmap " +
         "LEFT JOIN FETCH n.layerLibrary " +
         "LEFT JOIN FETCH n.memberQuest " +
         "WHERE n.deletedAt IS NULL AND n.notificationType = :type AND n.member.id = :memberId " +
         "ORDER BY n.createdAt DESC")
-    java.util.List<Notification> findByNotificationTypeWithAllRelationsAndMemberId(
+    List<Notification> findByNotificationTypeWithAllRelationsAndMemberId(
         NotificationType type, Long memberId);
+
+
+    // ===== 읽음 처리 =====
+
+    @Query("SELECT n FROM Notification n " +
+        "LEFT JOIN FETCH n.member " +
+        "LEFT JOIN FETCH n.roadmap " +
+        "LEFT JOIN FETCH n.layerLibrary ll " +
+        "LEFT JOIN FETCH ll.member " +
+        "LEFT JOIN FETCH ll.layer " +
+        "LEFT JOIN FETCH n.memberQuest mq " +
+        "LEFT JOIN FETCH mq.member " +
+        "WHERE n.id = :id")
+    Optional<Notification> findByIdWithAllRelations(Long id);
+
+    @Query("SELECT n FROM Notification n " +
+        "LEFT JOIN FETCH n.member " +
+        "LEFT JOIN FETCH n.roadmap " +
+        "LEFT JOIN FETCH n.layerLibrary ll " +
+        "LEFT JOIN FETCH ll.member " +
+        "LEFT JOIN FETCH ll.layer " +
+        "LEFT JOIN FETCH n.memberQuest mq " +
+        "LEFT JOIN FETCH mq.member " +
+        "WHERE n.isRead = true AND n.readAt < :before AND n.deletedAt IS NULL")
+    List<Notification> findReadBeforeAndNotDeletedWithAllRelations(OffsetDateTime before);
+
+
+
+    //    @Query("SELECT n FROM Notification n " +
+//        "LEFT JOIN FETCH n.member " +
+//        "LEFT JOIN FETCH n.roadmap " +
+//        "LEFT JOIN FETCH n.layerLibrary ll " +
+//        "LEFT JOIN FETCH ll.member " +
+//        "LEFT JOIN FETCH ll.layer " +
+//        "LEFT JOIN FETCH n.memberQuest mq " +
+//        "LEFT JOIN FETCH mq.member " +
+//        "WHERE n.notificationType = :type " +
+//        "ORDER BY n.createdAt DESC")
+//    List<Notification> findByNotificationTypeOrderByCreatedAtDesc(NotificationType type);
+//
+//    @Query("SELECT n FROM Notification n " +
+//        "LEFT JOIN FETCH n.member " +
+//        "LEFT JOIN FETCH n.roadmap " +
+//        "LEFT JOIN FETCH n.layerLibrary ll " +
+//        "LEFT JOIN FETCH ll.member " +
+//        "LEFT JOIN FETCH ll.layer " +
+//        "LEFT JOIN FETCH n.memberQuest mq " +
+//        "LEFT JOIN FETCH mq.member " +
+//        "ORDER BY n.createdAt DESC")
+//    List<Notification> findAllByOrderByCreatedAtDesc();
+//
 }
