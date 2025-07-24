@@ -1,14 +1,13 @@
 package com.gitsunjaeab.mapick.application.search;
 
-import com.gitsunjaeab.mapick.api.search.dto.SearchResultResponse;
+import com.gitsunjaeab.mapick.api.search.dto.response.SearchListResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
-@AllArgsConstructor
 public class SearchService {
 
-    public SearchResultResponse search(String keyword) {
+    public SearchListResponse search(String keyword) {
         return null;
     }
 }

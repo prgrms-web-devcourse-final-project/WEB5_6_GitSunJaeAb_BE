@@ -279,3 +279,12 @@ VALUES (nextval('primary_sequence'), '📢 시스템 업데이트 예고', '📢
 -- 9. 🔔 기타 알림
 INSERT INTO notifications (id, title, content, member_id, is_read, announcement_type, notification_type, roadmap_id, created_at)
 VALUES (nextval('primary_sequence'), '🔔 기타 알림', '기타 알림 테스트입니다.', 1, false, NULL, 'ETC', NULL, NOW());
+
+-- Search 데이터
+INSERT INTO search (id, keyword, member_id, created_at, updated_at, deleted_at)
+VALUES
+    (101, '스프링 부트', 1, now(), now(), NULL),
+    (102, 'Java', 1, now(), now(), NULL),
+    (103, '지도 공유', 2, now(), now(), NULL),
+    (104, 'MZ 핫플', 2, now(), now(), NULL),
+    (105, '국토종주', 3, now(), now(), NULL);
