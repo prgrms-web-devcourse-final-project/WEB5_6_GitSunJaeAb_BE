@@ -135,7 +135,7 @@ public class RoadmapController {
     // 개인 로드맵 생성 NOTE 완
     @PostMapping("/personal")
     @Operation(summary = "로드맵 생성", description = "[사용자용] 레이어, 마커 제외 지도 관련 속성만 저장 + 해시태그 생성 ")
-    public ResponseEntity<RoadmapCreateResponse> createRoadmap(
+    public ResponseEntity<ApiResponse> createRoadmap(
             @RequestBody @Valid final RoadmapRequest request,
             @AuthenticationPrincipal final Principal principal
     ) {
@@ -144,8 +144,17 @@ public class RoadmapController {
         }
 
         Long memberId = principal.getMember().getId();
-        Long roadmapId = roadmapService.createRoadmap(request, memberId);
-        return ResponseEntity.ok(RoadmapCreateResponse.of(ResponseCode.OK, "로드맵 생성 완료", roadmapId));
+        RoadmapAchievementResponse response = roadmapService.createRoadmap(request, memberId);
+
+        if (response.isAchievementUnlocked()) {
+            return ResponseEntity.ok(ApiResponse.of(
+                ResponseCode.OK,
+                "로드맵 생성 완료! 업적 '" + response.getAchievement().getName() + "' 을(를) 획득했습니다.",
+                response
+            ));
+        }
+
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "로드맵 생성 완료", response.getRoadmapId()));
     }
 
     // 개인 로드맵 수정 NOTE 완
