@@ -1,8 +1,10 @@
 package com.gitsunjaeab.mapick.domain.notification;
 
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
+import com.gitsunjaeab.mapick.domain.comment.Comment;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.quest.MemberQuest;
+import com.gitsunjaeab.mapick.domain.quest.Quest;
 import com.gitsunjaeab.mapick.domain.roadmap.LayerLibrary;
 import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
 import com.gitsunjaeab.mapick.infra.converter.OffsetDateTimeConverter;
@@ -65,6 +67,10 @@ public class Notification {
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "comment_id")
+    private Comment comment; // 댓글 내용 (COMMENT Type 에서만 사용)
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     @ToString.Include
     private Member member;
@@ -108,6 +114,10 @@ public class Notification {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "layer_library_id")
     private LayerLibrary layerLibrary;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "quest_id")
+    private Quest quest;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_quest_id")

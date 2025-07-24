@@ -128,6 +128,4 @@ public class NotificationController {
 //        final List<Notification> notifications = notificationService.findByType(NotificationType.Fork);
 //        return ResponseEntity.ok(NotificationForkListResponse.of(notifications, "포크 알림 조회 성공"));
 //    }
-//}
-
 }

@@ -1,7 +1,10 @@
 package com.gitsunjaeab.mapick.api.notification.dto.response;
 
+import com.gitsunjaeab.mapick.api.comment.dto.CommentSimpleDTO;
 import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
 import com.gitsunjaeab.mapick.api.notification.dto.NotificationCommentsListDTO;
+import com.gitsunjaeab.mapick.api.quest.dto.QuestSimpleDTO;
+import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapSimpleDTO;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.notification.Notification;
@@ -18,6 +21,8 @@ public class NotificationCommentsListResponse implements BaseApiResponse {
     private String message;
     private LocalDateTime timestamp;
     private List<NotificationCommentsListDTO> notifications;
+    private List<RoadmapSimpleDTO> roadmaps;
+    private List<QuestSimpleDTO> quests;
 
     // 공통 처리 로직
     public static NotificationCommentsListResponse of(List<Notification> notificationEntities) {
@@ -33,7 +38,10 @@ public class NotificationCommentsListResponse implements BaseApiResponse {
                 dto.setId(n.getId());
                 dto.setTitle(n.getTitle());
                 dto.setContent(n.getContent());
-                dto.setMember(n.getMember() != null ? new MemberSimpleDTO(n.getMember()) : null);
+                // 댓글 정보(내용, 작성자 등)
+                dto.setComment(n.getComment() != null ? new CommentSimpleDTO(n.getComment()) : null);
+                // 수신인(알림 받는 사람)
+                dto.setReceiver(n.getMember() != null ? new MemberSimpleDTO(n.getMember()) : null);
                 dto.setCreatedAt(n.getCreatedAt());
                 dto.setUpdatedAt(n.getUpdatedAt());
                 dto.setDeletedAt(n.getDeletedAt());
@@ -41,6 +49,9 @@ public class NotificationCommentsListResponse implements BaseApiResponse {
                 dto.setNotificationType(n.getNotificationType());
                 dto.setAnnouncementType(n.getAnnouncementType());
                 dto.setRead(n.isRead());
+                // 연관관계 정보
+                dto.setQuest(n.getQuest() != null ? new QuestSimpleDTO(n.getQuest()) : null);
+                dto.setRoadmap(n.getRoadmap() != null ? new RoadmapSimpleDTO(n.getRoadmap()) : null);
                 return dto;
             })
             .toList();
@@ -49,7 +60,9 @@ public class NotificationCommentsListResponse implements BaseApiResponse {
             ResponseCode.OK.getCode(),
             message,
             LocalDateTime.now(),
-            notificationCommentsListDTOs
+            notificationCommentsListDTOs,
+            null,
+            null
         );
 
     }

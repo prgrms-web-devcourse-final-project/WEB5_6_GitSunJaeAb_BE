@@ -104,12 +104,14 @@ public class LayerLibraryService {
         // 찜 알림 발송 로직 
         Member layerOwner = layer.getMember();
         notificationService.createNotification(
-            layerOwner,           // 알림 받을 대상 (레이어 소유자)
+            layerOwner,            // 알림 받을 대상 (레이어 소유자)
             NotificationType.ZZIM, // 알림 타입
-            layer.getRoadmap(),   // 로드맵 정보
-            layer,                // 레이어 정보
-            savedLibrary,         // 찜 기록 정보
-            null                  // 퀘스트 정보 (없음)
+            layer.getRoadmap(),    // 로드맵 정보
+            layer,                 // 레이어 정보
+            savedLibrary,          // 찜 기록 정보
+            null,                  // 퀘스트
+            null,                   // 멤버퀘스트
+            null
         );
 
         return savedLibrary;
@@ -195,12 +197,14 @@ public class LayerLibraryService {
         // 포크 알림 발송 로직 (찜 알림과 동일한 패턴)
         Member layerOwner = originalLayer.getMember();
         notificationService.createNotification(
-            layerOwner,           // 알림 받을 대상 (레이어 소유자)
+            layerOwner,            // 알림 받을 대상 (레이어 소유자)
             NotificationType.FORK, // 알림 타입
-            targetRoadmap,        // 로드맵 정보
-            originalLayer,        // 레이어 정보
-            layerLibrary,         // 찜 기록 정보
-            null                  // 퀘스트 정보 (없음)
+            targetRoadmap,         // 로드맵 정보
+            originalLayer,         // 레이어 정보
+            layerLibrary,          // 찜 기록 정보
+            null,                  // 퀘스트
+            null,                  // 멤버퀘스트
+            null                   // 댓글
         );
 
         // 찜 기록 조회해서 반환
