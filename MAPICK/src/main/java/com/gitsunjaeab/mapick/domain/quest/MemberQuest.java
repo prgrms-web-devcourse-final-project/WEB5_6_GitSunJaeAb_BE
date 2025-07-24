@@ -75,7 +75,7 @@ public class MemberQuest {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @Column(name = "image_url", nullable = false)
+    @Column(name = "image_url", nullable = true)
 //    @Column(nullable = true) // 테스트용 배포시 false로 변환
     private String imageUrl;
 

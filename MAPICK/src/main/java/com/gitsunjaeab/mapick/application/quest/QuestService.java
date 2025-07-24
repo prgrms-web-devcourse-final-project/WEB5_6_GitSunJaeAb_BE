@@ -39,6 +39,7 @@ public class QuestService {
             final QuestRankRepository questRankRepository
 //        ,MemberRepository memberRepository 임시로 주석처리
      ) {
+        //수정예정
         this.questRepository = questRepository;
 //        this.memberRepository = memberRepository;
         this.reportRepository = reportRepository;
