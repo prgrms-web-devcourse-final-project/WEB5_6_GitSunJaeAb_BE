@@ -11,13 +11,13 @@ import org.springframework.data.repository.query.Param;
 
 public interface MarkerRepository extends JpaRepository<Marker, Long> {
 
-    @Query("SELECT m FROM Search m WHERE m.member = :member AND m.deletedAt IS NULL")
+    @Query("SELECT m FROM Marker m WHERE m.member = :member AND m.deletedAt IS NULL")
     Marker findFirstByMember(@Param("member") Member member);
 
-    @Query("SELECT m FROM Search m WHERE m.layer = :layer AND m.deletedAt IS NULL")
+    @Query("SELECT m FROM Marker m WHERE m.layer = :layer AND m.deletedAt IS NULL")
     Marker findFirstByLayer(@Param("layer") Layer layer);
 
-    @Query("SELECT m FROM Search m WHERE m.layer.id = :layerId AND m.deletedAt IS NULL")
+    @Query("SELECT m FROM Marker m WHERE m.layer.id = :layerId AND m.deletedAt IS NULL")
     List<Marker> findAllByLayer_Id(@Param("layerId") Long layerId);
 
     Optional<Marker> findByClientGeneratedUUID(String tempUUID);

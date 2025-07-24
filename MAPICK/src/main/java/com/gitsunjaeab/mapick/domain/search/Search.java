@@ -1,21 +1,15 @@
 package com.gitsunjaeab.mapick.domain.search;
 
 import com.gitsunjaeab.mapick.domain.member.Member;
-import com.gitsunjaeab.mapick.domain.report.Report;
-import com.gitsunjaeab.mapick.domain.roadmap.Layer;
-import com.gitsunjaeab.mapick.domain.roadmap.MarkerCustomImage;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.annotation.Nullable;
 import java.time.OffsetDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
-@Table(name = "search",
+@Table(name = "Search",
         uniqueConstraints = {
         @UniqueConstraint(columnNames = {"member_id", "keyword"})
 })
