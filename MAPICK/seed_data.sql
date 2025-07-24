@@ -138,7 +138,7 @@ VALUES (1, '2025-07-13', '2025-07-13 16:23:21.552000 +00:00', null, 1, 1, 1, nul
 
 -- Markers 데이터
 INSERT INTO public.markers (lat, lng, marker_seq, created_at, deleted_at, id, layer_id, member_id,
-                            updated_at, color, description, image_url, name)
+                            updated_at, color, description, custom_image_id, name)
 VALUES (37.512817, 127.102496, 1, '2025-07-13 16:28:29.510000 +00:00', null, 1, 1, 1, null,
         '#FF0000', '잠실 제일가는 함박 스테이크', null, '후쿠오카 함바그 롯데월드몰점'),
        (37.512817, 127.102496, 2, '2025-07-13 16:34:33.283000 +00:00', null, 2, 1, 1, null,
@@ -153,6 +153,13 @@ VALUES (37.512817, 127.102496, 1, '2025-07-13 16:28:29.510000 +00:00', null, 1, 
         '유명한 온천 마을', NULL, '수안보 온천'),
        (37.512817, 127.102496, 3, '2025-07-14 10:40:00+00', NULL, 7, 6, 1, NULL, '#008080',
         '야시장 분위기', NULL, '방이전통시장');
+
+-- MarkerCustomImage 데이터
+INSERT INTO "public"."marker_custom_images" ("id", "marker_image", "name")
+VALUES ('103', 'https://lyrvpfgoxwppqtuuolav.supabase.co/storage/v1/object/public/mapick/5304e12e-8682-40d5-8ee3-3ddf44146aaa', '고양이'),
+       ('104', 'https://lyrvpfgoxwppqtuuolav.supabase.co/storage/v1/object/public/mapick/7a81e092-ad6a-498e-af06-d942b9e54050', '커피'),
+       ('119', 'https://lyrvpfgoxwppqtuuolav.supabase.co/storage/v1/object/public/mapick/105e8ca9-4f00-4e00-9b59-7f1c0b93f061', '음식'),
+       ('128', 'https://lyrvpfgoxwppqtuuolav.supabase.co/storage/v1/object/public/mapick/2d0f3f0a-b261-45f1-b0c0-9dbbfe26a20c', '커스텀마커');
 
 -- LayerLibraries 데이터
 INSERT INTO public.layer_libraries (created_at, id, layer_id, member_id, is_zzim)

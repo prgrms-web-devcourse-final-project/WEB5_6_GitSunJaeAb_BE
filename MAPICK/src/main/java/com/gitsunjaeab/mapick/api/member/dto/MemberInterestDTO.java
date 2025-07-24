@@ -22,15 +22,11 @@ public class MemberInterestDTO {
 
     private List<CategorySimpleDTO> categories;
 
-    public static MemberInterestDTO of(MemberInterest memberInterest ) {
+    public static MemberInterestDTO of(MemberInterest memberInterest) {
         return MemberInterestDTO.builder()
                 .id(memberInterest.getId())
                 .createdAt(memberInterest.getCreatedAt())
-                .categories(
-                        List.of(
-                                CategorySimpleDTO.of(memberInterest)
-                        )
-                )
+                .categories(List.of(CategorySimpleDTO.of(memberInterest)))
                 .build();
     }
 

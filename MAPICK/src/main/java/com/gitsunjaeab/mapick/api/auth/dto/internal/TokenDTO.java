@@ -1,11 +1,13 @@
-package com.gitsunjaeab.mapick.domain.auth;
+package com.gitsunjaeab.mapick.api.auth.dto.internal;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.gitsunjaeab.mapick.infra.auth.token.code.GrantType;
 import lombok.Builder;
 import lombok.Data;
 
 @Data
 @Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class TokenDTO { // 내부 서비스/비즈니스 로직 전달용 DTO
     private String id;
     private String accessToken;

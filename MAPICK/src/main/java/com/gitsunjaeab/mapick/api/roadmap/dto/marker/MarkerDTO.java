@@ -1,7 +1,5 @@
 package com.gitsunjaeab.mapick.api.roadmap.dto.marker;
 
-import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
-import com.gitsunjaeab.mapick.domain.comment.Comment;
 import com.gitsunjaeab.mapick.domain.roadmap.Marker;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -25,6 +23,8 @@ public class MarkerDTO {
 
     private String description;
 
+    private String address;
+
     @NotNull
     private Double lat;
 
@@ -35,7 +35,7 @@ public class MarkerDTO {
     private String color;
 
     @Size(max = 255)
-    private String markerImage;
+    private MarkerCustomImageDTO customImage;
 
     private Integer markerSeq;
 
@@ -45,10 +45,13 @@ public class MarkerDTO {
         this.id = marker.getId();
         this.name = marker.getName();
         this.description = marker.getDescription();
+        this.address = marker.getAddress();
         this.lat = marker.getLat();
         this.lng = marker.getLng();
         this.color = marker.getColor();
-        this.markerImage = marker.getMarkerImage();
+        this.customImage = marker.getCustomImage() != null
+            ? MarkerCustomImageDTO.of(marker.getCustomImage())
+            : null;
         this.markerSeq = marker.getMarkerSeq();
         this.layerId = marker.getLayer().getId();
     }

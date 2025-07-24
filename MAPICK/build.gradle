@@ -92,7 +92,7 @@ dependencies {
     implementation 'com.google.http-client:google-http-client-jackson2:1.34.1'
 
 
-//    // Google Secret Manager
+//    // Google Secret Manager(로컬에서 돌릴땐 빼야함)
 //    implementation 'com.google.cloud:spring-cloud-gcp-starter-secretmanager:3.5.2'
 
 

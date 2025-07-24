@@ -1,13 +1,13 @@
 package com.gitsunjaeab.mapick.application.auth;
 
 import com.gitsunjaeab.mapick.api.auth.dto.request.SocialLoginRequest;
-import com.gitsunjaeab.mapick.api.auth.dto.SocialUserInfo;
+import com.gitsunjaeab.mapick.api.auth.dto.internal.SocialUserInfo;
 import com.gitsunjaeab.mapick.application.member.MemberService;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.auth.LoginType;
 import com.gitsunjaeab.mapick.domain.auth.RefreshToken;
 import com.gitsunjaeab.mapick.domain.auth.RefreshTokenRepository;
-import com.gitsunjaeab.mapick.domain.auth.TokenDTO;
+import com.gitsunjaeab.mapick.api.auth.dto.internal.TokenDTO;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
 import com.gitsunjaeab.mapick.infra.auth.token.JwtProvider;
@@ -45,7 +45,7 @@ public class AuthService {
 
     // 소셜 로그인
     @Transactional
-    public TokenDTO registerOrLoginSocialUser(SocialLoginRequest request) {
+    public TokenDTO socialLogin(SocialLoginRequest request) {
 
         SocialUserInfo userInfo = googleOAuthService.getUserInfo(request.getToken());
         String email = userInfo.getEmail();
@@ -147,8 +147,8 @@ public class AuthService {
         TokenDTO tokenDto = TokenDTO.builder()
                 .accessToken(accessToken.getAccessToken())
                 .refreshToken(refreshToken.getToken())
-                .atExpiresIn(jwtProvider.getAtExpiration())
-                .rtExpiresIn(jwtProvider.getRtExpiration())
+                .atExpiresIn(jwtProvider.getAtExpiration()) // access token의 만료 시간
+                .rtExpiresIn(jwtProvider.getRtExpiration()) // refresh token의 만료 시간
                 .grantType(GrantType.BEARER)
                 .build();
 

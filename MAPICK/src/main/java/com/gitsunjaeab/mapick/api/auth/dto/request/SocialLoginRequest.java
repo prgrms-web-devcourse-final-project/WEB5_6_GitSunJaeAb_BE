@@ -11,5 +11,5 @@ import lombok.Setter;
 @AllArgsConstructor
 public class SocialLoginRequest {
     private String provider;
-    private String token; // access token 또는 id_token todo id_token을 처리 할 수 있도록 바꿔야함
+    private String token; // access token 또는 id_token 값
 }

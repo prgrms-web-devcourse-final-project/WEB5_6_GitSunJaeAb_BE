@@ -69,6 +69,8 @@ public class Notification {
     @ToString.Include
     private Member member;
 
+
+    @Builder.Default
     @Column(nullable = false)
     private boolean isRead = false; // 기본값 : 읽지 않음
 
@@ -111,13 +113,18 @@ public class Notification {
     @JoinColumn(name = "member_quest_id")
     private MemberQuest memberQuest;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "announcement_id")
+    private Announcement announcement;
+
 
     // ===== UTIL =====
     // Enum 값 저장 검증 로직
     @PrePersist
     private void validateBeforeSave() {
         if (notificationType == NotificationType.ALL) {
-            throw new CommonException(ResponseCode.SAVE_FAILED, "NotificationType.All 은 저장할 수 없습니다.");
+            throw new CommonException(ResponseCode.SAVE_FAILED,
+                "NotificationType.All 은 저장할 수 없습니다.");
         }
     }
 

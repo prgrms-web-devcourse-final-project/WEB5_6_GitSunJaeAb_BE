@@ -24,6 +24,7 @@ public class UserDetailsServiceImpl implements UserDetailsService { // UserDetai
     // 로그인 사용자 확인 및 권한 설정
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+
         Member member = memberRepository.findByEmailAndDeletedAtIsNull(email)
                 .orElseThrow(() -> new UsernameNotFoundException("탈퇴했거나 존재하지 않는 사용자입니다."));
 

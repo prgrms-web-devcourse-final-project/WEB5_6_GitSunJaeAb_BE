@@ -59,7 +59,7 @@ public class MemberDTO {
 
     private OffsetDateTime deletedAt;
 
-    public static MemberDTO of(Member member ) {
+    public static MemberDTO of(Member member) {
         return MemberDTO.builder()
                 .id(member.getId())
                 .isBlacklisted(member.getIsBlacklisted())
