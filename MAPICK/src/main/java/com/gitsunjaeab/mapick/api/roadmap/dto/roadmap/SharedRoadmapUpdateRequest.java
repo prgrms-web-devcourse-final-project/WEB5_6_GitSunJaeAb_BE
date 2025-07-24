@@ -41,4 +41,5 @@ public class SharedRoadmapUpdateRequest {
     private OffsetDateTime participationEnd;
 
     private List<HashtagRequest> hashtags = new ArrayList<>();
+    private String address;
 }

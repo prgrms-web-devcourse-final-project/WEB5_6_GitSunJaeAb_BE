@@ -83,6 +83,9 @@ public class Roadmap {
     @Column
     private OffsetDateTime deletedAt;
 
+    @Column(length = 255)
+    private String address;
+
     @Column
     private Double regionLatitude;
 

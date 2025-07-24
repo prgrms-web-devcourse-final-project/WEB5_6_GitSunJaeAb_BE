@@ -85,6 +85,7 @@ public class RoadmapService {
         roadmap.setRegionLatitude(request.getRegionLatitude());
         roadmap.setRegionLongitude(request.getRegionLongitude());
         roadmap.setParticipationEnd(request.getParticipationEnd());
+        roadmap.setAddress(request.getAddress());
 
         roadmapRepository.save(roadmap);
         // 로드맵 생성 시 해시태그
@@ -135,6 +136,8 @@ public class RoadmapService {
         roadmap.setIsPublic(request.getIsPublic());
         roadmap.setCategory(category);
         roadmap.setUpdatedAt(OffsetDateTime.now());
+        roadmap.setAddress(request.getAddress());
+
 
         // 해시태그 수정: null이 아닐 때만 처리
         if (request.getHashtags() != null) {
@@ -329,6 +332,7 @@ public class RoadmapService {
 
         return RoadmapResponse.of(roadmap);
     }
+
 
 //    @Transactional
 //    public Long create(final RoadmapRequest request) {

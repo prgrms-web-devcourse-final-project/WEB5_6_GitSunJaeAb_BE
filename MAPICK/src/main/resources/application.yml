@@ -4,7 +4,7 @@ jwt:
   refresh-expiration: ${JWT_REFRESH_EXPIRATION}
 
 server:
-  port: ${PORT:8080}
+  port: ${PORT:80}
 
 supabase:
   url: ${PUBLIC_SUPABASE_URL}
@@ -42,8 +42,8 @@ spring:
         id:
           new_generator_mappings: true
 
-  config:
-    import: sm://
+#  config:
+#    import: sm://
 
   web:
     resources:

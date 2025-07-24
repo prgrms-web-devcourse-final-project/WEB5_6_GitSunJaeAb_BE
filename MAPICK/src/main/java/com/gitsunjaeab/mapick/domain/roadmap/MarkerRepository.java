@@ -2,6 +2,8 @@ package com.gitsunjaeab.mapick.domain.roadmap;
 
 import com.gitsunjaeab.mapick.domain.member.Member;
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,4 +19,6 @@ public interface MarkerRepository extends JpaRepository<Marker, Long> {
 
     @Query("SELECT m FROM Marker m WHERE m.layer.id = :layerId AND m.deletedAt IS NULL")
     List<Marker> findAllByLayer_Id(@Param("layerId") Long layerId);
+
+    Optional<Marker> findByClientGeneratedUUID(String tempUUID);
 }
