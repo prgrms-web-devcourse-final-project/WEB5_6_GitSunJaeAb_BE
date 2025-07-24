@@ -34,4 +34,6 @@ public class SearchHistoryDTO {
                 .deletedAt(search.getDeletedAt())
                 .build();
     }
+
+
 }

@@ -34,7 +34,6 @@ public class SearchController {
     }
 
 
-
     // 최신 검색 목록 조회
     @GetMapping("/list")
     @Operation(summary = "최신 검색 목록 조회", description = "최신 검색 목록 조회" )
@@ -70,11 +69,40 @@ public class SearchController {
                 .body(response);
     }
 
-    // 최신 검색 목록 삭제
+    // 최신 검색 항목 삭제
+    @DeleteMapping
+    @Operation(summary = "최신 검색 항목 단일 삭제", description = "최신 검색 항목 단일 삭제" )
+    public ResponseEntity<SearchListResponse> deletSearchHistory(@RequestParam("keyword") String keyword) {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Long memberId = Long.parseLong(auth.getName());
+
+        searchHistoryService.deleteSearchHistory(memberId,keyword);
+
+        SearchListResponse response = SearchListResponse.remove();
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(response);
+    }
 
 
     // 최신 검색 목록 전체 삭제
+    @DeleteMapping("/list")
+    @Operation(summary = "최신 검색 목록 삭제", description = "최신 검색 목록 삭제" )
+    public ResponseEntity<SearchListResponse> deletSearchHistoryList() {
 
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Long memberId = Long.parseLong(auth.getName());
+
+        searchHistoryService.deleteSearchHistoryList(memberId);
+
+        SearchListResponse response = SearchListResponse.removeList();
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(response);
+    }
 
 
 
