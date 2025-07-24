@@ -182,15 +182,15 @@ VALUES (true, null, '2025-07-13 19:00:00+00:00', null, 1, 1, null,
 -- MemberQuest 데이터
 INSERT INTO member_quests (completed_at, created_at, deleted_at, id, member_id, quest_id,
                            updated_at, answer, is_recognized, status)
-VALUES (null, '2025-07-13 19:00:00+00:00', null, 3, 2, 2, null, '롯데월드몰', 'true', 'COMPLETED'),
-       (null, '2025-07-13 19:00:00+00:00', null, 4, 5, 2, null, '남산타워', 'false', 'WRONG'),
-       (null, '2025-07-13 19:00:00+00:00', null, 5, 1, 2, null, '서울숲', 'true', 'COMPLETED'),
-       (null, '2025-07-13 19:01:00+00:00', null, 6, 3, 3, null, '방이먹자골목', 'true', 'COMPLETED'),
-       (null, '2025-07-13 19:01:00+00:00', null, 7, 2, 3, null, '성수동카페', 'false', 'WRONG'),
-       (null, '2025-07-13 19:01:00+00:00', null, 8, 4, 3, null, '롯데월드몰', 'true', 'COMPLETED'),
-       (null, '2025-07-13 19:02:00+00:00', null, 9, 5, 2, null, '남산타워', 'true', 'COMPLETED'),
-       (null, '2025-07-13 19:02:00+00:00', null, 10, 1, 1, null, '롯데월드몰', 'true', 'COMPLETED'),
-       (null, '2025-07-13 19:02:00+00:00', null, 11, 2, 1, null, '서울숲', 'false', 'WRONG');
+VALUES (null, '2025-07-13 19:00:00+00:00', null, 3, 2, 2, null, '롯데월드몰', 'true', 'false'),
+       (null, '2025-07-13 19:00:00+00:00', null, 4, 5, 2, null, '남산타워', 'false', 'true'),
+       (null, '2025-07-13 19:00:00+00:00', null, 5, 1, 2, null, '서울숲', 'true', 'false'),
+       (null, '2025-07-13 19:01:00+00:00', null, 6, 3, 3, null, '방이먹자골목', 'true', 'false'),
+       (null, '2025-07-13 19:01:00+00:00', null, 7, 2, 3, null, '성수동카페', 'false', 'true'),
+       (null, '2025-07-13 19:01:00+00:00', null, 8, 4, 3, null, '롯데월드몰', 'true', 'false'),
+       (null, '2025-07-13 19:02:00+00:00', null, 9, 5, 2, null, '남산타워', 'true', 'false'),
+       (null, '2025-07-13 19:02:00+00:00', null, 10, 1, 1, null, '롯데월드몰', 'true', 'true'),
+       (null, '2025-07-13 19:02:00+00:00', null, 11, 2, 1, null, '서울숲', 'false', 'true');
 
 -- QuestRank 데이터
 INSERT INTO quest_ranks (rank, completed_at, created_at, deleted_at, id, member_id, quest_id,
@@ -203,26 +203,26 @@ VALUES (1, null, '2025-07-13 19:00:00+00:00', null, 3, 2, 2, null),
        (1, null, '2025-07-13 19:02:00+00:00', null, 8, 1, 1, null);
 
 -- MemberQuestEvidences 데이터
-INSERT INTO member_quest_evidences (created_at, deleted_at, id, member_quest_id, updated_at,
-                                    description, image_url)
-VALUES ('2025-07-13 19:00:00+00:00', null, 3, 3, null, '현장 인증입니다.',
-        'https://example.com/evidence3.jpg'),
-       ('2025-07-13 19:00:00+00:00', null, 4, 4, null, '잘 모르겠지만 찍었어요.',
-        'https://example.com/evidence4.jpg'),
-       ('2025-07-13 19:00:00+00:00', null, 5, 5, null, '서울숲일지도?',
-        'https://example.com/evidence5.jpg'),
-       ('2025-07-13 19:01:00+00:00', null, 6, 6, null, '이 골목 어디게?',
-        'https://example.com/evidence6.jpg'),
-       ('2025-07-13 19:01:00+00:00', null, 7, 7, null, '찍긴 했는데요...',
-        'https://example.com/evidence7.jpg'),
-       ('2025-07-13 19:01:00+00:00', null, 8, 8, null, '이 장소 아닐까요?',
-        'https://example.com/evidence8.jpg'),
-       ('2025-07-13 19:02:00+00:00', null, 9, 9, null, '온천 근처입니다.',
-        'https://example.com/evidence9.jpg'),
-       ('2025-07-13 19:02:00+00:00', null, 10, 10, null, '정답 맞죠?',
-        'https://example.com/evidence10.jpg'),
-       ('2025-07-13 19:02:00+00:00', null, 11, 11, null, '틀려도 재미있었어요~',
-        'https://example.com/evidence11.jpg');
+-- INSERT INTO member_quest_evidences (created_at, deleted_at, id, member_quest_id, updated_at,
+--                                     description, image_url)
+-- VALUES ('2025-07-13 19:00:00+00:00', null, 3, 3, null, '현장 인증입니다.',
+--         'https://example.com/evidence3.jpg'),
+--        ('2025-07-13 19:00:00+00:00', null, 4, 4, null, '잘 모르겠지만 찍었어요.',
+--         'https://example.com/evidence4.jpg'),
+--        ('2025-07-13 19:00:00+00:00', null, 5, 5, null, '서울숲일지도?',
+--         'https://example.com/evidence5.jpg'),
+--        ('2025-07-13 19:01:00+00:00', null, 6, 6, null, '이 골목 어디게?',
+--         'https://example.com/evidence6.jpg'),
+--        ('2025-07-13 19:01:00+00:00', null, 7, 7, null, '찍긴 했는데요...',
+--         'https://example.com/evidence7.jpg'),
+--        ('2025-07-13 19:01:00+00:00', null, 8, 8, null, '이 장소 아닐까요?',
+--         'https://example.com/evidence8.jpg'),
+--        ('2025-07-13 19:02:00+00:00', null, 9, 9, null, '온천 근처입니다.',
+--         'https://example.com/evidence9.jpg'),
+--        ('2025-07-13 19:02:00+00:00', null, 10, 10, null, '정답 맞죠?',
+--         'https://example.com/evidence10.jpg'),
+--        ('2025-07-13 19:02:00+00:00', null, 11, 11, null, '틀려도 재미있었어요~',
+--         'https://example.com/evidence11.jpg');
 
 -- Reports 데이터
 INSERT INTO "public"."reports" ("created_at", "id", "marker_id", "quest_id", "reported_member_id", "reporter_id", "resolved_at", "roadmap_id", "description", "status")
