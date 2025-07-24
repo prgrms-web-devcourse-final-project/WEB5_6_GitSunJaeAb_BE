@@ -129,6 +129,12 @@ public class CommentService {
         commentRepository.deleteById(id);
     }
 
+    @Transactional
+    public List<Comment> findAllCommentsByMember(Long memberId) {
+
+        return commentRepository.findAllByMember_Id(memberId);
+    }
+
     private void DtoToEntity(final CommentRequest request, final Comment comment,
         final Long memberId) {
         comment.setContent(request.getContent());
