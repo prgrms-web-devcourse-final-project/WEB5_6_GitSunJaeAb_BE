@@ -33,22 +33,7 @@ public class SearchController {
         return ResponseEntity.ok(resultResponse);
     }
 
-    // 최신 검색 목록 저장
-    @PostMapping
-    @Operation(summary = "최신 검색 목록 저장", description = "최신 검색 목록 저장" )
-    public ResponseEntity<SearchListResponse> saveSearchHistory(@RequestBody SearchRequest searchRequest) {
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Long memberId = Long.parseLong(auth.getName());
-
-        searchHistoryService.saveSearchHistory(memberId,searchRequest);
-
-        SearchListResponse response = SearchListResponse.save();
-
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(response);
-    }
 
     // 최신 검색 목록 조회
     @GetMapping("/list")
@@ -62,6 +47,23 @@ public class SearchController {
         List<SearchHistoryDTO> searchHistoryDTOs = searchHistoryService.getSearchHistories(memberId);
 
         SearchListResponse response = SearchListResponse.get(searchHistoryDTOs);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(response);
+    }
+
+    // 최신 검색 목록 저장
+    @PostMapping
+    @Operation(summary = "최신 검색 목록 저장", description = "최신 검색 목록 저장" )
+    public ResponseEntity<SearchListResponse> saveSearchHistory(@RequestBody SearchRequest searchRequest) {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Long memberId = Long.parseLong(auth.getName());
+
+        searchHistoryService.saveSearchHistory(memberId,searchRequest);
+
+        SearchListResponse response = SearchListResponse.save();
 
         return ResponseEntity
                 .status(HttpStatus.OK)

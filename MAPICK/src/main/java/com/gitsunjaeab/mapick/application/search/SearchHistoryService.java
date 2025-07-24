@@ -26,7 +26,7 @@ public class SearchHistoryService {
     // 최근 검색어 목록 조회
     public List<SearchHistoryDTO> getSearchHistories(Long memberId) {
 
-        final List<Search> searches = searchRepository.findAllByMemberIdAndDeletedAtIsNull(memberId); // todo 삭제 된건 안나오게 수정 필요
+        final List<Search> searches = searchRepository.findAllByMemberIdAndDeletedAtIsNull(memberId);
 
         log.info("searches: {}", searches);
 
@@ -37,6 +37,9 @@ public class SearchHistoryService {
         return SearchHistoryDTOs;
     }
 
+    // todo 기존 이미 같은 검색어가 있으면 저장 하지 않는 로직 처리
+    // todo 삭제 처리 되어 있는 놈이면 삭제 null 로 만들고 수정 일자 최신으로 처리
+    // 최근 검색어 저장
     @Transactional
     public void saveSearchHistory(Long memberId,SearchRequest searchRequest) {
 
