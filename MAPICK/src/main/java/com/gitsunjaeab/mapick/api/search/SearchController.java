@@ -39,7 +39,6 @@ public class SearchController {
     @Operation(summary = "최신 검색 목록 조회", description = "최신 검색 목록 조회" )
     public ResponseEntity<SearchListResponse> getSearchHistories() {
 
-
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Long memberId = Long.parseLong(auth.getName());
 

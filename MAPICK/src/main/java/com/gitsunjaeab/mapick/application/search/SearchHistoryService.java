@@ -29,8 +29,6 @@ public class SearchHistoryService {
 
         final List<Search> searches = searchRepository.findAllByMemberIdAndDeletedAtIsNull(memberId);
 
-        log.info("searches: {}", searches);
-
         List<SearchHistoryDTO> SearchHistoryDTOs = searches.stream()
                 .map(SearchHistoryDTO::of)
                 .toList();
@@ -38,8 +36,6 @@ public class SearchHistoryService {
         return SearchHistoryDTOs;
     }
 
-    // todo 기존 이미 같은 검색어가 있으면 저장 하지 않는 로직 처리
-    // todo 삭제 처리 되어 있는 놈이면 삭제 null 로 만들고 수정 일자 최신으로 처리
     // 최근 검색어 저장
     @Transactional
     public void saveSearchHistory(Long memberId,SearchRequest searchRequest) {
@@ -47,13 +43,20 @@ public class SearchHistoryService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CommonException(ResponseCode.MEMBER_NOT_FOUND));
 
-        Search search = Search.builder()
-                .keyword(searchRequest.getKeyword())
-                .member(member)
-                .build();
+        Search search = searchRepository.findByMemberIdAndKeywordIs(memberId,searchRequest.getKeyword());
 
-        searchRepository.save(search);
+        if(search==null){
+            Search newsearch = Search.builder()
+                    .keyword(searchRequest.getKeyword())
+                    .member(member)
+                    .build();
 
+            searchRepository.save(newsearch);
+        } else if (search.getDeletedAt() != null) {
+            search.setDeletedAt(null);
+        } else {
+            search.setUpdatedAt(OffsetDateTime.now());
+        }
     }
 
 
@@ -63,9 +66,7 @@ public class SearchHistoryService {
 
         Search search = searchRepository.findByMemberIdAndKeywordIs(memberId,keyword);
 
-                search.setDeletedAt(OffsetDateTime.now());
-
-
+        search.setDeletedAt(OffsetDateTime.now());
     }
 
     // 최근 검색어 목록 삭제
@@ -77,7 +78,5 @@ public class SearchHistoryService {
         for (Search search : searches) {
             search.setDeletedAt(OffsetDateTime.now());
         }
-
-
     }
 }
