@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.gitsunjaeab.mapick.api.category.dto.CategorySimpleDTO;
 import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.hashtag.HashtagDTO;
+import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerWithMarkerDTO;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
@@ -59,6 +60,8 @@ public class RoadmapResponse implements BaseApiResponse {
         private Integer likeCount;
 
         private Integer viewCount;
+
+        private List<LayerWithMarkerDTO> layers;
     }
 
     // --- 정적 팩토리 메서드 ---
@@ -77,6 +80,12 @@ public class RoadmapResponse implements BaseApiResponse {
         roadmapInfo.setIsAnimated(r.getIsAnimated());
         roadmapInfo.setLikeCount(r.getLikeCount());
         roadmapInfo.setViewCount(r.getViewCount());
+
+        List<LayerWithMarkerDTO> layers = r.getRoadmapLayers().stream()
+                .map(LayerWithMarkerDTO::new)
+                .collect(Collectors.toList());
+        roadmapInfo.setLayers(layers);
+
 
         return new RoadmapResponse(
             ResponseCode.OK.getCode(),

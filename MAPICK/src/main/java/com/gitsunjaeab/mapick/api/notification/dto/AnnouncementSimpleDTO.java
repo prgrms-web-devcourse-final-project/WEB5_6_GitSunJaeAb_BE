@@ -2,6 +2,7 @@ package com.gitsunjaeab.mapick.api.notification.dto;
 
 import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
 import com.gitsunjaeab.mapick.domain.notification.Announcement;
+import com.gitsunjaeab.mapick.domain.notification.AnnouncementType;
 import java.time.OffsetDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,6 +13,7 @@ public class AnnouncementSimpleDTO {
     private Long id; // 공지 ID
     private String title; // 공지 제목
     private String content; // 공지 내용
+    private AnnouncementType announcementType;
     private OffsetDateTime createdAt; // 생성일
     private MemberSimpleDTO member; // 작성자 정보
 
@@ -20,6 +22,7 @@ public class AnnouncementSimpleDTO {
             announcement.getId(),
             announcement.getTitle(),
             announcement.getContent(),
+            announcement.getAnnouncementType(),
             announcement.getCreatedAt(),
             MemberSimpleDTO.of(announcement.getMember())
         );

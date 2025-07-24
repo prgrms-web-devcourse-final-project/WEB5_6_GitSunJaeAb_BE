@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>실시간 마커 지도</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+    <style>
+        #map { height: 90vh; width: 100%; }
+    </style>
+</head>
+<body>
+<h2>🗺️ MAPICK 실시간 마커 테스트 페이지</h2>
+<div id="map"></div>
+
+<script>
+    // 지도 초기화 (서울 기준)
+    const map = L.map('map').setView([37.5665, 126.9780], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+    // WebSocket 연결
+    const socket = new SockJS('http://localhost:8080/ws'); // 서버 주소 확인!
+    const stompClient = Stomp.over(socket);
+
+    stompClient.connect({}, () => {
+        console.log("✅ WebSocket 연결됨");
+
+        // layerId 기준으로 구독
+        const layerId = 1;
+        stompClient.subscribe(`/sub/marker/roadmap/${layerId}`, (message) => {
+            const marker = JSON.parse(message.body);
+            console.log("📥 마커 수신됨:", marker);
+
+            if (marker.lat && marker.lng) {
+                L.marker([marker.lat, marker.lng])
+                    .addTo(map)
+                    .bindPopup(`<strong>${marker.name}</strong><br>${marker.description}`)
+                    .openPopup();
+            }
+        });
+    });
+    function sendMarkerViaWebSocket() {
+        const message = {
+            name: "브라우저 마커",
+            description: "JS로 보낸 마커",
+            lat: 37.5665,
+            lng: 126.9780,
+            color: null,
+            customImageId: 103,
+            markerSeq: 2,
+            layerId: 1,
+            tempUUID: crypto.randomUUID(),
+            action: "add",
+            userId: 1
+        };
+
+        stompClient.send("/app/marker/update", {}, JSON.stringify(message));
+        console.log("📤 마커 전송됨:", message);
+    }
+</script>
+</body>
+</html>

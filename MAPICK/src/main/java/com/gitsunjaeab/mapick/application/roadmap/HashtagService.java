@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.convert.ReadingConverter;
 import org.springframework.data.domain.Sort;

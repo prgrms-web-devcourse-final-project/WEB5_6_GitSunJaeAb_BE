@@ -5,10 +5,7 @@ import com.gitsunjaeab.mapick.api.roadmap.dto.bookmark.BookmarkDeleteResponse;
 import com.gitsunjaeab.mapick.common.response.ApiResponse;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
-import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
-import com.gitsunjaeab.mapick.infra.error.exceptions.DuplicatedBookmarkException;
-import com.gitsunjaeab.mapick.infra.error.exceptions.ForbiddenException;
-import com.gitsunjaeab.mapick.infra.error.exceptions.UnauthenticatedException;
+import com.gitsunjaeab.mapick.infra.error.exceptions.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -91,5 +88,11 @@ public class RestExceptionAdvice {
     public ResponseEntity<BaseApiResponse> handleForbiddenFromBookMarkDelete(ForbiddenException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new BookmarkDeleteResponse("4001", ex.getMessage(), LocalDateTime.now()));
+    }
+
+    @ExceptionHandler(InvalidRoadmapTypeException.class)
+    public ResponseEntity<BaseApiResponse> handleInvalidType(InvalidRoadmapTypeException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new BookmarkDeleteResponse(ResponseCode.INVALID_ROADMAP_TYPE.getCode(), ex.getMessage(), LocalDateTime.now()));
     }
 }
