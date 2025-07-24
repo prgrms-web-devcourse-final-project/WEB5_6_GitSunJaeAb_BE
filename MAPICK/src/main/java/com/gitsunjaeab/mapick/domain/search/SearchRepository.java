@@ -11,7 +11,5 @@ public interface SearchRepository extends JpaRepository<Search, Long> {
 
     Search findByMemberIdAndKeywordIs(Long memberId, String keyword);
 
-
-
     Search findByMemberIdAndDeletedAtIsNull(Long memberId);
 }
