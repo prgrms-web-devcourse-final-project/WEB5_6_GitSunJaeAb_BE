@@ -6,6 +6,7 @@ import com.gitsunjaeab.mapick.api.notification.dto.response.NotificationForkList
 import com.gitsunjaeab.mapick.api.notification.dto.response.NotificationListResponse;
 import com.gitsunjaeab.mapick.api.notification.dto.response.NotificationPostsListResponse;
 import com.gitsunjaeab.mapick.api.notification.dto.response.NotificationQuestListResponse;
+import com.gitsunjaeab.mapick.api.notification.dto.response.NotificationReadResponse;
 import com.gitsunjaeab.mapick.api.notification.dto.response.NotificationZzimListResponse;
 import com.gitsunjaeab.mapick.application.notification.NotificationService;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
@@ -63,13 +64,13 @@ public class NotificationController {
 
     // 알림 개별 읽음 처리
     @PutMapping("/{id}/read")
-    public ResponseEntity<Void> readNotification(
+    public ResponseEntity<NotificationReadResponse> readNotification(
         @AuthenticationPrincipal Principal principal,
         @PathVariable Long id
     ) {
         Long memberId = principal.getMember().getId();
-        notificationService.readNotification(id, memberId);
-        return ResponseEntity.ok().build();
+        Notification notification = notificationService.readNotification(id, memberId);
+        return ResponseEntity.ok(NotificationReadResponse.of(notification, "알림을 읽었습니다.(test 시 1분 후 삭제됨)"));
     }
 
 //    // 알림 조회 - 전체

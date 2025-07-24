@@ -1,5 +1,6 @@
 package com.gitsunjaeab.mapick.application.notification;
 
+import com.gitsunjaeab.mapick.api.notification.dto.response.NotificationReadResponse;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
 import com.gitsunjaeab.mapick.domain.notification.Notification;
@@ -117,15 +118,15 @@ public class NotificationService {
 
     // 알림 개별 읽음 처리
     @Transactional
-    public void readNotification(Long notificationId, Long memberId) {
-        Notification notification = notificationRepository.findById(notificationId)
+    public Notification readNotification(Long notificationId, Long memberId) {
+        Notification notification = notificationRepository.findByIdWithAllRelations(notificationId)
             .orElseThrow(() -> new RuntimeException("알림이 존재하지 않습니다."));
         if (!notification.getMember().getId().equals(memberId)) {
             throw new RuntimeException("본인 알림만 읽음 처리할 수 있습니다.");
         }
         notification.setRead(true);
         notification.setReadAt(java.time.OffsetDateTime.now());
-        notificationRepository.save(notification);
+        return notificationRepository.save(notification);
     }
 
     // ====== 읽음 후 1분 후 soft delete (테스트용) ======
@@ -133,7 +134,7 @@ public class NotificationService {
     @Transactional
     public void deleteReadNotificationsAfterOneMinute() {
         OffsetDateTime oneMinuteAgo = OffsetDateTime.now().minusMinutes(1);
-        List<Notification> notifications = notificationRepository.findByIsReadTrueAndReadAtBeforeAndDeletedAtIsNull(
+        List<Notification> notifications = notificationRepository.findReadBeforeAndNotDeletedWithAllRelations(
             oneMinuteAgo);
         for (Notification n : notifications) {
             n.setDeletedAt(OffsetDateTime.now());
@@ -142,14 +143,14 @@ public class NotificationService {
     }
 
     // ====== 읽음 후 1일 후 soft delete (배포용, 주석처리) ======
-    // @Scheduled(cron = "0 0 * * * *") // 매시 정각마다 실행
-    // @Transactional
-    // public void deleteReadNotificationsAfterOneDay() {
-    //     OffsetDateTime oneDayAgo = OffsetDateTime.now().minusDays(1);
-    //     List<Notification> notifications = notificationRepository.findByIsReadTrueAndReadAtBeforeAndDeletedAtIsNull(oneDayAgo);
-    //     for (Notification n : notifications) {
-    //         n.setDeletedAt(OffsetDateTime.now());
-    //     }
-    //     notificationRepository.saveAll(notifications);
-    // }
+//     @Scheduled(cron = "0 0 * * * *") // 매시 정각마다 실행
+//     @Transactional
+//     public void deleteReadNotificationsAfterOneDay() {
+//         OffsetDateTime oneDayAgo = OffsetDateTime.now().minusDays(1);
+//         List<Notification> notifications = notificationRepository.findReadBeforeAndNotDeletedWithAllRelations(oneDayAgo);
+//         for (Notification n : notifications) {
+//             n.setDeletedAt(OffsetDateTime.now());
+//         }
+//         notificationRepository.saveAll(notifications);
+//     }
 }
