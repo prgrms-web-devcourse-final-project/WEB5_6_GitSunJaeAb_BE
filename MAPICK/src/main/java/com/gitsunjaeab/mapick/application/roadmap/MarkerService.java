@@ -4,6 +4,9 @@ import com.gitsunjaeab.mapick.api.roadmap.dto.marker.MarkerCreateRequest;
 import com.gitsunjaeab.mapick.api.roadmap.dto.marker.MarkerCustomImageDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.marker.MarkerDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.marker.MarkerUpdateRequest;
+import com.gitsunjaeab.mapick.api.roadmap.websocket.dto.MarkerSocketCreateRequest;
+import com.gitsunjaeab.mapick.api.roadmap.websocket.dto.MarkerSocketDTO;
+import com.gitsunjaeab.mapick.api.roadmap.websocket.dto.MarkerSocketUpdateRequest;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.Layer;
@@ -127,6 +130,26 @@ public class MarkerService {
     @Transactional
     public void delete(final Long id) {
         markerRepository.deleteById(id);
+    }
+
+    @Transactional
+    public Marker createFromSocket(MarkerSocketDTO dto) {
+        MarkerSocketCreateRequest socketRequest = MarkerSocketCreateRequest.fromSocketDTO(dto);
+        MarkerCreateRequest request = socketRequest.toMarkerCreateRequest();
+        this.create(dto.getUserId(), request);
+
+        return markerRepository.findByClientGeneratedUUID(dto.getTempUUID())
+                .orElseThrow(() -> new NotFoundException("UUID로 마커 조회 실패"));
+    }
+
+    @Transactional
+    public Marker updateFromSocket(MarkerSocketDTO dto) {
+        MarkerSocketUpdateRequest socketRequest = MarkerSocketUpdateRequest.fromSocketDTO(dto);
+        MarkerUpdateRequest request = socketRequest.toMarkerUpdateRequest();
+        this.update(dto.getMarkerId(), request);
+
+        return markerRepository.findById(dto.getMarkerId())
+                .orElseThrow(() -> new NotFoundException("마커 조회 실패"));
     }
 
     private void applyUpdateRequestToMarker(Marker marker, MarkerUpdateRequest request, MarkerCustomImage customImage) {

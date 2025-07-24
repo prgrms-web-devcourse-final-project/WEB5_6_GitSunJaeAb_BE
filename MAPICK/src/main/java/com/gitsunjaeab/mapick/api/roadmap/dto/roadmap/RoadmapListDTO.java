@@ -3,6 +3,7 @@ package com.gitsunjaeab.mapick.api.roadmap.dto.roadmap;
 import com.gitsunjaeab.mapick.api.category.dto.CategorySimpleDTO;
 import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.hashtag.HashtagDTO;
+import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerListDTO;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapType;
 
 import java.time.OffsetDateTime;
@@ -31,4 +32,5 @@ public class RoadmapListDTO {
     private OffsetDateTime createdAt;
     // 사용자가 북마크했는지 안 했는지
     private Boolean isBookmarked;
+//    private List<LayerListDTO> layers;
 }

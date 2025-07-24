@@ -5,15 +5,19 @@ import com.gitsunjaeab.mapick.domain.roadmap.Layer;
 import com.gitsunjaeab.mapick.domain.roadmap.Marker;
 import com.gitsunjaeab.mapick.domain.roadmap.MarkerCustomImage;
 import jakarta.validation.constraints.Size;
+
 import java.time.OffsetDateTime;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
-@AllArgsConstructor
 public class MarkerCreateRequest {
 
     @Size(max = 255)
@@ -32,23 +36,25 @@ public class MarkerCreateRequest {
 
     private Long customImageId;
 
+    private String tempUUID;
     private Integer markerSeq;
 
     private Long layerId;
 
     public Marker toEntity(Layer layer, Member member, MarkerCustomImage customImage) {
         return Marker.builder()
-            .name(name)
-            .description(description)
-            .customImage(customImage)
-            .address(address)
-            .lat(lat)
-            .lng(lng)
-            .color(color)
-            .markerSeq(markerSeq)
-            .layer(layer)
-            .member(member)
-            .createdAt(OffsetDateTime.now())
-            .build();
+                .name(name)
+                .description(description)
+                .customImage(customImage)
+                .address(address)
+                .lat(lat)
+                .lng(lng)
+                .color(color)
+                .markerSeq(markerSeq)
+                .layer(layer)
+                .member(member)
+                .clientGeneratedUUID(tempUUID)
+                .createdAt(OffsetDateTime.now())
+                .build();
     }
 }
