@@ -1,5 +1,6 @@
 package com.gitsunjaeab.mapick.api.comment;
 
+import com.gitsunjaeab.mapick.api.comment.dto.CommentAchievementResponse;
 import com.gitsunjaeab.mapick.api.comment.dto.CommentDTO;
 import com.gitsunjaeab.mapick.api.comment.dto.CommentListResponse;
 import com.gitsunjaeab.mapick.api.comment.dto.CommentRequest;
@@ -46,12 +47,22 @@ public class CommentController {
     @Operation(summary = "지도 댓글 생성", description = "[모든 사용자] 특정 로드맵/공유지도의 댓글 생성")
     public ResponseEntity<ApiResponse> createComment(
         @AuthenticationPrincipal Principal principal,
-        @RequestBody @Valid final CommentRequest request) {
+        @RequestBody @Valid final CommentRequest request
+    ) {
         Long memberId = principal.getMember().getId();
-        commentService.create(request, memberId);
+        CommentAchievementResponse response = commentService.create(request, memberId);
+
+        if (response.isAchievementUnlocked()) {
+            return ResponseEntity.ok(ApiResponse.of(
+                ResponseCode.OK,
+                "댓글 작성 완료! 업적 '" + response.getAchievement().getName() + "' 을(를) 획득했습니다.",
+                response
+            ));
+        }
 
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "댓글 작성 완료"));
     }
+
 
     // 특정 지도 댓글 조회
     @GetMapping("/roadmaps")
@@ -70,12 +81,22 @@ public class CommentController {
     @Operation(summary = "퀘스트 댓글 생성", description = "[모든 사용자] 특정 퀘스트의 댓글 생성")
     public ResponseEntity<ApiResponse> createQuestComment(
         @AuthenticationPrincipal Principal principal,
-        @RequestBody @Valid final CommentRequest request) {
+        @RequestBody @Valid final CommentRequest request
+    ) {
         Long memberId = principal.getMember().getId();
-        commentService.create(request, memberId);
+        CommentAchievementResponse response = commentService.create(request, memberId);
 
-        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "퀘스트 댓글 생성 완료"));
+        if (response.isAchievementUnlocked()) {
+            return ResponseEntity.ok(ApiResponse.of(
+                ResponseCode.OK,
+                "댓글 작성 완료! 업적 '" + response.getAchievement().getName() + "' 을(를) 획득했습니다.",
+                response
+            ));
+        }
+
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "댓글 작성 완료"));
     }
+
 
     // 특정 퀘스트 댓글 조회
     @GetMapping("/quests")

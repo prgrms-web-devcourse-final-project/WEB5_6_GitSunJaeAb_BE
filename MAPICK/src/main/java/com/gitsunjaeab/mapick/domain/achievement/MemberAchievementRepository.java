@@ -11,4 +11,5 @@ public interface MemberAchievementRepository extends JpaRepository<MemberAchieve
     @Query("select ma.achievement.id from MemberAchievement ma where ma.member.id = :memberId")
     List<Long> findAchievementIdsByMemberId(@Param("memberId") Long memberId);
 
+    boolean existsByMemberIdAndAchievementId(Long memberId, Long achievementId);
 }

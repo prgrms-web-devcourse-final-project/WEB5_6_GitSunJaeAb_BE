@@ -18,6 +18,12 @@ public class AchievementDTO {
 
     private String image;
 
+    public AchievementDTO(Achievement achievement) {
+        this.id = achievement.getId();
+        this.name = achievement.getName();
+        this.image = achievement.getImage();
+    }
+
     public static AchievementDTO of(Achievement achievement) {
         return new AchievementDTO(
             achievement.getId(),
