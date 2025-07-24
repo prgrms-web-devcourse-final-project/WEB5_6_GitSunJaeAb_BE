@@ -48,7 +48,7 @@ public class NotificationController {
             case ANNOUNCEMENT -> ResponseEntity.ok(
                 NotificationAnnouncementsListResponse.of(notifications, "공지 알림 조회"));
             case POST ->
-                ResponseEntity.ok(NotificationPostsListResponse.of(notifications, "게시글 알림 조회"));
+                ResponseEntity.ok(NotificationPostsListResponse.of(notifications, "북마크 알림 조회"));
             case QUEST ->
                 ResponseEntity.ok(NotificationQuestListResponse.of(notifications, "퀘스트 알림 조회"));
             case COMMENT ->

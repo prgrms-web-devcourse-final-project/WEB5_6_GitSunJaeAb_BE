@@ -8,6 +8,7 @@ import com.gitsunjaeab.mapick.domain.notification.NotificationRepository;
 import com.gitsunjaeab.mapick.domain.notification.NotificationType;
 import com.gitsunjaeab.mapick.domain.quest.MemberQuest;
 import com.gitsunjaeab.mapick.domain.quest.Quest;
+import com.gitsunjaeab.mapick.domain.roadmap.Bookmark;
 import com.gitsunjaeab.mapick.domain.roadmap.Layer;
 import com.gitsunjaeab.mapick.domain.roadmap.LayerLibrary;
 import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
@@ -57,7 +58,8 @@ public class NotificationService {
         LayerLibrary layerLibrary,
         Quest quest,
         MemberQuest memberQuest,
-        Comment comment // 댓글 연동
+        Comment comment,
+        Bookmark bookmark
     ) {
 
         String title = ""; // 알림 제목
@@ -70,8 +72,9 @@ public class NotificationService {
                     + "님이 " + layer.getName() + "을(를) 인용했어요!";
                 break;
             case POST:
-                title = "🔥 로드맵 인기 급상승";
-                content = "'"+ roadmap.getTitle() + " '로드맵이 인기폭발이에요!";
+                title = "🔖 로드맵 북마크 알림";
+                content = "'" + bookmark.getMember().getNickname() + "' 님이 내 '" + roadmap.getTitle()
+                    + "' 로드맵을 북마크 했어요!";
                 break;
             case QUEST:
                 title = "🎯 퀘스트 참여";
@@ -100,12 +103,13 @@ public class NotificationService {
         Notification notifications = Notification.builder()
             .title(title)
             .content(content)
-            .comment(comment) // 댓글 연동
+            .comment(comment)
             .member(target)
             .roadmap(roadmap)
             .layerLibrary(layerLibrary)
             .quest(quest)
             .memberQuest(memberQuest)
+            .bookmark(bookmark)
             .notificationType(type)
             .isRead(false)
             .createdAt(OffsetDateTime.now())
@@ -114,20 +118,6 @@ public class NotificationService {
         return notificationRepository.save(notifications);
     }
 
-    // 커스텀 알림
-    public Notification createCustomNotification(Member target, String title, String content,
-       Comment comment, NotificationType type) {
-        Notification notification = Notification.builder()
-            .title(title)
-            .content(content)
-            .comment(comment)
-            .member(target)
-            .notificationType(type)
-            .isRead(false)
-            .createdAt(OffsetDateTime.now())
-            .build();
-        return notificationRepository.save(notification);
-    }
 
     // 알림 개별 읽음 처리
     @Transactional
