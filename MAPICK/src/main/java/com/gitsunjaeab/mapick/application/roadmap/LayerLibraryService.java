@@ -110,8 +110,9 @@ public class LayerLibraryService {
             layer,                 // 레이어 정보
             savedLibrary,          // 찜 기록 정보
             null,                  // 퀘스트
-            null,                   // 멤버퀘스트
-            null
+            null,                  // 멤버퀘스트
+            null,                  // 댓글
+            null                   // 북마크
         );
 
         return savedLibrary;
@@ -204,7 +205,8 @@ public class LayerLibraryService {
             layerLibrary,          // 찜 기록 정보
             null,                  // 퀘스트
             null,                  // 멤버퀘스트
-            null                   // 댓글
+            null,                  // 댓글
+            null                   // 북마크
         );
 
         // 찜 기록 조회해서 반환

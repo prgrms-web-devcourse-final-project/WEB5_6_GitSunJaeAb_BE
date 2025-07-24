@@ -1,10 +1,12 @@
 package com.gitsunjaeab.mapick.application.roadmap;
 
-import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.RoadmapListResponse;
 import com.gitsunjaeab.mapick.api.roadmap.dto.bookmark.BookmarkDTO;
+import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.RoadmapListResponse;
+import com.gitsunjaeab.mapick.application.notification.NotificationService;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
+import com.gitsunjaeab.mapick.domain.notification.NotificationType;
 import com.gitsunjaeab.mapick.domain.roadmap.Bookmark;
 import com.gitsunjaeab.mapick.domain.roadmap.BookmarkRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
@@ -17,7 +19,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,12 +30,15 @@ public class BookmarkService {
     private final BookmarkRepository bookmarkRepository;
     private final RoadmapRepository roadmapRepository;
     private final MemberRepository memberRepository;
+    private final NotificationService notificationService;
 
     public BookmarkService(final BookmarkRepository bookmarkRepository,
-        final RoadmapRepository roadmapRepository, final MemberRepository memberRepository) {
+        final RoadmapRepository roadmapRepository, final MemberRepository memberRepository,
+        NotificationService notificationService) {
         this.bookmarkRepository = bookmarkRepository;
         this.roadmapRepository = roadmapRepository;
         this.memberRepository = memberRepository;
+        this.notificationService = notificationService;
     }
 
     @Transactional
@@ -53,6 +57,21 @@ public class BookmarkService {
         bookmark.setMember(member);
         bookmark.setCreatedAt(OffsetDateTime.now());
 
+        // === 알림 발송 로직 (북마크 시)===
+        Member roadmapOwner = roadmap.getMember();
+        if (!roadmapOwner.getId().equals(memberId)) {
+            notificationService.createNotification(
+                roadmapOwner,           // 알림 수신자
+                NotificationType.POST,  // 알림 타입
+                roadmap,                // 로드맵
+                null,                   // 레이어
+                null,                   // 레이어 라이브러리
+                null,                   // 퀘스트
+                null,                   // 멤버퀘스트
+                null,                   // 댓글
+                bookmark                // 북마크
+            );
+        }
         bookmarkRepository.save(bookmark);
     }
 

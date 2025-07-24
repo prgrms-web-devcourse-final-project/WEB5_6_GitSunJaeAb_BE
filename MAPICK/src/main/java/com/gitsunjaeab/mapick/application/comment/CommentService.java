@@ -61,7 +61,8 @@ public class CommentService {
                     null,                      // 레이어 라이브러리
                     null,                      // 퀘스트
                     null,                      // 멤버퀘스트
-                    savedComment               // 댓글 객체(발신인 추적)
+                    savedComment,              // 댓글
+                    null                       // 북마크
                 );
             }
 
@@ -81,7 +82,8 @@ public class CommentService {
                     null,                      // 레이어 라이브러리
                     quest,                     // 퀘스트
                     null,                      // 멤버퀘스트
-                    savedComment               // 댓글 객체(발신인 추적)
+                    savedComment,              // 댓글
+                    null                       // 북마크
                 );
             }
         }
