@@ -1,6 +1,7 @@
 package com.gitsunjaeab.mapick.api.search;
 
 import com.gitsunjaeab.mapick.api.search.dto.SearchHistoryDTO;
+import com.gitsunjaeab.mapick.api.search.dto.request.SearchRequest;
 import com.gitsunjaeab.mapick.api.search.dto.response.SearchListResponse;
 import com.gitsunjaeab.mapick.application.search.SearchHistoryService;
 import com.gitsunjaeab.mapick.application.search.SearchService;
@@ -12,10 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -35,15 +33,35 @@ public class SearchController {
         return ResponseEntity.ok(resultResponse);
     }
 
+    // 최신 검색 목록 저장
+    @PostMapping
+    @Operation(summary = "최신 검색 목록 저장", description = "최신 검색 목록 저장" )
+    public ResponseEntity<SearchListResponse> saveSearchHistory(@RequestBody SearchRequest searchRequest) {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Long memberId = Long.parseLong(auth.getName());
+
+        searchHistoryService.saveSearchHistory(memberId,searchRequest);
+
+        SearchListResponse response = SearchListResponse.save();
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(response);
+    }
+
     // 최신 검색 목록 조회
     @GetMapping("/list")
     @Operation(summary = "최신 검색 목록 조회", description = "최신 검색 목록 조회" )
     public ResponseEntity<SearchListResponse> getSearchHistories() {
 
 
-        List<SearchHistoryDTO> SearchHistoryDTOs = searchHistoryService.getSearchHistories();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Long memberId = Long.parseLong(auth.getName());
 
-        SearchListResponse response = SearchListResponse.get(SearchHistoryDTOs);
+        List<SearchHistoryDTO> searchHistoryDTOs = searchHistoryService.getSearchHistories(memberId);
+
+        SearchListResponse response = SearchListResponse.get(searchHistoryDTOs);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -52,8 +70,10 @@ public class SearchController {
 
     // 최신 검색 목록 삭제
 
+
     // 최신 검색 목록 전체 삭제
 
-    // 최신 검색 목록 저장
+
+
 
 }

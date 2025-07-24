@@ -18,9 +18,11 @@ public class SearchListResponse implements BaseApiResponse {
     private String code;
     private String message;
     private LocalDateTime timestamp;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<SearchHistoryDTO> SearchHistoryDTOs;
 
-//    @JsonInclude(JsonInclude.Include.NON_NULL)
+
 
 
     public static SearchListResponse get(List<SearchHistoryDTO> SearchHistoryDTOs) {
@@ -29,6 +31,33 @@ public class SearchListResponse implements BaseApiResponse {
                 "최근 검색어 목록 조회 완료",
                 LocalDateTime.now(),
                 SearchHistoryDTOs
+        );
+    }
+
+    public static SearchListResponse save() {
+        return new SearchListResponse(
+                ResponseCode.OK.getCode(),
+                "최근 검색어 저장 완료",
+                LocalDateTime.now(),
+                null
+        );
+    }
+
+    public static SearchListResponse remove() {
+        return new SearchListResponse(
+                ResponseCode.OK.getCode(),
+                "최근 검색어 삭제 완료",
+                LocalDateTime.now(),
+                null
+        );
+    }
+
+    public static SearchListResponse removeList() {
+        return new SearchListResponse(
+                ResponseCode.OK.getCode(),
+                "최근 검색어 목록 삭제 완료",
+                LocalDateTime.now(),
+                null
         );
     }
 

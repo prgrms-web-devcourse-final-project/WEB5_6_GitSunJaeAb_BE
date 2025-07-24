@@ -7,5 +7,7 @@ import java.util.List;
 
 public interface SearchRepository extends JpaRepository<Search, Long> {
 
-    List<Search> findAllByMemberIdAndDeletedAtIsNotNull(Long memberId);
+    List<Search> findAllByMemberIdAndDeletedAtIsNull(Long memberId);
+
+    Search findByMemberIdAndDeletedAtIsNull(Long memberId);
 }
