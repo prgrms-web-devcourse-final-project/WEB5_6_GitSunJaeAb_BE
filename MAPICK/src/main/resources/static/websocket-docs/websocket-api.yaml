@@ -1,0 +1,189 @@
+
+openapi: 3.0.3
+info:
+  title: MAPICK 실시간 공유지도 WebSocket API 명세
+  version: 1.0.0
+  description: |
+    이 문서는 실시간 협업 지도(Mapick)에서 사용되는 WebSocket 기반 메시징 API 명세입니다.
+    JWT 기반 인증을 사용하며, STOMP 프로토콜 위에서 메시지를 전송/수신합니다.
+
+    ✅ 메시지 전송 경로:
+    - /app/layer/update : 레이어 실시간 생성/수정/삭제 요청
+    - /app/marker/update : 마커 실시간 생성/수정/삭제 요청
+
+    ✅ 메시지 수신 경로 (구독):
+    - /sub/layer/roadmap/{roadmapId} : 레이어 변경사항 실시간 수신
+    - /sub/marker/roadmap/{roadmapId} : 마커 변경사항 실시간 수신
+
+    ✅ WebSocket 연결 예시:
+    - ws://localhost:8080/ws?token=eyJhbGci...
+    - SockJS + STOMP 조합 사용
+
+    ✅ 메시지 예시 (클라이언트 → 서버):
+    
+    LayerSocketDTO:
+    
+      {
+    
+        "action": "ADD",
+    
+        "tempId": "temp_123abc",
+    
+        "name": "관광지 마커",
+    
+        "description": "서울 주요 관광지 마커",
+    
+        "layerSeq": 1,
+    
+        "layerTime": "2025-07-26",
+    
+        "roadmapId": 10
+    
+      }
+
+
+    MarkerSocketDTO:
+    
+      {
+    
+        "action": "UPDATE",
+    
+        "markerId": 55,
+    
+        "name": "경복궁",
+    
+        "description": "대표적인 궁궐",
+    
+        "address": "서울 종로구",
+    
+        "lat": 37.5796,
+    
+        "lng": 126.977,
+    
+        "markerSeq": 2,
+    
+        "layerId": 3,
+    
+        "roadmapId": 10
+    
+      }
+
+servers:
+  - url: wss://your-domain.com/ws
+    description: 실서비스용 WebSocket 서버
+  - url: ws://localhost:8080/ws
+    description: 로컬 개발 서버
+
+paths:
+  /ws:
+    get:
+      summary: WebSocket 연결 (Faild to fetch 발생이 맞습니다)
+      description: |
+        클라이언트는 이 엔드포인트에 WebSocket 연결을 수립합니다.
+        연결 시 JWT Access Token을 쿼리 파라미터로 전달해야 합니다.
+        (Swagger에서는 WebSocket 테스트 안됩니다,,)
+      parameters:
+        - name: token
+          in: query
+          required: true
+          description: JWT Access Token
+          schema:
+            type: string
+      responses:
+        '101':
+          description: WebSocket 연결 성공 (Switching Protocols)
+        '401':
+          description: 인증 실패
+
+components:
+  schemas:
+    LayerSocketDTO:
+      type: object
+      required: [action, name, roadmapId]
+      properties:
+        action:
+          type: string
+          enum: [ADD, UPDATE, DELETE]
+          description: 동작 타입 (생성/수정/삭제)
+          example: ADD
+        layerId:
+          type: integer
+          description: 레이어 ID (수정/삭제 시 필요)
+          example: 101
+        tempId:
+          type: string
+          description: 클라이언트가 생성 시 사용하는 임시 식별자
+          example: temp_abc123
+        name:
+          type: string
+          description: 레이어 이름
+          example: 관광지 마커 레이어
+        description:
+          type: string
+          description: 레이어 설명
+          example: 서울 주요 관광지 마커를 포함
+        layerSeq:
+          type: integer
+          description: 레이어 표시 순서
+          example: 1
+        layerTime:
+          type: string
+          format: date
+          description: 레이어 타임라인용 날짜
+          example: 2025-07-26
+        roadmapId:
+          type: integer
+          description: 소속된 로드맵 ID
+          example: 10
+
+    MarkerSocketDTO:
+      type: object
+      required: [action, name, lat, lng, roadmapId]
+      properties:
+        action:
+          type: string
+          enum: [ADD, UPDATE, DELETE]
+          description: 동작 타입 (생성/수정/삭제)
+          example: ADD
+        markerId:
+          type: integer
+          description: 마커 ID (수정/삭제 시 필요)
+          example: 99
+        tempId:
+          type: string
+          description: 클라이언트가 생성 시 사용하는 임시 식별자
+          example: temp_marker_xyz
+        name:
+          type: string
+          description: 마커 이름
+          example: 경복궁
+        description:
+          type: string
+          description: 마커 설명
+          example: 대표적인 궁궐
+        address:
+          type: string
+          description: 마커 주소
+          example: 서울 종로구
+        lat:
+          type: number
+          format: double
+          description: 위도
+          example: 37.5796
+        lng:
+          type: number
+          format: double
+          description: 경도
+          example: 126.977
+        markerSeq:
+          type: integer
+          description: 마커 순서
+          example: 2
+        layerId:
+          type: integer
+          description: 소속된 레이어 ID
+          example: 3
+        roadmapId:
+          type: integer
+          description: 소속된 로드맵 ID
+          example: 10

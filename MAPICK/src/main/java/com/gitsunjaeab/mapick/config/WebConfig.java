@@ -17,6 +17,7 @@ public class WebConfig {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**") // 모든 경로에 대해 CORS를 허용
                     .allowedOrigins(
+                            "http://localhost:8080",
                             "http://localhost:63342",
                             "http://localhost:3000",
                             "https://localhost:3443",
