@@ -42,6 +42,6 @@ public class NotificationQuestListDTO {
 
     private OffsetDateTime readAt;
 
-    private Long 연관관계;
+    private Long questId;
 
 }

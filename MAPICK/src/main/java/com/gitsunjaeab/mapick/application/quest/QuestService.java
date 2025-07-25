@@ -24,6 +24,7 @@ import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import com.gitsunjaeab.mapick.util.ReferencedWarning;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Service;
@@ -86,7 +87,7 @@ public class QuestService {
         final Quest quest = new Quest();
         requestToEntity(questRequest, quest);
         quest.setMember(member); // 작성자
-        quest.setCreatedAt(OffsetDateTime.now());
+        quest.setCreatedAt(OffsetDateTime.now(ZoneId.of("Asia/Seoul")));
         questRepository.save(quest);
 
         // 퀘스트 첫 생성 업적
@@ -126,7 +127,7 @@ public class QuestService {
         }
 
         requestToEntity(questRequest, quest);
-        quest.setUpdatedAt(OffsetDateTime.now());
+        quest.setUpdatedAt(OffsetDateTime.now(ZoneId.of("Asia/Seoul")));
         questRepository.save(quest);
     }
 
@@ -138,7 +139,7 @@ public class QuestService {
             throw new RuntimeException("작성자만 퀘스트를 삭제 할 수 있습니다.");
         }
 
-        quest.setDeletedAt(OffsetDateTime.now()); // DeletedAt의 값이 들어있는 것을 통해 판단
+        quest.setDeletedAt(OffsetDateTime.now(ZoneId.of("Asia/Seoul"))); // DeletedAt의 값이 들어있는 것을 통해 판단
         questRepository.save(quest); // 변경 내용 명시적으로 저장
 //        questRepository.deleteById(id); //SoftDelete임을 가정하고 일단 주석처리
     }
