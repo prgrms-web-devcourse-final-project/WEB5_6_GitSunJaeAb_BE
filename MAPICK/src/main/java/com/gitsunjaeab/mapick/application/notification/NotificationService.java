@@ -1,18 +1,23 @@
 package com.gitsunjaeab.mapick.application.notification;
 
+import com.gitsunjaeab.mapick.domain.comment.Comment;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
 import com.gitsunjaeab.mapick.domain.notification.Notification;
 import com.gitsunjaeab.mapick.domain.notification.NotificationRepository;
 import com.gitsunjaeab.mapick.domain.notification.NotificationType;
 import com.gitsunjaeab.mapick.domain.quest.MemberQuest;
+import com.gitsunjaeab.mapick.domain.quest.Quest;
+import com.gitsunjaeab.mapick.domain.roadmap.Bookmark;
 import com.gitsunjaeab.mapick.domain.roadmap.Layer;
 import com.gitsunjaeab.mapick.domain.roadmap.LayerLibrary;
 import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
 import java.time.OffsetDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -34,38 +39,60 @@ public class NotificationService {
         return notificationRepository.findByNotificationTypeWithAllRelations(type);
     }
 
+    // 타입+멤버 조회 (본인 알림만)
+    public List<Notification> findByTypeAndMember(NotificationType type, Long memberId) {
+        if (type == NotificationType.ALL) {
+            return notificationRepository.findAllWithAllRelationsByMemberId(memberId);
+        }
+        return notificationRepository.findByNotificationTypeWithAllRelationsAndMemberId(type,
+            memberId);
+    }
+
     // 자동 알림 생성
+    @Transactional
     public Notification createNotification(
         Member target,
         NotificationType type,
         Roadmap roadmap,
         Layer layer,
         LayerLibrary layerLibrary,
-        MemberQuest quest) {
+        Quest quest,
+        MemberQuest memberQuest,
+        Comment comment,
+        Bookmark bookmark
+    ) {
 
-        String title = "";
-        String content = "";
+        String title = ""; // 알림 제목
+        String content = ""; // 알림 설명
 
         switch (type) {
             case FORK:
                 title = "🍴포크 발생!";
-                content = layer.getName() + "을(를) " + layerLibrary.getMember().getNickname() + "님이 인용했어요!";
+                content = layerLibrary.getMember().getNickname()
+                    + "님이 " + layer.getName() + "을(를) 인용했어요!";
                 break;
             case POST:
-                title = "🔥 로드맵 인기 급상승";
-                content = roadmap.getTitle() + " 로드맵이 인기폭발이에요!";
+                title = "🔖 로드맵 북마크 알림";
+                content = "'" + bookmark.getMember().getNickname() + "' 님이 내 '" + roadmap.getTitle()
+                    + "' 로드맵을 북마크 했어요!";
                 break;
             case QUEST:
                 title = "🎯 퀘스트 참여";
-                content = "퀘스트에 " + quest.getMember().getNickname() + "님이 참여했어요!";
+                content = "내 퀘스트에 '" + quest.getMember().getNickname() + "'님이 참여했어요!";
                 break;
             case COMMENT:
-                title = "💬 새로운 댓글!";
-                content = "내 로드맵 " + roadmap.getTitle() + "에 댓글이 달렸어요!";
+                if (roadmap != null && roadmap.getTitle() != null) {
+                    title = "💬 로드맵 댓글 알림";
+                    content = "내 로드맵 '" + roadmap.getTitle() + "'에 '" + comment.getMember().getNickname() + "'님이 댓글을 남겼어요!";
+                } else if (quest != null && quest.getTitle() != null) {
+                    title = "💬 퀘스트 댓글 알림";
+                    content = "내 퀘스트 '" + quest.getTitle() + "'에 '" + comment.getMember().getNickname() + "'님이 댓글을 남겼어요!";
+                }
                 break;
             case ZZIM:
                 title = "⭐ 찜 알림";
-                content = layerLibrary.getMember().getNickname() + "님이 내 " + layer.getName() + "을(를) 찜했어요!";
+                content = layerLibrary.getMember().getNickname() + "님이 내 " + layer.getName()
+                    + "을(를) 찜했어요!";
                 break;
             default:
                 title = "🔔 기타 알림";
@@ -76,10 +103,13 @@ public class NotificationService {
         Notification notifications = Notification.builder()
             .title(title)
             .content(content)
+            .comment(comment)
             .member(target)
             .roadmap(roadmap)
             .layerLibrary(layerLibrary)
-            .memberQuest(quest)
+            .quest(quest)
+            .memberQuest(memberQuest)
+            .bookmark(bookmark)
             .notificationType(type)
             .isRead(false)
             .createdAt(OffsetDateTime.now())
@@ -88,16 +118,42 @@ public class NotificationService {
         return notificationRepository.save(notifications);
     }
 
-    // 커스텀 알림
-    public Notification createCustomNotification(Member target, String title, String content, NotificationType type) {
-        Notification notification = Notification.builder()
-            .title(title)
-            .content(content)
-            .member(target)
-            .notificationType(type)
-            .isRead(false)
-            .createdAt(OffsetDateTime.now())
-            .build();
+
+    // 알림 개별 읽음 처리
+    @Transactional
+    public Notification readNotification(Long notificationId, Long memberId) {
+        Notification notification = notificationRepository.findByIdWithAllRelations(notificationId)
+            .orElseThrow(() -> new RuntimeException("알림이 존재하지 않습니다."));
+        if (!notification.getMember().getId().equals(memberId)) {
+            throw new RuntimeException("본인 알림만 읽음 처리할 수 있습니다.");
+        }
+        notification.setRead(true);
+        notification.setReadAt(java.time.OffsetDateTime.now());
         return notificationRepository.save(notification);
     }
+
+    // ====== 읽음 후 1분 후 soft delete (테스트용) ======
+    @Scheduled(cron = "0 * * * * *") // 매 분 0초마다 실행
+    @Transactional
+    public void deleteReadNotificationsAfterOneMinute() {
+        OffsetDateTime oneMinuteAgo = OffsetDateTime.now().minusMinutes(1);
+        List<Notification> notifications = notificationRepository.findReadBeforeAndNotDeletedWithAllRelations(
+            oneMinuteAgo);
+        for (Notification n : notifications) {
+            n.setDeletedAt(OffsetDateTime.now());
+        }
+        notificationRepository.saveAll(notifications);
+    }
+
+    // ====== 읽음 후 1일 후 soft delete (배포용, 주석처리) ======
+//     @Scheduled(cron = "0 0 * * * *") // 매시 정각마다 실행
+//     @Transactional
+//     public void deleteReadNotificationsAfterOneDay() {
+//         OffsetDateTime oneDayAgo = OffsetDateTime.now().minusDays(1);
+//         List<Notification> notifications = notificationRepository.findReadBeforeAndNotDeletedWithAllRelations(oneDayAgo);
+//         for (Notification n : notifications) {
+//             n.setDeletedAt(OffsetDateTime.now());
+//         }
+//         notificationRepository.saveAll(notifications);
+//     }
 }

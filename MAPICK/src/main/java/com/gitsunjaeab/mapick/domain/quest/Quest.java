@@ -53,6 +53,9 @@ public class Quest {
     @Column(nullable = false)
     private Boolean isActive;
 
+    @Column(nullable = false)
+    private OffsetDateTime deadline;
+
     @Column
     private OffsetDateTime createdAt;
 

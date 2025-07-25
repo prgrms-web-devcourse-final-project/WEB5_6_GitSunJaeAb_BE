@@ -73,7 +73,6 @@ public class AdminAnnouncementService {
         if (!member.hasRole(Role.ROLE_ADMIN)) {
             throw new CommonException(ResponseCode.FORBIDDEN);
         }
-        // 공지 fetch join으로 조회
         Announcement announcement = adminAnnouncementRepository.findAllWithMember().stream()
             .filter(a -> a.getId().equals(announcementId))
             .findFirst()
@@ -95,7 +94,6 @@ public class AdminAnnouncementService {
         if (!member.hasRole(Role.ROLE_ADMIN)) {
             throw new CommonException(ResponseCode.FORBIDDEN);
         }
-        // 공지 fetch join으로 조회
         Announcement announcement = adminAnnouncementRepository.findAllWithMember().stream()
             .filter(a -> a.getId().equals(announcementId))
             .findFirst()
@@ -116,7 +114,16 @@ public class AdminAnnouncementService {
     // 조회
     @Transactional(readOnly = true)
     public List<Announcement> findAll() {
-        // fetch join으로 member까지 한 번에 로딩
         return adminAnnouncementRepository.findAllWithMember();
+    }
+
+    // 공지 상세 조회
+    public Announcement findById(Long id) {
+        Announcement announcement = adminAnnouncementRepository.findByIdWithMember(id)
+            .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND));
+        if (announcement.getDeletedAt() != null) {
+            throw new CommonException(ResponseCode.NOT_FOUND);
+        }
+        return announcement;
     }
 }

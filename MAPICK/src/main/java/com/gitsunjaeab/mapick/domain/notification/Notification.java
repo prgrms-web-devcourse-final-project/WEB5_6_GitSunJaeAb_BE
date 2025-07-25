@@ -1,8 +1,11 @@
 package com.gitsunjaeab.mapick.domain.notification;
 
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
+import com.gitsunjaeab.mapick.domain.comment.Comment;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.quest.MemberQuest;
+import com.gitsunjaeab.mapick.domain.quest.Quest;
+import com.gitsunjaeab.mapick.domain.roadmap.Bookmark;
 import com.gitsunjaeab.mapick.domain.roadmap.LayerLibrary;
 import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
 import com.gitsunjaeab.mapick.infra.converter.OffsetDateTimeConverter;
@@ -65,10 +68,16 @@ public class Notification {
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "comment_id")
+    private Comment comment; // 댓글 내용 (COMMENT Type 에서만 사용)
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     @ToString.Include
     private Member member;
 
+
+    @Builder.Default
     @Column(nullable = false)
     private boolean isRead = false; // 기본값 : 읽지 않음
 
@@ -108,13 +117,20 @@ public class Notification {
     private LayerLibrary layerLibrary;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "quest_id")
+    private Quest quest;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_quest_id")
     private MemberQuest memberQuest;
 
-    // 공지(Announcement) 연관관계 추가
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "announcement_id")
     private Announcement announcement;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "bookmark_id")
+    private Bookmark bookmark;
 
 
     // ===== UTIL =====
@@ -122,7 +138,8 @@ public class Notification {
     @PrePersist
     private void validateBeforeSave() {
         if (notificationType == NotificationType.ALL) {
-            throw new CommonException(ResponseCode.SAVE_FAILED, "NotificationType.All 은 저장할 수 없습니다.");
+            throw new CommonException(ResponseCode.SAVE_FAILED,
+                "NotificationType.All 은 저장할 수 없습니다.");
         }
     }
 

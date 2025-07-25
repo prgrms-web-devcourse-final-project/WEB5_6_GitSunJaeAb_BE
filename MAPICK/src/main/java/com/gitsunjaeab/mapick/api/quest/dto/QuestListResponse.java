@@ -39,6 +39,7 @@ public class QuestListResponse implements BaseApiResponse {
                 q.getTitle(),
                 q.getQuestImage(),
                 q.getDescription(),
+                q.getDeadline(),
                 q.getIsActive(),
                 q.getCreatedAt(),
                 q.getCompletedAt(),
@@ -63,6 +64,7 @@ public class QuestListResponse implements BaseApiResponse {
         private String title;
         private String questImage;
         private String description;
+        private OffsetDateTime deadline;
         private Boolean isActive;
         private OffsetDateTime createdAt;
         private OffsetDateTime completedAt;

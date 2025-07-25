@@ -28,6 +28,8 @@ public class QuestDTO {
 
     private String description;
 
+    private OffsetDateTime deadline;
+
     @NotNull
     @JsonProperty("isActive")
     private Boolean isActive;
@@ -47,6 +49,7 @@ public class QuestDTO {
         this.title = quest.getTitle();
         this.questImage = quest.getQuestImage();
         this.description = quest.getDescription();
+        this.deadline = quest.getDeadline();
         this.isActive = quest.getIsActive();
         this.createdAt = quest.getCreatedAt();
         this.completedAt = quest.getCompletedAt();

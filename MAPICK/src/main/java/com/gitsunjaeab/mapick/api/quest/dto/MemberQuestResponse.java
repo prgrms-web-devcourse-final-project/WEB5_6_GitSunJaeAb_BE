@@ -17,24 +17,22 @@ import java.time.OffsetDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-//implements BaseApiResponse
 public class MemberQuestResponse {
 
-    // 커스텀 응답 필드들
-//    private String code;
-//    private String message;
-//    private LocalDateTime timestamp;
+
     
     // 퀘스트 참여 데이터 필드들
     private Long id;
     
     @NotNull
-    private String status;
-    
-    private String answer;
+    private Boolean status;
     
     private String isRecognized;
-    
+
+    private String title;
+
+    private String answer;
+
     private OffsetDateTime createdAt;
     
     private OffsetDateTime completedAt;
@@ -42,45 +40,59 @@ public class MemberQuestResponse {
     private OffsetDateTime updatedAt;
     
     private OffsetDateTime deletedAt;
-    
-//    private Long member;
+
+    private OffsetDateTime submitAt;
+
+    private String imageUrl;
+
+    private String description;
 
     private MemberSimpleDTO member;
+
     private Long quest;
 
-    // 퀘스트 참여 생성 응답 
+   //private QuestDTO quest;
+
+
+    // 퀘스트 참여 생성 응답
     public static MemberQuestResponse ofCreate(MemberQuest memberQuest) {
         return new MemberQuestResponse(
-//            ResponseCode.OK.getCode(),
-//            "퀘스트 참여 생성 완료",
-//            LocalDateTime.now(),
             memberQuest.getId(),
             memberQuest.getStatus(),
-            memberQuest.getAnswer(),
             memberQuest.getIsRecognized(),
+            memberQuest.getTitle(),
+            memberQuest.getAnswer(),
             memberQuest.getCreatedAt(),
             memberQuest.getCompletedAt(),
             memberQuest.getUpdatedAt(),
             memberQuest.getDeletedAt(),
+            memberQuest.getSubmitAt(),
+            memberQuest.getImageUrl(),
+            memberQuest.getDescription(),
             memberQuest.getMember() != null ? new MemberSimpleDTO(memberQuest.getMember()) : null,
             memberQuest.getQuest() != null ? memberQuest.getQuest().getId() : null
+
+            //향후 프론트 요청에 따라 수정 할 예정
+            //memberQuest.getQuest() != null ? new QuestDTO(memberQuest.getQuest()) : null
+
         );
     }
 
     // 퀘스트 참여 조회 응답 (커스텀 응답 + 데이터)
     public static MemberQuestResponse ofGetDetail(MemberQuestResponse memberQuestResponse) {
         return new MemberQuestResponse(
-//            ResponseCode.OK.getCode(),
-//            "퀘스트 참여 조회 완료",
-//            LocalDateTime.now(),
             memberQuestResponse.getId(),
             memberQuestResponse.getStatus(),
-            memberQuestResponse.getAnswer(),
             memberQuestResponse.getIsRecognized(),
+            memberQuestResponse.getTitle(),
+            memberQuestResponse.getAnswer(),
             memberQuestResponse.getCreatedAt(),
             memberQuestResponse.getCompletedAt(),
             memberQuestResponse.getUpdatedAt(),
             memberQuestResponse.getDeletedAt(),
+            memberQuestResponse.getSubmitAt(),
+            memberQuestResponse.getImageUrl(),
+            memberQuestResponse.getDescription(),
             memberQuestResponse.getMember(),
             memberQuestResponse.getQuest()
         );
@@ -89,17 +101,18 @@ public class MemberQuestResponse {
     // 퀘스트 참여 목록 조회 응답 (커스텀 응답 + 데이터)
     public static MemberQuestResponse ofGetList(MemberQuestResponse memberQuestResponse) {
         return new MemberQuestResponse(
-//            ResponseCode.OK.getCode(),
-//            "퀘스트 참여 목록 조회 완료",
-//            LocalDateTime.now(),
             memberQuestResponse.getId(),
             memberQuestResponse.getStatus(),
-            memberQuestResponse.getAnswer(),
             memberQuestResponse.getIsRecognized(),
+            memberQuestResponse.getTitle(),
+            memberQuestResponse.getAnswer(),
             memberQuestResponse.getCreatedAt(),
             memberQuestResponse.getCompletedAt(),
             memberQuestResponse.getUpdatedAt(),
             memberQuestResponse.getDeletedAt(),
+            memberQuestResponse.getSubmitAt(),
+            memberQuestResponse.getImageUrl(),
+            memberQuestResponse.getDescription(),
             memberQuestResponse.getMember(),
             memberQuestResponse.getQuest()
         );

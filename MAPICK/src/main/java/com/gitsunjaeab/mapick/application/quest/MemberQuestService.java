@@ -10,6 +10,8 @@ import com.gitsunjaeab.mapick.domain.quest.QuestRepository;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
 import com.gitsunjaeab.mapick.util.NotFoundException;
+import feign.Request;
+import java.time.OffsetDateTime;
 import java.util.List;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -21,8 +23,11 @@ public class MemberQuestService {
     private final QuestRepository questRepository;
     private final MemberRepository memberRepository;
 
-    public MemberQuestService(final MemberQuestRepository memberQuestRepository,
-            final QuestRepository questRepository, final MemberRepository memberRepository) {
+    public MemberQuestService(
+        final MemberQuestRepository memberQuestRepository,
+        final QuestRepository questRepository,
+        final MemberRepository memberRepository
+    ) {
         this.memberQuestRepository = memberQuestRepository;
         this.questRepository = questRepository;
         this.memberRepository = memberRepository;
@@ -51,20 +56,34 @@ public class MemberQuestService {
                 .map(this::toResponse)
                 .orElseThrow(NotFoundException::new);
     }
+    //-------------------------------------------------------------------------
 
-    // 퀘스트 참여 신청
-    public Long create(final MemberQuestRequest request) {
+    public Long create(final MemberQuestRequest request, final Member member){
         final MemberQuest memberQuest = new MemberQuest();
-        requestToEntity(request, memberQuest);
+
+        requestToEntity(request, memberQuest); // 기본 데이터 입력
+        memberQuest.setMember(member); // 로그인된 사용자 정보 직접 주입
+        memberQuest.setSubmitAt(OffsetDateTime.now()); // 현재 시간 세팅
+
         return memberQuestRepository.save(memberQuest).getId();
     }
-    
-    // 퀘스트 참여 신청 후 엔티티 반환
-    public MemberQuest createAndReturnEntity(final MemberQuestRequest request) {
-        final MemberQuest memberQuest = new MemberQuest();
-        requestToEntity(request, memberQuest);
-        return memberQuestRepository.save(memberQuest);
-    }
+
+//    ----------------------------------------------------------------------
+//    // 퀘스트 참여 신청
+//    public Long create(final MemberQuestRequest request) {
+//        final MemberQuest memberQuest = new MemberQuest();
+//        requestToEntity(request, memberQuest);
+//        return memberQuestRepository.save(memberQuest).getId();
+//    }
+//
+//    // 퀘스트 참여 신청 후 엔티티 반환
+//    public MemberQuest createAndReturnEntity(final MemberQuestRequest request) {
+//        final MemberQuest memberQuest = new MemberQuest();
+//        requestToEntity(request, memberQuest);
+//        return memberQuestRepository.save(memberQuest);
+//    }
+//---------------------------------------------------------------------------
+
 
     // 참여 정보 수정
     public void update(final Long id, final MemberQuestRequest request) {
@@ -84,8 +103,12 @@ public class MemberQuestService {
         MemberQuestResponse response = new MemberQuestResponse();
         response.setId(memberQuest.getId());
         response.setStatus(memberQuest.getStatus());
+        response.setTitle(memberQuest.getTitle());
         response.setAnswer(memberQuest.getAnswer());
         response.setIsRecognized(memberQuest.getIsRecognized());
+        response.setImageUrl(memberQuest.getImageUrl());
+        response.setDescription(memberQuest.getDescription());
+        response.setSubmitAt(memberQuest.getSubmitAt());
         response.setCreatedAt(memberQuest.getCreatedAt());
         response.setCompletedAt(memberQuest.getCompletedAt());
         response.setUpdatedAt(memberQuest.getUpdatedAt());
@@ -98,15 +121,24 @@ public class MemberQuestService {
     // Request → Entity 변환
     private void requestToEntity(final MemberQuestRequest request, final MemberQuest memberQuest) {
         // 기본 상태 설정
-        memberQuest.setStatus("PENDING"); // 대기 상태로 초기화
-        memberQuest.setAnswer(""); // 참여 신청 시에는 빈 답변으로 설정 (증빙 제출 시 업데이트)
+        memberQuest.setStatus(true); // 대기 상태로 초기화
         memberQuest.setIsRecognized("N"); // 인정 여부 초기값
-        
+
+        //요청값 반영
+        memberQuest.setTitle(request.getTitle());
+        memberQuest.setAnswer(request.getAnswer());
+        memberQuest.setImageUrl(request.getEvidenceImage());
+        memberQuest.setDescription(request.getDescription());
+        memberQuest.setSubmitAt(java.time.OffsetDateTime.now());
+
+
         // 연관 엔티티 설정
         final Quest quest = questRepository.findById(request.getQuest())
                 .orElseThrow(() -> new NotFoundException("quest not found"));
         memberQuest.setQuest(quest);
-        
+
+//        memberQuest.setMember(member);
+//        //기존 코드
         final Member member = memberRepository.findById(request.getMember())
                 .orElseThrow(() -> new NotFoundException("member not found"));
         memberQuest.setMember(member);
