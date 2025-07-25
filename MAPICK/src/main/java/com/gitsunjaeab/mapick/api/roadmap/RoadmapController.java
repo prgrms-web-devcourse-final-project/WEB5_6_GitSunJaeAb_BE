@@ -140,8 +140,17 @@ public class RoadmapController {
         }
 
         Long memberId = principal.getMember().getId();
-        Long roadmapId = roadmapService.createRoadmap(request, memberId, imageFile);
-        return ResponseEntity.ok(RoadmapCreateResponse.of(ResponseCode.OK, "로드맵 생성 완료", roadmapId));
+        RoadmapAchievementResponse response = roadmapService.createRoadmap(request, memberId, imageFile);
+
+        if (response.isAchievementUnlocked()) {
+            return ResponseEntity.ok(RoadmapCreateResponse.of(
+                ResponseCode.OK,
+                "로드맵 생성 완료! 업적 '" + response.getAchievement().getName() + "' 을(를) 획득했습니다.",
+                    response.getRoadmapId()
+            ));
+        }
+
+        return ResponseEntity.ok(RoadmapCreateResponse.of(ResponseCode.OK, "로드맵 생성 완료", response.getRoadmapId()));
     }
 
     // 개인 로드맵 수정 NOTE 완

@@ -1,35 +1,52 @@
 package com.gitsunjaeab.mapick.application.roadmap;
 
+import com.gitsunjaeab.mapick.api.achievement.dto.AchievementDTO;
 import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.*;
 import com.gitsunjaeab.mapick.api.roadmap.dto.hashtag.HashtagRequest;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
+import com.gitsunjaeab.mapick.domain.achievement.Achievement;
+import com.gitsunjaeab.mapick.domain.achievement.AchievementRepository;
+import com.gitsunjaeab.mapick.domain.achievement.MemberAchievement;
+import com.gitsunjaeab.mapick.domain.achievement.MemberAchievementRepository;
 import com.gitsunjaeab.mapick.domain.category.Category;
 import com.gitsunjaeab.mapick.domain.category.CategoryRepository;
+import com.gitsunjaeab.mapick.domain.comment.Comment;
+import com.gitsunjaeab.mapick.domain.comment.CommentRepository;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
 import com.gitsunjaeab.mapick.domain.report.Report;
 import com.gitsunjaeab.mapick.domain.report.ReportRepository;
-import com.gitsunjaeab.mapick.domain.roadmap.*;
-import com.gitsunjaeab.mapick.domain.comment.Comment;
-import com.gitsunjaeab.mapick.domain.comment.CommentRepository;
+import com.gitsunjaeab.mapick.domain.roadmap.Bookmark;
+import com.gitsunjaeab.mapick.domain.roadmap.BookmarkRepository;
+import com.gitsunjaeab.mapick.domain.roadmap.Hashtag;
+import com.gitsunjaeab.mapick.domain.roadmap.HashtagRepository;
+import com.gitsunjaeab.mapick.domain.roadmap.Layer;
+import com.gitsunjaeab.mapick.domain.roadmap.LayerLibraryRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.LayerLibraryRepository.RoadmapCitationProjection;
+import com.gitsunjaeab.mapick.domain.roadmap.LayerRepository;
+import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
+import com.gitsunjaeab.mapick.domain.roadmap.RoadmapEditor;
+import com.gitsunjaeab.mapick.domain.roadmap.RoadmapEditorRepository;
+import com.gitsunjaeab.mapick.domain.roadmap.RoadmapHashtagRelation;
+import com.gitsunjaeab.mapick.domain.roadmap.RoadmapHashtagRelationRepository;
+import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
+import com.gitsunjaeab.mapick.domain.roadmap.RoadmapType;
 import com.gitsunjaeab.mapick.infra.auth.AuthHelper;
+import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
 import com.gitsunjaeab.mapick.infra.error.exceptions.InvalidRoadmapTypeException;
 import com.gitsunjaeab.mapick.infra.error.exceptions.UnauthenticatedException;
 import com.gitsunjaeab.mapick.infra.storage.SupabaseStorageService;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import com.gitsunjaeab.mapick.util.ReferencedWarning;
 import jakarta.persistence.EntityNotFoundException;
-
+import jakarta.validation.Valid;
 import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +76,10 @@ public class RoadmapService {
     private final HashtagRepository hashtagRepository;
     private final AuthHelper authHelper;
     private final SupabaseStorageService supabaseStorageService;
+    @Autowired
+    private MemberAchievementRepository memberAchievementRepository;
+    @Autowired
+    private AchievementRepository achievementRepository;
 
     // 공유 지도 생성
     @Transactional
@@ -168,7 +189,7 @@ public class RoadmapService {
 
     // 개인 로드맵 생성
     @Transactional
-    public Long createRoadmap(@Valid RoadmapRequest request, Long memberId,  MultipartFile imageFile) {
+    public RoadmapAchievementResponse createRoadmap(@Valid RoadmapRequest request, Long memberId ,MultipartFile imageFile) {
         Category category = categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카테고리입니다."));
 
@@ -211,7 +232,30 @@ public class RoadmapService {
             roadmapHashtagRelationRepository.saveAll(roadmap.getRoadmapMapHashtags());
         }
 
-        return roadmap.getId();
+        // 로드맵 첫 생성 업적
+        Long roadmapCount = roadmapRepository.countByMemberId(memberId);
+        final Long ACHIEVEMENT_ID = 100L;
+
+        if (roadmapCount == 1) {
+            boolean alreadyHas = memberAchievementRepository.existsByMemberIdAndAchievementId(memberId, ACHIEVEMENT_ID);
+            if (!alreadyHas) {
+                Member user = memberRepository.findById(memberId)
+                    .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND, "해당하는 회원이 없습니다."));
+                Achievement achievement = achievementRepository.findById(ACHIEVEMENT_ID)
+                    .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND, "해당하는 업적이 없습니다."));
+
+                memberAchievementRepository.save(
+                    MemberAchievement.builder()
+                        .member(user)
+                        .achievement(achievement)
+                        .achievedAt(OffsetDateTime.now())
+                        .build()
+                );
+                return new RoadmapAchievementResponse(roadmap.getId(), true, new AchievementDTO(achievement));
+            }
+        }
+
+        return new RoadmapAchievementResponse(roadmap.getId(), false, null);
     }
 
     // 개인 로드맵 수정
