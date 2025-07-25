@@ -136,9 +136,9 @@ public class MarkerService {
     public Marker createFromSocket(MarkerSocketDTO dto) {
         MarkerSocketCreateRequest socketRequest = MarkerSocketCreateRequest.fromSocketDTO(dto);
         MarkerCreateRequest request = socketRequest.toMarkerCreateRequest();
-        this.create(dto.getUserId(), request);
+        this.create(dto.getMemberId(), request);
 
-        return markerRepository.findByClientGeneratedUUID(dto.getTempUUID())
+        return markerRepository.findFirstByClientGeneratedUUIDOrderByIdDesc(dto.getTempUUID())
                 .orElseThrow(() -> new NotFoundException("UUID로 마커 조회 실패"));
     }
 
@@ -163,5 +163,17 @@ public class MarkerService {
         marker.setCustomImage(customImage);
 
         marker.setUpdatedAt(OffsetDateTime.now());
+    }
+
+    public Long findRoadmapIdByLayerId(Long layerId) {
+        Layer layer = layerRepository.findById(layerId)
+                .orElseThrow(() -> new RuntimeException("💥 해당 Layer를 찾을 수 없습니다. layerId: " + layerId));
+
+        return layer.getRoadmap().getId();
+    }
+
+    public Marker findById(Long markerId) {
+        return markerRepository.findById(markerId)
+                .orElseThrow(() -> new RuntimeException("💥 해당 Marker를 찾을 수 없습니다. markerId: " + markerId));
     }
 }

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <title>WebSocket Marker & Layer 테스트</title>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+</head>
+<body>
+<h2>🚀 WebSocket Marker & Layer 실시간 테스트</h2>
+
+<div>
+    <label>📍 Roadmap ID: </label>
+    <input type="text" id="roadmapId" value="" />
+    <label>JWT Token:</label>
+    <input type="text" id="jwtToken" style="width: 400px;" />
+    <button onclick="connect()">🔌 Connect</button>
+</div>
+
+<hr />
+
+<div>
+    <h3>📄 레이어 생성</h3>
+    <input type="text" id="layerName" placeholder="레이어 이름" />
+    <input type="text" id="layerDescription" placeholder="레이어 설명" />
+    <input type="text" id="layerSeq" placeholder="레이어 순서 (숫자)" />
+    <input type="text" id="layerTime" placeholder="YYYY-MM-DD" />
+    <input type="text" id="memberId" placeholder="사용자 ID" />
+    <button onclick="createLayer()">🧱 레이어 생성</button>
+</div>
+
+<hr />
+
+<div>
+    <h3>📄 마커 작업 전송</h3>
+    <select id="action">
+        <option value="ADD">ADD</option>
+        <option value="UPDATE">UPDATE</option>
+        <option value="DELETE">DELETE</option>
+    </select><br/>
+
+    <input type="text" id="markerId" placeholder="markerId (삭제/수정용)" />
+    <input type="text" id="layerId" placeholder="layerId (필수)" />
+    <input type="text" id="name" placeholder="name" />
+    <input type="text" id="lat" placeholder="latitude" />
+    <input type="text" id="lng" placeholder="longitude" />
+    <input type="text" id="description" placeholder="description (optional)" />
+    <input type="text" id="address" placeholder="address (optional)" />
+    <input type="text" id="color" placeholder="color (ex: #FF0000)" />
+    <input type="number" id="markerSeq" placeholder="markerSeq (숫자)" />
+    <button onclick="sendMarker()">🚀 Send Marker</button>
+</div>
+
+<hr />
+
+<div>
+    <h3>📥 수신 로그</h3>
+    <pre id="log" style="background: #f4f4f4; padding: 10px; max-height: 300px; overflow-y: auto;"></pre>
+</div>
+
+<script>
+    let stompClient;
+
+    function connect() {
+        const roadmapId = document.getElementById("roadmapId").value;
+        const token = document.getElementById("jwtToken").value;
+
+        if (!token || !roadmapId) {
+            alert("JWT 토큰과 Roadmap ID를 입력해주세요.");
+            return;
+        }
+
+        const socket = new WebSocket(`ws://localhost:8080/ws?token=${token}`);
+        stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, function () {
+            log("\u2705 연결됨");
+
+            stompClient.subscribe(`/sub/marker/roadmap/${roadmapId}`, (message) => {
+                const data = JSON.parse(message.body);
+                log("\ud83d\udce5 [Marker] 수신: " + JSON.stringify(data, null, 2));
+            });
+
+            stompClient.subscribe(`/sub/layer/roadmap/${roadmapId}`, (message) => {
+                const data = JSON.parse(message.body);
+                log("\ud83d\udce5 [Layer] 수신: " + JSON.stringify(data, null, 2));
+            });
+        }, function (error) {
+            log("\u274c 연결 실패: " + error);
+        });
+    }
+
+    function createLayer() {
+        const name = document.getElementById("layerName").value;
+        const description = document.getElementById("layerDescription").value;
+        const layerSeq = document.getElementById("layerSeq").value;
+        const layerTime = document.getElementById("layerTime").value;
+        const roadmapId = document.getElementById("roadmapId").value;
+        const memberId = document.getElementById("memberId").value;
+
+        if (!roadmapId || !memberId || !name) {
+            alert("레이어 생성 시 roadmapId, memberId, name은 필수입니다.");
+            return;
+        }
+
+        const socketPayload = {
+            action: "ADD",
+            tempId: crypto.randomUUID(),
+            name,
+            description,
+            layerSeq: parseInt(layerSeq) || 1,
+            layerTime,
+            memberId: parseInt(memberId),
+            roadmapId: parseInt(roadmapId)
+        };
+
+        stompClient.send("/app/layer/update", {}, JSON.stringify(socketPayload));
+        log("\ud83d\udcc4 [Layer] 전송: " + JSON.stringify(socketPayload, null, 2));
+    }
+
+    function sendMarker() {
+        const action = document.getElementById("action").value;
+        const markerId = document.getElementById("markerId").value;
+        const layerId = document.getElementById("layerId").value;
+        const name = document.getElementById("name").value;
+        const lat = parseFloat(document.getElementById("lat").value);
+        const lng = parseFloat(document.getElementById("lng").value);
+        const description = document.getElementById("description").value;
+        const address = document.getElementById("address").value;
+        const color = document.getElementById("color").value;
+        const markerSeq = parseInt(document.getElementById("markerSeq").value) || 1;
+        const userId = parseInt(document.getElementById("memberId").value);
+        const roadmapId = document.getElementById("roadmapId").value;
+
+        if (!layerId || isNaN(userId) || !roadmapId) {
+            alert("layerId, memberId, roadmapId는 필수입니다.");
+            return;
+        }
+
+        const payload = {
+            action,
+            markerId: markerId ? parseInt(markerId) : null,
+            tempUUID: crypto.randomUUID(),
+            name,
+            description,
+            address,
+            color,
+            lat,
+            lng,
+            markerSeq,
+            layerId: parseInt(layerId),
+            userId,
+            roadmapId: parseInt(roadmapId)
+        };
+
+        stompClient.send("/app/marker/update", {}, JSON.stringify(payload));
+        log("\ud83d\ude80 [Marker] 전송: " + JSON.stringify(payload, null, 2));
+    }
+
+    function log(message) {
+        const logArea = document.getElementById("log");
+        logArea.textContent += message + "\n";
+        logArea.scrollTop = logArea.scrollHeight;
+    }
+</script>
+</body>
+</html>

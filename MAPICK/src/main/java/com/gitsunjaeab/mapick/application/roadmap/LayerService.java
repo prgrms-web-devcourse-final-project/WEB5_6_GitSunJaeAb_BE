@@ -2,6 +2,7 @@ package com.gitsunjaeab.mapick.application.roadmap;
 
 import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerDetailDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerRequest;
+import com.gitsunjaeab.mapick.api.roadmap.websocket.dto.LayerSocketDTO;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.auth.Role;
 import com.gitsunjaeab.mapick.domain.member.Member;
@@ -139,6 +140,8 @@ public class LayerService {
             throw new CommonException(ResponseCode.FORBIDDEN);
         }
 
+
+
         // 참조 무결성 검사
         ReferencedWarning warning = getReferencedWarning(layer.getId());
         if (warning != null) {
@@ -154,6 +157,53 @@ public class LayerService {
         // 소프트 딜리트된 엔티티 반환
         return layer;
     }
+
+    @Transactional
+    public Layer createFromSocket(LayerSocketDTO dto) {
+        Long memberId = dto.getMemberId();
+        Long roadmapId = dto.getRoadmapId();
+
+        // DTO → LayerRequest 변환 후 기존 create() 재사용
+        LayerRequest request = new LayerRequest(
+                dto.getName(),
+                dto.getDescription(),
+                dto.getLayerSeq(),
+                dto.getLayerTime()
+        );
+
+        return create(request, memberId, roadmapId);
+    }
+
+    // WebSocket용 레이어 수정
+    @Transactional
+    public Layer updateFromSocket(LayerSocketDTO dto) {
+        Long memberId = dto.getMemberId();
+        Long layerId = dto.getLayerId();
+
+        // DTO → LayerRequest 변환 후 기존 update() 재사용
+        LayerRequest request = new LayerRequest(
+                dto.getName(),
+                dto.getDescription(),
+                dto.getLayerSeq(),
+                dto.getLayerTime()
+        );
+
+        return update(layerId, request, memberId);
+    }
+
+    // WebSocket용 레이어 삭제
+    @Transactional
+    public Layer deleteFromSocket(LayerSocketDTO dto) {
+        Long memberId = dto.getMemberId();
+        return delete(dto.getLayerId(), memberId);
+    }
+
+    @Transactional(readOnly = true)
+    public Layer findById(Long id) {
+        return layerRepository.findById(id)
+                .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND));
+    }
+
 
     // 관리자 블록 처리
     @Transactional

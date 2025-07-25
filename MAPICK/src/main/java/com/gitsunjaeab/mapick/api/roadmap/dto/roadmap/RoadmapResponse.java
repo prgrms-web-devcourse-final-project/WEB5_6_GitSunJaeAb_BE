@@ -8,6 +8,7 @@ import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerWithMarkerDTO;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
@@ -62,6 +63,9 @@ public class RoadmapResponse implements BaseApiResponse {
         private Integer viewCount;
 
         private List<LayerWithMarkerDTO> layers;
+        private String address;
+        private Double regionLatitude;
+        private Double regionLongitude;
     }
 
     // --- 정적 팩토리 메서드 ---
@@ -85,7 +89,9 @@ public class RoadmapResponse implements BaseApiResponse {
                 .map(LayerWithMarkerDTO::new)
                 .collect(Collectors.toList());
         roadmapInfo.setLayers(layers);
-
+        roadmapInfo.setAddress(r.getAddress());
+        roadmapInfo.setRegionLatitude(r.getRegionLatitude());
+        roadmapInfo.setRegionLongitude(r.getRegionLongitude());
 
         return new RoadmapResponse(
             ResponseCode.OK.getCode(),
