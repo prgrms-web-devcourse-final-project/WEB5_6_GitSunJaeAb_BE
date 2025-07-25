@@ -8,8 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface MemberAchievementRepository extends JpaRepository<MemberAchievement, Long> {
 
-    @Query("select ma.achievement.id from MemberAchievement ma where ma.member.id = :memberId")
-    List<Long> findAchievementIdsByMemberId(@Param("memberId") Long memberId);
-
     boolean existsByMemberIdAndAchievementId(Long memberId, Long achievementId);
+
+    List<MemberAchievement> findAllByMember_Id(Long memberId);
 }
