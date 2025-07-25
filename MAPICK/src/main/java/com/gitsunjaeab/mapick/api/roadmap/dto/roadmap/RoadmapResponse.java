@@ -12,6 +12,7 @@ import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.Getter;
@@ -66,6 +67,7 @@ public class RoadmapResponse implements BaseApiResponse {
         private String address;
         private Double regionLatitude;
         private Double regionLongitude;
+        private OffsetDateTime participationEnd;
     }
 
     // --- 정적 팩토리 메서드 ---
@@ -92,6 +94,7 @@ public class RoadmapResponse implements BaseApiResponse {
         roadmapInfo.setAddress(r.getAddress());
         roadmapInfo.setRegionLatitude(r.getRegionLatitude());
         roadmapInfo.setRegionLongitude(r.getRegionLongitude());
+        roadmapInfo.setParticipationEnd(r.getParticipationEnd());
 
         return new RoadmapResponse(
             ResponseCode.OK.getCode(),

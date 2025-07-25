@@ -18,6 +18,8 @@ import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
 import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import com.gitsunjaeab.mapick.util.ReferencedWarning;
+
+import java.time.OffsetDateTime;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -177,25 +179,41 @@ public class LayerService {
     // WebSocket용 레이어 수정
     @Transactional
     public Layer updateFromSocket(LayerSocketDTO dto) {
-        Long memberId = dto.getMemberId();
-        Long layerId = dto.getLayerId();
+        Layer layer = layerRepository.findById(dto.getLayerId())
+                .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND));
 
-        // DTO → LayerRequest 변환 후 기존 update() 재사용
-        LayerRequest request = new LayerRequest(
-                dto.getName(),
-                dto.getDescription(),
-                dto.getLayerSeq(),
-                dto.getLayerTime()
-        );
+        // 권한 검증 없음 → 공유지도이므로 누구나 수정 가능
+        layer.setName(dto.getName());
+        layer.setDescription(dto.getDescription());
+        layer.setLayerSeq(dto.getLayerSeq());
+        layer.setLayerTime(dto.getLayerTime());
 
-        return update(layerId, request, memberId);
+        return layerRepository.save(layer);
     }
 
     // WebSocket용 레이어 삭제
     @Transactional
     public Layer deleteFromSocket(LayerSocketDTO dto) {
-        Long memberId = dto.getMemberId();
-        return delete(dto.getLayerId(), memberId);
+        Layer layer = layerRepository.findById(dto.getLayerId())
+                .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND));
+
+        // 공유지도에서는 권한 없이도 삭제 가능
+        if (layer.getDeletedAt() != null) {
+            throw new CommonException(ResponseCode.ALREADY_PROCESSED);
+        }
+
+        ReferencedWarning warning = getReferencedWarning(layer.getId());
+        if (warning != null) {
+            throw new CommonException(ResponseCode.CONFLICT);
+        }
+
+        layerLibraryRepository.softDeleteAllByLayer(layer.getId());
+        layer.setDeletedAt(OffsetDateTime.now());
+        layerRepository.save(layer);
+        layerRepository.flush();
+
+        return layer;
+
     }
 
     @Transactional(readOnly = true)

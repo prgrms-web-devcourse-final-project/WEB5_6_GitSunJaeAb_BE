@@ -38,22 +38,21 @@ public class LayerWebSocketController {
 
         LayerSocketDTO responseDTO;
 
+        dto.setMemberId(memberId);
+
         switch (dto.getAction()) {
             case ADD -> {
-                dto.setMemberId(memberId);
                 Layer created = layerService.createFromSocket(dto);
                 responseDTO = LayerSocketDTO.from(created, LayerSocketAction.ADD);
                 responseDTO.setTempId(dto.getTempId());
             }
             case UPDATE -> {
-                dto.setMemberId(memberId);
                 Layer updated = layerService.updateFromSocket(dto);
                 responseDTO = LayerSocketDTO.from(updated, LayerSocketAction.UPDATE);
+                responseDTO.setTempId(dto.getTempId());
             }
             case DELETE -> {
-                dto.setMemberId(memberId);
-                Layer deleted = layerService.findById(dto.getLayerId());
-                layerService.delete(dto.getLayerId(), dto.getMemberId());
+                Layer deleted = layerService.deleteFromSocket(dto);
                 responseDTO = LayerSocketDTO.from(deleted, LayerSocketAction.DELETE);
             }
             default -> throw new IllegalArgumentException("지원하지 않는 액션입니다: " + dto.getAction());
