@@ -5,20 +5,16 @@ import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestCreateRequest;
 import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestCreateResponse;
 import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestJudgeRequest;
 import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestJudgeResponse;
+import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestResponse;
 import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestUpdateRequest;
 import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestUpdateResponse;
-import com.gitsunjaeab.mapick.domain.quest.MemberQuestRepository;
-import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestRequest;
-import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestResponse;
 import com.gitsunjaeab.mapick.application.notification.NotificationService;
 import com.gitsunjaeab.mapick.domain.member.Member;
-import com.gitsunjaeab.mapick.domain.member.MemberRepository;
 import com.gitsunjaeab.mapick.domain.notification.NotificationType;
 import com.gitsunjaeab.mapick.domain.quest.MemberQuest;
 import com.gitsunjaeab.mapick.domain.quest.MemberQuestRepository;
 import com.gitsunjaeab.mapick.domain.quest.Quest;
 import com.gitsunjaeab.mapick.domain.quest.QuestRepository;
-import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -30,25 +26,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-//@RequiredArgsConstructor
+@RequiredArgsConstructor
 public class MemberQuestService {
 
     private final MemberQuestRepository memberQuestRepository;
     private final QuestRepository questRepository;
-    private final MemberRepository memberRepository;
     private final NotificationService notificationService;
-//    private final MemberRepository memberRepository;
-
-    public MemberQuestService(
-        final MemberQuestRepository memberQuestRepository,
-        final QuestRepository questRepository,
-        final MemberRepository memberRepository, NotificationService notificationService
-    ) {
-        this.memberQuestRepository = memberQuestRepository;
-        this.questRepository = questRepository;
-        this.memberRepository = memberRepository;
-        this.notificationService = notificationService;
-    }
 
 
     // 전체 참여 목록 조회 //확인
@@ -77,7 +60,9 @@ public class MemberQuestService {
     //-------------------------------------------------------------------------
 
     //(참여자) 퀘스트 참여
-    public MemberQuestCreateResponse createMemberQuest(final MemberQuestCreateRequest request, final Member member) {
+    @Transactional
+    public MemberQuestCreateResponse createMemberQuest(final MemberQuestCreateRequest request,
+        final Member member) {
         final Quest quest = questRepository.findById(request.getQuestId())
             .orElseThrow(() -> new NotFoundException("퀘스트를 찾을 수 없습니다."));
 
@@ -88,24 +73,9 @@ public class MemberQuestService {
         memberQuest.setAnswer(request.getAnswer());
         memberQuest.setImageUrl(request.getEvidenceImage());
         memberQuest.setDescription(request.getDescription());
-        memberQuest.setSubmitAt(OffsetDateTime.now());
+        memberQuest.setSubmitAt(OffsetDateTime.now(ZoneId.of("Asia/Seoul")));
         memberQuest.setStatus(true);
         memberQuest.setIsRecognized("N");
-
-        MemberQuest saved = memberQuestRepository.save(memberQuest);
-        return MemberQuestCreateResponse.of(saved);
-
-    }
-
-
-    // 퀘스트 참여
-    @Transactional
-    public Long create(final MemberQuestRequest request, final Member member) {
-        final MemberQuest memberQuest = new MemberQuest();
-
-        requestToEntity(request, memberQuest); // 기본 데이터 입력
-        memberQuest.setMember(member); // 로그인된 사용자 정보 직접 주입
-        memberQuest.setSubmitAt(OffsetDateTime.now(ZoneId.of("Asia/Seoul"))); // 현재 시간 세팅
 
         MemberQuest savedQuest = memberQuestRepository.save(memberQuest);
 
@@ -121,8 +91,9 @@ public class MemberQuestService {
             null,                    // 댓글
             null                     // 북마크
         );
-        return savedQuest.getId();
+        return MemberQuestCreateResponse.of(savedQuest);
     }
+
 
     // 퀘스트 마감 알림발송 로직
     @Transactional
@@ -186,7 +157,7 @@ public class MemberQuestService {
         memberQuest.setAnswer(request.getAnswer());
         memberQuest.setImageUrl(request.getEvidenceImage());
         memberQuest.setDescription(request.getDescription());
-        memberQuest.setUpdatedAt(OffsetDateTime.now());
+        memberQuest.setUpdatedAt(OffsetDateTime.now(ZoneId.of("Asia/Seoul")));
 
         return MemberQuestUpdateResponse.of(memberQuestRepository.save(memberQuest));
     }
@@ -206,7 +177,7 @@ public class MemberQuestService {
 
         // 정답 여부 설정
         memberQuest.setIsRecognized(request.getIsRecognized() ? "Y" : "N");
-        memberQuest.setUpdatedAt(OffsetDateTime.now());
+        memberQuest.setUpdatedAt(OffsetDateTime.now(ZoneId.of("Asia/Seoul")));
 
         // 저장 후 DTO로 반환
         return MemberQuestJudgeResponse.of(memberQuestRepository.save(memberQuest));
@@ -237,29 +208,29 @@ public class MemberQuestService {
         return response;
     }
 
-    // Request → Entity 변환
-    private void requestToEntity(final MemberQuestRequest request, final MemberQuest memberQuest) {
-        // 기본 상태 설정
-        memberQuest.setStatus(true); // 대기 상태로 초기화
-        memberQuest.setIsRecognized("N"); // 인정 여부 초기값
+//    // Request → Entity 변환
+//    private void requestToEntity(final MemberQuestRequest request, final MemberQuest memberQuest) {
+//        // 기본 상태 설정
+//        memberQuest.setStatus(true); // 대기 상태로 초기화
+//        memberQuest.setIsRecognized("N"); // 인정 여부 초기값
+//
+//        //요청값 반영
+//        memberQuest.setTitle(request.getTitle());
+//        memberQuest.setAnswer(request.getAnswer());
+//        memberQuest.setImageUrl(request.getEvidenceImage());
+//        memberQuest.setDescription(request.getDescription());
+//        memberQuest.setSubmitAt(java.time.OffsetDateTime.now());
 
-        //요청값 반영
-        memberQuest.setTitle(request.getTitle());
-        memberQuest.setAnswer(request.getAnswer());
-        memberQuest.setImageUrl(request.getEvidenceImage());
-        memberQuest.setDescription(request.getDescription());
-        memberQuest.setSubmitAt(java.time.OffsetDateTime.now());
 
-
-        // 연관 엔티티 설정
-        final Quest quest = questRepository.findById(request.getQuest())
-                .orElseThrow(() -> new NotFoundException("quest not found"));
-        memberQuest.setQuest(quest);
-
+//        // 연관 엔티티 설정
+//        final Quest quest = questRepository.findById(request.getQuest())
+//                .orElseThrow(() -> new NotFoundException("quest not found"));
+//        memberQuest.setQuest(quest);
+//
+////        memberQuest.setMember(member);
+////        //기존 코드
+//        final Member member = memberRepository.findById(request.getMember())
+//                .orElseThrow(() -> new NotFoundException("member not found"));
 //        memberQuest.setMember(member);
-//        //기존 코드
-        final Member member = memberRepository.findById(request.getMember())
-                .orElseThrow(() -> new NotFoundException("member not found"));
-        memberQuest.setMember(member);
-    }
+//    }
 }
