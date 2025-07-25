@@ -27,17 +27,19 @@ public class MarkerSocketDTO {
     private Integer markerSeq;
 
     private Long layerId;
-    private Long userId;
+    private Long memberId;
 
     private Long customImageId;
     private String tempUUID;
+
+    private Long roadmapId;
 
     public MarkerSocketDTO(Long markerId, MarkerSocketAction action) {
         this.markerId = markerId;
         this.action = action;
     }
 
-    public MarkerSocketDTO(Marker marker) {
+    public MarkerSocketDTO(Marker marker, MarkerSocketAction action) {
         this.markerId = marker.getId();
         this.name = marker.getName();
         this.description = marker.getDescription();
@@ -47,9 +49,10 @@ public class MarkerSocketDTO {
         this.color = marker.getColor();
         this.markerSeq = marker.getMarkerSeq();
         this.layerId = marker.getLayer().getId();
-        this.userId = marker.getMember().getId();
+        this.memberId = marker.getMember().getId();
         this.customImageId = marker.getCustomImage() != null ? marker.getCustomImage().getId() : null;
         this.tempUUID = marker.getClientGeneratedUUID();
-        this.action = MarkerSocketAction.ADD; // 기본적으로 ADD로 설정 (수정/삭제 시는 따로 지정해도 됨)
+        this.roadmapId = marker.getLayer().getRoadmap().getId();
+        this.action = action;
     }
 }
