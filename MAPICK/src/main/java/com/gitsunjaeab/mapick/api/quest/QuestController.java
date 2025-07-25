@@ -1,31 +1,27 @@
 package com.gitsunjaeab.mapick.api.quest;
 
-import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestDTO;
 import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestListResponse;
+import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestRequest;
+import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestResponse;
+import com.gitsunjaeab.mapick.api.quest.dto.QuestAchievementResponse;
 import com.gitsunjaeab.mapick.api.quest.dto.QuestDetailResponse;
-import com.gitsunjaeab.mapick.api.quest.dto.QuestResponse;
 import com.gitsunjaeab.mapick.api.quest.dto.QuestListResponse;
+import com.gitsunjaeab.mapick.api.quest.dto.QuestRankResponse;
 import com.gitsunjaeab.mapick.api.quest.dto.QuestRequest;
-import com.gitsunjaeab.mapick.api.quest.dto.QuestDTO;
+import com.gitsunjaeab.mapick.api.quest.dto.QuestResponse;
 import com.gitsunjaeab.mapick.application.quest.MemberQuestService;
 import com.gitsunjaeab.mapick.application.quest.QuestRankService;
 import com.gitsunjaeab.mapick.application.quest.QuestService;
-//import com.gitsunjaeab.mapick.application.quest.MemberQuestEvidenceService;
+import com.gitsunjaeab.mapick.common.response.ApiResponse;
+import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.auth.Principal;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.util.ReferencedException;
 import com.gitsunjaeab.mapick.util.ReferencedWarning;
-import com.gitsunjaeab.mapick.common.response.ApiResponse;
-import com.gitsunjaeab.mapick.common.response.ResponseCode;
-import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestRequest;
-import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestResponse;
-//import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestEvidenceRequest;
-//import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestEvidenceResponse;
-import com.gitsunjaeab.mapick.api.quest.dto.QuestRankResponse;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.util.List;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -38,8 +34,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import java.util.List;
-import com.gitsunjaeab.mapick.domain.quest.MemberQuest;
 
 @RestController
 @RequestMapping(value = "/quests", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -75,9 +69,17 @@ public class QuestController {
         }
 
         Member member = principal.getMember(); //현재 로그인된 멤버 객체
-        Long questId = questService.create(questRequest,member);
-        QuestResponse createdQuest = questService.get(questId);
-        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "퀘스트 생성 완료"));
+        QuestAchievementResponse response = questService.create(questRequest,member);
+
+        if (response.isAchievementUnlocked()) {
+            return ResponseEntity.ok(ApiResponse.of(
+                ResponseCode.OK,
+                "퀘스트 생성 완료! 업적 '" + response.getAchievement().getName() + "' 을(를) 획득했습니다.",
+                response
+            ));
+        }
+
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "퀘스트 생성 완료", response.getQuestId()));
     }
 
     // 퀘스트 수정 (출제자용) //완료
