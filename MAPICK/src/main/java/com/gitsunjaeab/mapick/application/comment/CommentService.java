@@ -1,10 +1,16 @@
 package com.gitsunjaeab.mapick.application.comment;
 
+import com.gitsunjaeab.mapick.api.achievement.dto.AchievementDTO;
+import com.gitsunjaeab.mapick.api.comment.dto.CommentAchievementResponse;
 import com.gitsunjaeab.mapick.api.comment.dto.CommentDTO;
 import com.gitsunjaeab.mapick.api.comment.dto.CommentListResponse;
 import com.gitsunjaeab.mapick.api.comment.dto.CommentRequest;
 import com.gitsunjaeab.mapick.application.notification.NotificationService;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
+import com.gitsunjaeab.mapick.domain.achievement.Achievement;
+import com.gitsunjaeab.mapick.domain.achievement.AchievementRepository;
+import com.gitsunjaeab.mapick.domain.achievement.MemberAchievement;
+import com.gitsunjaeab.mapick.domain.achievement.MemberAchievementRepository;
 import com.gitsunjaeab.mapick.domain.comment.Comment;
 import com.gitsunjaeab.mapick.domain.comment.CommentRepository;
 import com.gitsunjaeab.mapick.domain.member.Member;
@@ -34,9 +40,11 @@ public class CommentService {
     private final MemberRepository memberRepository;
     private final QuestRepository questRepository;
     private final NotificationService notificationService;
+    private final MemberAchievementRepository memberAchievementRepository;
+    private final AchievementRepository achievementRepository;
 
     @Transactional
-    public Long create(final CommentRequest request, final Long memberId) {
+    public CommentAchievementResponse create(final CommentRequest request, final Long memberId) {
         final Comment comment = new Comment();
         DtoToEntity(request, comment, memberId);
 
@@ -88,7 +96,32 @@ public class CommentService {
             }
         }
 
-        return savedComment.getId();
+        // 댓글 업적
+        Long commentCount = commentRepository.countByMemberId(memberId);
+        final Long ACHIEVEMENT_ID = 103L;
+
+        if (commentCount == 10) {
+            boolean alreadyHas = memberAchievementRepository.existsByMemberIdAndAchievementId(memberId, ACHIEVEMENT_ID);
+            if (!alreadyHas) {
+                Member member = memberRepository.findById(memberId)
+                    .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND, "해당하는 회원이 없습니다."));
+                Achievement achievement = achievementRepository.findById(ACHIEVEMENT_ID)
+                    .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND, "해당하는 업적이 없습니다."));
+
+                memberAchievementRepository.save(
+                    MemberAchievement.builder()
+                        .member(member)
+                        .achievement(achievement)
+                        .achievedAt(OffsetDateTime.now())
+                        .build()
+                );
+
+                return new CommentAchievementResponse(savedComment.getId(), true, new AchievementDTO(achievement));
+            }
+        }
+
+        // 업적 미달성 or 이미 달성
+        return new CommentAchievementResponse(savedComment.getId(), false, null);
     }
 
     @Transactional
@@ -129,6 +162,12 @@ public class CommentService {
 
     public void delete(final Long id) {
         commentRepository.deleteById(id);
+    }
+
+    @Transactional
+    public List<Comment> findAllCommentsByMember(Long memberId) {
+
+        return commentRepository.findAllByMember_Id(memberId);
     }
 
     private void DtoToEntity(final CommentRequest request, final Comment comment,

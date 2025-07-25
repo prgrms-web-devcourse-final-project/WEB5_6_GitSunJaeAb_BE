@@ -8,17 +8,26 @@ import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestJudgeResponse;
 import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestUpdateRequest;
 import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestUpdateResponse;
 import com.gitsunjaeab.mapick.domain.quest.MemberQuestRepository;
+import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestRequest;
 import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestResponse;
+import com.gitsunjaeab.mapick.application.notification.NotificationService;
+import com.gitsunjaeab.mapick.domain.member.Member;
+import com.gitsunjaeab.mapick.domain.member.MemberRepository;
+import com.gitsunjaeab.mapick.domain.notification.NotificationType;
 import com.gitsunjaeab.mapick.domain.quest.MemberQuest;
+import com.gitsunjaeab.mapick.domain.quest.MemberQuestRepository;
 import com.gitsunjaeab.mapick.domain.quest.Quest;
 import com.gitsunjaeab.mapick.domain.quest.QuestRepository;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.util.NotFoundException;
+import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +35,8 @@ public class MemberQuestService {
 
     private final MemberQuestRepository memberQuestRepository;
     private final QuestRepository questRepository;
+    private final MemberRepository memberRepository;
+    private final NotificationService notificationService;
 //    private final MemberRepository memberRepository;
 
 //    public MemberQuestService(
@@ -37,6 +48,16 @@ public class MemberQuestService {
 //        this.questRepository = questRepository;
 //        this.memberRepository = memberRepository;
 //    }
+    public MemberQuestService(
+        final MemberQuestRepository memberQuestRepository,
+        final QuestRepository questRepository,
+        final MemberRepository memberRepository,
+        NotificationService notificationService) {
+        this.memberQuestRepository = memberQuestRepository;
+        this.questRepository = questRepository;
+        this.memberRepository = memberRepository;
+        this.notificationService = notificationService;
+    }
 
     // 전체 참여 목록 조회 //확인
     public List<MemberQuestResponse> findAll() {
@@ -83,6 +104,76 @@ public class MemberQuestService {
         return MemberQuestCreateResponse.of(saved);
 
     }
+
+
+//    // 퀘스트 참여
+//    @Transactional
+//    public Long create(final MemberQuestRequest request, final Member member) {
+//        final MemberQuest memberQuest = new MemberQuest();
+//
+//        requestToEntity(request, memberQuest); // 기본 데이터 입력
+//        memberQuest.setMember(member); // 로그인된 사용자 정보 직접 주입
+//        memberQuest.setSubmitAt(OffsetDateTime.now(ZoneId.of("Asia/Seoul"))); // 현재 시간 세팅
+//
+//        MemberQuest savedQuest = memberQuestRepository.save(memberQuest);
+//
+//        // === 참여자 본인에게 알림 발송 ===
+//        notificationService.createNotification(
+//            member,              // 참여자
+//            NotificationType.QUEST,  // 알림 타입
+//            null,                    // 로드맵
+//            null,                    // 레이어
+//            null,                    // 레이어 라이브러리
+//            savedQuest.getQuest(),   // 퀘스트
+//            savedQuest,              // 멤버퀘스트
+//            null,                    // 댓글
+//            null                     // 북마크
+//        );
+//        return savedQuest.getId();
+//    }
+//
+//    // 퀘스트 마감 알림발송 로직
+//    @Transactional
+//    public void sendDeadlineNotification() {
+//        OffsetDateTime now = OffsetDateTime.now(ZoneId.of("Asia/Seoul"));
+//        List<MemberQuest> allQuests = memberQuestRepository.findAll();
+//
+//        for (MemberQuest mq : allQuests) {
+//            Quest quest = mq.getQuest();
+//            OffsetDateTime deadline = quest.getDeadline();
+//
+//            // 마감 시간이 없으면 알림 스킵
+//            if (deadline == null) {
+//                continue;
+//            }
+//
+//            long diffSec = Duration.between(now, deadline).getSeconds();
+//
+//            // 마감 1분 전 알림 전송 (테스트용)
+//            if (diffSec >= 0 && diffSec <= 60) {
+//                notificationService.createNotification(
+//                    mq.getMember(),          // 참여자
+//                    NotificationType.QUEST_DEADLINE,  // 알림 타입
+//                    null, null, null,        // 로드맵, 레이어, 레이어라이브러리
+//                    quest,                   // 퀘스트
+//                    mq,                      // 멤버 퀘스트
+//                    null, null               // 댓글, 북마크
+//                );
+//            }
+//
+//            // 마감 D-1일이면 알림 전송 (배포용)
+////            if (diffSec >= 0 && diffSec <= 60) {
+////                notificationService.createNotification(
+////                    mq.getMember(),               // 참여자 본인
+////                    NotificationType.QUEST_DEADLINE,       // 알림 타입
+////                    null, null, null,             // 로드맵, 레이어, 레이어라이브러리
+////                    quest,                        // 퀘스트
+////                    mq,                           // 멤버퀘스트
+////                    null, null                     // 댓글, 북마크
+////                );
+////            }
+//        }
+//    }
 
 
     // (참여자)퀘스트 참여 정보 수정(= 증빙자료나 내용 수정)

@@ -16,15 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @RestController
@@ -67,26 +60,28 @@ public class RoadmapController {
     }
 
     // 공유지도 생성 NOTE 임시 완성
-    @PostMapping("/shared")
+    @PostMapping(value = "/shared", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "공유지도 생성", description = "[사용자용] 레이어, 마커 제외 지도 관련 속성만 저장")
     public ResponseEntity<RoadmapCreateResponse> createSharedRoadmap(
-            @RequestBody @Valid final SharedRoadmapCreateRequest request,
+            @RequestPart @Valid final SharedRoadmapCreateRequest request,
+            @RequestPart(required = false) MultipartFile imageFile,
             @AuthenticationPrincipal Principal principal) {
         if (principal == null) {
             throw new IllegalStateException("로그인되지 않았습니다.");
         }
 
         Long memberId = principal.getMember().getId();
-        Long roadmapId = roadmapService.createSharedRoadmap(request, memberId);
+        Long roadmapId = roadmapService.createSharedRoadmap(request, memberId, imageFile);
         return ResponseEntity.ok(RoadmapCreateResponse.of(ResponseCode.OK, "공유지도 생성 완료", roadmapId));
     }
 
     // 공유지도 수정
-    @PutMapping("/shared/{roadmapId}")
+    @PutMapping(value = "/shared/{roadmapId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "공유지도 수정", description = "[사용자용] 레이어, 마커 제외 지도 관련 속성만 수정")
     public ResponseEntity<SharedRoadmapUpdateResponse> updateSharedRoadmap(
             @PathVariable(name = "roadmapId") final Long roadmapId,
-            @RequestBody @Valid final SharedRoadmapUpdateRequest request,
+            @RequestPart @Valid final SharedRoadmapUpdateRequest request,
+            @RequestPart(required = false) MultipartFile imageFile,
             @AuthenticationPrincipal Principal principal) {
 
         if (principal == null) {
@@ -94,7 +89,7 @@ public class RoadmapController {
         }
 
         Long memberId = principal.getMember().getId();
-        roadmapService.updateSharedRoadmap(request, roadmapId, memberId);
+        roadmapService.updateSharedRoadmap(request, roadmapId, memberId, imageFile);
         return ResponseEntity.ok(SharedRoadmapUpdateResponse.of(ResponseCode.OK, "공유지도 수정 완료"));
     }
 
@@ -133,10 +128,11 @@ public class RoadmapController {
     // TODO 해시태그로 로드맵 검색 >> {hashtagId} 활용??
 
     // 개인 로드맵 생성 NOTE 완
-    @PostMapping("/personal")
+    @PostMapping(value = "/personal", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "로드맵 생성", description = "[사용자용] 레이어, 마커 제외 지도 관련 속성만 저장 + 해시태그 생성 ")
     public ResponseEntity<RoadmapCreateResponse> createRoadmap(
-            @RequestBody @Valid final RoadmapRequest request,
+            @RequestPart @Valid final RoadmapRequest request,
+            @RequestPart(required = false) MultipartFile imageFile,
             @AuthenticationPrincipal final Principal principal
     ) {
         if (principal == null) {
@@ -144,16 +140,26 @@ public class RoadmapController {
         }
 
         Long memberId = principal.getMember().getId();
-        Long roadmapId = roadmapService.createRoadmap(request, memberId);
-        return ResponseEntity.ok(RoadmapCreateResponse.of(ResponseCode.OK, "로드맵 생성 완료", roadmapId));
+        RoadmapAchievementResponse response = roadmapService.createRoadmap(request, memberId, imageFile);
+
+        if (response.isAchievementUnlocked()) {
+            return ResponseEntity.ok(RoadmapCreateResponse.of(
+                ResponseCode.OK,
+                "로드맵 생성 완료! 업적 '" + response.getAchievement().getName() + "' 을(를) 획득했습니다.",
+                    response.getRoadmapId()
+            ));
+        }
+
+        return ResponseEntity.ok(RoadmapCreateResponse.of(ResponseCode.OK, "로드맵 생성 완료", response.getRoadmapId()));
     }
 
     // 개인 로드맵 수정 NOTE 완
-    @PutMapping("/personal/{roadmapId}")
+    @PutMapping(value = "/personal/{roadmapId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "로드맵 수정", description = "[사용자용] 레이어, 마커 제외 지도 관련 속성만 수정")
     public ResponseEntity<ApiResponse> updateRoadmap(
         @PathVariable(name = "roadmapId") final Long roadmapId,
-        @RequestBody @Valid final RoadmapRequest request,
+        @RequestPart @Valid final RoadmapRequest request,
+        @RequestPart(required = false) MultipartFile imageFile,
         @AuthenticationPrincipal final Principal principal) {
 
         if (principal == null || principal.getMember() == null) {
@@ -161,7 +167,7 @@ public class RoadmapController {
         }
 
         Long memberId = principal.getMember().getId();
-        roadmapService.updateRoadmap(request, roadmapId, memberId);
+        roadmapService.updateRoadmap(request, roadmapId, memberId, imageFile);
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "로드맵 수정 완료"));
     }
 

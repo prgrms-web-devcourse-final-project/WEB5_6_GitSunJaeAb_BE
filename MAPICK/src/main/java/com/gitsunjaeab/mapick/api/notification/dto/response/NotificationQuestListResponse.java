@@ -25,8 +25,7 @@ public class NotificationQuestListResponse implements BaseApiResponse {
     }
 
     // 생성 패턴용
-    public static NotificationQuestListResponse of(List<Notification> notificationEntities,
-        String message) {
+    public static NotificationQuestListResponse of(List<Notification> notificationEntities, String message) {
         List<NotificationQuestListDTO> notificationQuestListDTOs = notificationEntities.stream()
             .map(n -> {
                 NotificationQuestListDTO dto = new NotificationQuestListDTO();
@@ -34,13 +33,14 @@ public class NotificationQuestListResponse implements BaseApiResponse {
                 dto.setTitle(n.getTitle());
                 dto.setContent(n.getContent());
                 dto.setMember(n.getMember() != null ? new MemberSimpleDTO(n.getMember()) : null);
+                dto.setRead(n.isRead());
+                dto.setNotificationType(n.getNotificationType());
+                dto.setAnnouncementType(n.getAnnouncementType());
                 dto.setCreatedAt(n.getCreatedAt());
                 dto.setUpdatedAt(n.getUpdatedAt());
                 dto.setDeletedAt(n.getDeletedAt());
                 dto.setReadAt(n.getReadAt());
-                dto.setNotificationType(n.getNotificationType());
-                dto.setAnnouncementType(n.getAnnouncementType());
-                dto.setRead(n.isRead());
+                dto.setQuestId(n.getQuest().getId());
                 return dto;
             })
             .toList();

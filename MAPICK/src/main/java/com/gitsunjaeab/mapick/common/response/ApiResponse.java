@@ -1,5 +1,6 @@
 package com.gitsunjaeab.mapick.common.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -16,14 +17,16 @@ public class ApiResponse<T> implements BaseApiResponse {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime timestamp;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private T data;
 
     // 데이터 없이 상태코드와 메시지만 반환
     public static ApiResponse of(ResponseCode responseCode, String message) {
         return new ApiResponse(
             responseCode.getCode(),
             message,
-            LocalDateTime.now()
-
+            LocalDateTime.now(),
+            null
         );
     }
 
@@ -31,10 +34,19 @@ public class ApiResponse<T> implements BaseApiResponse {
         return new ApiResponse(
             responseCode.getCode(),
             responseCode.getMessage(),
-            LocalDateTime.now()
-
+            LocalDateTime.now(),
+            null
         );
     }
 
+    // 임시
+    public static <T> ApiResponse<T> of(ResponseCode responseCode, String message, T data) {
+        return new ApiResponse<>(
+            responseCode.getCode(),
+            message,
+            LocalDateTime.now(),
+            data
+        );
+    }
 }
 
