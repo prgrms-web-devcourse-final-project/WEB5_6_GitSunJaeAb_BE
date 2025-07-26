@@ -3,6 +3,7 @@ package com.gitsunjaeab.mapick.api.roadmap.websocket;
 import com.gitsunjaeab.mapick.api.roadmap.websocket.code.LayerSocketAction;
 import com.gitsunjaeab.mapick.api.roadmap.websocket.dto.LayerSocketDTO;
 import com.gitsunjaeab.mapick.application.roadmap.LayerService;
+import com.gitsunjaeab.mapick.application.roadmap.RoadmapEditorService;
 import com.gitsunjaeab.mapick.domain.auth.Principal;
 import com.gitsunjaeab.mapick.domain.roadmap.Layer;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Controller;
 public class LayerWebSocketController {
     private final LayerService layerService;
     private final SimpMessagingTemplate messagingTemplate;
+    private final RoadmapEditorService roadmapEditorService;
 
     @MessageMapping("/layer/update")
     public void handleLayerMessage(@Payload LayerSocketDTO dto,
@@ -45,15 +47,21 @@ public class LayerWebSocketController {
                 Layer created = layerService.createFromSocket(dto);
                 responseDTO = LayerSocketDTO.from(created, LayerSocketAction.ADD);
                 responseDTO.setTempId(dto.getTempId());
+
+                roadmapEditorService.registerEditorIfNotExists(roadmapId, memberId);
             }
             case UPDATE -> {
                 Layer updated = layerService.updateFromSocket(dto);
                 responseDTO = LayerSocketDTO.from(updated, LayerSocketAction.UPDATE);
                 responseDTO.setTempId(dto.getTempId());
+
+                roadmapEditorService.registerEditorIfNotExists(roadmapId, memberId);
             }
             case DELETE -> {
                 Layer deleted = layerService.deleteFromSocket(dto);
                 responseDTO = LayerSocketDTO.from(deleted, LayerSocketAction.DELETE);
+
+                roadmapEditorService.registerEditorIfNotExists(roadmapId, memberId);
             }
             default -> throw new IllegalArgumentException("지원하지 않는 액션입니다: " + dto.getAction());
         }

@@ -5,6 +5,7 @@ import com.gitsunjaeab.mapick.api.roadmap.websocket.code.MarkerSocketAction;
 import com.gitsunjaeab.mapick.api.roadmap.websocket.dto.LayerSocketDTO;
 import com.gitsunjaeab.mapick.api.roadmap.websocket.dto.MarkerSocketDTO;
 import com.gitsunjaeab.mapick.application.roadmap.MarkerService;
+import com.gitsunjaeab.mapick.application.roadmap.RoadmapEditorService;
 import com.gitsunjaeab.mapick.domain.roadmap.Marker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -18,6 +19,7 @@ public class MarkerWebSocketController {
 
     private final MarkerService markerService;
     private final SimpMessagingTemplate messagingTemplate;
+    private final RoadmapEditorService roadmapEditorService;
 
     /**
      * 실시간 마커 CRUD 메시지 처리
@@ -57,6 +59,8 @@ public class MarkerWebSocketController {
                 LayerSocketDTO layerSocketDTO = LayerSocketDTO.from(createdMarker.getLayer(), LayerSocketAction.UPDATE);
                 messagingTemplate.convertAndSend(destinationLayer, layerSocketDTO);
 
+                roadmapEditorService.registerEditorIfNotExists(roadmapId, memberId);
+
             }
             case UPDATE -> {
                 Marker updatedMarker = markerService.updateFromSocket(dto);
@@ -66,6 +70,8 @@ public class MarkerWebSocketController {
 
                 LayerSocketDTO layerSocketDTO = LayerSocketDTO.from(updatedMarker.getLayer(), LayerSocketAction.UPDATE);
                 messagingTemplate.convertAndSend(destinationLayer, layerSocketDTO);
+
+                roadmapEditorService.registerEditorIfNotExists(roadmapId, memberId);
             }
             case DELETE -> {
                 Marker deletedMarker = markerService.findByIdWithLayerAndRoadmap(dto.getMarkerId());
@@ -75,6 +81,8 @@ public class MarkerWebSocketController {
 
                 LayerSocketDTO layerSocketDTO = LayerSocketDTO.from(deletedMarker.getLayer(), LayerSocketAction.UPDATE);
                 messagingTemplate.convertAndSend(destinationLayer, layerSocketDTO);
+
+                roadmapEditorService.registerEditorIfNotExists(roadmapId, memberId);
             }
             default -> throw new IllegalArgumentException("지원하지 않는 액션입니다: " + dto.getAction());
         }

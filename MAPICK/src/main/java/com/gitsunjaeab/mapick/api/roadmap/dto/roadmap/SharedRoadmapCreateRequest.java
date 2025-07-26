@@ -22,9 +22,6 @@ public class SharedRoadmapCreateRequest {
 
     private String description;
 
-    @Size(max = 255)
-    private String thumbnail;
-
     @NotNull
     @JsonProperty("isPublic")
     private Boolean isPublic;

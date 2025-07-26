@@ -26,5 +26,4 @@ public interface MarkerRepository extends JpaRepository<Marker, Long> {
             "WHERE m.id = :id")
     Optional<Marker> findByIdWithLayerAndRoadmap(@Param("id") Long id);
 
-    Optional<Marker> findFirstByClientGeneratedUUIDOrderByIdDesc(String uuid);
 }
