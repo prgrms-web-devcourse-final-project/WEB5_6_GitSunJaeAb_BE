@@ -30,7 +30,6 @@ public class MarkerSocketDTO {
     private Long memberId;
 
     private Long customImageId;
-    private String tempUUID;
 
     private Long roadmapId;
 
@@ -51,7 +50,6 @@ public class MarkerSocketDTO {
         this.layerId = marker.getLayer().getId();
         this.memberId = marker.getMember().getId();
         this.customImageId = marker.getCustomImage() != null ? marker.getCustomImage().getId() : null;
-        this.tempUUID = marker.getClientGeneratedUUID();
         this.roadmapId = marker.getLayer().getRoadmap().getId();
         this.action = action;
     }

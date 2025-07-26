@@ -77,9 +77,6 @@ public class Marker {
     @Column
     private OffsetDateTime deletedAt;
 
-    @Column(name = "client_generated_uuid", unique = true, updatable = false)
-    private String clientGeneratedUUID;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;

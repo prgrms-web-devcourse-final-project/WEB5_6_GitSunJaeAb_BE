@@ -42,10 +42,7 @@ import com.gitsunjaeab.mapick.util.ReferencedWarning;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import java.time.OffsetDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -365,23 +362,28 @@ public class RoadmapService {
     @Transactional(readOnly = true)
     public RoadmapListResponse buildRoadmapListResponse(List<Roadmap> roadmaps) {
         List<Long> roadmapIds = roadmaps.stream()
-            .map(Roadmap::getId)
-            .collect(Collectors.toList());
+                .map(Roadmap::getId)
+                .collect(Collectors.toList());
 
         List<RoadmapCitationProjection> projections =
-            layerLibraryRepository.countDistinctMemberByRoadmapIds(roadmapIds);
+                layerLibraryRepository.countDistinctMemberByRoadmapIds(roadmapIds);
 
-        // 로드맵 ID (key), 인용수 (value)
         Map<Long, Long> citationCountMap = projections.stream()
-            .collect(Collectors.toMap(
-                RoadmapCitationProjection::getRoadmapId,
-                RoadmapCitationProjection::getCitationCount
-            ));
+                .collect(Collectors.toMap(
+                        RoadmapCitationProjection::getRoadmapId,
+                        RoadmapCitationProjection::getCitationCount
+                ));
 
         Long memberId = authHelper.getCurrentMemberId();
-        Set<Long> bookmarkedIds = new HashSet<>(bookmarkRepository.findRoadmapIdsByMemberId(memberId));
+        List<Bookmark> bookmarks = bookmarkRepository.findByMemberId(memberId);
 
-        return RoadmapListResponse.of(roadmaps, citationCountMap, bookmarkedIds);
+        Map<Long, Long> roadmapIdToBookmarkIdMap = bookmarks.stream()
+                .collect(Collectors.toMap(
+                        b -> b.getRoadmap().getId(),
+                        Bookmark::getId
+                ));
+
+        return RoadmapListResponse.of(roadmaps, citationCountMap, roadmapIdToBookmarkIdMap);
     }
 
     @Transactional

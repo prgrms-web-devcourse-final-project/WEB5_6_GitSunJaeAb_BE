@@ -1,5 +1,6 @@
 package com.gitsunjaeab.mapick.application.roadmap;
 
+import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.RoadmapEditorSimpleDTO;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapEditorRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
 import com.gitsunjaeab.mapick.domain.member.Member;
@@ -8,9 +9,13 @@ import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
 import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.RoadmapEditorDTO;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapEditor;
 import com.gitsunjaeab.mapick.util.NotFoundException;
+
+import java.time.OffsetDateTime;
 import java.util.List;
+
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 // 공유지도
 @Service
@@ -44,6 +49,35 @@ public class RoadmapEditorService {
         final RoadmapEditor roadmapEditor = new RoadmapEditor();
         roadmapToEntity(roadmapEditorDTO, roadmapEditor);
         return roadmapEditorRepository.save(roadmapEditor).getId();
+    }
+
+    @Transactional(readOnly = true)
+    public List<RoadmapEditorSimpleDTO> getRoadmapEditors(Long roadmapId) {
+        return roadmapEditorRepository.findAllEditorsByRoadmapId(roadmapId);
+    }
+
+    @Transactional(readOnly = true)
+    public long countRoadmapEditors(Long roadmapId) {
+        return roadmapEditorRepository.countByRoadmapIdAndDeletedAtIsNull(roadmapId);
+    }
+
+    @Transactional
+    public void registerEditorIfNotExists(Long roadmapId, Long memberId) {
+        boolean exists = roadmapEditorRepository.existsByRoadmapIdAndMemberId(roadmapId, memberId);
+        if (!exists) {
+            Roadmap roadmap = roadmapRepository.findById(roadmapId)
+                    .orElseThrow(() -> new NotFoundException("로드맵이 존재하지 않습니다."));
+            Member member = memberRepository.findById(memberId)
+                    .orElseThrow(() -> new NotFoundException("사용자가 존재하지 않습니다."));
+
+            RoadmapEditor editor = new RoadmapEditor();
+            editor.setRoadmap(roadmap);
+            editor.setMember(member);
+            editor.setPermission("EDIT"); // 기본 권한
+            editor.setCreatedAt(OffsetDateTime.now());
+
+            roadmapEditorRepository.save(editor);
+        }
     }
 
     public void update(final Long id, final RoadmapEditorDTO roadmapEditorDTO) {
