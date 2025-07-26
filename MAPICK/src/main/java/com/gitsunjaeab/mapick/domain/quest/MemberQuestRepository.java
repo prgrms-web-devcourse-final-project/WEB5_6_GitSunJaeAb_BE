@@ -17,7 +17,7 @@ public interface MemberQuestRepository extends JpaRepository<MemberQuest, Long> 
     // 특정 퀘스트의 참여자 목록 조회
 //    List<MemberQuest> findByQuestId(Long questId);
 
-    // 🔥 LAZY 문제 해결용 쿼리 추가
+    // LAZY 문제 해결용 쿼리 추가
     @Query("SELECT mq FROM MemberQuest mq " +
         "JOIN FETCH mq.quest q " +
         "JOIN FETCH q.member " +

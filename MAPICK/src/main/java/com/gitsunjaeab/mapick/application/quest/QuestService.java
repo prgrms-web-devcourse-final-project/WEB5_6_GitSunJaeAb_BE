@@ -21,6 +21,7 @@ import com.gitsunjaeab.mapick.domain.quest.QuestRepository;
 import com.gitsunjaeab.mapick.domain.report.Report;
 import com.gitsunjaeab.mapick.domain.report.ReportRepository;
 import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
+import com.gitsunjaeab.mapick.infra.storage.SupabaseStorageService;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import com.gitsunjaeab.mapick.util.ReferencedWarning;
 import java.time.OffsetDateTime;
@@ -34,13 +35,14 @@ import org.springframework.stereotype.Service;
 public class QuestService {
 
     private final QuestRepository questRepository;
-//    private final MemberRepository memberRepository;
     private final ReportRepository reportRepository;
     private final MemberQuestRepository memberQuestRepository;
     private final QuestRankRepository questRankRepository;
     private final MemberRepository memberRepository;
     private final MemberAchievementRepository memberAchievementRepository;
     private final AchievementRepository achievementRepository;
+    //Supabase 사용을 위해 추가
+
 
     public QuestService(final QuestRepository questRepository,
             final MemberRepository memberRepository,

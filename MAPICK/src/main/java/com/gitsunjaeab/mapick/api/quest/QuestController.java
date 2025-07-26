@@ -50,16 +50,13 @@ public class QuestController {
     private final QuestService questService;
     private final QuestRankService questRankService;
     private final MemberQuestService memberQuestService;
-//    private final MemberQuestEvidenceService memberQuestEvidenceService;
 
     public QuestController(final QuestService questService, final QuestRankService questRankService,
         final MemberQuestService memberQuestService
-//        ,final MemberQuestEvidenceService memberQuestEvidenceService
     ) {
         this.questService = questService;
         this.questRankService = questRankService;
         this.memberQuestService = memberQuestService;
-//        this.memberQuestEvidenceService = memberQuestEvidenceService;
     }
 
     // ===== 출제자용 API (퀘스트 관리) =====
@@ -121,12 +118,6 @@ public class QuestController {
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "퀘스트 삭제 완료"));
     }
 
-//    // 본인 퀘스트 증빙 자료 조회 (출제자용 - 정답 처리시 사용)
-//    @GetMapping("/evidence")
-//    @Operation(summary = "본인 퀘스트 증빙 자료 조회", description = "[출제자용] (추후 추가예정) 본인이 생성한 퀘스트의 모든 증빙 자료를 조회합니다. 정답 처리시 사용됩니다.")
-//    public ResponseEntity<List<MemberQuestEvidenceResponse>> getAllEvidence() {
-//        return ResponseEntity.ok(memberQuestEvidenceService.findAll());
-//    }
 
     // ===== 참여자용 API (퀘스트 참여 및 조회) =====
     
@@ -221,39 +212,5 @@ public class QuestController {
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "퀘스트 판별 완료"));
     }
 
-//    // 증빙 자료 제출 (참여자용)
-//    @PostMapping("/memberQuest/{memberQuestId}/evidence")
-//    @Operation(summary = "증빙 자료 제출", description = "[참여자용] 퀘스트 참여에 대한 증빙 자료를 제출합니다.")
-//    public ResponseEntity<ApiResponse> submitEvidence(@PathVariable(name = "memberQuestId") final Long memberQuestId,
-//            @RequestBody @Valid final MemberQuestEvidenceRequest evidenceRequest) {
-//        // memberQuestId를 request에 설정
-//        evidenceRequest.setMemberQuest(memberQuestId);
-//        memberQuestEvidenceService.create(evidenceRequest);
-//        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "증빙 자료 제출 완료"));
-//    }
-//
-//    // 참여자 증빙 자료 조회 (참여자용)
-//    @GetMapping("/memberQuest/{memberQuestId}/evidence")
-//    @Operation(summary = "참여자 증빙 자료 조회", description = "[참여자용] (추후 추가예정)특정 참여자의 증빙 자료를 조회합니다.")
-//    public ResponseEntity<List<MemberQuestEvidenceResponse>> getParticipantEvidence(@PathVariable(name = "memberQuestId") final Long memberQuestId) {
-//        return ResponseEntity.ok(memberQuestEvidenceService.findByMemberQuestId(memberQuestId));
-//    }
-//
-//    // 증빙 자료 수정 (참여자용)
-//    @PutMapping("/evidence/{evidenceId}")
-//    @Operation(summary = "증빙 자료 수정", description = "[참여자용] 본인이 제출한 증빙 자료를 수정합니다.")
-//    public ResponseEntity<ApiResponse> updateEvidence(@PathVariable(name = "evidenceId") final Long evidenceId,
-//            @RequestBody @Valid final MemberQuestEvidenceRequest evidenceRequest) {
-//        memberQuestEvidenceService.update(evidenceId, evidenceRequest);
-//        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "증빙 자료 수정 완료"));
-//    }
-//
-//    // 증빙 자료 삭제 (참여자용)
-//    @DeleteMapping("/evidence/{evidenceId}")
-//    @Operation(summary = "증빙 자료 삭제", description = "[참여자용] 본인이 제출한 증빙 자료를 삭제합니다.")
-//    public ResponseEntity<ApiResponse> deleteEvidence(@PathVariable(name = "evidenceId") final Long evidenceId) {
-//        memberQuestEvidenceService.delete(evidenceId);
-//        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "증빙 자료 삭제 완료"));
-//    }
 
 }
