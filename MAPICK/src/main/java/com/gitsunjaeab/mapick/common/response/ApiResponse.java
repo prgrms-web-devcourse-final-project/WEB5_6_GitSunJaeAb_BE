@@ -32,7 +32,6 @@ public class ApiResponse<T> implements BaseApiResponse {
             responseCode.getCode(),
             responseCode.getMessage(),
             LocalDateTime.now()
-
         );
     }
 

@@ -146,6 +146,7 @@ public class MemberController {
      */
 
     // 본인 회원 정보 조회 (프로필) -> todo 완성(예외처리 필요)
+    //    @PreAuthorize("hasRole('USER')")
     @GetMapping
     @Operation(summary = "[사용자] 회원 정보 조회", description = "[사용자 전용] 본인만 접근 가능한 프로필 조회" )
     public ResponseEntity<MemberProfileResponse> getMemberProfile() {
@@ -163,6 +164,7 @@ public class MemberController {
     }
 
     // 회원 정보 수정 (프로필) -> todo 프로필 사진 변경 되게 수정
+    //    @PreAuthorize("hasRole('USER')")
     @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "[사용자]회원 정보 수정(프로필)", description = "사용자 회원 정보 수정")
     public ResponseEntity<ApiResponse> updateMember(
@@ -180,6 +182,7 @@ public class MemberController {
     }
 
     // 회원 탈퇴 (사용자) -> todo 완성(예외처리 필요)
+    //    @PreAuthorize("hasRole('USER')")
     @DeleteMapping ("/withdraw")
     @Operation(summary = "[사용자]회원 탈퇴", description = "회원 탈퇴")
     public ResponseEntity<ApiResponse> withdrawMember() {
@@ -197,6 +200,7 @@ public class MemberController {
     // ===== 회원 관심분야 관리 API =====
 
     // 회원 관심분야 선택 (본인만) -> todo 완성(예외처리 필요)
+    //    @PreAuthorize("hasRole('USER')")
     @PostMapping("/interests")
     @Operation(summary = "[사용자]회원 관심분야 선택", description = "[사용자 전용] 본인만 접근 가능한 관심분야 선택")
     public ResponseEntity<ApiResponse> createMemberInterest(@Valid @RequestBody MemberInterestRequest memberInterestRequest) {
@@ -211,7 +215,8 @@ public class MemberController {
                 .body(ApiResponse.of(ResponseCode.OK, "관심분야 선택 완료"));
     }
 
-    // 회원 관심분야 수정 (본인만) -> todo 완성(예외처리 필요)
+    // 회원 관심분야 수정 (본인만) -> todo 완성
+    //    @PreAuthorize("hasRole('USER')")
     @PutMapping("/interests")
     @Operation(summary = "[사용자]회원 관심분야 수정", description = "[사용자 전용] 본인만 접근 가능한 관심분야 수정")
     public ResponseEntity<ApiResponse> updateMemberInterest(@Valid @RequestBody MemberInterestRequest memberInterestRequest) {
@@ -229,6 +234,7 @@ public class MemberController {
     // ===== 회원 비밀번호 관리 API =====
 
     // 마이페이지 - 비밀번호 확인 (본인만) -> todo 완성(예외처리 필요)
+//    @PreAuthorize("hasRole('USER')")
     @PostMapping("/password/verify")
     @Operation(summary = "[사용자]비밀번호 확인", description = "[사용자 전용] 본인만 접근 가능한 비밀번호 확인")
     public ResponseEntity<ApiResponse> verifyPassword(@Valid @RequestBody PasswordRequest passwordRequest) {

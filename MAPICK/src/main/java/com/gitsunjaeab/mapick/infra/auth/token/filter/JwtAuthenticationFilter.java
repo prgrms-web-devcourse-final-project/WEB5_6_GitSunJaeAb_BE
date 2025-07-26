@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -34,7 +35,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(HttpServletRequest request) {
         List<String> excludePaths = List.of(
             "/error", "/favicon.ico", "/css", "/img", "/js", "/download",
-            "/auth/signup","/index", "/auth/signin","/auth/socialLogin"
+                "/swagger-ui", "/swagger-ui/", "/swagger-ui/index.html",
+                "/v3/api-docs",
+                "/v3/api-docs/",
+                "/v3/api-docs/swagger-config",
+                "/ws",
+                "/auth/signin", "/auth/signup", "/auth/socialLogin", "/auth/logout"
         );
         String path = request.getRequestURI();
         return excludePaths.stream().anyMatch(path::startsWith);
@@ -46,9 +52,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         FilterChain filterChain) throws ServletException, IOException {
 
         String requestAccessToken = jwtProvider.resolveToken(request, TokenType.ACCESS_TOKEN);
-        if (requestAccessToken == null) {
-            filterChain.doFilter(request, response);
-            return;
+        if (requestAccessToken == null || requestAccessToken.isBlank()) {
+            throw new IllegalArgumentException("Access Token is missing or empty.");
         }
 
         try {
@@ -66,7 +71,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             RefreshToken newRefreshToken = renewingRefreshToken(ex.getClaims().getId(), newAccessToken.getId());
             responseToken(response, newAccessToken, newRefreshToken);
         }  catch (Exception e) {
-            System.out.println("❌ 기타 JWT 예외 발생: " + e.getMessage());
+            throw new RuntimeException("❌ 기타 JWT 예외 발생: " + e.getMessage());
         }
 
         filterChain.doFilter(request, response);
