@@ -1,5 +1,6 @@
 package com.gitsunjaeab.mapick.api.roadmap.dto.roadmap;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.gitsunjaeab.mapick.api.category.dto.CategorySimpleDTO;
 import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.hashtag.HashtagDTO;
@@ -33,4 +34,8 @@ public class RoadmapListDTO {
     // 사용자가 북마크했는지 안 했는지
     private Boolean isBookmarked;
 //    private List<LayerListDTO> layers;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Long bookmarkId;
+
 }
