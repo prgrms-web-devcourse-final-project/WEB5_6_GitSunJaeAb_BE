@@ -17,8 +17,9 @@ import com.gitsunjaeab.mapick.util.NotFoundException;
 import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.stream.Collectors;
+
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,7 +49,7 @@ public class BookmarkService {
         Member member = memberRepository.findById(memberId)
             .orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다."));
 
-        if (bookmarkRepository.existsByMemberAndRoadmap(member, roadmap)) {
+        if (bookmarkRepository.existsByMemberIdAndRoadmapId(member.getId(), roadmap.getId())) {
             throw new DuplicatedBookmarkException(ResponseCode.BOOKMARK_DUPLICATED);
         }
 
@@ -92,13 +93,16 @@ public class BookmarkService {
         List<Bookmark> bookmarks = bookmarkRepository.findAllWithAllRoadmapRelationsByMemberId(memberId);
 
         List<Roadmap> roadmaps = bookmarks.stream()
-            .map(Bookmark::getRoadmap)
-            .toList();
+                .map(Bookmark::getRoadmap)
+                .toList();
 
-        Set<Long> bookmarkedIds = roadmaps.stream()
-                .map(Roadmap::getId)
-                .collect(Collectors.toSet());
-        return RoadmapListResponse.of(roadmaps, Collections.emptyMap(), bookmarkedIds);
+        Map<Long, Long> roadmapIdToBookmarkIdMap = bookmarks.stream()
+                .collect(Collectors.toMap(
+                        b -> b.getRoadmap().getId(),
+                        Bookmark::getId
+                ));
+
+        return RoadmapListResponse.of(roadmaps, Collections.emptyMap(), roadmapIdToBookmarkIdMap);
     }
 
     public List<BookmarkDTO> findAll() {

@@ -1,6 +1,7 @@
 package com.gitsunjaeab.mapick.api.roadmap;
 
 import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.*;
+import com.gitsunjaeab.mapick.application.roadmap.RoadmapEditorService;
 import com.gitsunjaeab.mapick.application.roadmap.RoadmapService;
 import com.gitsunjaeab.mapick.common.response.ApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
@@ -19,6 +20,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/roadmaps", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -27,9 +29,19 @@ import org.springframework.web.multipart.MultipartFile;
 public class RoadmapController {
 
     private final RoadmapService roadmapService;
+    private final RoadmapEditorService roadmapEditorService;
 
-    public RoadmapController(final RoadmapService roadmapService) {
+    public RoadmapController(final RoadmapService roadmapService, final RoadmapEditorService roadmapEditorService) {
         this.roadmapService = roadmapService;
+        this.roadmapEditorService = roadmapEditorService;
+    }
+
+    @GetMapping("/{roadmapId}/editors")
+    @Operation(summary = "실시간 공유지도 참여자 조회", description = " [사용자 및 관리자 용] 사용자 정보 및 참여자 인원 수 조회")
+    public ResponseEntity<RoadmapEditorListResponse> getEditors(@PathVariable Long roadmapId) {
+        List<RoadmapEditorSimpleDTO> editors = roadmapEditorService.getRoadmapEditors(roadmapId);
+        long count = roadmapEditorService.countRoadmapEditors(roadmapId);
+        return ResponseEntity.ok(new RoadmapEditorListResponse(editors, count));
     }
 
     // 전체 조회 (개인로드맵, 공유지도) >> NOTE 프론트 데이터 확인용 (추후 삭제예정)
@@ -203,4 +215,6 @@ public class RoadmapController {
         roadmapService.delete(roadmapId, member);
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "삭제 완료"));
     }
+
+
 }

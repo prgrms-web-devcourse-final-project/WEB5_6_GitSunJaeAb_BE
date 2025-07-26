@@ -156,7 +156,6 @@ public class MarkerService {
         marker.setLng(dto.getLng());
         marker.setColor(dto.getColor());
         marker.setMarkerSeq(dto.getMarkerSeq());
-        marker.setClientGeneratedUUID(dto.getTempUUID());
         marker.setCustomImage(customImage);
         marker.setCreatedAt(OffsetDateTime.now());
 

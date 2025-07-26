@@ -53,7 +53,6 @@ public class MarkerCreateRequest {
                 .markerSeq(markerSeq)
                 .layer(layer)
                 .member(member)
-                .clientGeneratedUUID(tempUUID)
                 .createdAt(OffsetDateTime.now())
                 .build();
     }
