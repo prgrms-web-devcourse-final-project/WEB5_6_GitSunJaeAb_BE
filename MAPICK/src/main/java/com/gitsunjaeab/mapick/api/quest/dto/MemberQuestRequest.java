@@ -17,17 +17,20 @@ public class MemberQuestRequest {
 //    @NotNull
     private Long member; // 퀘스트 수정시에 필요함
 
+    //(참여자) 증빙자료 제출관련
     @NotNull
     private String title;    // 증빙 제목
     private String description;    // 증빙 내용/설명
     private String evidenceImage;    // 증빙 이미지 URL
-
-
     // 퀘스트 답변 // ex)정답! 롯데월드~!
     @NotNull
     private String answer;
 
-    // 연관된 멤버퀘스트 ID
+    //(제출자) 증방자료 결과 처리 (정답 or 오답)
+    private Boolean status;
+
+
+    // 연관된 멤버퀘스트 ID ?
     @NotNull
     private Long memberQuest;
 

@@ -2,7 +2,6 @@ package com.gitsunjaeab.mapick.application.notification;
 
 import com.gitsunjaeab.mapick.domain.comment.Comment;
 import com.gitsunjaeab.mapick.domain.member.Member;
-import com.gitsunjaeab.mapick.domain.member.MemberRepository;
 import com.gitsunjaeab.mapick.domain.notification.Notification;
 import com.gitsunjaeab.mapick.domain.notification.NotificationRepository;
 import com.gitsunjaeab.mapick.domain.notification.NotificationType;
@@ -25,20 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class NotificationService {
 
     private final NotificationRepository notificationRepository;
-    private final MemberRepository memberRepository;
 
     // ===== 기본 CRUD =====
-
-    // 타입 조회
-    public List<Notification> findByType(NotificationType type) {
-        // 전체
-        if (type == NotificationType.ALL) {
-            // fetch join으로 N+1 문제 방지
-            return notificationRepository.findAllWithAllRelations();
-        }
-        // 타입별 조회도 fetch join + deletedAt 조건 쿼리 사용
-        return notificationRepository.findByNotificationTypeWithAllRelations(type);
-    }
 
     // 타입+멤버 조회 (본인 알림만)
     public List<Notification> findByTypeAndMember(NotificationType type, Long memberId) {
@@ -73,9 +60,13 @@ public class NotificationService {
                     + "님이 " + layer.getName() + "을(를) 인용했어요!";
                 break;
             case POST:
-                title = "🔖 로드맵 북마크 알림";
-                content = "'" + bookmark.getMember().getNickname() + "' 님이 내 '" + roadmap.getTitle()
-                    + "' 로드맵을 북마크 했어요!";
+                if (roadmap != null) {
+                    title = "🔖 로드맵 북마크 알림";
+                    content = "'" + bookmark.getMember().getNickname() + "' 님이 내 '" + roadmap.getTitle() + "' 로드맵을 북마크 했어요!";
+                } else if (quest != null) {
+                    title = "🔖 퀘스트 북마크 알림";
+                    content = "'" + bookmark.getMember().getNickname() + "' 님이 내 '" + quest.getTitle() + "' 퀘스트를 북마크 했어요!";
+                }
                 break;
             case QUEST:
                 title = "🧭 퀘스트 참여 알림";

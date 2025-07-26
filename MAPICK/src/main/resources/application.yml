@@ -25,10 +25,10 @@ spring:
       max-lifetime: 1800000
 
   # //로컬 확인을 위한 false 처리
-#  cloud:
-#    gcp:
-#      secretmanager:
-#        enabled: true
+  cloud:
+    gcp:
+      secretmanager:
+        enabled: true
 
   jpa:
     hibernate:
