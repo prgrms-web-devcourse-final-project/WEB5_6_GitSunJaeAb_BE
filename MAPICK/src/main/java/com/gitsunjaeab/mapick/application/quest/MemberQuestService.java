@@ -167,17 +167,38 @@ public class MemberQuestService {
         final MemberQuestJudgeRequest request,
         final Member judgeMember
     ) {
-        final MemberQuest memberQuest = memberQuestRepository.findById(request.getMemberQuestId())
+        final MemberQuest memberQuest = memberQuestRepository
+            .findWithQuestAndMemberById(request.getMemberQuestId())
             .orElseThrow(() -> new NotFoundException("참여 내역을 찾을 수 없습니다."));
+
+//        final MemberQuest memberQuest = memberQuestRepository
+//            .findById(request.getMemberQuestId())
+//            .orElseThrow(() -> new NotFoundException("참여 내역을 찾을 수 없습니다."));
+
 
         // 권한 확인: judgeMember = 제출자 (제출자인지 확인)
         if (!memberQuest.getQuest().getMember().getId().equals(judgeMember.getId())) {
             throw new NotFoundException("퀘스트 판정 권한이 없습니다.");
         }
 
+
+        //Null값 확인
+        Boolean recognized = request.getIsRecognized();
+
+        //문제확인용 로그
+        System.out.println("🟡 판정 요청 값 (isRecognized): " + recognized);
+
+        if (recognized == null){
+            throw new IllegalStateException("정답여부를 판단해 주세요");
+        }
+
+//        memberQuest.setIsRecognized(request.getIsRecognized() ? "Y" : "N");
+//        memberQuest.setUpdatedAt(OffsetDateTime.now(ZoneId.of("Asia/Seoul")));
+
         // 정답 여부 설정
-        memberQuest.setIsRecognized(request.getIsRecognized() ? "Y" : "N");
+        memberQuest.setIsRecognized(recognized ? "Y" : "N");
         memberQuest.setUpdatedAt(OffsetDateTime.now(ZoneId.of("Asia/Seoul")));
+
 
         // 저장 후 DTO로 반환
         return MemberQuestJudgeResponse.of(memberQuestRepository.save(memberQuest));

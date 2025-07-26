@@ -45,7 +45,7 @@ public class MemberQuest {
     private Boolean status;
 
     //정답여부
-    @Column(nullable = false)
+    @Column(name = "is_recognized", length = 1)
     private String isRecognized;
 
     //
