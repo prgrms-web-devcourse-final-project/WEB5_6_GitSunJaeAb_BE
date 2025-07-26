@@ -1,6 +1,8 @@
 package com.gitsunjaeab.mapick.domain.roadmap;
 
 import com.gitsunjaeab.mapick.domain.member.Member;
+import com.gitsunjaeab.mapick.domain.quest.Quest;
+
 import jakarta.persistence.*;
 
 import java.time.OffsetDateTime;
@@ -41,4 +43,7 @@ public class Bookmark {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "quest_id")
+    private Quest quest;
 }
