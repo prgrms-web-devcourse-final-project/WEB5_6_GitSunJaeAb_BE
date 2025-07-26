@@ -4,7 +4,7 @@ jwt:
   refresh-expiration: ${JWT_REFRESH_EXPIRATION}
 
 server:
-  port: ${PORT:80}
+  port: ${PORT:8080}
 
 supabase:
   url: ${PUBLIC_SUPABASE_URL}
