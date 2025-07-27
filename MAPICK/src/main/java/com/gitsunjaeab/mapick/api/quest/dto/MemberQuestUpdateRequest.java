@@ -13,7 +13,6 @@ public class MemberQuestUpdateRequest {
     private Long memberQuestId;
 
     private String title; //수정된 증빙 제목
-    private String evidenceImage; // 수정된 이미지URL
     private String description; // 수정된 설명
     private String answer; // 수정된 정답
 

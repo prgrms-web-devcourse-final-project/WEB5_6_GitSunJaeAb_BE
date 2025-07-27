@@ -81,8 +81,6 @@ public class MemberQuestService {
         if(imageFile != null && !imageFile.isEmpty()){
             String uploadedUrl = supabaseStorageService.upload(imageFile);
             memberQuest.setImageUrl(uploadedUrl);
-        }else{
-            memberQuest.setImageUrl(request.getEvidenceImage());
         }
 
         memberQuest.setDescription(request.getDescription());
@@ -173,8 +171,6 @@ public class MemberQuestService {
         if(imageFile != null && !imageFile.isEmpty()){
             String uploadedUrl = supabaseStorageService.upload(imageFile);
             memberQuest.setImageUrl(uploadedUrl);
-        }else{
-            memberQuest.setImageUrl(request.getEvidenceImage());
         }
 
         memberQuest.setDescription(request.getDescription());
