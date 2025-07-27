@@ -10,6 +10,7 @@ import com.gitsunjaeab.mapick.domain.auth.RefreshTokenRepository;
 import com.gitsunjaeab.mapick.api.auth.dto.internal.TokenDTO;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
+import com.gitsunjaeab.mapick.domain.member.code.MemberStatus;
 import com.gitsunjaeab.mapick.infra.auth.token.JwtProvider;
 import com.gitsunjaeab.mapick.infra.auth.token.code.GrantType;
 import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
@@ -44,6 +45,7 @@ public class AuthService {
 
 
     // 소셜 로그인
+    // complete
     @Transactional
     public TokenDTO socialLogin(SocialLoginRequest request) {
 
@@ -66,6 +68,20 @@ public class AuthService {
                 throw new CommonException(ResponseCode.PROVIDER_MISMATCH);
             }
 
+            // 블랙 리스트 회원 인 경우
+            if (existing.getIsBlacklisted()){
+                throw new CommonException(ResponseCode.BLACKLISTED_USER);
+            }
+
+            // 탈퇴된 회원인 경우
+            if (MemberStatus.WITHDRAWN.name().equalsIgnoreCase(existing.getStatus())) {
+                throw new CommonException(ResponseCode.WITHDRAWN_USER);
+            }
+
+            existing.setLastLogin(OffsetDateTime.now()); // last login 날짜 추가
+            existing.setLoginCount(existing.getLoginCount() + 1);
+
+
             TokenDTO tokendto = processTokenSignin(existing); // jwt 토큰 발급
 
             return tokendto;
@@ -83,6 +99,7 @@ public class AuthService {
     }
 
     // 자체 로그인
+    // complete
     public TokenDTO signin(String email, String password){
 
         // 이메일로 사용자 객체 가져오기
@@ -94,9 +111,19 @@ public class AuthService {
             throw new CommonException(ResponseCode.INVALID_PASSWORD);
         }
 
+        // 블랙 리스트 회원 인 경우
+        if (member.getIsBlacklisted()){
+            throw new CommonException(ResponseCode.BLACKLISTED_USER);
+        }
+
+        // 탈퇴된 회원인 경우
+        if (MemberStatus.WITHDRAWN.name().equalsIgnoreCase(member.getStatus())) {
+            throw new CommonException(ResponseCode.WITHDRAWN_USER);
+        }
+
         member.setLastLogin(OffsetDateTime.now()); // last login 날짜 추가
         member.setLoginCount(member.getLoginCount() + 1);
-        memberRepository.save(member);
+
 
         authenticateMember(email, password); // 인증 객체 생성 및 Spring Security 등록
 

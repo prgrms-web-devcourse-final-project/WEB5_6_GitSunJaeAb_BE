@@ -56,7 +56,7 @@ public class JwtProvider {
     // 비밀 키 만들기
     public SecretKey getSecretKey(){
         if(secretKey == null){
-            secretKey  = Keys.hmacShaKeyFor(key.getBytes(StandardCharsets.UTF_8)); // ✅
+            secretKey  = Keys.hmacShaKeyFor(key.getBytes(StandardCharsets.UTF_8));
         }
         return secretKey;
     }
