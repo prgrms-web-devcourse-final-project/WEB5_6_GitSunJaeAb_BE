@@ -60,7 +60,7 @@ public class CommentController {
             ));
         }
 
-        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "댓글 작성 완료"));
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "댓글 작성 완료", response.getComment()));
     }
 
 
@@ -94,7 +94,7 @@ public class CommentController {
             ));
         }
 
-        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "댓글 작성 완료"));
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "댓글 작성 완료", response.getComment()));
     }
 
 
@@ -128,9 +128,9 @@ public class CommentController {
     public ResponseEntity<ApiResponse> updateRoadmapComment(
         @PathVariable(name = "commentId") final Long commentId,
         @RequestBody @Valid final CommentRequest request) {
-        commentService.update(commentId, request);
+        CommentDTO commentDTO = commentService.update(commentId, request);
 
-        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "댓글 수정 완료"));
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "댓글 수정 완료", commentDTO));
     }
 
     // 댓글 삭제
