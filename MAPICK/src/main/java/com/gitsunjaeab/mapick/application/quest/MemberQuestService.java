@@ -15,6 +15,7 @@ import com.gitsunjaeab.mapick.domain.quest.MemberQuest;
 import com.gitsunjaeab.mapick.domain.quest.MemberQuestRepository;
 import com.gitsunjaeab.mapick.domain.quest.Quest;
 import com.gitsunjaeab.mapick.domain.quest.QuestRepository;
+import com.gitsunjaeab.mapick.infra.storage.SupabaseStorageService;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -24,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +34,7 @@ public class MemberQuestService {
     private final MemberQuestRepository memberQuestRepository;
     private final QuestRepository questRepository;
     private final NotificationService notificationService;
+    private final SupabaseStorageService supabaseStorageService;
 
 
     // 전체 참여 목록 조회 //확인
@@ -61,17 +64,27 @@ public class MemberQuestService {
 
     //(참여자) 퀘스트 참여
     @Transactional
-    public MemberQuestCreateResponse createMemberQuest(final MemberQuestCreateRequest request,
-        final Member member) {
+    public MemberQuestCreateResponse createMemberQuest(
+        final MemberQuestCreateRequest request,
+        final Member member,
+        final MultipartFile imageFile
+    ) {
         final Quest quest = questRepository.findById(request.getQuestId())
             .orElseThrow(() -> new NotFoundException("퀘스트를 찾을 수 없습니다."));
+
 
         final MemberQuest memberQuest = new MemberQuest();
         memberQuest.setQuest(quest);
         memberQuest.setMember(member);
         memberQuest.setTitle(request.getTitle());
         memberQuest.setAnswer(request.getAnswer());
-        memberQuest.setImageUrl(request.getEvidenceImage());
+        if(imageFile != null && !imageFile.isEmpty()){
+            String uploadedUrl = supabaseStorageService.upload(imageFile);
+            memberQuest.setImageUrl(uploadedUrl);
+        }else{
+            memberQuest.setImageUrl(request.getEvidenceImage());
+        }
+
         memberQuest.setDescription(request.getDescription());
         memberQuest.setSubmitAt(OffsetDateTime.now(ZoneId.of("Asia/Seoul")));
         memberQuest.setStatus(true);
@@ -143,7 +156,8 @@ public class MemberQuestService {
     public MemberQuestUpdateResponse updateMemberQuest(
         final Long id,
         final MemberQuestUpdateRequest request,
-        final Member member
+        final Member member,
+        final MultipartFile imageFile
     ) {
         final MemberQuest memberQuest = memberQuestRepository.findById(id)
             .orElseThrow(() -> new NotFoundException("참여 내역을 찾을 수 없습니다."));
@@ -155,7 +169,14 @@ public class MemberQuestService {
         }
         memberQuest.setTitle(request.getTitle());
         memberQuest.setAnswer(request.getAnswer());
-        memberQuest.setImageUrl(request.getEvidenceImage());
+
+        if(imageFile != null && !imageFile.isEmpty()){
+            String uploadedUrl = supabaseStorageService.upload(imageFile);
+            memberQuest.setImageUrl(uploadedUrl);
+        }else{
+            memberQuest.setImageUrl(request.getEvidenceImage());
+        }
+
         memberQuest.setDescription(request.getDescription());
         memberQuest.setUpdatedAt(OffsetDateTime.now(ZoneId.of("Asia/Seoul")));
 
