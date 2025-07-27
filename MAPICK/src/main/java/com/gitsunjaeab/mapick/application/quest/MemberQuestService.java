@@ -35,6 +35,7 @@ public class MemberQuestService {
     private final QuestRepository questRepository;
     private final NotificationService notificationService;
     private final SupabaseStorageService supabaseStorageService;
+    private final QuestRankService questRankService;
 
 
     // 전체 참여 목록 조회 //확인
@@ -188,10 +189,6 @@ public class MemberQuestService {
             .findWithQuestAndMemberById(request.getMemberQuestId())
             .orElseThrow(() -> new NotFoundException("참여 내역을 찾을 수 없습니다."));
 
-//        final MemberQuest memberQuest = memberQuestRepository
-//            .findById(request.getMemberQuestId())
-//            .orElseThrow(() -> new NotFoundException("참여 내역을 찾을 수 없습니다."));
-
 
         // 권한 확인: judgeMember = 제출자 (제출자인지 확인)
         if (!memberQuest.getQuest().getMember().getId().equals(judgeMember.getId())) {
@@ -202,20 +199,20 @@ public class MemberQuestService {
         //Null값 확인
         Boolean recognized = request.getIsRecognized();
 
-        //문제확인용 로그
-        System.out.println("🟡 판정 요청 값 (isRecognized): " + recognized);
-
         if (recognized == null){
             throw new IllegalStateException("정답여부를 판단해 주세요");
         }
-
-//        memberQuest.setIsRecognized(request.getIsRecognized() ? "Y" : "N");
-//        memberQuest.setUpdatedAt(OffsetDateTime.now(ZoneId.of("Asia/Seoul")));
 
         // 정답 여부 설정
         memberQuest.setIsRecognized(recognized ? "Y" : "N");
         memberQuest.setUpdatedAt(OffsetDateTime.now(ZoneId.of("Asia/Seoul")));
 
+        // 정답일 경우 점수를 부여
+        if (recognized){
+            final Member submitter = memberQuest.getMember();
+            final Quest quest = memberQuest.getQuest();
+            questRankService.addScore(submitter,quest,100); //100점씩
+        }
 
         // 저장 후 DTO로 반환
         return MemberQuestJudgeResponse.of(memberQuestRepository.save(memberQuest));

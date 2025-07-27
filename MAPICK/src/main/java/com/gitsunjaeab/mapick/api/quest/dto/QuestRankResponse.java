@@ -2,6 +2,7 @@ package com.gitsunjaeab.mapick.api.quest.dto;
 
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
+import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.quest.QuestRank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -28,27 +29,39 @@ public class QuestRankResponse implements BaseApiResponse {
     
     @NotNull
     private Integer rank;
-    
+
+    private Integer score;
+
+
     private OffsetDateTime completedAt;
-    
     private OffsetDateTime createdAt;
-    
     private OffsetDateTime updatedAt;
     
     private Long quest;
 
+    // 멤버 정보 - 필요하면 유지
+    private Long memberId;
+    private String nickname;
+
+
     // 퀘스트 랭킹 생성 응답 
     public static QuestRankResponse ofCreate(QuestRank questRank) {
+
+        Member member = questRank.getMember();
+
         return new QuestRankResponse(
             ResponseCode.OK.getCode(),
             "퀘스트 랭킹 생성 완료",
             LocalDateTime.now(),
             questRank.getId(),
             questRank.getRank(),
+            questRank.getScore(),
             questRank.getCompletedAt(),
             questRank.getCreatedAt(),
             questRank.getUpdatedAt(),
-            questRank.getQuest() != null ? questRank.getQuest().getId() : null
+            questRank.getQuest() != null ? questRank.getQuest().getId() : null,
+            member != null ? member.getId() : null,
+            member != null ? member.getNickname() : null
         );
     }
 }
