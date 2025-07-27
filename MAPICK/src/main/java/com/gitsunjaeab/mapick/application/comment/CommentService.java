@@ -116,12 +116,12 @@ public class CommentService {
                         .build()
                 );
 
-                return new CommentAchievementResponse(savedComment.getId(), true, new AchievementDTO(achievement));
+                return new CommentAchievementResponse(new CommentDTO(savedComment), true, new AchievementDTO(achievement));
             }
         }
 
         // 업적 미달성 or 이미 달성
-        return new CommentAchievementResponse(savedComment.getId(), false, null);
+        return new CommentAchievementResponse(new CommentDTO(savedComment), false, null);
     }
 
     @Transactional
@@ -151,13 +151,15 @@ public class CommentService {
     }
 
     @Transactional
-    public void update(Long commentId, @Valid CommentRequest request) {
+    public CommentDTO update(Long commentId, @Valid CommentRequest request) {
         final Comment comment = commentRepository.findById(commentId)
             .orElseThrow(() -> new NotFoundException("존재하지 않는 댓글 ID 입니다."));
         comment.setContent(request.getContent());
         comment.setUpdatedAt(OffsetDateTime.now());
 
         commentRepository.save(comment);
+
+        return new CommentDTO(comment);
     }
 
     public void delete(final Long id) {
