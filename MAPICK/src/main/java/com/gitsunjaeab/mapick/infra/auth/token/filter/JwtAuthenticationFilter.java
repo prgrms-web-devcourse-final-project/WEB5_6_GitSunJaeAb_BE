@@ -52,6 +52,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         FilterChain filterChain) throws ServletException, IOException {
 
         String requestAccessToken = jwtProvider.resolveToken(request, TokenType.ACCESS_TOKEN);
+
         if (requestAccessToken == null || requestAccessToken.isBlank()) {
             throw new IllegalArgumentException("Access Token is missing or empty.");
         }
@@ -62,17 +63,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (ExpiredJwtException ex) {
+
             TokenDTO newAccessToken = renewingAccessToken(requestAccessToken, request);
+
             if (newAccessToken == null) {
                 filterChain.doFilter(request, response);
                 return;
-            }
+            } //todo 만료된 토큰 예외 처리
 
             RefreshToken newRefreshToken = renewingRefreshToken(ex.getClaims().getId(), newAccessToken.getId());
             responseToken(response, newAccessToken, newRefreshToken);
+
         }  catch (Exception e) {
             throw new RuntimeException("❌ 기타 JWT 예외 발생: " + e.getMessage());
-        }
+        } //todo 기타 문제 예외 처리
 
         filterChain.doFilter(request, response);
     }
