@@ -61,12 +61,12 @@ public class JwtProvider {
         return secretKey;
     }
 
-    // JWT 발급(로그인 시)
+    // JWT 발급
     public TokenDTO generateAccessToken(Authentication authentication){
         return generateAccessToken(authentication.getName());
     }
 
-    // JWT 발급(재발급 시)
+    // JWT 발급
     public TokenDTO generateAccessToken(String email){
         String id = UUID.randomUUID().toString();
         long now = new Date().getTime();

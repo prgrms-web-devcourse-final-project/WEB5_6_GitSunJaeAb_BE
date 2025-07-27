@@ -1,13 +1,16 @@
 package com.gitsunjaeab.mapick.infra.auth.token.filter;
 
 import com.gitsunjaeab.mapick.application.auth.RefreshTokenService;
+import com.gitsunjaeab.mapick.domain.auth.AccessTokenBlacklistRepository;
 import com.gitsunjaeab.mapick.domain.auth.RefreshToken;
 import com.gitsunjaeab.mapick.api.auth.dto.internal.TokenDTO;
 import com.gitsunjaeab.mapick.infra.auth.token.JwtProvider;
 import com.gitsunjaeab.mapick.infra.auth.token.TokenCookieFactory;
 import com.gitsunjaeab.mapick.infra.auth.token.code.TokenType;
+import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,6 +33,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtProvider jwtProvider;
     private final RefreshTokenService refreshTokenService;
+    private final AccessTokenBlacklistRepository  accessTokenBlacklistRepository;
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
@@ -51,13 +55,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
         FilterChain filterChain) throws ServletException, IOException {
 
-        String requestAccessToken = jwtProvider.resolveToken(request, TokenType.ACCESS_TOKEN);
+        String requestAccessToken = jwtProvider.resolveToken(request, TokenType.ACCESS_TOKEN); // access token 추출
 
         if (requestAccessToken == null || requestAccessToken.isBlank()) {
             throw new IllegalArgumentException("Access Token is missing or empty.");
         }
 
         try {
+            if (accessTokenBlacklistRepository.existsByToken(requestAccessToken)) {
+                throw new JwtException("블랙리스트에 등록된 액세스 토큰입니다.");
+            }
+
             if (jwtProvider.validateToken(requestAccessToken)) {
                 Authentication authentication = jwtProvider.generateAuthentication(requestAccessToken);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
