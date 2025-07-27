@@ -1,13 +1,12 @@
 package com.gitsunjaeab.mapick.infra.auth.token.filter;
 
+import com.gitsunjaeab.mapick.api.auth.dto.internal.TokenDTO;
 import com.gitsunjaeab.mapick.application.auth.RefreshTokenService;
 import com.gitsunjaeab.mapick.domain.auth.AccessTokenBlacklistRepository;
 import com.gitsunjaeab.mapick.domain.auth.RefreshToken;
-import com.gitsunjaeab.mapick.api.auth.dto.internal.TokenDTO;
 import com.gitsunjaeab.mapick.infra.auth.token.JwtProvider;
 import com.gitsunjaeab.mapick.infra.auth.token.TokenCookieFactory;
 import com.gitsunjaeab.mapick.infra.auth.token.code.TokenType;
-import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -15,16 +14,17 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.ResponseCookie;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import java.io.IOException;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -44,7 +44,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 "/v3/api-docs/",
                 "/v3/api-docs/swagger-config",
                 "/ws",
-                "/auth/signin", "/auth/signup", "/auth/socialLogin", "/auth/logout"
+                "/auth/signin", "/auth/signup", "/auth/socialLogin"
         );
         String path = request.getRequestURI();
         return excludePaths.stream().anyMatch(path::startsWith);
@@ -57,11 +57,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String requestAccessToken = jwtProvider.resolveToken(request, TokenType.ACCESS_TOKEN); // access token 추출
 
-        if (requestAccessToken == null || requestAccessToken.isBlank()) {
-            throw new IllegalArgumentException("Access Token is missing or empty.");
-        }
-
         try {
+            if (requestAccessToken == null || requestAccessToken.isBlank()) {
+                throw new IllegalArgumentException("Access Token is missing or empty.");
+            }
+
             if (accessTokenBlacklistRepository.existsByToken(requestAccessToken)) {
                 throw new JwtException("블랙리스트에 등록된 액세스 토큰입니다.");
             }
@@ -70,6 +70,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 Authentication authentication = jwtProvider.generateAuthentication(requestAccessToken);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
+
         } catch (ExpiredJwtException ex) {
 
             TokenDTO newAccessToken = renewingAccessToken(requestAccessToken, request);
@@ -83,7 +84,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             responseToken(response, newAccessToken, newRefreshToken);
 
         }  catch (Exception e) {
-            throw new RuntimeException("❌ 기타 JWT 예외 발생: " + e.getMessage());
+            throw e;
         } //todo 기타 문제 예외 처리
 
         filterChain.doFilter(request, response);

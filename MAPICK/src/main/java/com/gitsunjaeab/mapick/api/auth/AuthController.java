@@ -31,6 +31,7 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -143,14 +144,17 @@ public class AuthController {
     }
 
     // 로그아웃
-    // complete
+
     // todo 로그아웃 하지 않으면 refresh token 값이 삭제 되지 않음, 추후 어떻게 기존 db의 refresh 값을 삭제 할 것인지 고민
+    // todo 엑세스토큰이 블랙리스트로 저장이 되지 않는 이슈
     @PostMapping("/logout")
     @Operation(summary = "로그 아웃")
+    @Transactional
     public ResponseEntity<LogoutResponse> logout(HttpServletRequest request, HttpServletResponse response) {
 
         // 계정에 존재하는 기존 refresh token 삭제 1
         String accessToken = jwtProvider.resolveToken(request, TokenType.ACCESS_TOKEN);
+
         Claims claims = jwtProvider.parseClaim(accessToken);
         String jti = claims.getId();
 
@@ -162,23 +166,11 @@ public class AuthController {
 
         refreshTokenRepository.deleteByAccessTokenId(jti);
 
-        // 계정에 존재하는 기존 refresh token 삭제 2
-//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//        Long memberId = Long.parseLong(auth.getName());
-//        refreshTokenRepository.deleteByMemberId(memberId);
-
-
-
         // 쿠키 굽기
-//      ResponseCookie expiredAccessToken = TokenCookieFactory.createExpiredToken(TokenType.ACCESS_TOKEN);
         ResponseCookie expiredRefreshToken = TokenCookieFactory.createExpiredToken(TokenType.REFRESH_TOKEN);
-//      ResponseCookie expiredSessionId = TokenCookieFactory.createExpiredToken(TokenType.AUTH_SERVER_SESSION_ID);
-
 
         // 응답 헤더에 추가
-//      response.addHeader("Set-Cookie", expiredAccessToken.toString());
         response.addHeader("Set-Cookie", expiredRefreshToken.toString());
-//      response.addHeader("Set-Cookie", expiredSessionId.toString());
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -189,6 +181,7 @@ public class AuthController {
     // complete
     @PutMapping("/password")
     @Operation(summary = "비밀번호 수정", description = "[사용자 전용] 본인만 접근 가능한 비밀번호 변경")
+    @Transactional
     public ResponseEntity<PasswordChangeResponse> updatePassword(@Valid @RequestBody PasswordRequest passwordRequest,HttpServletRequest request, HttpServletResponse response) {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -209,11 +202,6 @@ public class AuthController {
 
         TokenDTO tokenDTO = authService.updatePassword(memberId, passwordRequest.getPassword());
 
-        ResponseCookie accessTokenCookie = TokenCookieFactory.create(
-                TokenType.ACCESS_TOKEN.name(),
-                tokenDTO.getAccessToken(),
-                tokenDTO.getAtExpiresIn()
-        );
         ResponseCookie refreshTokenCookie = TokenCookieFactory.create(
                 TokenType.REFRESH_TOKEN.name(),
                 tokenDTO.getRefreshToken(),

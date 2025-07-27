@@ -61,7 +61,6 @@ public class SecurityConfig {
                     response.getWriter().write(json);
                 })
                 .authenticationEntryPoint((request, response, authException) -> { // 인증 실패 처리
-                    log.warn("🚨 authenticationEntryPoint 진입: {}", authException.getClass().getSimpleName());
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401
                     response.setContentType("application/json");
                     response.setCharacterEncoding("UTF-8");

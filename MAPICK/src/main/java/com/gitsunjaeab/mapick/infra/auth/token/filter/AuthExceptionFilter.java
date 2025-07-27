@@ -37,34 +37,27 @@ public class AuthExceptionFilter extends OncePerRequestFilter {
         try {
             filterChain.doFilter(request, response);
 
-        } catch (JwtException ex) {
-            log.warn("❌ JWT 오류 발생");
-            throw new BadCredentialsException("잘못된 JWT 토큰", ex);
-
-        } catch (AuthenticationException ex) {
-            log.warn("❌ 인증 예외 발생");
-            throw ex;
-
-        }
-        catch (IllegalArgumentException ex) {
-            log.warn("❌ 잘못된 요청 매개변수 (JWT 없음 또는 빈 문자열)");
-//            throw new BadCredentialsException("유효하지 않은 인증 헤더", ex);
+        } catch (IllegalArgumentException | JwtException ex) {
+            log.warn("❌ 인증 관련 예외 발생: {}", ex.getMessage());
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
 
-            ApiResponse apiResponse = ApiResponse.of(ResponseCode.UNAUTHORIZED); // 커스텀 코드 4010 같은 것
+            ApiResponse apiResponse = ApiResponse.of(ResponseCode.UNAUTHORIZED);
             String json = objectMapper.writeValueAsString(apiResponse);
+            log.info("➡️ 응답: {}", json);
             response.getWriter().write(json);
 
-            // 예외 던지지 않고 종료
-            return;
+        } catch (Exception ex) {
+            log.error("❌ 필터 내 처리되지 않은 예외 발생", ex);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR); // 500
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
 
-        }
-
-        catch (Exception ex) {
-            log.warn("❌ 기타 예외 발생");
-            throw new AuthenticationServiceException("인증 중 예기치 못한 오류", ex);
+            ApiResponse apiResponse = ApiResponse.of(ResponseCode.INTERNAL_ERROR);
+            String json = objectMapper.writeValueAsString(apiResponse);
+            log.info("➡️ 응답: {}", json);
+            response.getWriter().write(json);
         }
     }
 
