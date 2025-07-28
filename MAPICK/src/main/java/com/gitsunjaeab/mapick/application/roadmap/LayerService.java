@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class LayerService {
 
+    private final RoadmapEditorService roadmapEditorService;
     private final LayerRepository layerRepository;
     private final MemberRepository memberRepository;
     private final RoadmapRepository roadmapRepository;
@@ -36,12 +37,13 @@ public class LayerService {
     public LayerService(final LayerRepository layerRepository,
         final MemberRepository memberRepository, final RoadmapRepository roadmapRepository,
         final MarkerRepository markerRepository,
-        final LayerLibraryRepository layerLibraryRepository) {
+        final LayerLibraryRepository layerLibraryRepository, final RoadmapEditorService roadmapEditorService) {
         this.layerRepository = layerRepository;
         this.memberRepository = memberRepository;
         this.roadmapRepository = roadmapRepository;
         this.markerRepository = markerRepository;
         this.layerLibraryRepository = layerLibraryRepository;
+        this.roadmapEditorService = roadmapEditorService;
     }
 
     // ===== 실시간 공유지도 상 CRUD =====
@@ -61,6 +63,8 @@ public class LayerService {
         layer.setMember(member);
         layer.setRoadmap(roadmap);
         layer.setLayerTempId(request.getLayerTempId());
+
+        roadmapEditorService.registerEditorIfNotExists(roadmap.getId(), member.getId());
         return layerRepository.save(layer);
     }
 
@@ -72,6 +76,10 @@ public class LayerService {
         layer.setName(request.getName());
         layer.setDescription(request.getDescription());
         layer.setLayerSeq(request.getLayerSeq());
+
+        Long roadmapId = layer.getRoadmap().getId();
+        Long memberId = layer.getMember().getId();
+        roadmapEditorService.registerEditorIfNotExists(roadmapId, memberId);
         return layerRepository.save(layer);
     }
 
@@ -91,6 +99,11 @@ public class LayerService {
 
         layerLibraryRepository.softDeleteAllByLayer(layer.getId());
         layer.setDeletedAt(OffsetDateTime.now());
+
+        Long roadmapId = layer.getRoadmap().getId();
+        Long memberId = layer.getMember().getId();
+        roadmapEditorService.registerEditorIfNotExists(roadmapId, memberId);
+
         return layerRepository.save(layer);
     }
 

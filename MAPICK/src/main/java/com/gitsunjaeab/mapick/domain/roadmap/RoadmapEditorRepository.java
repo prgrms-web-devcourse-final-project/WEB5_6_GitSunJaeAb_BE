@@ -8,18 +8,12 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-
 public interface RoadmapEditorRepository extends JpaRepository<RoadmapEditor, Long> {
 
     RoadmapEditor findFirstByRoadmap(Roadmap roadmap);
-
     RoadmapEditor findFirstByMember(Member member);
-
-    RoadmapEditor findFirstByInvitedBy(Member member);
     boolean existsByRoadmapIdAndMemberId(Long roadmapId, Long memberId);
-
     long countByRoadmapIdAndDeletedAtIsNull(Long roadmapId);
-
     @Query("SELECT new com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.RoadmapEditorSimpleDTO(" +
             "m.id, m.name, m.nickname, m.profileImage) " +
             "FROM RoadmapEditor re " +

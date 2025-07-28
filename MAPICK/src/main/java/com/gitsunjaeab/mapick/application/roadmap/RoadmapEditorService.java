@@ -95,19 +95,15 @@ public class RoadmapEditorService {
         roadmapEditorDTO.setId(roadmapEditor.getId());
         roadmapEditorDTO.setPermission(roadmapEditor.getPermission());
         roadmapEditorDTO.setCreatedAt(roadmapEditor.getCreatedAt());
-        roadmapEditorDTO.setUpdatedAt(roadmapEditor.getUpdatedAt());
         roadmapEditorDTO.setDeletedAt(roadmapEditor.getDeletedAt());
         roadmapEditorDTO.setRoadmap(roadmapEditor.getRoadmap() == null ? null : roadmapEditor.getRoadmap().getId());
         roadmapEditorDTO.setMember(roadmapEditor.getMember() == null ? null : roadmapEditor.getMember().getId());
-        roadmapEditorDTO.setInvitedBy(
-            roadmapEditor.getInvitedBy() == null ? null : roadmapEditor.getInvitedBy().getId());
         return roadmapEditorDTO;
     }
 
     private RoadmapEditor roadmapToEntity(final RoadmapEditorDTO roadmapEditorDTO, final RoadmapEditor roadmapEditor) {
         roadmapEditor.setPermission(roadmapEditorDTO.getPermission());
         roadmapEditor.setCreatedAt(roadmapEditorDTO.getCreatedAt());
-        roadmapEditor.setUpdatedAt(roadmapEditorDTO.getUpdatedAt());
         roadmapEditor.setDeletedAt(roadmapEditorDTO.getDeletedAt());
         final Roadmap roadmap = roadmapEditorDTO.getRoadmap() == null ? null : roadmapRepository.findById(roadmapEditorDTO.getRoadmap())
                 .orElseThrow(() -> new NotFoundException("map not found"));
@@ -117,7 +113,6 @@ public class RoadmapEditorService {
         roadmapEditor.setMember(member);
         final Member invitedBy = roadmapEditorDTO.getInvitedBy() == null ? null : memberRepository.findById(roadmapEditorDTO.getInvitedBy())
                 .orElseThrow(() -> new NotFoundException("invitedBy not found"));
-        roadmapEditor.setInvitedBy(invitedBy);
         return roadmapEditor;
     }
 
