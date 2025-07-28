@@ -79,6 +79,7 @@ public class CommentService {
     }
 
     @Transactional
+
     public CommentDTO update(final Long commentId, final Long memberId, @Valid final CommentRequest request) {
         final Comment comment = entityFinder.findCommentById(commentId);
 

@@ -80,7 +80,7 @@ public class CommentController {
 
         final List<CommentDTO> commentDTOList= commentService.findAllCommentsInQuest(questId);
         final CommentListResponse response = CommentListResponse.get(commentDTOList);
-
+  
         return ResponseEntity.ok(response);
     }
 
@@ -113,6 +113,7 @@ public class CommentController {
 
         return ResponseEntity.ok(response);
     }
+
 
     @Operation(summary = "댓글 삭제", description = "[작성자] 댓글 삭제")
     @DeleteMapping("/{commentId}")
