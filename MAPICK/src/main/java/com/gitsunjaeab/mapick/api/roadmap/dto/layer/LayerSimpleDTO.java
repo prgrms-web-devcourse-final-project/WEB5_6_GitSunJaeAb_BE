@@ -26,8 +26,6 @@ public class LayerSimpleDTO {
 
     private Integer layerSeq;
 
-    private LocalDate layerTime;
-
     @NotNull
     private OffsetDateTime createdAt;
 
@@ -37,7 +35,6 @@ public class LayerSimpleDTO {
         this.name = layer.getName();
         this.description = layer.getDescription();
         this.layerSeq = layer.getLayerSeq();
-        this.layerTime = layer.getLayerTime();
         this.createdAt = layer.getCreatedAt();
     }
 

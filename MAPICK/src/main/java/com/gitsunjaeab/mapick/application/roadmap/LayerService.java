@@ -2,7 +2,7 @@ package com.gitsunjaeab.mapick.application.roadmap;
 
 import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerDetailDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerRequest;
-import com.gitsunjaeab.mapick.api.roadmap.websocket.dto.LayerSocketDTO;
+import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerSyncRequest;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.auth.Role;
 import com.gitsunjaeab.mapick.domain.member.Member;
@@ -44,6 +44,56 @@ public class LayerService {
         this.layerLibraryRepository = layerLibraryRepository;
     }
 
+    // ===== 실시간 공유지도 상 CRUD =====
+
+    @Transactional
+    public Layer  createFromSync(LayerSyncRequest request) {
+        Member member = memberRepository.findById(request.getMemberId())
+                .orElseThrow(() -> new IllegalArgumentException("사용자 없음"));
+
+        Roadmap roadmap = roadmapRepository.findById(request.getRoadmapId())
+                .orElseThrow(() -> new IllegalArgumentException("로드맵 없음"));
+
+        Layer layer = new Layer();
+        layer.setName(request.getName());
+        layer.setDescription(request.getDescription());
+        layer.setLayerSeq(request.getLayerSeq());
+        layer.setMember(member);
+        layer.setRoadmap(roadmap);
+        layer.setLayerTempId(request.getLayerTempId());
+        return layerRepository.save(layer);
+    }
+
+    @Transactional
+    public Layer  updateFromSync(LayerSyncRequest request) {
+        Layer layer = layerRepository.findByLayerTempId(request.getLayerTempId())
+                .orElseThrow(() -> new IllegalArgumentException("레이어를 찾을 수 없음"));
+
+        layer.setName(request.getName());
+        layer.setDescription(request.getDescription());
+        layer.setLayerSeq(request.getLayerSeq());
+        return layerRepository.save(layer);
+    }
+
+    @Transactional
+    public Layer deleteByTempId(Long layerTempId) {
+        Layer layer = layerRepository.findByLayerTempId(layerTempId)
+                .orElseThrow(() -> new IllegalArgumentException("레이어를 찾을 수 없음"));
+
+        if (layer.getDeletedAt() != null) {
+            throw new CommonException(ResponseCode.ALREADY_PROCESSED);
+        }
+
+        ReferencedWarning warning = getReferencedWarning(layer.getId());
+        if (warning != null) {
+            throw new CommonException(ResponseCode.CONFLICT);
+        }
+
+        layerLibraryRepository.softDeleteAllByLayer(layer.getId());
+        layer.setDeletedAt(OffsetDateTime.now());
+        return layerRepository.save(layer);
+    }
+
     // ===== 기본 CRUD =====
 
     // 로드맵의 레이어 조회
@@ -81,7 +131,6 @@ public class LayerService {
         return LayerDetailDTO.from(layer, isZzim);
     }
 
-
     // 레이어 생성
     public Layer create(final LayerRequest request, Long memberId, Long roadmapId) {
         // 연관 Entity 조회
@@ -96,7 +145,6 @@ public class LayerService {
         // 저장 & 생성된 레이어 반환
         return layerRepository.save(layer);
     }
-
 
     // 레이어 수정
     @Transactional
@@ -114,12 +162,10 @@ public class LayerService {
         layer.setName(request.getName());
         layer.setDescription(request.getDescription());
         layer.setLayerSeq(request.getLayerSeq());
-        layer.setLayerTime(request.getLayerTime());
 
         // 수정된 레이어 반환
         return layerRepository.save(layer);
     }
-
 
     // 레이어 삭제
     @Transactional
@@ -143,7 +189,6 @@ public class LayerService {
         }
 
 
-
         // 참조 무결성 검사
         ReferencedWarning warning = getReferencedWarning(layer.getId());
         if (warning != null) {
@@ -160,61 +205,6 @@ public class LayerService {
         return layer;
     }
 
-    @Transactional
-    public Layer createFromSocket(LayerSocketDTO dto) {
-        Long memberId = dto.getMemberId();
-        Long roadmapId = dto.getRoadmapId();
-
-        // DTO → LayerRequest 변환 후 기존 create() 재사용
-        LayerRequest request = new LayerRequest(
-                dto.getName(),
-                dto.getDescription(),
-                dto.getLayerSeq(),
-                dto.getLayerTime()
-        );
-
-        return create(request, memberId, roadmapId);
-    }
-
-    // WebSocket용 레이어 수정
-    @Transactional
-    public Layer updateFromSocket(LayerSocketDTO dto) {
-        Layer layer = layerRepository.findById(dto.getLayerId())
-                .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND));
-
-        // 권한 검증 없음 → 공유지도이므로 누구나 수정 가능
-        layer.setName(dto.getName());
-        layer.setDescription(dto.getDescription());
-        layer.setLayerSeq(dto.getLayerSeq());
-        layer.setLayerTime(dto.getLayerTime());
-
-        return layerRepository.save(layer);
-    }
-
-    // WebSocket용 레이어 삭제
-    @Transactional
-    public Layer deleteFromSocket(LayerSocketDTO dto) {
-        Layer layer = layerRepository.findById(dto.getLayerId())
-                .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND));
-
-        // 공유지도에서는 권한 없이도 삭제 가능
-        if (layer.getDeletedAt() != null) {
-            throw new CommonException(ResponseCode.ALREADY_PROCESSED);
-        }
-
-        ReferencedWarning warning = getReferencedWarning(layer.getId());
-        if (warning != null) {
-            throw new CommonException(ResponseCode.CONFLICT);
-        }
-
-        layerLibraryRepository.softDeleteAllByLayer(layer.getId());
-        layer.setDeletedAt(OffsetDateTime.now());
-        layerRepository.save(layer);
-        layerRepository.flush();
-
-        return layer;
-
-    }
 
     @Transactional(readOnly = true)
     public Layer findById(Long id) {

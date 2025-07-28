@@ -3,6 +3,7 @@ package com.gitsunjaeab.mapick.domain.roadmap;
 import com.gitsunjaeab.mapick.domain.category.Category;
 import com.gitsunjaeab.mapick.domain.comment.Comment;
 import com.gitsunjaeab.mapick.domain.member.Member;
+import com.gitsunjaeab.mapick.domain.notification.Notification;
 import com.gitsunjaeab.mapick.domain.report.Report;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -117,4 +118,7 @@ public class Roadmap {
 
     @OneToMany(mappedBy = "roadmap", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<Report> roadmapReports = new HashSet<>();
+
+    @OneToMany(mappedBy = "roadmap", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private Set<Notification> notifications = new HashSet<>();
 }

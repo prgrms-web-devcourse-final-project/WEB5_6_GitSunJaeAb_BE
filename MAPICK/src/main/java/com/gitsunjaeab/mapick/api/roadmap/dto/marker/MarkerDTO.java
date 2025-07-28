@@ -55,4 +55,6 @@ public class MarkerDTO {
         this.markerSeq = marker.getMarkerSeq();
         this.layerId = marker.getLayer().getId();
     }
+
+
 }
