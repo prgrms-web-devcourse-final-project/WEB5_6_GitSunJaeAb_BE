@@ -74,7 +74,8 @@ public class MemberController {
 
     // ===== 회원 블랙리스트 설정/해제 API =====
 
-    // 회원의 블랙리스트 설정 (관리자 전용) -> todo 완성(예외처리 필요)
+    // 회원의 블랙리스트 설정 (관리자 전용)
+    // complete
     @PutMapping("/blacklist/{memberId}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "[관리자 전용] 블랙리스트 여부 변경 (관리자)", description = "[관리자 전용] 회원의 블랙 리스트 여부 수정")
@@ -89,7 +90,8 @@ public class MemberController {
                 .body(response);
     }
 
-    // 회원의 블랙리스트 해제 (관리자 전용) -> todo 완성(예외처리 필요)
+    // 회원의 블랙리스트 해제 (관리자 전용)
+    // complete
     @DeleteMapping("/blacklist/{memberId}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "[관리자 전용] 블랙리스트 여부 변경 (관리자)", description = "[관리자 전용] 회원의 블랙 리스트 여부 수정")
@@ -106,7 +108,8 @@ public class MemberController {
 
     // ===== 회원 관리자 권한 부여/회수 API =====
 
-    // 회원 관리자 권한 부여 (관리자 전용) -> todo 완성(예외처리 필요)
+    // 회원 관리자 권한 부여 (관리자 전용)
+    // complete
     @PutMapping("/role/{memberId}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "[관리자 전용] 특정 회원 관리자 설정 (관리자)", description = "[관리자 전용] 특정 회원 관리자 설정 ")
@@ -121,7 +124,8 @@ public class MemberController {
                 .body(response);
     }
 
-    // 회원 관리자 권한 회수(관리자 전용) -> todo 완성(예외처리 필요)
+    // 회원 관리자 권한 회수(관리자 전용)
+    // complete
     @DeleteMapping("/role/{memberId}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "[관리자 전용] 특정 회원 관리자 권한 회수 (관리자)", description = "[관리자 전용] 특정 회원 관리자 권한 회수 ")

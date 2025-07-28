@@ -190,7 +190,7 @@ public class MemberService {
     public void deleteMember(final Long id) {
 
         final Member member = memberRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("해당 회원이 없습니다."));
+                .orElseThrow(() -> new CommonException(ResponseCode.MEMBER_NOT_FOUND));
 
         if (member.getDeletedAt() != null) {
             throw new CommonException(ResponseCode.ALREADY_DELETED_USER);
@@ -201,11 +201,12 @@ public class MemberService {
     }
 
     // 관리자 - 특정 유저 블랙 리스트 설정
+    // complete
     @Transactional
     public void setMemberBlackList(Long memberId) {
 
         Member member = memberRepository.findByIdAndDeletedAtIsNull(memberId)
-                .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
+                .orElseThrow(() -> new CommonException(ResponseCode.MEMBER_NOT_FOUND));
 
         // 회원 블랙 리스트 인지 확인
         if (member.getIsBlacklisted()){
@@ -216,11 +217,12 @@ public class MemberService {
     }
 
     // 관리자 - 특정 유저 블랙 리스트 해제
+    // complete
     @Transactional
     public void clearMemberBlackList(Long memberId) {
 
             Member member = memberRepository.findByIdAndDeletedAtIsNull(memberId)
-                    .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
+                    .orElseThrow(() -> new CommonException(ResponseCode.MEMBER_NOT_FOUND));
 
             // 회원 블랙 리스트가 아닌지 확인
             if (!member.getIsBlacklisted()){
@@ -232,31 +234,28 @@ public class MemberService {
     }
 
     // 관리자 - 유저 관리자 권한 부여
+    // complete
     @Transactional
     public void setMemberRoleAdmin(Long memberId) {
-        try{
 
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
+        Member member = memberRepository.findByIdAndDeletedAtIsNull(memberId)
+                .orElseThrow(() -> new CommonException(ResponseCode.MEMBER_NOT_FOUND));
 
         if ("ROLE_ADMIN".equals(member.getRole())) { // 리터럴을 앞에 두어 null 방지
             throw new CommonException(ResponseCode.ALREADY_REGISTERED_ADMIN);
         }
 
         member.setRole("ROLE_ADMIN");
-        }catch (DataIntegrityViolationException e){
-            throw new CommonException(ResponseCode.DB_CONSTRAINT_VIOLATION); // DB 제약 조건 위배
-        }
 
     }
 
     // 관리자 - 유저 관리자 권한 회수
+    // complete
     @Transactional
     public void clearMemberRoleAdmin(Long memberId) {
-        try{
 
-            Member member = memberRepository.findById(memberId)
-                    .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
+            Member member = memberRepository.findByIdAndDeletedAtIsNull(memberId)
+                    .orElseThrow(() -> new CommonException(ResponseCode.MEMBER_NOT_FOUND));
 
             if ("ROLE_USER".equals(member.getRole())) { // 리터럴을 앞에 두어 null 방지
                 throw new CommonException(ResponseCode.ALREADY_REGISTERED_USER);
@@ -264,9 +263,6 @@ public class MemberService {
 
             member.setRole("ROLE_USER");
 
-        }catch (DataIntegrityViolationException e){
-            throw new CommonException(ResponseCode.DB_CONSTRAINT_VIOLATION); // DB 제약 조건 위배
-        }
     }
 
     // 비밀번호 검증
