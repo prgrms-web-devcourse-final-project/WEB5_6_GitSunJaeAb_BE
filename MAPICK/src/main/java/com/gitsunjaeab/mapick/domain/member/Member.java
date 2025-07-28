@@ -119,10 +119,6 @@ public class Member {
     @Builder.Default
     private Set<RoadmapEditor> memberRoadmapEditors = new HashSet<>();
 
-    @OneToMany(mappedBy = "invitedBy")
-    @Builder.Default
-    private Set<RoadmapEditor> invitedByRoadmapEditors = new HashSet<>();
-
     @OneToMany(mappedBy = "member")
     @Builder.Default
     private Set<Layer> memberLayers = new HashSet<>();

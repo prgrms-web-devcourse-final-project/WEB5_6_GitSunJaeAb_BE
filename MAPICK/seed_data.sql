@@ -289,4 +289,4 @@ VALUES
     (104, 'MZ 핫플', 2, now(), now(), NULL),
     (105, '국토종주', 3, now(), now(), NULL);
 
-\d+ public.layers
+SELECT * FROM map_editors WHERE member_id = 109;

@@ -360,6 +360,41 @@ public class RoadmapService {
     }
 
     @Transactional(readOnly = true)
+    public RoadmapListResponse getMyParticipatedSharedRoadmapsWithCitation(Long memberId) {
+        // 사용자가 참여한 공유지도 조회
+        List<Roadmap> roadmaps = roadmapEditorRepository.findParticipatedSharedRoadmaps(memberId);
+        System.out.println("참여한 로드맵 개수: " + roadmaps.size());
+
+        if (roadmaps.isEmpty()) {
+            return RoadmapListResponse.of(Collections.emptyList(), Collections.emptyMap(), Collections.emptyMap());
+        }
+
+        List<Long> roadmapIds = roadmaps.stream()
+                .map(Roadmap::getId)
+                .collect(Collectors.toList());
+
+        // 인용 수 조회
+        List<RoadmapCitationProjection> projections =
+                layerLibraryRepository.countDistinctMemberByRoadmapIds(roadmapIds);
+        Map<Long, Long> citationCountMap = projections.stream()
+                .collect(Collectors.toMap(
+                        RoadmapCitationProjection::getRoadmapId,
+                        RoadmapCitationProjection::getCitationCount
+                ));
+
+        // 북마크 정보 조회
+        List<Bookmark> bookmarks = bookmarkRepository.findByMemberId(memberId);
+        Map<Long, Long> roadmapIdToBookmarkIdMap = bookmarks.stream()
+                .filter(b -> roadmapIds.contains(b.getRoadmap().getId()))
+                .collect(Collectors.toMap(
+                        b -> b.getRoadmap().getId(),
+                        Bookmark::getId
+                ));
+
+        return RoadmapListResponse.of(roadmaps, citationCountMap, roadmapIdToBookmarkIdMap);
+    }
+
+    @Transactional(readOnly = true)
     public RoadmapListResponse buildRoadmapListResponse(List<Roadmap> roadmaps) {
         List<Long> roadmapIds = roadmaps.stream()
                 .map(Roadmap::getId)

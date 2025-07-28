@@ -217,4 +217,18 @@ public class RoadmapController {
     }
 
 
+    @GetMapping("/shared/participated")
+    @Operation(summary = "내가 참여한 공유지도 조회", description = "[사용자용] 내가 협업한 공유지도 목록 반환")
+    public ResponseEntity<RoadmapListResponse> getMyParticipatedSharedRoadmaps(
+            @AuthenticationPrincipal Principal principal) {
+
+        if (principal == null || principal.getMember() == null) {
+            throw new UnauthenticatedException(ResponseCode.UNAUTHORIZED);
+        }
+
+        Long memberId = principal.getMember().getId();
+        RoadmapListResponse response = roadmapService.getMyParticipatedSharedRoadmapsWithCitation(memberId);
+        return ResponseEntity.ok(response);
+    }
+
 }
