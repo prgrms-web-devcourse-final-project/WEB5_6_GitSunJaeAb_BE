@@ -37,7 +37,7 @@ public class MapickApplication {
             // GCP 환경에서는 .env가 없어도 무시하도록
             System.out.println(".env 파일이 없어도 무시하고 실행합니다.");
         }
-        System.out.println(":둥근_압핀: JVM Default TimeZone: " + java.util.TimeZone.getDefault().getID());
+        System.out.println("JVM Default TimeZone: " + java.util.TimeZone.getDefault().getID());
         SpringApplication.run(MapickApplication.class, args);
     }
 }
