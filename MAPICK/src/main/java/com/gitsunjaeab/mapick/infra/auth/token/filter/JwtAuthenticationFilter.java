@@ -58,7 +58,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         try {
 
-            if (requestAccessToken == null || requestAccessToken.isBlank()) { // 빈 jtw가 오는 경우
+            if (requestAccessToken == null || requestAccessToken.isBlank()) { // 빈 JWT가 오는 경우
 //                throw new IllegalArgumentException("Access Token is missing or empty.");
                 filterChain.doFilter(request, response);
                 return;
