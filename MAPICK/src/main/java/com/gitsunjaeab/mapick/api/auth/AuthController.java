@@ -53,15 +53,8 @@ public class AuthController {
 
         TokenDTO dto = authService.socialLogin(request); // 인증 정보로 로그인 처리 후, access/refresh 토큰 생성
 
-        // 쿠키 굽기
-        // access token 쿠기 만들기
-//        ResponseCookie accessTokenCookie = TokenCookieFactory.create(
-//                TokenType.ACCESS_TOKEN.name(),
-//                dto.getAccessToken(),
-//                dto.getAtExpiresIn()
-//        );
 
-        // refresh token 쿠기 만들기
+        // refresh token 쿠키 만들기
         ResponseCookie refreshTokenCookie = TokenCookieFactory.create(
                 TokenType.REFRESH_TOKEN.name(),
                 dto.getRefreshToken(),
@@ -79,7 +72,6 @@ public class AuthController {
                 .atExpiresIn(dto.getAtExpiresIn()) // access token 만료 시간 전달
                 .grantType(GrantType.BEARER)
                 .build();
-
 
         return ResponseEntity
                 .status(HttpStatus.OK)

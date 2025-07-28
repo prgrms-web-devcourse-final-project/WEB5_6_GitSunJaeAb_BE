@@ -42,6 +42,8 @@ public class MemberController {
      *
      */
 
+    // ===== 회원 조회 API =====
+
     // 전체 회원 조회 (관리자 전용) -> todo 완성(예외처리 필요)
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/list")
@@ -71,6 +73,8 @@ public class MemberController {
                 .status(HttpStatus.OK)
                 .body(response);
     }
+
+    // ===== 회원 블랙리스트 설정/해제 API =====
 
     // 회원의 블랙리스트 설정 (관리자 전용) -> todo 완성(예외처리 필요)
     @PreAuthorize("hasRole('ADMIN')")
@@ -102,6 +106,8 @@ public class MemberController {
                 .body(response);
     }
 
+    // ===== 회원 관리자 권한 부여/회수 API =====
+
     // 회원 관리자 권한 부여 (관리자 전용) -> todo 완성(예외처리 필요)
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/role/{memberId}")
@@ -131,6 +137,8 @@ public class MemberController {
                 .status(HttpStatus.OK)
                 .body(response);
     }
+
+    // ===== 회원 삭제 API =====
 
     // 회원 삭제 (관리자 전용) -> todo 완성(예외처리 필요)
     @PreAuthorize("hasRole('ADMIN')")

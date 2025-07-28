@@ -41,6 +41,7 @@ public class NotificationService {
     }
 
     // DTO 변환
+    @Transactional(readOnly = true)
     public List<NotificationListDTO> findDtoByTypeAndMember(NotificationType type, Long memberId) {
         List<Notification> notifications = findByTypeAndMember(type, memberId);
         return mapToListDTO(notifications);
