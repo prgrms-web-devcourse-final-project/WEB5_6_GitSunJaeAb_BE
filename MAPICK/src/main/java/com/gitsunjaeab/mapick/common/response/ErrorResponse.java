@@ -1,6 +1,6 @@
 package com.gitsunjaeab.mapick.common.response;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -9,13 +9,13 @@ import lombok.Getter;
 public class ErrorResponse implements BaseApiResponse {
     private String code;
     private String message;
-    private LocalDateTime timestamp;
+    private OffsetDateTime timestamp;
 
     public static ErrorResponse of(ResponseCode code) {
         return new ErrorResponse(
             code.getCode(),
             code.getMessage(),
-            LocalDateTime.now()
+            OffsetDateTime.now()
         );
     }
 }

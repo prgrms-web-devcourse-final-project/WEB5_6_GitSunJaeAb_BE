@@ -4,7 +4,7 @@ import com.gitsunjaeab.mapick.api.notification.dto.AnnouncementSimpleDTO;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.notification.Announcement;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
@@ -15,7 +15,7 @@ import lombok.Getter;
 public class AnnouncementListResponse implements BaseApiResponse {
     private String code;
     private String message;
-    private LocalDateTime timestamp;
+    private OffsetDateTime timestamp;
     private List<AnnouncementSimpleDTO> announcements;
 
     public static AnnouncementListResponse of(List<Announcement> entities, String message) {
@@ -25,7 +25,7 @@ public class AnnouncementListResponse implements BaseApiResponse {
         return new AnnouncementListResponse(
             ResponseCode.OK.getCode(),
             message,
-            LocalDateTime.now(),
+            OffsetDateTime.now(),
             dtos
         );
     }

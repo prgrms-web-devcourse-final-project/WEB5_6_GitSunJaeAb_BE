@@ -8,10 +8,8 @@ import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerWithMarkerDTO;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,10 +21,10 @@ public class RoadmapResponse implements BaseApiResponse {
 
     private String code;
     private String message;
-    private LocalDateTime timestamp;
+    private OffsetDateTime timestamp;
     private RoadmapInfo roadmap;
 
-    public RoadmapResponse(String code, String message, LocalDateTime timestamp, RoadmapInfo roadmap){
+    public RoadmapResponse(String code, String message, OffsetDateTime timestamp, RoadmapInfo roadmap){
         this.code = code;
         this.message = message;
         this.timestamp = timestamp;
@@ -99,7 +97,7 @@ public class RoadmapResponse implements BaseApiResponse {
         return new RoadmapResponse(
             ResponseCode.OK.getCode(),
             "로드맵 조회 성공",
-            LocalDateTime.now(),
+            OffsetDateTime.now(),
             roadmapInfo
         );
     }

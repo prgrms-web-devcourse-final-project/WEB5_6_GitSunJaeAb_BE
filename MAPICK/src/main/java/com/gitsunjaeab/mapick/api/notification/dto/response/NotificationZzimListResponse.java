@@ -7,7 +7,7 @@ import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerSimpleDTO;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.notification.Notification;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,7 +18,7 @@ public class NotificationZzimListResponse implements BaseApiResponse {
 
     private String code;
     private String message;
-    private LocalDateTime timestamp;
+    private OffsetDateTime timestamp;
     private List<NotificationZzimListDTO> notifications;
 
     // 공통 처리 로직
@@ -68,7 +68,7 @@ public class NotificationZzimListResponse implements BaseApiResponse {
         return new NotificationZzimListResponse(
             ResponseCode.OK.getCode(),
             message,
-            LocalDateTime.now(),
+            OffsetDateTime.now(),
             notificationZzimListDTOs
         );
 

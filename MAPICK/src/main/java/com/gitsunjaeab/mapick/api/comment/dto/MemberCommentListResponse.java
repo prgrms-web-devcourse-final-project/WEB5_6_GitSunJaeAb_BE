@@ -3,7 +3,7 @@ package com.gitsunjaeab.mapick.api.comment.dto;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.comment.Comment;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,7 +18,7 @@ public class MemberCommentListResponse implements BaseApiResponse {
 
     private String code;
     private String message;
-    private LocalDateTime timestamp;
+    private OffsetDateTime timestamp;
     private List<CommentDTO> comments;
 
     public static MemberCommentListResponse of(List<Comment> commentEntities) {
@@ -35,7 +35,7 @@ public class MemberCommentListResponse implements BaseApiResponse {
         return new MemberCommentListResponse(
             ResponseCode.OK.getCode(),
             "댓글 목록 조회 성공",
-            LocalDateTime.now(),
+            OffsetDateTime.now(),
             commentLists
         );
     }

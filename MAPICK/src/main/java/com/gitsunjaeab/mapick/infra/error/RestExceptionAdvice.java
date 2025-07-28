@@ -5,7 +5,12 @@ import com.gitsunjaeab.mapick.api.roadmap.dto.bookmark.BookmarkDeleteResponse;
 import com.gitsunjaeab.mapick.common.response.ApiResponse;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
-import com.gitsunjaeab.mapick.infra.error.exceptions.*;
+import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
+import com.gitsunjaeab.mapick.infra.error.exceptions.DuplicatedBookmarkException;
+import com.gitsunjaeab.mapick.infra.error.exceptions.ForbiddenException;
+import com.gitsunjaeab.mapick.infra.error.exceptions.InvalidRoadmapTypeException;
+import com.gitsunjaeab.mapick.infra.error.exceptions.UnauthenticatedException;
+import java.time.OffsetDateTime;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -14,8 +19,6 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import java.time.LocalDateTime;
 
 @RestControllerAdvice(basePackages = "com.gitsunjaeab.mapick")
 @Slf4j
@@ -49,7 +52,8 @@ public class RestExceptionAdvice {
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<ApiResponse> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
+    public ResponseEntity<ApiResponse> handleDataIntegrityViolationException(
+        DataIntegrityViolationException e) {
         log.error("DB 제약 조건 위반 오류 발생: {}", e.getMessage());
 
         // 중복 키 오류 메시지 커스터마이징
@@ -74,25 +78,28 @@ public class RestExceptionAdvice {
     @ExceptionHandler(UnauthenticatedException.class)
     public ResponseEntity<ApiResponse> handleUnauthenticatedException(UnauthenticatedException e) {
         return ResponseEntity
-                .status(e.getCode().getStatus())
-                .body(ApiResponse.of(e.getCode()));
+            .status(e.getCode().getStatus())
+            .body(ApiResponse.of(e.getCode()));
     }
 
     @ExceptionHandler(DuplicatedBookmarkException.class)
-    public ResponseEntity<BaseApiResponse> handleDuplicatedBookmark(DuplicatedBookmarkException ex) {
+    public ResponseEntity<BaseApiResponse> handleDuplicatedBookmark(
+        DuplicatedBookmarkException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new BookmarkCreateResponse("4001", ex.getMessage(), LocalDateTime.now()));
+            .body(new BookmarkCreateResponse("4001", ex.getMessage(), OffsetDateTime.now()));
     }
 
     @ExceptionHandler(ForbiddenException.class)
-    public ResponseEntity<BaseApiResponse> handleForbiddenFromBookMarkDelete(ForbiddenException ex) {
+    public ResponseEntity<BaseApiResponse> handleForbiddenFromBookMarkDelete(
+        ForbiddenException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new BookmarkDeleteResponse("4001", ex.getMessage(), LocalDateTime.now()));
+            .body(new BookmarkDeleteResponse("4001", ex.getMessage(), OffsetDateTime.now()));
     }
 
     @ExceptionHandler(InvalidRoadmapTypeException.class)
     public ResponseEntity<BaseApiResponse> handleInvalidType(InvalidRoadmapTypeException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new BookmarkDeleteResponse(ResponseCode.INVALID_ROADMAP_TYPE.getCode(), ex.getMessage(), LocalDateTime.now()));
+            .body(new BookmarkDeleteResponse(ResponseCode.INVALID_ROADMAP_TYPE.getCode(),
+                ex.getMessage(), OffsetDateTime.now()));
     }
 }

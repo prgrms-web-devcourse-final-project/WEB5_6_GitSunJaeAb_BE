@@ -4,7 +4,7 @@ import com.gitsunjaeab.mapick.api.notification.dto.NotificationSimpleDTO;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.notification.Notification;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,7 +15,7 @@ public class NotificationReadResponse implements BaseApiResponse {
 
     private String code;
     private String message;
-    private LocalDateTime timestamp;
+    private OffsetDateTime timestamp;
     private List<NotificationSimpleDTO> notification;
 
     // 단일 공지도 배열로 감싸서 반환
@@ -23,7 +23,7 @@ public class NotificationReadResponse implements BaseApiResponse {
         return new NotificationReadResponse(
             ResponseCode.OK.getCode(),
             message,
-            LocalDateTime.now(),
+            OffsetDateTime.now(),
             List.of(NotificationSimpleDTO.from(notification))
         );
     }
