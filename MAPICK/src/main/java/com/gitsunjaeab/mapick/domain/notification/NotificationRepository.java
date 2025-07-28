@@ -49,17 +49,20 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
         OffsetDateTime before);
 
     // 본인(memberId) 알림 전체 fetch join (삭제된 알림 제외)
-    @Query("SELECT n FROM Notification n " +
-        "LEFT JOIN FETCH n.member " +
-        "LEFT JOIN FETCH n.comment c " +
-        "LEFT JOIN FETCH c.member " +
-        "LEFT JOIN FETCH n.roadmap " +
-        "LEFT JOIN FETCH n.layerLibrary ll " +
-        "LEFT JOIN FETCH ll.layer " +
-        "LEFT JOIN FETCH n.quest " +
-        "LEFT JOIN FETCH n.memberQuest " +
-        "WHERE n.deletedAt IS NULL AND n.member.id = :memberId " +
-        "ORDER BY n.createdAt DESC")
+    @Query("""
+            SELECT n FROM Notification n
+            LEFT JOIN FETCH n.member m
+            LEFT JOIN FETCH n.comment c
+            LEFT JOIN FETCH c.member
+            LEFT JOIN FETCH n.roadmap
+            LEFT JOIN FETCH n.layerLibrary ll
+            LEFT JOIN FETCH ll.layer
+            LEFT JOIN FETCH ll.member
+            LEFT JOIN FETCH n.quest
+            LEFT JOIN FETCH n.memberQuest
+            WHERE n.deletedAt IS NULL AND n.member.id = :memberId
+            ORDER BY n.createdAt DESC
+        """)
     List<Notification> findAllWithAllRelationsByMemberId(@Param("memberId") Long memberId);
 
     // 본인(memberId) 알림 타입별 fetch join (삭제된 알림 제외)
