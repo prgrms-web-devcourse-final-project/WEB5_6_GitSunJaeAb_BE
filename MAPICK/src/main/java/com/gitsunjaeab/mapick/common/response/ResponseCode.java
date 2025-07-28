@@ -8,6 +8,9 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum ResponseCode {
 
+    //todo 코드 정리 필요
+
+
     // 클라이언트 에러
     INVALID_INPUT("4000", HttpStatus.BAD_REQUEST, "잘못된 요청 데이터입니다."),
     EMAIL_ALREADY_REGISTERED_LOCALLY("4014", HttpStatus.BAD_REQUEST, "이미 로컬로 가입된 이메일입니다."),
@@ -30,13 +33,17 @@ public enum ResponseCode {
     MEMBER_NOT_FOUND("4042", HttpStatus.NOT_FOUND, "존재하지 않는 회원입니다."),
     INTEREST_NOT_FOUND("4043", HttpStatus.NOT_FOUND, "존재하지 않는 관심분야 입니다."),
     IMAGE_NOT_FOUND("4044", HttpStatus.NOT_FOUND, "존재하지 않는 사진 입니다."),
+    REPORT_NOT_FOUND("4044", HttpStatus.NOT_FOUND, "존재하지 않는 신고 입니다."),
+    MAP_NOT_FOUND("4044", HttpStatus.NOT_FOUND, "존재하지 않는 지도 입니다."),
+    REPORTER_NOT_FOUND("4044", HttpStatus.NOT_FOUND, "존재하지 않는 신고자 입니다."),
+    MARKER_NOT_FOUND("4044", HttpStatus.NOT_FOUND, "존재하지 않는 마커 입니다."),
+    QUEST_NOT_FOUND("4044", HttpStatus.NOT_FOUND, "존재하지 않는 퀘스트 입니다."),
 
 
 
     CONFLICT("4090", HttpStatus.CONFLICT, "충돌이 발생하였습니다."),
     NICKNAME_DUPLICATED("4091", HttpStatus.CONFLICT, "중복된 닉네임입니다."),
     ALREADY_REGISTERED_EMAIL("4092", HttpStatus.CONFLICT, "이미 가입된 이메일입니다."),
-
     DB_CONSTRAINT_VIOLATION("4093", HttpStatus.CONFLICT, "DB 제약 조건에 위배되었습니다."),
     ALREADY_REGISTERED_BLACKLIST("4094", HttpStatus.CONFLICT, "이미 블랙리스트에 등록된 회원 입니다."),
     ALREADY_NOT_REGISTERED_BLACKLIST("4094", HttpStatus.CONFLICT, "이미 블랙리스트 해제된 회원 입니다."),
@@ -45,7 +52,8 @@ public enum ResponseCode {
     ALREADY_DELETED_USER("4097", HttpStatus.CONFLICT, "이미 삭제된 회원 입니다."),
     BOOKMARK_DUPLICATED("4098", HttpStatus.CONFLICT, "중복 북마크입니다."),
     ALREADY_PROCESSED("4099", HttpStatus.CONFLICT, "이미 처리 되었습니다."),
-    
+    ALREADY_REPORTED("4099", HttpStatus.CONFLICT, "이미 신고 되었습니다."),
+
 
     // 내부 오류
     INTERNAL_ERROR("5000", HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류입니다."),
