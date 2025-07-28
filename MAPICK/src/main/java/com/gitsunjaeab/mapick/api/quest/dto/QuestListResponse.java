@@ -4,7 +4,6 @@ import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import jakarta.validation.constraints.Size;
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -17,13 +16,13 @@ public class QuestListResponse implements BaseApiResponse {
 
     private String code;
     private String message;
-    private LocalDateTime timestamp;
+    private OffsetDateTime timestamp;
 
     // 목록 조회용
     @Size(max = 255)
     private List<QuestListItem> quests;
 
-    public QuestListResponse(String code, String message, LocalDateTime timestamp,
+    public QuestListResponse(String code, String message, OffsetDateTime timestamp,
         List<QuestListItem> quests) {
         this.code = code;
         this.message = message;
@@ -52,7 +51,7 @@ public class QuestListResponse implements BaseApiResponse {
         return new QuestListResponse(
             ResponseCode.OK.getCode(),
             "퀘스트 조회 성공",
-            LocalDateTime.now(),
+            OffsetDateTime.now(),
             list
         );
     }
@@ -60,6 +59,7 @@ public class QuestListResponse implements BaseApiResponse {
     @Getter
     @AllArgsConstructor
     public static class QuestListItem {
+
         private Long id;
         private String title;
         private String questImage;
@@ -78,7 +78,7 @@ public class QuestListResponse implements BaseApiResponse {
         return new QuestListResponse(
             responseCode.getCode(),
             message,
-            LocalDateTime.now(),
+            OffsetDateTime.now(),
             Collections.emptyList()
         );
     }

@@ -3,7 +3,7 @@ package com.gitsunjaeab.mapick.api.roadmap.dto.layer;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.roadmap.Layer;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -15,7 +15,7 @@ public class LayerResponse implements BaseApiResponse {
     // 커스텀 응답 필드들
     private String code;
     private String message;
-    private LocalDateTime timestamp;
+    private OffsetDateTime timestamp;
     private LayerDetailDTO layer;
 
 
@@ -23,7 +23,7 @@ public class LayerResponse implements BaseApiResponse {
         return new LayerResponse(
             ResponseCode.OK.getCode(),
             message,
-            LocalDateTime.now(),
+            OffsetDateTime.now(),
             LayerDetailDTO.from(layer, isZzim)
         );
     }
@@ -32,7 +32,7 @@ public class LayerResponse implements BaseApiResponse {
         return new LayerResponse(
             ResponseCode.OK.getCode(),
             message,
-            LocalDateTime.now(),
+            OffsetDateTime.now(),
             layerDetailDTO
         );
     }

@@ -5,7 +5,7 @@ import com.gitsunjaeab.mapick.api.notification.dto.NotificationPostsListDTO;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.notification.Notification;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,7 +17,7 @@ public class NotificationPostsListResponse implements BaseApiResponse {
 
     private String code;
     private String message;
-    private LocalDateTime timestamp;
+    private OffsetDateTime timestamp;
     private List<NotificationPostsListDTO> notifications;
 
     // 공통 처리 로직
@@ -49,7 +49,7 @@ public class NotificationPostsListResponse implements BaseApiResponse {
         return new NotificationPostsListResponse(
             ResponseCode.OK.getCode(),
             message,
-            LocalDateTime.now(),
+            OffsetDateTime.now(),
             notificationPostsListDTOs
         );
 

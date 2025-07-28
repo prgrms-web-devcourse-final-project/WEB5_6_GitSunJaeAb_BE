@@ -1,9 +1,8 @@
 package com.gitsunjaeab.mapick.common.response;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import java.time.LocalDateTime;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import java.time.OffsetDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,10 +11,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ApiResponse<T> implements BaseApiResponse {
+
     private String code;
     private String message;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
-    private LocalDateTime timestamp;
+    private OffsetDateTime timestamp;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private T data;
@@ -25,7 +25,7 @@ public class ApiResponse<T> implements BaseApiResponse {
         return new ApiResponse(
             responseCode.getCode(),
             message,
-            LocalDateTime.now(),
+            OffsetDateTime.now(),
             null
         );
     }
@@ -34,7 +34,7 @@ public class ApiResponse<T> implements BaseApiResponse {
         return new ApiResponse(
             responseCode.getCode(),
             responseCode.getMessage(),
-            LocalDateTime.now(),
+            OffsetDateTime.now(),
             null
         );
     }
@@ -44,7 +44,7 @@ public class ApiResponse<T> implements BaseApiResponse {
         return new ApiResponse<>(
             responseCode.getCode(),
             message,
-            LocalDateTime.now(),
+            OffsetDateTime.now(),
             data
         );
     }

@@ -6,10 +6,9 @@ import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.api.roadmap.dto.hashtag.HashtagDTO;
 import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,7 +21,7 @@ import lombok.Getter;
 public class RoadmapListResponse implements BaseApiResponse {
     private String code;
     private String message;
-    private LocalDateTime timestamp;
+    private OffsetDateTime timestamp;
     private List<RoadmapListDTO> roadmaps;
 
     // 데이터 포함 반환
@@ -58,7 +57,7 @@ public class RoadmapListResponse implements BaseApiResponse {
         return new RoadmapListResponse(
                 ResponseCode.OK.getCode(),
                 "로드맵 목록 조회 성공",
-                LocalDateTime.now(),
+                OffsetDateTime.now(),
                 roadmapDtos
         );
     }

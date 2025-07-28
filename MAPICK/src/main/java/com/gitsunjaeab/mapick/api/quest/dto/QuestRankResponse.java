@@ -10,7 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.OffsetDateTime;
 
 @Getter
@@ -22,7 +22,7 @@ public class QuestRankResponse implements BaseApiResponse {
     // 커스텀 응답 필드들
     private String code;
     private String message;
-    private LocalDateTime timestamp;
+    private OffsetDateTime timestamp;
     
     // 퀘스트 랭킹 데이터 필드들
     private Long id;
@@ -52,7 +52,7 @@ public class QuestRankResponse implements BaseApiResponse {
         return new QuestRankResponse(
             ResponseCode.OK.getCode(),
             "퀘스트 랭킹 생성 완료",
-            LocalDateTime.now(),
+            OffsetDateTime.now(),
             questRank.getId(),
             questRank.getRank(),
             questRank.getScore(),

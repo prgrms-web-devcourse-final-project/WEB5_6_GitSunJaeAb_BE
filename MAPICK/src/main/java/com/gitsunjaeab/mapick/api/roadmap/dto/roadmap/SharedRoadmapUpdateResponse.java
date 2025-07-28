@@ -5,20 +5,20 @@ import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Getter
 @AllArgsConstructor
 public class SharedRoadmapUpdateResponse implements BaseApiResponse {
     private final String code;
     private final String message;
-    private final LocalDateTime timestamp;
+    private final OffsetDateTime timestamp;
 
     public static SharedRoadmapUpdateResponse of(ResponseCode responseCode, String message) {
         return new SharedRoadmapUpdateResponse(
                 responseCode.getCode(),
                 message,
-                LocalDateTime.now()
+                OffsetDateTime.now()
         );
     }
 

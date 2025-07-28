@@ -4,7 +4,6 @@ import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.category.Category;
 import jakarta.validation.constraints.Size;
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,13 +16,13 @@ public class CategoryListResponse implements BaseApiResponse {
 
     private String code;
     private String message;
-    private LocalDateTime timestamp;
+    private OffsetDateTime timestamp;
 
     // 목록 조회용
     @Size(max = 255)
     private List<CategoryListItem> categories;
 
-    public CategoryListResponse(String code, String message, LocalDateTime timestamp,
+    public CategoryListResponse(String code, String message, OffsetDateTime timestamp,
         List<CategoryListItem> categories) {
         this.code = code;
         this.message = message;
@@ -46,7 +45,7 @@ public class CategoryListResponse implements BaseApiResponse {
         return new CategoryListResponse(
             ResponseCode.OK.getCode(),
             "카테고리 조회 성공",
-            LocalDateTime.now(),
+            OffsetDateTime.now(),
             list
         );
     }
