@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 /**
  * 회원 DTO 반환 Response
@@ -17,14 +18,14 @@ public class MemberRoleUpdateResponse implements BaseApiResponse {
 
     private String code;
     private String message;
-    private LocalDateTime timestamp;
+    private OffsetDateTime timestamp;
 
 
     public static MemberRoleUpdateResponse set( ) {
         return new MemberRoleUpdateResponse(
             ResponseCode.OK.getCode(),
             "회원 관리자 권한 부여 완료",
-            LocalDateTime.now()
+                OffsetDateTime.now()
         );
     }
 
@@ -32,7 +33,7 @@ public class MemberRoleUpdateResponse implements BaseApiResponse {
         return new MemberRoleUpdateResponse(
                 ResponseCode.OK.getCode(),
                 "회원 관리자 권한 회수 완료",
-                LocalDateTime.now()
+                OffsetDateTime.now()
         );
     }
 }
