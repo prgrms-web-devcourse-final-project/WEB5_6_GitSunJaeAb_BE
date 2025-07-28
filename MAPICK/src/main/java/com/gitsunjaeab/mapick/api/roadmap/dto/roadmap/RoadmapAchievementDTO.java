@@ -6,9 +6,8 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class RoadmapAchievementResponse {
+public class RoadmapAchievementDTO {
     private Long roadmapId;
     private boolean achievementUnlocked;
     private AchievementDTO achievement;
-
 }
