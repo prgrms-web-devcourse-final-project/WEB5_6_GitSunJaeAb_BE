@@ -4,12 +4,14 @@ import com.gitsunjaeab.mapick.api.roadmap.dto.bookmark.BookmarkCreateResponse;
 import com.gitsunjaeab.mapick.api.roadmap.dto.bookmark.BookmarkDeleteResponse;
 import com.gitsunjaeab.mapick.common.response.ApiResponse;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
+import com.gitsunjaeab.mapick.common.response.ErrorResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
 import com.gitsunjaeab.mapick.infra.error.exceptions.DuplicatedBookmarkException;
 import com.gitsunjaeab.mapick.infra.error.exceptions.ForbiddenException;
 import com.gitsunjaeab.mapick.infra.error.exceptions.InvalidRoadmapTypeException;
 import com.gitsunjaeab.mapick.infra.error.exceptions.UnauthenticatedException;
+import com.gitsunjaeab.mapick.infra.error.exceptions.UnauthorizedAccessException;
 import java.time.OffsetDateTime;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -101,5 +103,16 @@ public class RestExceptionAdvice {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
             .body(new BookmarkDeleteResponse(ResponseCode.INVALID_ROADMAP_TYPE.getCode(),
                 ex.getMessage(), OffsetDateTime.now()));
+    }
+
+    @ExceptionHandler(UnauthorizedAccessException.class)
+    public ResponseEntity<BaseApiResponse> handleUnauthorized(UnauthorizedAccessException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+            new ErrorResponse(
+                ResponseCode.FORBIDDEN.getCode(),
+                ex.getMessage(),
+                OffsetDateTime.now()
+            )
+        );
     }
 }

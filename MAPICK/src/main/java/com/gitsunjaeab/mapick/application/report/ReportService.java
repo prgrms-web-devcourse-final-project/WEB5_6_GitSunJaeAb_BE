@@ -1,32 +1,32 @@
 package com.gitsunjaeab.mapick.application.report;
 
-import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
 import com.gitsunjaeab.mapick.api.report.dto.ReportDTO;
 import com.gitsunjaeab.mapick.api.report.dto.ReportDetailDTO;
+import com.gitsunjaeab.mapick.api.report.dto.ReportSimpleDTO;
 import com.gitsunjaeab.mapick.api.report.dto.request.MapReportRequest;
-import com.gitsunjaeab.mapick.api.report.dto.request.QuestReportRequest;
 import com.gitsunjaeab.mapick.api.report.dto.request.MarkerReportRequest;
-import com.gitsunjaeab.mapick.domain.report.ReportRepository;
-import com.gitsunjaeab.mapick.domain.report.ReportStatus;
-import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
-import com.gitsunjaeab.mapick.domain.roadmap.Marker;
-import com.gitsunjaeab.mapick.domain.roadmap.MarkerRepository;
+import com.gitsunjaeab.mapick.api.report.dto.request.QuestReportRequest;
+import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
 import com.gitsunjaeab.mapick.domain.quest.Quest;
 import com.gitsunjaeab.mapick.domain.quest.QuestRepository;
-import com.gitsunjaeab.mapick.api.report.dto.ReportSimpleDTO;
 import com.gitsunjaeab.mapick.domain.report.Report;
+import com.gitsunjaeab.mapick.domain.report.ReportRepository;
+import com.gitsunjaeab.mapick.domain.report.ReportStatus;
+import com.gitsunjaeab.mapick.domain.roadmap.Marker;
+import com.gitsunjaeab.mapick.domain.roadmap.MarkerRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
-import com.gitsunjaeab.mapick.util.NotFoundException;
-import jakarta.persistence.EntityNotFoundException;
-import java.time.OffsetDateTime;
-import java.util.List;
-
+import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
+import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.OffsetDateTime;
+import java.util.List;
 
 
 @Service
@@ -41,68 +41,67 @@ public class ReportService {
 
     // ===== 관리자용 메서드 =====
 
-    // [관리자] 전체 신고 조회 // todo 정적 메서드로 넣기 , 빌더로 변경 하기
+    // [관리자] 전체 신고 조회
+    // complete
     @Transactional(readOnly = true)
-    public List<ReportSimpleDTO> findAll() {
+    public List<ReportSimpleDTO> getAllReports() {
 
         final List<Report> reports = reportRepository.findAll(Sort.by("id"));
 
-
         List<ReportSimpleDTO> reportSimpleDTOS = reports.stream()
-                .map(r -> new ReportSimpleDTO(
-                                r.getId(),
-                                new MemberSimpleDTO(r.getReporter()),
-                                new MemberSimpleDTO(r.getReportedMember()),
-                                r.getDescription(),
-                                r.getRoadmap() != null ? r.getRoadmap().getId() : null,
-                                r.getMarker() != null ? r.getMarker().getId() : null,
-                                r.getQuest() != null ? r.getQuest().getId() : null,
-                                r.getStatus(),
-                                r.getCreatedAt(),
-                                r.getResolvedAt()
-                        )
-                ).toList();
+                .map(ReportSimpleDTO::of)
+                .toList();
 
         return reportSimpleDTOS;
     }
 
     // [관리자] 특정 신고 조회
+    // complete
     @Transactional(readOnly = true)
     public ReportDetailDTO getReportDetail(Long reportId) {
 
-        Report report = reportRepository.findById(reportId)
-                .orElseThrow(() -> new EntityNotFoundException("해당 신고가 존재하지 않습니다. id=" + reportId));
+        final Report report = reportRepository.findById(reportId)
+                .orElseThrow(() -> new CommonException(ResponseCode.REPORT_NOT_FOUND));
 
         ReportDetailDTO reportDetailDTO = ReportDetailDTO.of(report);
 
         return reportDetailDTO;
     }
 
-    // 신고 처리 완료 (관리자용)
+    // [관리자] 신고 완료 처리
+    // complete
     @Transactional
     public void processReport(Long reportId) {
 
-        Report report = reportRepository.findById(reportId)
-                .orElseThrow(() -> new NotFoundException("신고를 찾을 수 없습니다"));
-        
+        final Report report = reportRepository.findById(reportId)
+                .orElseThrow(() -> new CommonException(ResponseCode.REPORT_NOT_FOUND));
+
+        if(report.getStatus().equals(ReportStatus.RESOLVED)){
+            throw new CommonException(ResponseCode.ALREADY_PROCESSED);
+        }
+
         report.setStatus(ReportStatus.RESOLVED);
         report.setResolvedAt(OffsetDateTime.now());
-        
-        reportRepository.save(report);
+
     }
 
     // ===== 사용자용 신고 생성 메서드들 =====
     
-    // 지도(로드맵) 신고 생성
+    // [사용자] 지도(로드맵) 신고 생성
+    // complete
     @Transactional
     public ReportDTO createMapReport(Long roadmapId, MapReportRequest mapReportRequest) {
 
-        Member reporter = memberRepository.findById(mapReportRequest.getReporterId())
-                .orElseThrow(() -> new NotFoundException("신고자를 찾을 수 없습니다"));
-        
-        Roadmap roadmap = roadmapRepository.findById(roadmapId)
-                .orElseThrow(() -> new NotFoundException("지도를 찾을 수 없습니다"));
-        
+        final Member reporter = memberRepository.findById(mapReportRequest.getReporterId())
+                .orElseThrow(() -> new CommonException(ResponseCode.REPORTER_NOT_FOUND));
+
+        final Roadmap roadmap = roadmapRepository.findById(roadmapId)
+                .orElseThrow(() -> new CommonException(ResponseCode.MAP_NOT_FOUND));
+
+        if(reportRepository.existsByReporterAndRoadmap(reporter, roadmap)){
+            throw new CommonException(ResponseCode.ALREADY_REPORTED);
+        }
+
         Report report = Report.builder()
                 .reporter(reporter)
                 .reportedMember(roadmap.getMember())
@@ -111,8 +110,12 @@ public class ReportService {
                 .status(ReportStatus.REPORTED)
                 .createdAt(OffsetDateTime.now())
                 .build();
-        
-        reportRepository.save(report);
+
+        try {
+            reportRepository.save(report);
+        } catch (DataIntegrityViolationException e) {
+            throw new CommonException(ResponseCode.SAVE_FAILED);
+        }
 
         ReportDTO reportDTO = ReportDTO.of(report);
 
@@ -120,15 +123,20 @@ public class ReportService {
 
     }
 
-    // 마커 신고 생성 -> todo org.hibernate.LazyInitializationException: 해결 필요
+    // [사용자] 마커 신고 생성
+    // complete
     @Transactional
     public ReportDTO createMarkerReport(Long markerId, MarkerReportRequest markerReportRequest) {
 
-        Member reporter = memberRepository.findById(markerReportRequest.getReporterId())
-                .orElseThrow(() -> new NotFoundException("신고자를 찾을 수 없습니다"));
+        final Member reporter = memberRepository.findById(markerReportRequest.getReporterId())
+                .orElseThrow(() -> new CommonException(ResponseCode.REPORTER_NOT_FOUND));
 
-        Marker marker = markerRepository.findById(markerId)
-                .orElseThrow(() -> new NotFoundException("마커를 찾을 수 없습니다"));
+        final Marker marker = markerRepository.findById(markerId)
+                .orElseThrow(() -> new CommonException(ResponseCode.MARKER_NOT_FOUND));
+
+        if(reportRepository.existsByReporterAndMarker(reporter, marker)){
+            throw new CommonException(ResponseCode.ALREADY_REPORTED);
+        }
 
         Report report = Report.builder()
                 .reporter(reporter)
@@ -139,22 +147,31 @@ public class ReportService {
                 .createdAt(OffsetDateTime.now())
                 .build();
 
-        reportRepository.save(report);
+        try {
+            reportRepository.save(report);
+        } catch (DataIntegrityViolationException e) {
+            throw new CommonException(ResponseCode.SAVE_FAILED);
+        }
 
         ReportDTO reportDTO = ReportDTO.of(report);
 
         return reportDTO;
     }
     
-    // 퀘스트 신고 생성 -> todo org.hibernate.LazyInitializationException: 해결 필요
+    // [사용자] 퀘스트 신고 생성
+    // complete
     @Transactional
     public ReportDTO createQuestReport(Long questId, QuestReportRequest questReportRequest) {
 
-        Member reporter = memberRepository.findById(questReportRequest.getReporterId())
-                .orElseThrow(() -> new NotFoundException("신고자를 찾을 수 없습니다"));
-        
-        Quest quest = questRepository.findById(questId)
-                .orElseThrow(() -> new NotFoundException("퀘스트를 찾을 수 없습니다"));
+        final Member reporter = memberRepository.findById(questReportRequest.getReporterId())
+                .orElseThrow(() -> new CommonException(ResponseCode.REPORTER_NOT_FOUND));
+
+        final Quest quest = questRepository.findById(questId)
+                .orElseThrow(() -> new CommonException(ResponseCode.QUEST_NOT_FOUND));
+
+        if(reportRepository.existsByReporterAndQuest(reporter, quest)){
+            throw new CommonException(ResponseCode.ALREADY_REPORTED);
+        }
 
         Report report = Report.builder()
                 .reporter(reporter)
@@ -165,7 +182,11 @@ public class ReportService {
                 .createdAt(OffsetDateTime.now())
                 .build();
 
-        reportRepository.save(report);
+        try {
+            reportRepository.save(report);
+        } catch (DataIntegrityViolationException e) {
+            throw new CommonException(ResponseCode.SAVE_FAILED);
+        }
 
         ReportDTO reportDTO = ReportDTO.of(report);
 

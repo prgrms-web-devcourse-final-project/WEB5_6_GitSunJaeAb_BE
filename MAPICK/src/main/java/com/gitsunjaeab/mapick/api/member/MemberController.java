@@ -9,8 +9,7 @@ import com.gitsunjaeab.mapick.api.member.dto.request.PasswordRequest;
 import com.gitsunjaeab.mapick.api.member.dto.response.*;
 import com.gitsunjaeab.mapick.application.member.MemberInterestService;
 import com.gitsunjaeab.mapick.application.member.MemberService;
-import com.gitsunjaeab.mapick.common.response.ApiResponse;
-import com.gitsunjaeab.mapick.common.response.ResponseCode;
+import com.gitsunjaeab.mapick.domain.auth.Principal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -20,6 +19,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -44,9 +44,10 @@ public class MemberController {
 
     // ===== 회원 조회 API =====
 
-    // 전체 회원 조회 (관리자 전용) -> todo 완성(예외처리 필요)
-    @PreAuthorize("hasRole('ADMIN')")
+    // 전체 회원 조회 (관리자 전용)
+    // complete
     @GetMapping("/list")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "[관리자 전용] 전체 회원 조회 (관리자)", description = "[관리자 전용] 관리자만 접근 가능한 전체 회원 목록 조회" )
     public ResponseEntity<MemberListResponse> getAllMembers() {
 
@@ -59,9 +60,10 @@ public class MemberController {
                 .body(response);
     }
 
-    // 특정 회원 상세 조회 (관리자 전용) -> todo 완성(예외처리 필요)
-    @PreAuthorize("hasRole('ADMIN')")
+    // 특정 회원 상세 조회 (관리자 전용)
+    // complete
     @GetMapping("{memberId}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "[관리자 전용] 특정 회원 조회(괸라자) ", description = " 특정 회원 정보 조회")
     public ResponseEntity<MemberResponse> getMember(@PathVariable(name = "memberId") final Long memberId) {
 
@@ -76,9 +78,10 @@ public class MemberController {
 
     // ===== 회원 블랙리스트 설정/해제 API =====
 
-    // 회원의 블랙리스트 설정 (관리자 전용) -> todo 완성(예외처리 필요)
-    @PreAuthorize("hasRole('ADMIN')")
+    // 회원의 블랙리스트 설정 (관리자 전용)
+    // complete
     @PutMapping("/blacklist/{memberId}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "[관리자 전용] 블랙리스트 여부 변경 (관리자)", description = "[관리자 전용] 회원의 블랙 리스트 여부 수정")
     public ResponseEntity<MemberBlackListResponse> addMemberBlackList(@PathVariable(name = "memberId") final Long memberId) {
 
@@ -91,9 +94,10 @@ public class MemberController {
                 .body(response);
     }
 
-    // 회원의 블랙리스트 해제 (관리자 전용) -> todo 완성(예외처리 필요)
-    @PreAuthorize("hasRole('ADMIN')")
+    // 회원의 블랙리스트 해제 (관리자 전용)
+    // complete
     @DeleteMapping("/blacklist/{memberId}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "[관리자 전용] 블랙리스트 여부 변경 (관리자)", description = "[관리자 전용] 회원의 블랙 리스트 여부 수정")
     public ResponseEntity<MemberBlackListResponse> removeMemberBlackList(@PathVariable(name = "memberId") final Long memberId) {
 
@@ -108,9 +112,10 @@ public class MemberController {
 
     // ===== 회원 관리자 권한 부여/회수 API =====
 
-    // 회원 관리자 권한 부여 (관리자 전용) -> todo 완성(예외처리 필요)
-    @PreAuthorize("hasRole('ADMIN')")
+    // 회원 관리자 권한 부여 (관리자 전용)
+    // complete
     @PutMapping("/role/{memberId}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "[관리자 전용] 특정 회원 관리자 설정 (관리자)", description = "[관리자 전용] 특정 회원 관리자 설정 ")
     public ResponseEntity<MemberRoleUpdateResponse> addMemberRole(@PathVariable(name = "memberId") final Long memberId) {
 
@@ -123,9 +128,10 @@ public class MemberController {
                 .body(response);
     }
 
-    // 회원 관리자 권한 회수(관리자 전용) -> todo 완성(예외처리 필요)
-    @PreAuthorize("hasRole('ADMIN')")
+    // 회원 관리자 권한 회수(관리자 전용)
+    // complete
     @DeleteMapping("/role/{memberId}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "[관리자 전용] 특정 회원 관리자 권한 회수 (관리자)", description = "[관리자 전용] 특정 회원 관리자 권한 회수 ")
     public ResponseEntity<MemberRoleUpdateResponse> removeMemberRole(@PathVariable(name = "memberId") final Long memberId) {
 
@@ -140,9 +146,10 @@ public class MemberController {
 
     // ===== 회원 삭제 API =====
 
-    // 회원 삭제 (관리자 전용) -> todo 완성(예외처리 필요)
-    @PreAuthorize("hasRole('ADMIN')")
+    // 회원 삭제 (관리자 전용)
+    // complete
     @DeleteMapping("{memberId}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "[관리자 전용] 회원 삭제(관리자)", description = "회원 삭제")
     public ResponseEntity<MemberResponse> deleteMember(@PathVariable(name = "memberId") final Long memberId) {
 
@@ -161,14 +168,15 @@ public class MemberController {
      *
      */
 
-    // 본인 회원 정보 조회 (프로필) -> todo 완성(예외처리 필요)
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    // 본인 회원 정보 조회 (프로필)
+    // complete
     @GetMapping
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @Operation(summary = "[사용자] 회원 정보 조회", description = "[사용자 전용] 본인만 접근 가능한 프로필 조회" )
-    public ResponseEntity<MemberProfileResponse> getMemberProfile() {
+    public ResponseEntity<MemberProfileResponse> getMemberProfile(
+            @AuthenticationPrincipal Principal principal) {
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Long memberId = Long.parseLong(auth.getName());
+        Long memberId = principal.getMember().getId();
 
         MemberDetailDTO memberDetailDto = memberService.getMemberProfile(memberId);
 
@@ -179,16 +187,17 @@ public class MemberController {
                 .body(response);
     }
 
-    // 회원 정보 수정 (프로필) -> todo 프로필 사진 변경 되게 수정
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    // 회원 정보 수정 (프로필)
+    // complete
     @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @Operation(summary = "[사용자]회원 정보 수정(프로필)", description = "사용자 회원 정보 수정")
     public ResponseEntity<MemberResponse> updateMember(
+            @AuthenticationPrincipal Principal principal,
             @RequestPart(name = "member") @Valid final MemberProfileUpdateRequest MemberProfileUpdateRequest,
             @RequestPart(name = "imageFile", required = false) MultipartFile imageFile) {
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Long memberId = Long.parseLong(auth.getName());
+        Long memberId = principal.getMember().getId();
 
         memberService.updateMemberProfile(memberId, MemberProfileUpdateRequest,imageFile);
 
@@ -199,14 +208,15 @@ public class MemberController {
                 .body(response);
     }
 
-    // 회원 탈퇴 (사용자) -> todo 완성(예외처리 필요)
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    // 회원 탈퇴 (사용자)
+    // complete
     @DeleteMapping ("/withdraw")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @Operation(summary = "[사용자]회원 탈퇴", description = "회원 탈퇴")
-    public ResponseEntity<MemberResponse> withdrawMember() {
+    public ResponseEntity<MemberResponse> withdrawMember(
+            @AuthenticationPrincipal Principal principal) {
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Long memberId = Long.parseLong(auth.getName());
+        Long memberId = principal.getMember().getId();
 
         memberService.deleteMember(memberId); // 소프트 딜리트
 
@@ -220,13 +230,14 @@ public class MemberController {
     // ===== 회원 관심분야 관리 API =====
 
     // 회원 관심분야 선택 (본인만) -> todo 완성(예외처리 필요)
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @PostMapping("/interests")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @Operation(summary = "[사용자]회원 관심분야 선택", description = "[사용자 전용] 본인만 접근 가능한 관심분야 선택")
-    public ResponseEntity<MemberInterestResponse> createMemberInterest(@Valid @RequestBody MemberInterestRequest memberInterestRequest) {
+    public ResponseEntity<MemberInterestResponse> createMemberInterest(
+            @AuthenticationPrincipal Principal principal,
+            @Valid @RequestBody MemberInterestRequest memberInterestRequest) {
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Long memberId = Long.parseLong(auth.getName());
+        Long memberId = principal.getMember().getId();
 
         memberInterestService.createMemberInterests(memberId,memberInterestRequest);
 
@@ -238,13 +249,14 @@ public class MemberController {
     }
 
     // 회원 관심분야 수정 (본인만) -> todo 완성
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @PutMapping("/interests")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @Operation(summary = "[사용자]회원 관심분야 수정", description = "[사용자 전용] 본인만 접근 가능한 관심분야 수정")
-    public ResponseEntity<MemberInterestResponse> updateMemberInterest(@Valid @RequestBody MemberInterestRequest memberInterestRequest) {
+    public ResponseEntity<MemberInterestResponse> updateMemberInterest(
+            @AuthenticationPrincipal Principal principal,
+            @Valid @RequestBody MemberInterestRequest memberInterestRequest) {
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Long memberId = Long.parseLong(auth.getName());
+        Long memberId = principal.getMember().getId();
 
         memberInterestService.updateMemberInterests(memberId,memberInterestRequest);
 
@@ -257,14 +269,16 @@ public class MemberController {
 
     // ===== 회원 비밀번호 관리 API =====
 
-    // 마이페이지 - 비밀번호 확인 (본인만) -> todo 완성(예외처리 필요)
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    // 마이페이지 - 비밀번호 확인 (본인만)
+    // complete
     @PostMapping("/password/verify")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @Operation(summary = "[사용자]비밀번호 확인", description = "[사용자 전용] 본인만 접근 가능한 비밀번호 확인")
-    public ResponseEntity<MemberResponse> verifyPassword(@Valid @RequestBody PasswordRequest passwordRequest) {
+    public ResponseEntity<MemberResponse> verifyPassword(
+            @AuthenticationPrincipal Principal principal,
+            @Valid @RequestBody PasswordRequest passwordRequest) {
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Long memberId = Long.parseLong(auth.getName());
+        Long memberId = principal.getMember().getId();
 
         memberService.verifyPassword(memberId, passwordRequest.getPassword());
 

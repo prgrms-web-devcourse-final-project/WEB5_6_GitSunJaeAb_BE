@@ -37,22 +37,7 @@ public class QuestRequest {
     @JsonProperty("isActive")
     private Boolean isActive;
 
-//    @Size(max = 500)
-//    private String questImage;
-    //파일
-//    private MultipartFile imageFile;
 
 
-//    private OffsetDateTime createdAt; // 퀘스트 생성날짜
-//
-//    private OffsetDateTime completedAt;  // 퀘스트 완료 처리된 시간
-//
-//    private OffsetDateTime updatedAt;
-//
-//
-//    private OffsetDateTime deletedAt;
-//
-//
-//    private Long member;
 
 }

@@ -51,7 +51,26 @@ public class QuestResponse {
 //    private Long member;
 
     private MemberSimpleDTO member;
+    public static QuestResponse of(com.gitsunjaeab.mapick.domain.quest.Quest quest) {
+        QuestResponse response = new QuestResponse();
+        response.setId(quest.getId());
+        response.setTitle(quest.getTitle());
+        response.setQuestImage(quest.getQuestImage());
+        response.setDescription(quest.getDescription());
+        response.setDeadline(quest.getDeadline());
+        response.setIsActive(quest.getIsActive());
+        response.setCreatedAt(quest.getCreatedAt());
+        response.setCompletedAt(quest.getCompletedAt());
+        response.setUpdatedAt(quest.getUpdatedAt());
+        response.setDeletedAt(quest.getDeletedAt());
 
+        // Member -> MemberSimpleDTO 변환
+        if (quest.getMember() != null) {
+            response.setMember(MemberSimpleDTO.of(quest.getMember()));
+        }
+
+        return response;
+    }
 
     // QuestDTO를 QuestResponse로 변환하는 정적 메서드 (단순 데이터만)
     public static QuestResponse of(QuestDTO questDTO) {
@@ -158,5 +177,7 @@ public class QuestResponse {
             questDTO.getMember()
         );
     }
+
+
 
 }
