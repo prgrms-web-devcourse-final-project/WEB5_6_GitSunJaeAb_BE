@@ -41,27 +41,15 @@ public class ReportService {
 
     // ===== 관리자용 메서드 =====
 
-    // [관리자] 전체 신고 조회 // todo 정적 메서드로 넣기 , 빌더로 변경 하기
+    // [관리자] 전체 신고 조회
     @Transactional(readOnly = true)
-    public List<ReportSimpleDTO> findAll() {
+    public List<ReportSimpleDTO> getAllReports() {
 
         final List<Report> reports = reportRepository.findAll(Sort.by("id"));
 
-
         List<ReportSimpleDTO> reportSimpleDTOS = reports.stream()
-                .map(r -> new ReportSimpleDTO(
-                                r.getId(),
-                                new MemberSimpleDTO(r.getReporter()),
-                                new MemberSimpleDTO(r.getReportedMember()),
-                                r.getDescription(),
-                                r.getRoadmap() != null ? r.getRoadmap().getId() : null,
-                                r.getMarker() != null ? r.getMarker().getId() : null,
-                                r.getQuest() != null ? r.getQuest().getId() : null,
-                                r.getStatus(),
-                                r.getCreatedAt(),
-                                r.getResolvedAt()
-                        )
-                ).toList();
+                .map(ReportSimpleDTO::of)
+                .toList();
 
         return reportSimpleDTOS;
     }

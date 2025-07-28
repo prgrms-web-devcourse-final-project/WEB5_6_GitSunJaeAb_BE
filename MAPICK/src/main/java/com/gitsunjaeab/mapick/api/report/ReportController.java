@@ -37,7 +37,7 @@ public class ReportController {
     @Operation(summary = "[관리자]전체 신고 조회", description = "[관리자용] 모든 신고 내역을 조회합니다.")
     public ResponseEntity<ReportListResponse> getAllReports() {
 
-        List<ReportSimpleDTO> reportSimpleDTOS = reportService.findAll();
+        List<ReportSimpleDTO> reportSimpleDTOS = reportService.getAllReports();
 
         ReportListResponse response = ReportListResponse.of(reportSimpleDTOS);
 
@@ -52,7 +52,8 @@ public class ReportController {
     @GetMapping("/{reportId}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "[관리자]특정 신고 상세 조회", description = "[관리자용] 특정 신고의 상세 정보를 조회합니다.")
-    public ResponseEntity<ReportResponse> getReport(@PathVariable(name = "reportId") final Long reportId) {
+    public ResponseEntity<ReportResponse> getReport(
+            @PathVariable(name = "reportId") final Long reportId) {
 
         ReportDetailDTO reportDetailDTO = reportService.getReportDetail(reportId);
         ReportResponse response = ReportResponse.of(reportDetailDTO);
@@ -67,7 +68,8 @@ public class ReportController {
     @GetMapping("/admin/{reportId}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "[관리자]신고 처리 완료", description = "[관리자용] 신고 상태를 변경하여 처리 완료합니다.")
-    public ResponseEntity<ReportProcessResponse> processReport(@PathVariable(name = "reportId") final Long reportId) {
+    public ResponseEntity<ReportProcessResponse> processReport(
+            @PathVariable(name = "reportId") final Long reportId) {
 
         reportService.processReport(reportId);
         ReportProcessResponse response = ReportProcessResponse.of();
@@ -84,7 +86,8 @@ public class ReportController {
     @PostMapping("/maps/{roadmapId}")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @Operation(summary = "[사용자]지도 신고 생성", description = "[사용자용] 특정 지도(로드맵)에 대한 신고를 접수합니다.")
-    public ResponseEntity<MapReportResponse> reportMap(@PathVariable(name = "roadmapId") final Long roadmapId,
+    public ResponseEntity<MapReportResponse> reportMap(
+            @PathVariable(name = "roadmapId") final Long roadmapId,
             @RequestBody @Valid final MapReportRequest mapReportRequest) {
 
         ReportDTO reportDTO = reportService.createMapReport(roadmapId, mapReportRequest);
