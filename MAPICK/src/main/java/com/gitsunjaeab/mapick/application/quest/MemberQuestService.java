@@ -7,8 +7,10 @@ import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestJudgeRequest;
 import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestJudgeResponse;
 import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestRankResponse;
 import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestResponse;
+import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestSubmissionDTO;
 import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestUpdateRequest;
 import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestUpdateResponse;
+import com.gitsunjaeab.mapick.api.quest.dto.MemberRankingDTO;
 import com.gitsunjaeab.mapick.application.notification.NotificationService;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.notification.NotificationType;
@@ -213,13 +215,6 @@ public class MemberQuestService {
         memberQuest.setIsRecognized(recognized ? "Y" : "N");
         memberQuest.setUpdatedAt(OffsetDateTime.now(ZoneId.of("Asia/Seoul")));
 
-        // 정답일 경우 점수를 부여
-//        if (recognized){
-//            final Member submitter = memberQuest.getMember();
-//            final Quest quest = memberQuest.getQuest();
-//            questRankService.addScore(submitter,quest,100); //100점씩
-//        }
-
         // 저장 후 DTO로 반환
         return MemberQuestJudgeResponse.of(memberQuestRepository.save(memberQuest));
     }
@@ -259,6 +254,41 @@ public class MemberQuestService {
     public void deleteMemberQuest(final Long id) {
         memberQuestRepository.deleteById(id);
     }
+
+    public List<MemberQuestSubmissionDTO> getSubmissions(Long questId) {
+        final List<MemberQuest> memberQuests = memberQuestRepository.findWithMemberByQuestId(questId);
+
+        return memberQuests.stream()
+            .map(memberQuest -> new MemberQuestSubmissionDTO(
+                memberQuest.getImageUrl(),
+                "Y".equalsIgnoreCase(memberQuest.getIsRecognized()),
+                memberQuest.getMember().getNickname(),
+                memberQuest.getUpdatedAt() != null ? memberQuest.getUpdatedAt() : memberQuest.getCreatedAt()
+            ))
+            .toList();
+    }
+
+    //
+    public List<MemberRankingDTO> getRanking(Long questId) {
+        final List<MemberQuest> recognized = memberQuestRepository.findByQuestIdAndRecognizedTrue(questId);
+
+        final List<MemberQuest> sorted = recognized.stream()
+            .sorted(Comparator.comparing(memberQuest ->
+                memberQuest.getCreatedAt() != null ? memberQuest.getCreatedAt() : memberQuest.getUpdatedAt()
+            ))
+            .toList();
+
+        AtomicInteger rankCounter = new AtomicInteger(1);
+        return sorted.stream()
+            .map(memberQuest -> new MemberRankingDTO(
+                rankCounter.getAndIncrement(),
+                memberQuest.getMember().getNickname(),
+                memberQuest.getMember().getProfileImage()
+            ))
+            .toList();
+    }
+
+
 
     // Entity → Response 변환
     private MemberQuestResponse toResponse(final MemberQuest memberQuest) {

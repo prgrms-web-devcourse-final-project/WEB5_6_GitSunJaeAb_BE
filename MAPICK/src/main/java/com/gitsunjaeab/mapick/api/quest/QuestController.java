@@ -91,10 +91,23 @@ public class QuestController {
         return ResponseEntity.ok(QuestListResponse.of(questService.findAll(isActive)));
     }
 
+    // 단순 퀘스트 정보만
     @GetMapping("/{questsId}")
     @Operation(summary = "퀘스트 상세 조회", description = "[참여자용] 특정 퀘스트의 상세 정보를 조회합니다.")
     public ResponseEntity<QuestDetailResponse> getQuest(@PathVariable(name = "questsId") Long questsId) {
         return ResponseEntity.ok(QuestDetailResponse.of(questService.get(questsId)));
+    }
+
+    //퀘스트 + 참여자 답안 + 랭킹 까지
+    @GetMapping("/{questId}/detail")
+    @Operation(summary = "퀘스트 전체 상세 조회", description = "[모두]퀘스트 정보, 제출 목록, 랭킹을 함께 조회")
+    public ResponseEntity<QuestFullDetailResponse> getQuestFullDetail(@PathVariable(name = "questId") Long questId) {
+
+        QuestResponse quest = questService.get(questId); //퀘스트 정보
+        List<MemberQuestSubmissionDTO> submissions = memberQuestService.getSubmissions(questId); //인증 리스트
+        List<MemberRankingDTO> ranking = memberQuestService.getRanking(questId); //랭킹 정보
+
+        return ResponseEntity.ok(QuestFullDetailResponse.of(quest, submissions, ranking));
     }
 
     @GetMapping("/{questId}/rankings")
