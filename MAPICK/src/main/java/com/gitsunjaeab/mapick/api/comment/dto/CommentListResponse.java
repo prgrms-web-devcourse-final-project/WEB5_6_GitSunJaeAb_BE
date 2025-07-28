@@ -1,9 +1,7 @@
 package com.gitsunjaeab.mapick.api.comment.dto;
 
-import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
-import com.gitsunjaeab.mapick.domain.comment.Comment;
 import java.time.OffsetDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -22,22 +20,12 @@ public class CommentListResponse implements BaseApiResponse {
     private OffsetDateTime timestamp;
     private List<CommentDTO> comments;
 
-    public static CommentListResponse of(List<Comment> commentEntities) {
-        List<CommentDTO> commentLists = commentEntities.stream()
-            .map(c -> new CommentDTO(
-                c.getId(),
-                new MemberSimpleDTO(c.getMember()),
-                c.getContent(),
-                c.getCreatedAt(),
-                c.getRoadmap() == null ? null : c.getRoadmap().getId(),
-                c.getQuest() == null ? null : c.getQuest().getId()
-            )).toList();
-
+    public static CommentListResponse get(List<CommentDTO> commentDTOList) {
         return new CommentListResponse(
             ResponseCode.OK.getCode(),
             "댓글 목록 조회 성공",
             OffsetDateTime.now(),
-            commentLists
+            commentDTOList
         );
     }
 }
