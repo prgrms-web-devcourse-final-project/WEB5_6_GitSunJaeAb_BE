@@ -88,6 +88,9 @@ public class MemberQuest {
     private String description;
 
 
+//    @OneToMany(mappedBy = "comment", cascade = CascadeType.REMOVE, orphanRemoval = true)
+//    private Set<Notification> notifications = new HashSet<>();
+//
     //잠시 주석 처리
 //    @OneToMany(mappedBy = "memberQuest")
 //    private Set<MemberQuestEvidence> memberQuestMemberQuestEvidences = new HashSet<>();
