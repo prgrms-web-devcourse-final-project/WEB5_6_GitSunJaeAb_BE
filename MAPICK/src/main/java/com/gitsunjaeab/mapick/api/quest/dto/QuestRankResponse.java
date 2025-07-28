@@ -30,8 +30,6 @@ public class QuestRankResponse implements BaseApiResponse {
     @NotNull
     private Integer rank;
 
-    private Integer score;
-
 
     private OffsetDateTime completedAt;
     private OffsetDateTime createdAt;
@@ -55,7 +53,6 @@ public class QuestRankResponse implements BaseApiResponse {
             OffsetDateTime.now(),
             questRank.getId(),
             questRank.getRank(),
-            questRank.getScore(),
             questRank.getCompletedAt(),
             questRank.getCreatedAt(),
             questRank.getUpdatedAt(),
