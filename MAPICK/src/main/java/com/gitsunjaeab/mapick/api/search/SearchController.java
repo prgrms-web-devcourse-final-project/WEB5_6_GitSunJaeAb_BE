@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -35,7 +36,9 @@ public class SearchController {
 
 
     // 최신 검색 목록 조회
+    // complete
     @GetMapping("/list")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @Operation(summary = "최신 검색 목록 조회", description = "최신 검색 목록 조회" )
     public ResponseEntity<SearchListResponse> getSearchHistories() {
 
@@ -52,7 +55,9 @@ public class SearchController {
     }
 
     // 최신 검색 목록 저장
+    // complete
     @PostMapping
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @Operation(summary = "최신 검색 목록 저장", description = "최신 검색 목록 저장" )
     public ResponseEntity<SearchListResponse> saveSearchHistory(@RequestBody SearchRequest searchRequest) {
 
@@ -69,7 +74,9 @@ public class SearchController {
     }
 
     // 최신 검색 항목 삭제
+    // complete
     @DeleteMapping
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @Operation(summary = "최신 검색 항목 단일 삭제", description = "최신 검색 항목 단일 삭제" )
     public ResponseEntity<SearchListResponse> deletSearchHistory(@RequestParam("keyword") String keyword) {
 
@@ -87,7 +94,9 @@ public class SearchController {
 
 
     // 최신 검색 목록 전체 삭제
+    // complete
     @DeleteMapping("/list")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @Operation(summary = "최신 검색 목록 삭제", description = "최신 검색 목록 삭제" )
     public ResponseEntity<SearchListResponse> deletSearchHistoryList() {
 

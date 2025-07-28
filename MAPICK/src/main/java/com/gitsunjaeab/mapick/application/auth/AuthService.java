@@ -175,13 +175,15 @@ public class AuthService {
         Claims claims = jwtProvider.parseClaim(accessToken);
         String jti = claims.getId();
 
+        log.info(accessToken);
         // 기존 access token 블랙 리스트 등록
         if (accessToken != null && !accessToken.isBlank()) {
 
             accessTokenBlacklistRepository.save(new AccessTokenBlacklist(accessToken));
         }
-
+        log.info("=========================");
         refreshTokenRepository.deleteByAccessTokenId(jti);
+        log.info("=========================");
     }
 
     // 인증 객체 생성 및 Spring Security 등록
