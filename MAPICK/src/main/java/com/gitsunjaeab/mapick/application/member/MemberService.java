@@ -2,7 +2,10 @@ package com.gitsunjaeab.mapick.application.member;
 
 import com.gitsunjaeab.mapick.api.auth.dto.internal.SocialUserInfo;
 import com.gitsunjaeab.mapick.api.auth.dto.request.SignupRequest;
-import com.gitsunjaeab.mapick.api.member.dto.*;
+import com.gitsunjaeab.mapick.api.member.dto.MemberDTO;
+import com.gitsunjaeab.mapick.api.member.dto.MemberDetailDTO;
+import com.gitsunjaeab.mapick.api.member.dto.MemberInterestDTO;
+import com.gitsunjaeab.mapick.api.member.dto.MemberListDTO;
 import com.gitsunjaeab.mapick.api.member.dto.request.MemberProfileUpdateRequest;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.auth.LoginType;
@@ -22,8 +25,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import java.io.IOException;
-
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -40,18 +41,11 @@ public class MemberService {
     private final MemberInterestRepository memberInterestRepository;
     private final SupabaseStorageService supabaseStorageService;
 
-    // 소셜 로그인 시 임시 닉네임 부여
-    public String generateUniqueSocialNickname(String provider) {
-        String nickname;
-        do {
-            int randomNumber = (int) (Math.random() * 1_000_000);
-            nickname = provider + "_" + String.format("%06d", randomNumber);
-        } while (memberRepository.existsByNickname(nickname)); // 중복 체크
 
-        return nickname;
-    }
 
     // 소셜 로그인 회원 가입
+    // complete
+    @Transactional
     public Member registerNewSocialMember(SocialUserInfo userInfo, String provider) {
 
         String nickname = generateUniqueSocialNickname(provider);
@@ -72,18 +66,26 @@ public class MemberService {
             .updatedAt(OffsetDateTime.now())
             .build();
 
-        Member savedMember;
+        memberRepository.save(member);
 
-        try{
-            savedMember = memberRepository.save(member);
-        }catch (DataIntegrityViolationException e){
-            throw new CommonException(ResponseCode.DB_CONSTRAINT_VIOLATION); // DB 제약 조건 위배
-        }
+        return member;
+    }
 
-        return savedMember;
+    // 소셜 로그인 시 임시 닉네임 부여
+    //complete
+    public String generateUniqueSocialNickname(String provider) {
+        String nickname;
+        do {
+            int randomNumber = (int) (Math.random() * 1_000_000);
+            nickname = provider + "_" + String.format("%06d", randomNumber);
+        } while (memberRepository.existsByNickname(nickname)); // 중복 체크
+
+        return nickname;
     }
 
     // 자체 로그인 회원 가입
+    // complete
+    @Transactional
     public void signup(SignupRequest request) {
 
         if (memberRepository.existsByEmail(request.getEmail())) {
@@ -110,11 +112,8 @@ public class MemberService {
             .updatedAt(OffsetDateTime.now())
             .build();
 
-        try{
             memberRepository.save(member);
-        }catch (DataIntegrityViolationException e){
-            throw new CommonException(ResponseCode.DB_CONSTRAINT_VIOLATION); // DB 제약 조건 위배
-        }
+
     }
 
     // 멤버 리스트 조회 - 관리자
