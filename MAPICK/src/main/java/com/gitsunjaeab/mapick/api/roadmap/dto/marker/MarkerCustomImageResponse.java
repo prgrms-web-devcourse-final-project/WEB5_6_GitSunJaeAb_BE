@@ -3,7 +3,7 @@ package com.gitsunjaeab.mapick.api.roadmap.dto.marker;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,7 +14,7 @@ public class MarkerCustomImageResponse implements BaseApiResponse {
 
     private String code;
     private String message;
-    private LocalDateTime timestamp;
+    private OffsetDateTime timestamp;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<MarkerCustomImageDTO> markerCustomImages;
@@ -23,7 +23,7 @@ public class MarkerCustomImageResponse implements BaseApiResponse {
         return new MarkerCustomImageResponse(
             ResponseCode.OK.getCode(),
             "커스텀 마커 이미지 생성 완료",
-            LocalDateTime.now(),
+            OffsetDateTime.now(),
             null
         );
     }
@@ -32,7 +32,7 @@ public class MarkerCustomImageResponse implements BaseApiResponse {
         return new MarkerCustomImageResponse(
             ResponseCode.OK.getCode(),
             "커스텀 마커 이미지 목록 조회 성공",
-            LocalDateTime.now(),
+            OffsetDateTime.now(),
             markerCustomImages
         );
     }
@@ -41,7 +41,7 @@ public class MarkerCustomImageResponse implements BaseApiResponse {
         return new MarkerCustomImageResponse(
             ResponseCode.OK.getCode(),
             "커스텀 마커 이미지 수정 완료",
-            LocalDateTime.now(),
+            OffsetDateTime.now(),
             null
         );
     }
@@ -50,7 +50,7 @@ public class MarkerCustomImageResponse implements BaseApiResponse {
         return new MarkerCustomImageResponse(
             ResponseCode.OK.getCode(),
             "커스텀 마커 이미지 삭제 완료",
-            LocalDateTime.now(),
+            OffsetDateTime.now(),
             null
         );
     }

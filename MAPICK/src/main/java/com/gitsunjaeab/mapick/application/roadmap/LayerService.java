@@ -2,6 +2,7 @@ package com.gitsunjaeab.mapick.application.roadmap;
 
 import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerDetailDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerRequest;
+import com.gitsunjaeab.mapick.api.roadmap.websocket.dto.LayerSocketDTO;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.auth.Role;
 import com.gitsunjaeab.mapick.domain.member.Member;
@@ -17,6 +18,8 @@ import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
 import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import com.gitsunjaeab.mapick.util.ReferencedWarning;
+
+import java.time.OffsetDateTime;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -139,6 +142,8 @@ public class LayerService {
             throw new CommonException(ResponseCode.FORBIDDEN);
         }
 
+
+
         // 참조 무결성 검사
         ReferencedWarning warning = getReferencedWarning(layer.getId());
         if (warning != null) {
@@ -154,6 +159,69 @@ public class LayerService {
         // 소프트 딜리트된 엔티티 반환
         return layer;
     }
+
+    @Transactional
+    public Layer createFromSocket(LayerSocketDTO dto) {
+        Long memberId = dto.getMemberId();
+        Long roadmapId = dto.getRoadmapId();
+
+        // DTO → LayerRequest 변환 후 기존 create() 재사용
+        LayerRequest request = new LayerRequest(
+                dto.getName(),
+                dto.getDescription(),
+                dto.getLayerSeq(),
+                dto.getLayerTime()
+        );
+
+        return create(request, memberId, roadmapId);
+    }
+
+    // WebSocket용 레이어 수정
+    @Transactional
+    public Layer updateFromSocket(LayerSocketDTO dto) {
+        Layer layer = layerRepository.findById(dto.getLayerId())
+                .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND));
+
+        // 권한 검증 없음 → 공유지도이므로 누구나 수정 가능
+        layer.setName(dto.getName());
+        layer.setDescription(dto.getDescription());
+        layer.setLayerSeq(dto.getLayerSeq());
+        layer.setLayerTime(dto.getLayerTime());
+
+        return layerRepository.save(layer);
+    }
+
+    // WebSocket용 레이어 삭제
+    @Transactional
+    public Layer deleteFromSocket(LayerSocketDTO dto) {
+        Layer layer = layerRepository.findById(dto.getLayerId())
+                .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND));
+
+        // 공유지도에서는 권한 없이도 삭제 가능
+        if (layer.getDeletedAt() != null) {
+            throw new CommonException(ResponseCode.ALREADY_PROCESSED);
+        }
+
+        ReferencedWarning warning = getReferencedWarning(layer.getId());
+        if (warning != null) {
+            throw new CommonException(ResponseCode.CONFLICT);
+        }
+
+        layerLibraryRepository.softDeleteAllByLayer(layer.getId());
+        layer.setDeletedAt(OffsetDateTime.now());
+        layerRepository.save(layer);
+        layerRepository.flush();
+
+        return layer;
+
+    }
+
+    @Transactional(readOnly = true)
+    public Layer findById(Long id) {
+        return layerRepository.findById(id)
+                .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND));
+    }
+
 
     // 관리자 블록 처리
     @Transactional

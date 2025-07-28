@@ -45,6 +45,9 @@ public class Achievement {
     private String name;
 
     @Column
+    private String description;
+
+    @Column
     @Nullable
     private String image;
 

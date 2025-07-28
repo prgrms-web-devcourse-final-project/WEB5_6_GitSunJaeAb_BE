@@ -4,7 +4,8 @@ import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
 
 public enum NotificationType {
     POST,             // 게시글
-    QUEST,            // 퀘스트
+    QUEST,            // 퀘스트 참여
+    QUEST_DEADLINE,   // 퀘스트 마감
     COMMENT,          // 댓글
     ZZIM,             // 찜
     FORK,             // 포크 (인용)

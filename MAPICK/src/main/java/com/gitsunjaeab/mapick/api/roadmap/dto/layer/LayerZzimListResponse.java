@@ -7,9 +7,8 @@ import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.roadmap.Layer;
 import com.gitsunjaeab.mapick.domain.roadmap.LayerForkHistory;
-import java.time.LocalDateTime;
-import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import lombok.AllArgsConstructor;
@@ -23,7 +22,7 @@ public class LayerZzimListResponse implements BaseApiResponse {
     // 커스텀 응답 필드들
     private String code;
     private String message;
-    private LocalDateTime timestamp;
+    private OffsetDateTime timestamp;
 
     // 찜한 사용자
     private MemberSimpleDTO memberSimpleDTO;
@@ -60,7 +59,7 @@ public class LayerZzimListResponse implements BaseApiResponse {
             return new LayerZzimListResponse(
                 ResponseCode.OK.getCode(),
                 "찜한 레이어 없음",
-                LocalDateTime.now(),
+                OffsetDateTime.now(),
                 new MemberSimpleDTO(loginMember),
                 List.of()
             );
@@ -93,7 +92,7 @@ public class LayerZzimListResponse implements BaseApiResponse {
         return new LayerZzimListResponse(
             ResponseCode.OK.getCode(),
             message, // 커스텀 메시지 사용
-            LocalDateTime.now(),
+            OffsetDateTime.now(),
             new MemberSimpleDTO(loginMember),
             layerDTOs
         );

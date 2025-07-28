@@ -10,7 +10,7 @@ import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.Getter;
@@ -21,10 +21,10 @@ public class RoadmapResponse implements BaseApiResponse {
 
     private String code;
     private String message;
-    private LocalDateTime timestamp;
+    private OffsetDateTime timestamp;
     private RoadmapInfo roadmap;
 
-    public RoadmapResponse(String code, String message, LocalDateTime timestamp, RoadmapInfo roadmap){
+    public RoadmapResponse(String code, String message, OffsetDateTime timestamp, RoadmapInfo roadmap){
         this.code = code;
         this.message = message;
         this.timestamp = timestamp;
@@ -62,6 +62,10 @@ public class RoadmapResponse implements BaseApiResponse {
         private Integer viewCount;
 
         private List<LayerWithMarkerDTO> layers;
+        private String address;
+        private Double regionLatitude;
+        private Double regionLongitude;
+        private OffsetDateTime participationEnd;
     }
 
     // --- 정적 팩토리 메서드 ---
@@ -85,12 +89,15 @@ public class RoadmapResponse implements BaseApiResponse {
                 .map(LayerWithMarkerDTO::new)
                 .collect(Collectors.toList());
         roadmapInfo.setLayers(layers);
-
+        roadmapInfo.setAddress(r.getAddress());
+        roadmapInfo.setRegionLatitude(r.getRegionLatitude());
+        roadmapInfo.setRegionLongitude(r.getRegionLongitude());
+        roadmapInfo.setParticipationEnd(r.getParticipationEnd());
 
         return new RoadmapResponse(
             ResponseCode.OK.getCode(),
             "로드맵 조회 성공",
-            LocalDateTime.now(),
+            OffsetDateTime.now(),
             roadmapInfo
         );
     }

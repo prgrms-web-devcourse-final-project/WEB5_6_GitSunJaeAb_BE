@@ -2,6 +2,8 @@ package com.gitsunjaeab.mapick.api.achievement;
 
 import com.gitsunjaeab.mapick.api.achievement.dto.AchievementDTO;
 import com.gitsunjaeab.mapick.api.achievement.dto.AchievementListResponse;
+import com.gitsunjaeab.mapick.api.achievement.dto.MemberAchievementDTO;
+import com.gitsunjaeab.mapick.api.achievement.dto.MemberAchievementListResponse;
 import com.gitsunjaeab.mapick.application.achievement.AchievementService;
 import com.gitsunjaeab.mapick.domain.auth.Principal;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,13 +38,14 @@ public class AchievementController {
     // 사용자 취득 업적 조회
     @GetMapping("/member")
     @Operation(summary = "특정 사용자의 업적 조회", description = "[사용자] 해당 사용자가 취득한 업적 전체 조회")
-    public ResponseEntity<AchievementListResponse> getMemberAchievements(
+    public ResponseEntity<MemberAchievementListResponse> getMemberAchievements(
         @AuthenticationPrincipal Principal principal
     ) {
 
         Long memberId = principal.getMember().getId();
-        List<AchievementDTO> achievements = achievementService.findMemberAchievements(memberId);
-        AchievementListResponse response = AchievementListResponse.getList(achievements);
+        List<MemberAchievementDTO> achievements = achievementService.findMemberAchievements(memberId);
+        MemberAchievementListResponse response = MemberAchievementListResponse.getList(achievements);
+
 
         return ResponseEntity.ok(response);
     }

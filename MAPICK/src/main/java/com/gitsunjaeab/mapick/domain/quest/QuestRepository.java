@@ -3,7 +3,6 @@ package com.gitsunjaeab.mapick.domain.quest;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import java.util.List;
 import java.util.Optional;
-import org.springdoc.core.converters.models.Sort;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -22,5 +21,5 @@ public interface QuestRepository extends JpaRepository<Quest, Long> {
     @Query("SELECT q FROM Quest q JOIN FETCH q.member WHERE q.deletedAt IS NULL ORDER BY q.id ASC")
     List<Quest> findAllWithMember();
 
-
+    Long countByMemberId(Long memberId);
 }

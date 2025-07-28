@@ -1,31 +1,34 @@
 package com.gitsunjaeab.mapick.api.quest;
 
+import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestCreateRequest;
+import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestCreateResponse;
 import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestDTO;
+import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestJudgeRequest;
+import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestJudgeResponse;
 import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestListResponse;
+import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestUpdateRequest;
+import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestUpdateResponse;
+import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestRequest;
+import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestResponse;
+import com.gitsunjaeab.mapick.api.quest.dto.QuestAchievementResponse;
 import com.gitsunjaeab.mapick.api.quest.dto.QuestDetailResponse;
-import com.gitsunjaeab.mapick.api.quest.dto.QuestResponse;
 import com.gitsunjaeab.mapick.api.quest.dto.QuestListResponse;
+import com.gitsunjaeab.mapick.api.quest.dto.QuestRankResponse;
 import com.gitsunjaeab.mapick.api.quest.dto.QuestRequest;
-import com.gitsunjaeab.mapick.api.quest.dto.QuestDTO;
+import com.gitsunjaeab.mapick.api.quest.dto.QuestResponse;
 import com.gitsunjaeab.mapick.application.quest.MemberQuestService;
 import com.gitsunjaeab.mapick.application.quest.QuestRankService;
 import com.gitsunjaeab.mapick.application.quest.QuestService;
-//import com.gitsunjaeab.mapick.application.quest.MemberQuestEvidenceService;
+import com.gitsunjaeab.mapick.common.response.ApiResponse;
+import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.auth.Principal;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.util.ReferencedException;
 import com.gitsunjaeab.mapick.util.ReferencedWarning;
-import com.gitsunjaeab.mapick.common.response.ApiResponse;
-import com.gitsunjaeab.mapick.common.response.ResponseCode;
-import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestRequest;
-import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestResponse;
-//import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestEvidenceRequest;
-//import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestEvidenceResponse;
-import com.gitsunjaeab.mapick.api.quest.dto.QuestRankResponse;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.util.List;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -38,8 +41,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import java.util.List;
-import com.gitsunjaeab.mapick.domain.quest.MemberQuest;
 
 @RestController
 @RequestMapping(value = "/quests", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -75,9 +76,17 @@ public class QuestController {
         }
 
         Member member = principal.getMember(); //현재 로그인된 멤버 객체
-        Long questId = questService.create(questRequest,member);
-        QuestResponse createdQuest = questService.get(questId);
-        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "퀘스트 생성 완료"));
+        QuestAchievementResponse response = questService.create(questRequest,member);
+
+        if (response.isAchievementUnlocked()) {
+            return ResponseEntity.ok(ApiResponse.of(
+                ResponseCode.OK,
+                "퀘스트 생성 완료! 업적 '" + response.getAchievement().getName() + "' 을(를) 획득했습니다.",
+                response
+            ));
+        }
+
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "퀘스트 생성 완료", response.getQuestId()));
     }
 
     // 퀘스트 수정 (출제자용) //완료
@@ -156,13 +165,13 @@ public class QuestController {
         return ResponseEntity.ok(MemberQuestListResponse.of(memberQuests));
     }
 
-    // 퀘스트 참여 신청 (참여자용) //완료
+    // 퀘스트 참여 신청 (참여자용)
     @PostMapping("/{questId}/memberQuest")
     @Operation(summary = "퀘스트 참여 신청 및 증빙자료 제출", description = "[참여자용] 특정 퀘스트에 참여 신청을 합니다.")
     public ResponseEntity<ApiResponse> participateInQuest(
         @PathVariable(name = "questId") final Long questId,
         @AuthenticationPrincipal Principal principal,
-        @RequestBody @Valid MemberQuestRequest request
+        @RequestBody @Valid MemberQuestCreateRequest request
 
     ) {
         if(principal == null){
@@ -171,19 +180,46 @@ public class QuestController {
         }
 
         Member member = principal.getMember();
-        request.setQuest(questId);
-        request.setMember(member.getId());
-        memberQuestService.create(request,member);
+        request.setQuestId(questId);
+        MemberQuestCreateResponse response = memberQuestService.createMemberQuest(request,member);
 
-//        MemberQuestRequest request = new MemberQuestRequest();
-//        request.setMember(member.getId());
-//        MemberQuest created = memberQuestService.createAndReturnEntity(request);
-        //리팩토링 때 재확인 필요
-//        MemberQuestResponse response = MemberQuestResponse.ofCreate(created);
-
-        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "퀘스트 침여 완료"));
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "퀘스트 참여 완료"));
     }
 
+    //참여자 제출수정
+    @PutMapping("/memberQuest/{memberQuestId}")
+    @Operation(summary = "퀘스트 참여 정보 수정", description = "[참여자용] 본인이 제출한 퀘스트 참여 내용을 수정합니다.")
+    public ResponseEntity<ApiResponse> updateMemberQuest(
+        @PathVariable(name = "memberQuestId") final Long memberQuestId,
+        @AuthenticationPrincipal final Principal principal,
+        @RequestBody @Valid final MemberQuestUpdateRequest request
+    ) {
+        if (principal == null) {
+            throw new IllegalStateException("인증된 유저 정보 없음");
+        }
+
+        final Member member = principal.getMember();
+
+        MemberQuestUpdateResponse response = memberQuestService.updateMemberQuest(memberQuestId, request,principal.getMember());
+
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "퀘스트 참여 정보 수정 완료"));
+    }
+
+    //(제출자) 참여자 문제 정답 판별
+    @PutMapping("/memberQuest/judge")
+    @Operation(summary = "퀘스트 판별", description = "[출제자용] 퀘스트 참여자의 제출물을 보고 정답 여부를 판별합니다.")
+    public ResponseEntity<ApiResponse> judgeMemberQuest(
+        @RequestBody @Valid final MemberQuestJudgeRequest request,
+        @AuthenticationPrincipal final Principal principal
+    ) {
+        if (principal == null) {
+            throw new IllegalStateException("인증된 유저 정보 없음");
+        }
+
+        Member judgeMember = principal.getMember();
+        MemberQuestJudgeResponse response = memberQuestService.judgeMemberQuest(request, judgeMember);
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "퀘스트 판별 완료"));
+    }
 
 //    // 증빙 자료 제출 (참여자용)
 //    @PostMapping("/memberQuest/{memberQuestId}/evidence")

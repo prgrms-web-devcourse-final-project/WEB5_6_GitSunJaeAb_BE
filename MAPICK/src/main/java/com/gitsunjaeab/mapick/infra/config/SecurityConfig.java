@@ -38,6 +38,7 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final AuthExceptionFilter authExceptionFilter;
+    private final LogoutFilter logoutFilter;
     private final ObjectMapper objectMapper;
 
     @Bean
@@ -97,7 +98,6 @@ public class SecurityConfig {
         builder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
         return builder.build();
     }
-
 
     // CORS 관련 보안 정책 추가
 //    @Bean

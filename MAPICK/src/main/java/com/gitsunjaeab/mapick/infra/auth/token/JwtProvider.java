@@ -86,7 +86,7 @@ public class JwtProvider {
             .signWith(getSecretKey())
             .compact();
 
-        TokenDTO tokenDto =TokenDTO.builder()
+        TokenDTO tokenDto = TokenDTO.builder()
                 .id(id)
                 .accessToken(accessToken)
                 .atExpiresIn(atExpiration)
@@ -101,7 +101,7 @@ public class JwtProvider {
         String email = parseClaim(accessToken).getSubject();
 
         Member member = memberRepository.findByEmail(email)
-            .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
 
         List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(member.getRole()));
 
@@ -112,10 +112,10 @@ public class JwtProvider {
 
     //  Access Token 안에 있는 Claims (페이로드) 꺼내기
     public Claims parseClaim(String accessToken) {
-        try{
+        try {
             return Jwts.parser().verifyWith(getSecretKey()).build()
-                .parseSignedClaims(accessToken).getPayload();
-        }catch (ExpiredJwtException ex){
+                    .parseSignedClaims(accessToken).getPayload();
+        } catch (ExpiredJwtException ex) {
             return ex.getClaims();
         }
     }
@@ -123,7 +123,7 @@ public class JwtProvider {
 
     // JWT 유효성 검사(서명 위조, 만료 등)
     public boolean validateToken(String requestAccessToken) {
-        try{
+        try {
             Jwts.parser().verifyWith(getSecretKey()).build().parse(requestAccessToken);
             return true;
         }catch(SecurityException | MalformedJwtException
@@ -149,9 +149,24 @@ public class JwtProvider {
         }
 
         return Arrays.stream(cookies)
-            .filter(e -> e.getName().equals(tokenType.name()))
-            .map(Cookie::getValue).findFirst()
-            .orElse(null);
+                .filter(e -> e.getName().equals(tokenType.name()))
+                .map(Cookie::getValue).findFirst()
+                .orElse(null);
+    }
+
+    public Long getUserIdFromToken(String token) {
+        Claims claims = parseClaim(token);
+        Object memberId = claims.get("memberId");
+
+        System.out.println("✅ WebSocket 인증 성공 - memberId: " + memberId);
+        if (memberId instanceof Integer) {
+            return ((Integer) memberId).longValue();
+        } else if (memberId instanceof Long) {
+            return (Long) memberId;
+        } else {
+            throw new CommonException(ResponseCode.MEMBER_NOT_FOUND, "memberId가 토큰에 없습니다.");
+        }
+
     }
 
     // 서버 간 통신용 토큰 발급
@@ -161,11 +176,11 @@ public class JwtProvider {
         Date expiresAt = new Date(now + atExpiration);
 
         return Jwts.builder()
-            .subject("DevQuest-service")
-            .id(id)
-            .expiration(expiresAt)
-            .claim("authorities", List.of("ROLE_SERVER")) // 서버 권한
-            .signWith(getSecretKey())
-            .compact();
+                .subject("DevQuest-service")
+                .id(id)
+                .expiration(expiresAt)
+                .claim("authorities", List.of("ROLE_SERVER")) // 서버 권한
+                .signWith(getSecretKey())
+                .compact();
     }
 }

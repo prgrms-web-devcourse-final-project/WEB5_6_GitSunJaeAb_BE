@@ -1,16 +1,12 @@
 package com.gitsunjaeab.mapick.api.report.dto.request;
 
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
-import com.gitsunjaeab.mapick.common.response.ResponseCode;
-import com.gitsunjaeab.mapick.domain.report.Report;
 import jakarta.validation.constraints.NotNull;
+import java.time.OffsetDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 
 
 @Getter
@@ -22,7 +18,7 @@ public class ReportRequest implements BaseApiResponse {
     // 커스텀 응답 필드들
     private String code;
     private String message;
-    private LocalDateTime timestamp;
+    private OffsetDateTime timestamp;
 
     // 신고 데이터 필드들
     private Long id;

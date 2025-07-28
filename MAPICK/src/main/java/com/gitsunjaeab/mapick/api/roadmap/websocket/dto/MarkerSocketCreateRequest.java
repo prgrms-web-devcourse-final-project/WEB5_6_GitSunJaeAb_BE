@@ -23,8 +23,6 @@ public class MarkerSocketCreateRequest {
     private String color;
     private Integer markerSeq;
 
-    // WebSocket 연동용 필드
-    private String tempUUID;
     private Long customImageId;
     private Long layerId;
 
@@ -42,7 +40,6 @@ public class MarkerSocketCreateRequest {
         marker.setColor(this.color);
         marker.setMarkerSeq(this.markerSeq);
 
-        marker.setClientGeneratedUUID(this.tempUUID); // UUID 저장
 
         return marker;
     }
@@ -57,7 +54,6 @@ public class MarkerSocketCreateRequest {
         request.setLng(dto.getLng());
         request.setColor(dto.getColor());
         request.setMarkerSeq(dto.getMarkerSeq());
-        request.setTempUUID(dto.getTempUUID()); // 중요
         return request;
     }
 
@@ -72,7 +68,6 @@ public class MarkerSocketCreateRequest {
         request.setCustomImageId(this.customImageId);
         request.setMarkerSeq(this.markerSeq);
         request.setLayerId(this.layerId);
-        request.setTempUUID(this.tempUUID);
         return request;
     }
 }

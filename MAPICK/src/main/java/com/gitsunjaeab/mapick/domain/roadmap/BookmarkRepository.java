@@ -22,9 +22,7 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
 
     List<Bookmark> findAllWithAllRoadmapRelationsByMemberId(Long memberId);
 
-    boolean existsByMemberAndRoadmap(Member member, Roadmap roadmap);
-
-    Optional<Bookmark> findByMemberAndRoadmap(Member member, Roadmap roadmap);
+    boolean existsByMemberIdAndRoadmapId(Long memberId, Long roadmapId);
 
     @Query("SELECT b.roadmap.id FROM Bookmark b WHERE b.member.id = :memberId")
     List<Long> findRoadmapIdsByMemberId(@Param("memberId") Long memberId);

@@ -2,7 +2,6 @@ package com.gitsunjaeab.mapick.application.notification;
 
 import com.gitsunjaeab.mapick.domain.comment.Comment;
 import com.gitsunjaeab.mapick.domain.member.Member;
-import com.gitsunjaeab.mapick.domain.member.MemberRepository;
 import com.gitsunjaeab.mapick.domain.notification.Notification;
 import com.gitsunjaeab.mapick.domain.notification.NotificationRepository;
 import com.gitsunjaeab.mapick.domain.notification.NotificationType;
@@ -15,29 +14,18 @@ import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
 import java.time.OffsetDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.Scheduled;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class NotificationService {
 
     private final NotificationRepository notificationRepository;
-    private final MemberRepository memberRepository;
 
     // ===== 기본 CRUD =====
-
-    // 타입 조회
-    public List<Notification> findByType(NotificationType type) {
-        // 전체
-        if (type == NotificationType.ALL) {
-            // fetch join으로 N+1 문제 방지
-            return notificationRepository.findAllWithAllRelations();
-        }
-        // 타입별 조회도 fetch join + deletedAt 조건 쿼리 사용
-        return notificationRepository.findByNotificationTypeWithAllRelations(type);
-    }
 
     // 타입+멤버 조회 (본인 알림만)
     public List<Notification> findByTypeAndMember(NotificationType type, Long memberId) {
@@ -72,13 +60,22 @@ public class NotificationService {
                     + "님이 " + layer.getName() + "을(를) 인용했어요!";
                 break;
             case POST:
-                title = "🔖 로드맵 북마크 알림";
-                content = "'" + bookmark.getMember().getNickname() + "' 님이 내 '" + roadmap.getTitle()
-                    + "' 로드맵을 북마크 했어요!";
+                if (roadmap != null) {
+                    title = "🔖 로드맵 북마크 알림";
+                    content = "'" + bookmark.getMember().getNickname() + "' 님이 내 '" + roadmap.getTitle() + "' 로드맵을 북마크 했어요!";
+                } else if (quest != null) {
+                    title = "🔖 퀘스트 북마크 알림";
+                    content = "'" + bookmark.getMember().getNickname() + "' 님이 내 '" + quest.getTitle() + "' 퀘스트를 북마크 했어요!";
+                }
                 break;
             case QUEST:
-                title = "🎯 퀘스트 참여";
-                content = "내 퀘스트에 '" + quest.getMember().getNickname() + "'님이 참여했어요!";
+                title = "🧭 퀘스트 참여 알림";
+                content = "'" + memberQuest.getMember().getNickname() +"'님의 '" + memberQuest.getQuest().getTitle() + "' 퀘스트에 참여했습니다!";
+                break;
+            case QUEST_DEADLINE:
+                title = "🧭 퀘스트 마감 알림";
+                content = "'" + memberQuest.getMember().getNickname() +"'님의 '" + memberQuest.getQuest().getTitle() + "' 퀘스트의 마감 1분 전 입니다!"; // 테스트용
+//                content = "'" + memberQuest.getMember().getNickname() +"'님의 '" + memberQuest.getQuest().getTitle() + "' 퀘스트의 마감 D-1 일 전 입니다!"; // 배포용
                 break;
             case COMMENT:
                 if (roadmap != null && roadmap.getTitle() != null) {
@@ -115,6 +112,12 @@ public class NotificationService {
             .createdAt(OffsetDateTime.now())
             .build();
 
+        if (title.isEmpty() || content.isEmpty()) {
+            log.warn("알림 : title 또는 content 비어있음. 저장 생략함");
+
+            return null;
+        }
+
         return notificationRepository.save(notifications);
     }
 
@@ -131,29 +134,4 @@ public class NotificationService {
         notification.setReadAt(java.time.OffsetDateTime.now());
         return notificationRepository.save(notification);
     }
-
-    // ====== 읽음 후 1분 후 soft delete (테스트용) ======
-    @Scheduled(cron = "0 * * * * *") // 매 분 0초마다 실행
-    @Transactional
-    public void deleteReadNotificationsAfterOneMinute() {
-        OffsetDateTime oneMinuteAgo = OffsetDateTime.now().minusMinutes(1);
-        List<Notification> notifications = notificationRepository.findReadBeforeAndNotDeletedWithAllRelations(
-            oneMinuteAgo);
-        for (Notification n : notifications) {
-            n.setDeletedAt(OffsetDateTime.now());
-        }
-        notificationRepository.saveAll(notifications);
-    }
-
-    // ====== 읽음 후 1일 후 soft delete (배포용, 주석처리) ======
-//     @Scheduled(cron = "0 0 * * * *") // 매시 정각마다 실행
-//     @Transactional
-//     public void deleteReadNotificationsAfterOneDay() {
-//         OffsetDateTime oneDayAgo = OffsetDateTime.now().minusDays(1);
-//         List<Notification> notifications = notificationRepository.findReadBeforeAndNotDeletedWithAllRelations(oneDayAgo);
-//         for (Notification n : notifications) {
-//             n.setDeletedAt(OffsetDateTime.now());
-//         }
-//         notificationRepository.saveAll(notifications);
-//     }
 }

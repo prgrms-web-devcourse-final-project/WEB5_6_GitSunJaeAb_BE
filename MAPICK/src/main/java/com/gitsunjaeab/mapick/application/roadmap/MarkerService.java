@@ -134,22 +134,56 @@ public class MarkerService {
 
     @Transactional
     public Marker createFromSocket(MarkerSocketDTO dto) {
-        MarkerSocketCreateRequest socketRequest = MarkerSocketCreateRequest.fromSocketDTO(dto);
-        MarkerCreateRequest request = socketRequest.toMarkerCreateRequest();
-        this.create(dto.getUserId(), request);
+        Layer layer = layerRepository.findById(dto.getLayerId())
+                .orElseThrow(() -> new NotFoundException("해당 레이어가 존재하지 않습니다."));
 
-        return markerRepository.findByClientGeneratedUUID(dto.getTempUUID())
-                .orElseThrow(() -> new NotFoundException("UUID로 마커 조회 실패"));
+        Member member = memberRepository.findById(dto.getMemberId())
+                .orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다."));
+
+        MarkerCustomImage customImage = null;
+        if (dto.getCustomImageId() != null && dto.getCustomImageId() > 0) {
+            customImage = markerCustomImageRepository.findById(dto.getCustomImageId())
+                    .orElseThrow(() -> new NotFoundException("해당 커스텀 마커 이미지가 존재하지 않습니다."));
+        }
+
+        Marker marker = new Marker();
+        marker.setLayer(layer);
+        marker.setMember(member);
+        marker.setName(dto.getName());
+        marker.setDescription(dto.getDescription());
+        marker.setAddress(dto.getAddress());
+        marker.setLat(dto.getLat());
+        marker.setLng(dto.getLng());
+        marker.setColor(dto.getColor());
+        marker.setMarkerSeq(dto.getMarkerSeq());
+        marker.setCustomImage(customImage);
+        marker.setCreatedAt(OffsetDateTime.now());
+
+        return markerRepository.save(marker);
     }
 
     @Transactional
     public Marker updateFromSocket(MarkerSocketDTO dto) {
-        MarkerSocketUpdateRequest socketRequest = MarkerSocketUpdateRequest.fromSocketDTO(dto);
-        MarkerUpdateRequest request = socketRequest.toMarkerUpdateRequest();
-        this.update(dto.getMarkerId(), request);
+        Marker marker = markerRepository.findByIdWithLayerAndRoadmap(dto.getMarkerId())
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 마커입니다."));
 
-        return markerRepository.findById(dto.getMarkerId())
-                .orElseThrow(() -> new NotFoundException("마커 조회 실패"));
+        if (dto.getName() != null) marker.setName(dto.getName());
+        if (dto.getDescription() != null) marker.setDescription(dto.getDescription());
+        if (dto.getAddress() != null) marker.setAddress(dto.getAddress());
+        if (dto.getLat() != null) marker.setLat(dto.getLat());
+        if (dto.getLng() != null) marker.setLng(dto.getLng());
+        if (dto.getColor() != null) marker.setColor(dto.getColor());
+        if (dto.getMarkerSeq() != null) marker.setMarkerSeq(dto.getMarkerSeq());
+
+        if (dto.getCustomImageId() != null) {
+            MarkerCustomImage customImage = markerCustomImageRepository.findById(dto.getCustomImageId())
+                    .orElseThrow(() -> new NotFoundException("해당 커스텀 이미지가 존재하지 않습니다."));
+            marker.setCustomImage(customImage);
+        }
+
+        marker.setUpdatedAt(OffsetDateTime.now());
+
+        return markerRepository.save(marker);
     }
 
     private void applyUpdateRequestToMarker(Marker marker, MarkerUpdateRequest request, MarkerCustomImage customImage) {
@@ -163,5 +197,23 @@ public class MarkerService {
         marker.setCustomImage(customImage);
 
         marker.setUpdatedAt(OffsetDateTime.now());
+    }
+
+    public Long findRoadmapIdByLayerId(Long layerId) {
+        Layer layer = layerRepository.findById(layerId)
+                .orElseThrow(() -> new RuntimeException("💥 해당 Layer를 찾을 수 없습니다. layerId: " + layerId));
+
+        return layer.getRoadmap().getId();
+    }
+
+    public Marker findById(Long markerId) {
+        return markerRepository.findById(markerId)
+                .orElseThrow(() -> new RuntimeException("💥 해당 Marker를 찾을 수 없습니다. markerId: " + markerId));
+    }
+
+    @Transactional
+    public Marker findByIdWithLayerAndRoadmap(Long markerId) {
+        return markerRepository.findByIdWithLayerAndRoadmap(markerId)
+                .orElseThrow(() -> new NotFoundException("마커 조회 실패"));
     }
 }

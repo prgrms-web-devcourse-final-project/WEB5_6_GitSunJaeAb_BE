@@ -1,12 +1,15 @@
 package com.gitsunjaeab.mapick.application.achievement;
 
 import com.gitsunjaeab.mapick.api.achievement.dto.AchievementDTO;
+import com.gitsunjaeab.mapick.api.achievement.dto.MemberAchievementDTO;
 import com.gitsunjaeab.mapick.domain.achievement.Achievement;
 import com.gitsunjaeab.mapick.domain.achievement.AchievementRepository;
+import com.gitsunjaeab.mapick.domain.achievement.MemberAchievement;
 import com.gitsunjaeab.mapick.domain.achievement.MemberAchievementRepository;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @AllArgsConstructor
@@ -23,12 +26,12 @@ public class AchievementService {
             .toList();
     }
 
-    public List<AchievementDTO> findMemberAchievements(Long memberId) {
-        List<Long> achievementIds = memberAchievementRepository.findAchievementIdsByMemberId(memberId);
-        List<Achievement> achievements = achievementRepository.findAllById(achievementIds);
+    @Transactional
+    public List<MemberAchievementDTO> findMemberAchievements(Long memberId) {
+        List<MemberAchievement> memberAchievements = memberAchievementRepository.findAllByMember_Id(memberId);
 
-        return achievements.stream()
-            .map(AchievementDTO::of)
+        return memberAchievements.stream()
+            .map(MemberAchievementDTO::of)
             .toList();
     }
 }

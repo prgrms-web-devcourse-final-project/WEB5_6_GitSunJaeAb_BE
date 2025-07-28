@@ -1,40 +1,56 @@
 package com.gitsunjaeab.mapick.application.roadmap;
 
+import com.gitsunjaeab.mapick.api.achievement.dto.AchievementDTO;
 import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.*;
 import com.gitsunjaeab.mapick.api.roadmap.dto.hashtag.HashtagRequest;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
+import com.gitsunjaeab.mapick.domain.achievement.Achievement;
+import com.gitsunjaeab.mapick.domain.achievement.AchievementRepository;
+import com.gitsunjaeab.mapick.domain.achievement.MemberAchievement;
+import com.gitsunjaeab.mapick.domain.achievement.MemberAchievementRepository;
 import com.gitsunjaeab.mapick.domain.category.Category;
 import com.gitsunjaeab.mapick.domain.category.CategoryRepository;
+import com.gitsunjaeab.mapick.domain.comment.Comment;
+import com.gitsunjaeab.mapick.domain.comment.CommentRepository;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
 import com.gitsunjaeab.mapick.domain.report.Report;
 import com.gitsunjaeab.mapick.domain.report.ReportRepository;
-import com.gitsunjaeab.mapick.domain.roadmap.*;
-import com.gitsunjaeab.mapick.domain.comment.Comment;
-import com.gitsunjaeab.mapick.domain.comment.CommentRepository;
+import com.gitsunjaeab.mapick.domain.roadmap.Bookmark;
+import com.gitsunjaeab.mapick.domain.roadmap.BookmarkRepository;
+import com.gitsunjaeab.mapick.domain.roadmap.Hashtag;
+import com.gitsunjaeab.mapick.domain.roadmap.HashtagRepository;
+import com.gitsunjaeab.mapick.domain.roadmap.Layer;
+import com.gitsunjaeab.mapick.domain.roadmap.LayerLibraryRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.LayerLibraryRepository.RoadmapCitationProjection;
+import com.gitsunjaeab.mapick.domain.roadmap.LayerRepository;
+import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
+import com.gitsunjaeab.mapick.domain.roadmap.RoadmapEditor;
+import com.gitsunjaeab.mapick.domain.roadmap.RoadmapEditorRepository;
+import com.gitsunjaeab.mapick.domain.roadmap.RoadmapHashtagRelation;
+import com.gitsunjaeab.mapick.domain.roadmap.RoadmapHashtagRelationRepository;
+import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
+import com.gitsunjaeab.mapick.domain.roadmap.RoadmapType;
 import com.gitsunjaeab.mapick.infra.auth.AuthHelper;
+import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
 import com.gitsunjaeab.mapick.infra.error.exceptions.InvalidRoadmapTypeException;
 import com.gitsunjaeab.mapick.infra.error.exceptions.UnauthenticatedException;
+import com.gitsunjaeab.mapick.infra.storage.SupabaseStorageService;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import com.gitsunjaeab.mapick.util.ReferencedWarning;
 import jakarta.persistence.EntityNotFoundException;
-
-import java.time.OffsetDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import jakarta.validation.Valid;
+import java.time.OffsetDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @Service
@@ -56,10 +72,15 @@ public class RoadmapService {
     private final HashtagService hashtagService;
     private final HashtagRepository hashtagRepository;
     private final AuthHelper authHelper;
+    private final SupabaseStorageService supabaseStorageService;
+    @Autowired
+    private MemberAchievementRepository memberAchievementRepository;
+    @Autowired
+    private AchievementRepository achievementRepository;
 
     // 공유 지도 생성
     @Transactional
-    public Long createSharedRoadmap(SharedRoadmapCreateRequest request, Long memberId) {
+    public Long createSharedRoadmap(SharedRoadmapCreateRequest request, Long memberId, MultipartFile imageFile) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new NotFoundException("멤버 없음"));
 
@@ -74,7 +95,6 @@ public class RoadmapService {
         roadmap.setCategory(category);
         roadmap.setTitle(request.getTitle());
         roadmap.setDescription(request.getDescription());
-        roadmap.setThumbnail(request.getThumbnail());
         roadmap.setIsPublic(request.getIsPublic());
         roadmap.setIsAnimated(false);
         roadmap.setRoadmapType(RoadmapType.SHARED);
@@ -86,6 +106,10 @@ public class RoadmapService {
         roadmap.setRegionLongitude(request.getRegionLongitude());
         roadmap.setParticipationEnd(request.getParticipationEnd());
         roadmap.setAddress(request.getAddress());
+        if (imageFile != null && !imageFile.isEmpty()) {
+            String imageUrl = supabaseStorageService.upload(imageFile);
+            roadmap.setThumbnail(imageUrl);
+        }
 
         roadmapRepository.save(roadmap);
         // 로드맵 생성 시 해시태그
@@ -111,7 +135,7 @@ public class RoadmapService {
 
     // 공유 지도 수정
     @Transactional
-    public void updateSharedRoadmap(@Valid SharedRoadmapUpdateRequest request, Long roadmapId, Long memberId) {
+    public void updateSharedRoadmap(@Valid SharedRoadmapUpdateRequest request, Long roadmapId, Long memberId, MultipartFile imageFile) {
         Roadmap roadmap = roadmapRepository.findById(roadmapId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 로드맵입니다."));
 
@@ -129,7 +153,6 @@ public class RoadmapService {
 
         roadmap.setTitle(request.getTitle());
         roadmap.setDescription(request.getDescription());
-        roadmap.setThumbnail(request.getThumbnail());
         roadmap.setRegionLatitude(request.getRegionLatitude());
         roadmap.setRegionLongitude(request.getRegionLongitude());
         roadmap.setParticipationEnd(request.getParticipationEnd());
@@ -137,6 +160,10 @@ public class RoadmapService {
         roadmap.setCategory(category);
         roadmap.setUpdatedAt(OffsetDateTime.now());
         roadmap.setAddress(request.getAddress());
+        if (imageFile != null && !imageFile.isEmpty()) {
+            String imageUrl = supabaseStorageService.upload(imageFile);
+            roadmap.setThumbnail(imageUrl);
+        }
 
 
         // 해시태그 수정: null이 아닐 때만 처리
@@ -159,7 +186,7 @@ public class RoadmapService {
 
     // 개인 로드맵 생성
     @Transactional
-    public Long createRoadmap(@Valid RoadmapRequest request, Long memberId) {
+    public RoadmapAchievementResponse createRoadmap(@Valid RoadmapRequest request, Long memberId ,MultipartFile imageFile) {
         Category category = categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카테고리입니다."));
 
@@ -170,7 +197,6 @@ public class RoadmapService {
         roadmap.setCategory(category);
         roadmap.setTitle(request.getTitle());
         roadmap.setDescription(request.getDescription());
-        roadmap.setThumbnail(request.getThumbnail());
         roadmap.setIsPublic(request.getIsPublic());
         roadmap.setIsAnimated(false); // 기본값
         roadmap.setRoadmapType(RoadmapType.PERSONAL); // 개인 로드맵
@@ -178,6 +204,10 @@ public class RoadmapService {
         roadmap.setLikeCount(0);
         roadmap.setViewCount(0);
         roadmap.setMember(member);
+        if (imageFile != null && !imageFile.isEmpty()) {
+            String imageUrl = supabaseStorageService.upload(imageFile);
+            roadmap.setThumbnail(imageUrl);
+        }
 
         roadmapRepository.save(roadmap);
         // 로드맵 생성 시 해시태그
@@ -199,12 +229,35 @@ public class RoadmapService {
             roadmapHashtagRelationRepository.saveAll(roadmap.getRoadmapMapHashtags());
         }
 
-        return roadmap.getId();
+        // 로드맵 첫 생성 업적
+        Long roadmapCount = roadmapRepository.countByMemberId(memberId);
+        final Long ACHIEVEMENT_ID = 100L;
+
+        if (roadmapCount == 1) {
+            boolean alreadyHas = memberAchievementRepository.existsByMemberIdAndAchievementId(memberId, ACHIEVEMENT_ID);
+            if (!alreadyHas) {
+                Member user = memberRepository.findById(memberId)
+                    .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND, "해당하는 회원이 없습니다."));
+                Achievement achievement = achievementRepository.findById(ACHIEVEMENT_ID)
+                    .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND, "해당하는 업적이 없습니다."));
+
+                memberAchievementRepository.save(
+                    MemberAchievement.builder()
+                        .member(user)
+                        .achievement(achievement)
+                        .achievedAt(OffsetDateTime.now())
+                        .build()
+                );
+                return new RoadmapAchievementResponse(roadmap.getId(), true, new AchievementDTO(achievement));
+            }
+        }
+
+        return new RoadmapAchievementResponse(roadmap.getId(), false, null);
     }
 
     // 개인 로드맵 수정
     @Transactional
-    public void updateRoadmap(@Valid RoadmapRequest request, Long roadmapId, Long memberId) {
+    public void updateRoadmap(@Valid RoadmapRequest request, Long roadmapId, Long memberId, MultipartFile imageFile) {
         Roadmap roadmap = roadmapRepository.findById(roadmapId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 로드맵입니다."));
 
@@ -222,10 +275,13 @@ public class RoadmapService {
 
         roadmap.setTitle(request.getTitle());
         roadmap.setDescription(request.getDescription());
-        roadmap.setThumbnail(request.getThumbnail());
         roadmap.setIsPublic(request.getIsPublic());
         roadmap.setCategory(category);
         roadmap.setUpdatedAt(OffsetDateTime.now());
+        if (imageFile != null && !imageFile.isEmpty()) {
+            String imageUrl = supabaseStorageService.upload(imageFile);
+            roadmap.setThumbnail(imageUrl);
+        }
 
         // 해시태그 수정: null이 아닐 때만 처리
         if (request.getHashtags() != null) {
@@ -306,23 +362,28 @@ public class RoadmapService {
     @Transactional(readOnly = true)
     public RoadmapListResponse buildRoadmapListResponse(List<Roadmap> roadmaps) {
         List<Long> roadmapIds = roadmaps.stream()
-            .map(Roadmap::getId)
-            .collect(Collectors.toList());
+                .map(Roadmap::getId)
+                .collect(Collectors.toList());
 
         List<RoadmapCitationProjection> projections =
-            layerLibraryRepository.countDistinctMemberByRoadmapIds(roadmapIds);
+                layerLibraryRepository.countDistinctMemberByRoadmapIds(roadmapIds);
 
-        // 로드맵 ID (key), 인용수 (value)
         Map<Long, Long> citationCountMap = projections.stream()
-            .collect(Collectors.toMap(
-                RoadmapCitationProjection::getRoadmapId,
-                RoadmapCitationProjection::getCitationCount
-            ));
+                .collect(Collectors.toMap(
+                        RoadmapCitationProjection::getRoadmapId,
+                        RoadmapCitationProjection::getCitationCount
+                ));
 
         Long memberId = authHelper.getCurrentMemberId();
-        Set<Long> bookmarkedIds = new HashSet<>(bookmarkRepository.findRoadmapIdsByMemberId(memberId));
+        List<Bookmark> bookmarks = bookmarkRepository.findByMemberId(memberId);
 
-        return RoadmapListResponse.of(roadmaps, citationCountMap, bookmarkedIds);
+        Map<Long, Long> roadmapIdToBookmarkIdMap = bookmarks.stream()
+                .collect(Collectors.toMap(
+                        b -> b.getRoadmap().getId(),
+                        Bookmark::getId
+                ));
+
+        return RoadmapListResponse.of(roadmaps, citationCountMap, roadmapIdToBookmarkIdMap);
     }
 
     @Transactional
