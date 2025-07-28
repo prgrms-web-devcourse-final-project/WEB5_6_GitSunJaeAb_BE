@@ -30,7 +30,7 @@ public class MemberInterestService {
     @Transactional
     public void createMemberInterests(Long memberId, @Valid MemberInterestRequest memberInterestRequest) {
 
-        final Member member = memberRepository.findById(memberId)
+        final Member member = memberRepository.findByIdAndDeletedAtIsNull(memberId)
                 .orElseThrow(() -> new CommonException(ResponseCode.MEMBER_NOT_FOUND));
 
         for (Long categoryId : memberInterestRequest.getCategoryId()) {
@@ -53,7 +53,7 @@ public class MemberInterestService {
     @Transactional
     public void updateMemberInterests(Long memberId, @Valid MemberInterestRequest memberInterestRequest) {
 
-        final Member member = memberRepository.findById(memberId)
+        final Member member = memberRepository.findByIdAndDeletedAtIsNull(memberId)
                 .orElseThrow(() -> new CommonException(ResponseCode.MEMBER_NOT_FOUND));
 
         // 기존 관심 분야 삭제

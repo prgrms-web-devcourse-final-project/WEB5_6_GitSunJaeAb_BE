@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class CommentAchievementResponse {
+public class CommentAchievementDTO {
     private CommentDTO comment;
     private boolean achievementUnlocked;
     private AchievementDTO achievement;

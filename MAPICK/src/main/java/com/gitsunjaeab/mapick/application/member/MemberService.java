@@ -2,7 +2,10 @@ package com.gitsunjaeab.mapick.application.member;
 
 import com.gitsunjaeab.mapick.api.auth.dto.internal.SocialUserInfo;
 import com.gitsunjaeab.mapick.api.auth.dto.request.SignupRequest;
-import com.gitsunjaeab.mapick.api.member.dto.*;
+import com.gitsunjaeab.mapick.api.member.dto.MemberDTO;
+import com.gitsunjaeab.mapick.api.member.dto.MemberDetailDTO;
+import com.gitsunjaeab.mapick.api.member.dto.MemberInterestDTO;
+import com.gitsunjaeab.mapick.api.member.dto.MemberListDTO;
 import com.gitsunjaeab.mapick.api.member.dto.request.MemberProfileUpdateRequest;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.auth.LoginType;
@@ -17,7 +20,6 @@ import com.gitsunjaeab.mapick.util.NotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -38,18 +40,11 @@ public class MemberService {
     private final MemberInterestRepository memberInterestRepository;
     private final SupabaseStorageService supabaseStorageService;
 
-    // 소셜 로그인 시 임시 닉네임 부여
-    public String generateUniqueSocialNickname(String provider) {
-        String nickname;
-        do {
-            int randomNumber = (int) (Math.random() * 1_000_000);
-            nickname = provider + "_" + String.format("%06d", randomNumber);
-        } while (memberRepository.existsByNickname(nickname)); // 중복 체크
 
-        return nickname;
-    }
 
     // 소셜 로그인 회원 가입
+    // complete
+    @Transactional
     public Member registerNewSocialMember(SocialUserInfo userInfo, String provider) {
 
         String nickname = generateUniqueSocialNickname(provider);
@@ -70,18 +65,26 @@ public class MemberService {
             .updatedAt(OffsetDateTime.now())
             .build();
 
-        Member savedMember;
+        memberRepository.save(member);
 
-        try{
-            savedMember = memberRepository.save(member);
-        }catch (DataIntegrityViolationException e){
-            throw new CommonException(ResponseCode.DB_CONSTRAINT_VIOLATION); // DB 제약 조건 위배
-        }
+        return member;
+    }
 
-        return savedMember;
+    // 소셜 로그인 시 임시 닉네임 부여
+    //complete
+    public String generateUniqueSocialNickname(String provider) {
+        String nickname;
+        do {
+            int randomNumber = (int) (Math.random() * 1_000_000);
+            nickname = provider + "_" + String.format("%06d", randomNumber);
+        } while (memberRepository.existsByNickname(nickname)); // 중복 체크
+
+        return nickname;
     }
 
     // 자체 로그인 회원 가입
+    // complete
+    @Transactional
     public void signup(SignupRequest request) {
 
         if (memberRepository.existsByEmail(request.getEmail())) {
@@ -108,14 +111,12 @@ public class MemberService {
             .updatedAt(OffsetDateTime.now())
             .build();
 
-        try{
             memberRepository.save(member);
-        }catch (DataIntegrityViolationException e){
-            throw new CommonException(ResponseCode.DB_CONSTRAINT_VIOLATION); // DB 제약 조건 위배
-        }
+
     }
 
-    // 멤버 리스트 조회
+    // 멤버 리스트 조회 - 관리자
+    // complete
     public List<MemberListDTO> getAllMembers() {
 
         final List<Member> members = memberRepository.findAllByDeletedAtIsNull(Sort.by("id")); // 탈퇴하지 않은 사용자들만 죠회
@@ -128,6 +129,7 @@ public class MemberService {
     }
 
     // 멤버 상세 조회(상세 버전) - 관리자
+    // complete
     public MemberDTO getMember(final Long memberId) {
 
         final Member member = memberRepository.findByIdAndDeletedAtIsNull(memberId)
@@ -138,11 +140,12 @@ public class MemberService {
         return memberDTO;
     }
 
-    // 사용자 정보 조회 -사용자
+    // 사용자 정보 조회 - 사용자
+    // complete
     @Transactional
-    public MemberDetailDTO getMemberProfile(Long memberId) {
+    public MemberDetailDTO getMemberProfile(final Long memberId) {
 
-        Member member = memberRepository.findById(memberId)
+        final Member member = memberRepository.findByIdAndDeletedAtIsNull(memberId)
                 .orElseThrow(() -> new CommonException(ResponseCode.MEMBER_NOT_FOUND));
 
         List<MemberInterest> memberInterests = memberInterestRepository.findAllByMemberId(memberId);
@@ -157,113 +160,94 @@ public class MemberService {
     }
 
     // 사용자 정보(프로필) 수정
+    // complete
     @Transactional
     public void updateMemberProfile(final Long memberId,
                                     final MemberProfileUpdateRequest memberProfileUpdateRequest,
                                     MultipartFile imageFile) {
-        try{
-        final Member member = memberRepository.findById(memberId)
+
+        final Member member = memberRepository.findByIdAndDeletedAtIsNull(memberId)
                 .orElseThrow(() -> new CommonException(ResponseCode.MEMBER_NOT_FOUND));
 
         String nickname = memberProfileUpdateRequest.getNickname();
 
 
-        if (nickname != null && !nickname.isBlank()) {
+        if (nickname != null && !nickname.isBlank() && !nickname.equals(member.getNickname())) {
+            if(memberRepository.existsByNickname(nickname)){
+                throw new CommonException(ResponseCode.NICKNAME_DUPLICATED);
+            }
             member.setNickname(nickname);
         }
 
         if (imageFile != null && !imageFile.isEmpty()) {
-            String imageUrl = supabaseStorageService.upload(imageFile);
-            member.setProfileImage(imageUrl);
+            try {
+                String imageUrl = supabaseStorageService.upload(imageFile);
+                member.setProfileImage(imageUrl);
+            } catch (RuntimeException e) {
+                throw new CommonException(ResponseCode.FILE_UPLOAD_FAILED);
+            }
         }
 
         member.setUpdatedAt(OffsetDateTime.now());
 
-
-        }catch (DataIntegrityViolationException e){
-            throw new CommonException(ResponseCode.DB_CONSTRAINT_VIOLATION); // DB 제약 조건 위배
-        }
-    }
-
-    // 회원 삭제/탈퇴(관리자/사용자) - 소프트 딜리트
-    @Transactional
-    public void deleteMember(final Long id) {
-
-        final Member member = memberRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("해당 회원이 없습니다."));
-
-        if (member.getDeletedAt() != null) {
-            throw new CommonException(ResponseCode.ALREADY_DELETED_USER);
-        }
-
-        member.setStatus("WITHDRAWN");
-        member.setDeletedAt(OffsetDateTime.now()); // 삭제 날짜에 현재 시간 입력
     }
 
     // 관리자 - 특정 유저 블랙 리스트 설정
+    // complete
     @Transactional
     public void setMemberBlackList(Long memberId) {
-        try{
 
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
+        Member member = memberRepository.findByIdAndDeletedAtIsNull(memberId)
+                .orElseThrow(() -> new CommonException(ResponseCode.MEMBER_NOT_FOUND));
 
-        if (member.getIsBlacklisted() == true){
+        // 회원 블랙 리스트 인지 확인
+        if (member.getIsBlacklisted()){
             throw new CommonException(ResponseCode.ALREADY_REGISTERED_BLACKLIST);
         }
             member.setIsBlacklisted(true);
 
-        }catch (DataIntegrityViolationException e){
-            throw new CommonException(ResponseCode.DB_CONSTRAINT_VIOLATION); // DB 제약 조건 위배
-        }
-
     }
 
     // 관리자 - 특정 유저 블랙 리스트 해제
+    // complete
     @Transactional
     public void clearMemberBlackList(Long memberId) {
-        try{
 
-            Member member = memberRepository.findById(memberId)
-                    .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
+            Member member = memberRepository.findByIdAndDeletedAtIsNull(memberId)
+                    .orElseThrow(() -> new CommonException(ResponseCode.MEMBER_NOT_FOUND));
 
-            if (member.getIsBlacklisted() == false){
-                throw new CommonException(ResponseCode.MEMBER_NOT_FOUND);
+            // 회원 블랙 리스트가 아닌지 확인
+            if (!member.getIsBlacklisted()){
+                throw new CommonException(ResponseCode.ALREADY_NOT_REGISTERED_BLACKLIST);
             }
 
             member.setIsBlacklisted(false);
 
-        }catch (DataIntegrityViolationException e){
-            throw new CommonException(ResponseCode.DB_CONSTRAINT_VIOLATION); // DB 제약 조건 위배
-        }
     }
 
     // 관리자 - 유저 관리자 권한 부여
+    // complete
     @Transactional
     public void setMemberRoleAdmin(Long memberId) {
-        try{
 
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
+        Member member = memberRepository.findByIdAndDeletedAtIsNull(memberId)
+                .orElseThrow(() -> new CommonException(ResponseCode.MEMBER_NOT_FOUND));
 
         if ("ROLE_ADMIN".equals(member.getRole())) { // 리터럴을 앞에 두어 null 방지
             throw new CommonException(ResponseCode.ALREADY_REGISTERED_ADMIN);
         }
 
         member.setRole("ROLE_ADMIN");
-        }catch (DataIntegrityViolationException e){
-            throw new CommonException(ResponseCode.DB_CONSTRAINT_VIOLATION); // DB 제약 조건 위배
-        }
 
     }
 
     // 관리자 - 유저 관리자 권한 회수
+    // complete
     @Transactional
     public void clearMemberRoleAdmin(Long memberId) {
-        try{
 
-            Member member = memberRepository.findById(memberId)
-                    .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
+            Member member = memberRepository.findByIdAndDeletedAtIsNull(memberId)
+                    .orElseThrow(() -> new CommonException(ResponseCode.MEMBER_NOT_FOUND));
 
             if ("ROLE_USER".equals(member.getRole())) { // 리터럴을 앞에 두어 null 방지
                 throw new CommonException(ResponseCode.ALREADY_REGISTERED_USER);
@@ -271,22 +255,36 @@ public class MemberService {
 
             member.setRole("ROLE_USER");
 
-        }catch (DataIntegrityViolationException e){
-            throw new CommonException(ResponseCode.DB_CONSTRAINT_VIOLATION); // DB 제약 조건 위배
+    }
+
+    // 회원 삭제/탈퇴(관리자/사용자) - 소프트 딜리트
+    // complete
+    @Transactional
+    public void deleteMember(final Long memberId) {
+
+        final Member member = memberRepository.findByIdAndDeletedAtIsNull(memberId)
+                .orElseThrow(() -> new CommonException(ResponseCode.MEMBER_NOT_FOUND));
+
+        if (member.getDeletedAt() != null || member.getStatus().equals("WITHDRAWN")) {
+            throw new CommonException(ResponseCode.ALREADY_DELETED_USER);
         }
+
+        member.setStatus("WITHDRAWN");
+        member.setDeletedAt(OffsetDateTime.now()); // 삭제 날짜에 현재 시간 입력
     }
 
     // 비밀번호 검증
+    // complete
     public boolean verifyPassword(Long memberId, String password) {
 
-        Member member = memberRepository.findById(memberId)
+        Member member = memberRepository.findByIdAndDeletedAtIsNull(memberId)
                 .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
 
         if (!passwordEncoder.matches(password, member.getPassword())) {
             throw new CommonException(ResponseCode.INVALID_PASSWORD);
         }
 
-        return member.getPassword().equals(password);
+        return true;
     }
 
 
