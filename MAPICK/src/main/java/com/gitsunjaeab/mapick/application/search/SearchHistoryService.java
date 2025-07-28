@@ -40,6 +40,7 @@ public class SearchHistoryService {
     }
 
     // 최근 검색어 저장
+    // complete
     @Transactional
     public void saveSearchHistory(Long memberId,SearchRequest searchRequest) {
 
@@ -81,7 +82,8 @@ public class SearchHistoryService {
     @Transactional
     public void deleteSearchHistory(Long memberId,String keyword) {
 
-        Search search = searchRepository.findByMemberIdAndKeywordIs(memberId,keyword);
+        Search search = searchRepository.findByMemberIdAndKeywordIs(memberId,keyword)
+                .orElseThrow(() -> new CommonException(ResponseCode.SEARCH_NOT_FOUND));
 
         search.setDeletedAt(OffsetDateTime.now());
     }
