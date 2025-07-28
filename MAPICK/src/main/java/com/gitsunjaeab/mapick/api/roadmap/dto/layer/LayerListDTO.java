@@ -3,7 +3,6 @@ package com.gitsunjaeab.mapick.api.roadmap.dto.layer;
 import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,8 +25,6 @@ public class LayerListDTO {
     private String description;
 
     private Integer layerSeq;
-
-    private LocalDate layerTime;
 
     @NotNull
     private OffsetDateTime createdAt;

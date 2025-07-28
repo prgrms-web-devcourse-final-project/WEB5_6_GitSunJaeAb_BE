@@ -47,6 +47,9 @@ public class Marker {
     )
     private Long id;
 
+    @Column(name = "marker_temp_id", unique = true)
+    private Long markerTempId;
+
     @Column
     private String name;
 

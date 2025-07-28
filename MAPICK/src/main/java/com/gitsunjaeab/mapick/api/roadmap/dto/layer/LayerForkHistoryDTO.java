@@ -1,6 +1,6 @@
 package com.gitsunjaeab.mapick.api.roadmap.dto.layer;
 
-import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapSimpleDTO;
+import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.RoadmapSimpleDTO;
 import com.gitsunjaeab.mapick.domain.roadmap.LayerForkHistory;
 import java.time.OffsetDateTime;
 import lombok.AllArgsConstructor;
