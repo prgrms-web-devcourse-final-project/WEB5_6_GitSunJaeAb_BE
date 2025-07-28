@@ -6,6 +6,7 @@ import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.quest.MemberQuest;
 import com.gitsunjaeab.mapick.domain.quest.Quest;
 import com.gitsunjaeab.mapick.domain.roadmap.Bookmark;
+import com.gitsunjaeab.mapick.domain.roadmap.Layer;
 import com.gitsunjaeab.mapick.domain.roadmap.LayerLibrary;
 import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
 import com.gitsunjaeab.mapick.infra.converter.OffsetDateTimeConverter;
@@ -115,6 +116,10 @@ public class Notification {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "layer_library_id")
     private LayerLibrary layerLibrary;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "layer_id")
+    private Layer layer;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "quest_id")

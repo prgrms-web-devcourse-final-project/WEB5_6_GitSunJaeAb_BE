@@ -15,6 +15,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+import java.io.IOException;
+
 @Component
 @Slf4j
 @RequiredArgsConstructor
@@ -31,11 +33,13 @@ public class AuthExceptionFilter extends OncePerRequestFilter {
         try {
             filterChain.doFilter(request, response);
 
+
         } catch (IllegalArgumentException | JwtException ex) {
             log.warn("❌ 인증 관련 예외 발생: {}", ex.getMessage());
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
+
 
             ApiResponse apiResponse = ApiResponse.of(ResponseCode.UNAUTHORIZED);
             String json = objectMapper.writeValueAsString(apiResponse);
