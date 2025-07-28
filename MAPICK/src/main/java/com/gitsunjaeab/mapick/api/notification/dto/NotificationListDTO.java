@@ -57,6 +57,7 @@ public class NotificationListDTO {
     private Long relatedQuestId;                // 관련 퀘스트 ID
     private Long relatedCommentId;              // 관련 댓글 ID
     private List<MarkerSimpleDTO> relatedMarkers; // 관련 마커 정보
+    private Long relatedBookmarkId; // 관련 북마크 정보
 
 
     public static NotificationListDTO of(Notification n) {
@@ -65,14 +66,6 @@ public class NotificationListDTO {
         dto.setTitle(n.getTitle());
         dto.setContent(n.getContent());
         dto.setReceiver(n.getMember() != null ? new MemberSimpleDTO(n.getMember()) : null);
-
-        MemberSimpleDTO sender = null;
-        if (n.getLayerLibrary() != null && n.getLayerLibrary().getMember() != null) {
-            sender = new MemberSimpleDTO(n.getLayerLibrary().getMember());
-        } else if (n.getMemberQuest() != null && n.getMemberQuest().getMember() != null) {
-            sender = new MemberSimpleDTO(n.getMemberQuest().getMember());
-        }
-        dto.setSender(sender);
 
         dto.setCreatedAt(n.getCreatedAt());
         dto.setUpdatedAt(n.getUpdatedAt());
@@ -85,8 +78,10 @@ public class NotificationListDTO {
         dto.setRelatedRoadmap(n.getRoadmap() != null ? new RoadmapSimpleDTO(n.getRoadmap()) : null);
         dto.setRelatedLayer(n.getLayerLibrary() != null && n.getLayerLibrary().getLayer() != null ?
             new LayerSimpleDTO(n.getLayerLibrary().getLayer()) : null);
-        dto.setRelatedQuestId(n.getMemberQuest() != null ? n.getMemberQuest().getId() : null);
-        dto.setRelatedCommentId(null); // 필요 시 추가
+        dto.setRelatedQuestId(n.getMemberQuest() != null && n.getMemberQuest().getQuest() != null
+            ? n.getMemberQuest().getQuest().getId() : null);
+        dto.setRelatedCommentId(n.getComment() != null ? n.getComment().getId() : null);
+        dto.setRelatedBookmarkId(n.getBookmark() != null ? n.getBookmark().getId() : null);
 
         return dto;
     }

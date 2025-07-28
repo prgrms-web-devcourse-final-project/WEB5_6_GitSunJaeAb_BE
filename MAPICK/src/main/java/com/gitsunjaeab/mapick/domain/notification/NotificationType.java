@@ -3,7 +3,7 @@ package com.gitsunjaeab.mapick.domain.notification;
 import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
 
 public enum NotificationType {
-    POST,             // 게시글
+    BOOKMARK,         // 좋아요
     QUEST,            // 퀘스트 참여
     QUEST_DEADLINE,   // 퀘스트 마감
     COMMENT,          // 댓글

@@ -22,7 +22,8 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
         "LEFT JOIN FETCH n.roadmap " +
         "LEFT JOIN FETCH n.layerLibrary " +
         "LEFT JOIN FETCH n.quest " +
-        "LEFT JOIN FETCH n.memberQuest " +
+        "LEFT JOIN FETCH n.memberQuest mq " +
+        "LEFT JOIN FETCH mq.quest q " +
         "WHERE n.deletedAt IS NULL " +
         "ORDER BY n.createdAt DESC")
     List<Notification> findAllWithAllRelations();
@@ -59,7 +60,10 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
             LEFT JOIN FETCH ll.layer
             LEFT JOIN FETCH ll.member
             LEFT JOIN FETCH n.quest
-            LEFT JOIN FETCH n.memberQuest
+            LEFT JOIN FETCH n.memberQuest mq
+            LEFT JOIN FETCH mq.quest q
+            LEFT JOIN FETCH n.bookmark b
+            LEFT JOIN FETCH b.member
             WHERE n.deletedAt IS NULL AND n.member.id = :memberId
             ORDER BY n.createdAt DESC
         """)
