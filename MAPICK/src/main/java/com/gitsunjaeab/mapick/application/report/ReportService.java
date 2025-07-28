@@ -42,6 +42,7 @@ public class ReportService {
     // ===== 관리자용 메서드 =====
 
     // [관리자] 전체 신고 조회
+    // complete
     @Transactional(readOnly = true)
     public List<ReportSimpleDTO> getAllReports() {
 
