@@ -43,9 +43,6 @@ public class RoadmapEditor {
     private OffsetDateTime createdAt = OffsetDateTime.now();
 
     @Column
-    private OffsetDateTime updatedAt;
-
-    @Column
     private OffsetDateTime deletedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -56,8 +53,5 @@ public class RoadmapEditor {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "invited_by_id")
-    private Member invitedBy;
 
 }

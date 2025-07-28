@@ -46,15 +46,15 @@ public class LayerController {
     @PostMapping("/sync")
     @Operation(summary = "실시간 레이어 동기화", description = "[실시간 공유지도용] 레이어 생성/수정/삭제 동기화 처리")
     public ResponseEntity<LayerResponse> syncLayer(@RequestBody LayerSyncRequest request) {
-        Layer layer;
+        LayerResponse response;
         switch (request.getAction()) {
-            case "add" -> layer = layerService.createFromSync(request);
-            case "update" -> layer = layerService.updateFromSync(request);
-            case "delete" -> layer = layerService.deleteByTempId(request.getLayerTempId());
+            case "add" -> response = layerService.createFromSync(request);
+            case "update" -> response = layerService.updateFromSync(request);
+            case "delete" -> response = layerService.deleteByTempId(request.getLayerTempId());
             default -> throw new IllegalArgumentException("지원하지 않는 action: " + request.getAction());
         }
 
-        return ResponseEntity.ok(LayerResponse.of(layer, false, "레이어 " + request.getAction() + " 성공"));
+        return ResponseEntity.ok(response);
     }
 
     // ===== 기본 CRUD =====

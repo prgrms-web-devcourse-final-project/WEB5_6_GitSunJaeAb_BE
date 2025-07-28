@@ -2,6 +2,7 @@ package com.gitsunjaeab.mapick.application.roadmap;
 
 import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerDetailDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerRequest;
+import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerResponse;
 import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerSyncRequest;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.auth.Role;
@@ -27,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class LayerService {
 
+    private final RoadmapEditorService roadmapEditorService;
     private final LayerRepository layerRepository;
     private final MemberRepository memberRepository;
     private final RoadmapRepository roadmapRepository;
@@ -36,18 +38,19 @@ public class LayerService {
     public LayerService(final LayerRepository layerRepository,
         final MemberRepository memberRepository, final RoadmapRepository roadmapRepository,
         final MarkerRepository markerRepository,
-        final LayerLibraryRepository layerLibraryRepository) {
+        final LayerLibraryRepository layerLibraryRepository, final RoadmapEditorService roadmapEditorService) {
         this.layerRepository = layerRepository;
         this.memberRepository = memberRepository;
         this.roadmapRepository = roadmapRepository;
         this.markerRepository = markerRepository;
         this.layerLibraryRepository = layerLibraryRepository;
+        this.roadmapEditorService = roadmapEditorService;
     }
 
     // ===== 실시간 공유지도 상 CRUD =====
 
     @Transactional
-    public Layer  createFromSync(LayerSyncRequest request) {
+    public LayerResponse createFromSync(LayerSyncRequest request) {
         Member member = memberRepository.findById(request.getMemberId())
                 .orElseThrow(() -> new IllegalArgumentException("사용자 없음"));
 
@@ -61,22 +64,26 @@ public class LayerService {
         layer.setMember(member);
         layer.setRoadmap(roadmap);
         layer.setLayerTempId(request.getLayerTempId());
-        return layerRepository.save(layer);
+
+        Layer saved = layerRepository.save(layer);
+        roadmapEditorService.registerEditorIfNotExists(roadmap.getId(), member.getId());
+        return LayerResponse.of(saved, false, "레이어 생성 성공");
     }
 
     @Transactional
-    public Layer  updateFromSync(LayerSyncRequest request) {
+    public LayerResponse   updateFromSync(LayerSyncRequest request) {
         Layer layer = layerRepository.findByLayerTempId(request.getLayerTempId())
                 .orElseThrow(() -> new IllegalArgumentException("레이어를 찾을 수 없음"));
 
         layer.setName(request.getName());
         layer.setDescription(request.getDescription());
         layer.setLayerSeq(request.getLayerSeq());
-        return layerRepository.save(layer);
+
+        return LayerResponse.of(layerRepository.save(layer), false, "레이어 수정 성공");
     }
 
     @Transactional
-    public Layer deleteByTempId(Long layerTempId) {
+    public LayerResponse  deleteByTempId(Long layerTempId) {
         Layer layer = layerRepository.findByLayerTempId(layerTempId)
                 .orElseThrow(() -> new IllegalArgumentException("레이어를 찾을 수 없음"));
 
@@ -91,7 +98,8 @@ public class LayerService {
 
         layerLibraryRepository.softDeleteAllByLayer(layer.getId());
         layer.setDeletedAt(OffsetDateTime.now());
-        return layerRepository.save(layer);
+
+        return LayerResponse.of(layerRepository.save(layer), false, "레이어 삭제 성공");
     }
 
     // ===== 기본 CRUD =====
