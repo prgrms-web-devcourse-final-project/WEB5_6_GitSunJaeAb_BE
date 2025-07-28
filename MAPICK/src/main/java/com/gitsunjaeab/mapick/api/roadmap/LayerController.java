@@ -1,10 +1,6 @@
 package com.gitsunjaeab.mapick.api.roadmap;
 
-import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerListResponse;
-import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerRequest;
-import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerResponse;
-import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerZzimListResponse;
-import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerZzimResponse;
+import com.gitsunjaeab.mapick.api.roadmap.dto.layer.*;
 import com.gitsunjaeab.mapick.application.roadmap.LayerLibraryService;
 import com.gitsunjaeab.mapick.application.roadmap.LayerService;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
@@ -27,10 +23,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.gitsunjaeab.mapick.domain.roadmap.Layer;
 import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
 import com.gitsunjaeab.mapick.domain.roadmap.LayerLibrary;
-import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerDetailDTO;
-import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerZzimSimpleDTO;
 
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -47,6 +42,20 @@ public class LayerController {
         this.layerLibraryService = layerLibraryService;
     }
 
+    // ===== 실시간 공유지도 상 레이어 CRUD =====
+    @PostMapping("/sync")
+    @Operation(summary = "실시간 레이어 동기화", description = "[실시간 공유지도용] 레이어 생성/수정/삭제 동기화 처리")
+    public ResponseEntity<LayerResponse> syncLayer(@RequestBody LayerSyncRequest request) {
+        Layer layer;
+        switch (request.getAction()) {
+            case "add" -> layer = layerService.createFromSync(request);
+            case "update" -> layer = layerService.updateFromSync(request);
+            case "delete" -> layer = layerService.deleteByTempId(request.getLayerTempId());
+            default -> throw new IllegalArgumentException("지원하지 않는 action: " + request.getAction());
+        }
+
+        return ResponseEntity.ok(LayerResponse.of(layer, false, "레이어 " + request.getAction() + " 성공"));
+    }
 
     // ===== 기본 CRUD =====
 
@@ -62,9 +71,9 @@ public class LayerController {
             throw new CommonException(ResponseCode.UNAUTHORIZED);
         }
         Long memberId = principal.getMember().getId();
-        
+
         final Layer createdLayer = layerService.create(request, memberId, roadmapId);
-        
+
         return ResponseEntity.ok(LayerResponse.of(createdLayer, false, "레이어 생성 성공"));
     }
 

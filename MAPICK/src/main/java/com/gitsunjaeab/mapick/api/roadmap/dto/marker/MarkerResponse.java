@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import java.time.OffsetDateTime;
+
+import com.gitsunjaeab.mapick.domain.roadmap.Marker;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -55,6 +57,15 @@ public class MarkerResponse implements BaseApiResponse {
             "마커 삭제 완료",
             OffsetDateTime.now(),
             null
+        );
+    }
+
+    public static MarkerResponse of(Marker marker, String message) {
+        return new MarkerResponse(
+                ResponseCode.OK.getCode(),
+                message,
+                OffsetDateTime.now(),
+                new MarkerDTO(marker)
         );
     }
 }

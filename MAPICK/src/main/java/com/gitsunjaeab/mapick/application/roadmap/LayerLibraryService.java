@@ -188,7 +188,6 @@ public class LayerLibraryService {
         forkedLayer.setName(originalLayer.getName());
         forkedLayer.setDescription(originalLayer.getDescription());
         forkedLayer.setLayerSeq(originalLayer.getLayerSeq());
-        forkedLayer.setLayerTime(originalLayer.getLayerTime());
         forkedLayer.setMember(member);
         forkedLayer.setRoadmap(targetRoadmap);
 

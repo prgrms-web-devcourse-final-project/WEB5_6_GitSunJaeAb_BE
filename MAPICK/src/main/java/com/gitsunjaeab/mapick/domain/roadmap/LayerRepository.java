@@ -1,7 +1,10 @@
 package com.gitsunjaeab.mapick.domain.roadmap;
 
 import com.gitsunjaeab.mapick.domain.member.Member;
+
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -64,6 +67,8 @@ public interface LayerRepository extends JpaRepository<Layer, Long> {
     @Modifying(clearAutomatically = true)
     @Query("UPDATE Layer l SET l.deletedAt = CURRENT_TIMESTAMP WHERE l.id = :layerId")
     int softDeleteById(@Param("layerId") Long layerId);
+
+    Optional<Layer> findByLayerTempId(Long layerTempId);
 
     // 로드맵 fetch join (필요할때 쓰려고 만들어놓음)
 //    @Query("""

@@ -1,13 +1,13 @@
 package com.gitsunjaeab.mapick.api.notification.dto;
 
 import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
-import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapSimpleDTO;
+import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.RoadmapSimpleDTO;
 import com.gitsunjaeab.mapick.domain.notification.AnnouncementType;
 import com.gitsunjaeab.mapick.domain.notification.NotificationType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.OffsetDateTime;
-import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -25,7 +25,6 @@ public class LayerRequest {
 
     private String description;
     private Integer layerSeq;
-    private LocalDate layerTime;
 
 
     // Entity 변환 메서드
@@ -34,7 +33,6 @@ public class LayerRequest {
         layer.setName(this.name);
         layer.setDescription(this.description);
         layer.setLayerSeq(this.layerSeq);
-        layer.setLayerTime(this.layerTime);
 
         layer.setMember(member);
         layer.setRoadmap(roadmap);

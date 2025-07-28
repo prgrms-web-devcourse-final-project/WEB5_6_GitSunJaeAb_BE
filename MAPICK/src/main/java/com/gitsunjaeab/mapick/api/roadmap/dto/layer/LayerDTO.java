@@ -1,9 +1,8 @@
 package com.gitsunjaeab.mapick.api.roadmap.dto.layer;
 
 import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
-import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapSimpleDTO;
+import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.RoadmapSimpleDTO;
 import com.gitsunjaeab.mapick.domain.roadmap.Layer;
-import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,7 +16,6 @@ public class LayerDTO {
     private String name;
     private String description;
     private Integer layerSeq;
-    private LocalDate layerTime;
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
     private OffsetDateTime deletedAt;
@@ -29,7 +27,6 @@ public class LayerDTO {
         this.name = layer.getName();
         this.description = layer.getDescription();
         this.layerSeq = layer.getLayerSeq();
-        this.layerTime = layer.getLayerTime();
         this.createdAt = layer.getCreatedAt();
         this.updatedAt = layer.getUpdatedAt();
         this.deletedAt = layer.getDeletedAt();
