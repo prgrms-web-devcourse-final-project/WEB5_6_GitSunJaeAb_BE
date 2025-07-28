@@ -21,6 +21,7 @@ import com.gitsunjaeab.mapick.domain.quest.QuestRepository;
 import com.gitsunjaeab.mapick.domain.report.Report;
 import com.gitsunjaeab.mapick.domain.report.ReportRepository;
 import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
+import com.gitsunjaeab.mapick.infra.storage.SupabaseStorageService;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import com.gitsunjaeab.mapick.util.ReferencedWarning;
 import java.time.OffsetDateTime;
@@ -28,37 +29,40 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @Service
 public class QuestService {
 
     private final QuestRepository questRepository;
-//    private final MemberRepository memberRepository;
     private final ReportRepository reportRepository;
     private final MemberQuestRepository memberQuestRepository;
     private final QuestRankRepository questRankRepository;
     private final MemberRepository memberRepository;
     private final MemberAchievementRepository memberAchievementRepository;
     private final AchievementRepository achievementRepository;
+    //Supabase 사용을 위해 추가
+    private final SupabaseStorageService supabaseStorageService;
 
     public QuestService(final QuestRepository questRepository,
             final MemberRepository memberRepository,
             final ReportRepository reportRepository,
             final MemberQuestRepository memberQuestRepository,
             final QuestRankRepository questRankRepository,
-//        ,MemberRepository memberRepository 임시로 주석처리
+            final SupabaseStorageService supabaseStorageService,
+
         MemberAchievementRepository memberAchievementRepository,
         AchievementRepository achievementRepository) {
         //수정예정
         this.questRepository = questRepository;
-//        this.memberRepository = memberRepository;
         this.reportRepository = reportRepository;
         this.memberQuestRepository = memberQuestRepository;
         this.questRankRepository = questRankRepository;
         this.memberRepository = memberRepository;
         this.memberAchievementRepository = memberAchievementRepository;
         this.achievementRepository = achievementRepository;
+        this.supabaseStorageService = supabaseStorageService;
     }
     //전체 퀘스트 조회
     public List<QuestResponse> findAll(Boolean isActive) {
@@ -83,11 +87,22 @@ public class QuestService {
                 .orElseThrow(NotFoundException::new);
     }
 
-    public QuestAchievementResponse create (final QuestRequest questRequest, final Member member) {
+    public QuestAchievementResponse create (
+        final QuestRequest questRequest,
+        final Member member,
+        final MultipartFile imageFile
+    ) {
         final Quest quest = new Quest();
         requestToEntity(questRequest, quest);
         quest.setMember(member); // 작성자
         quest.setCreatedAt(OffsetDateTime.now(ZoneId.of("Asia/Seoul")));
+
+        //이미지 업로드
+        if(imageFile != null && !imageFile.isEmpty()){
+            String imageUrl = supabaseStorageService.upload(imageFile);
+            quest.setQuestImage(imageUrl);
+        }
+
         questRepository.save(quest);
 
         // 퀘스트 첫 생성 업적
@@ -118,7 +133,13 @@ public class QuestService {
     }
 
     //퀘스트 수정
-    public void update(final Long id, final QuestRequest questRequest, final String currentMemberEmail) {
+    public void update(
+        final Long id,
+        final QuestRequest questRequest,
+        final String currentMemberEmail,
+        final MultipartFile imageFile
+    ) {
+
         final Quest quest = questRepository.findWithMemberById(id)
                 .orElseThrow(NotFoundException::new);
 
@@ -127,6 +148,13 @@ public class QuestService {
         }
 
         requestToEntity(questRequest, quest);
+
+        //이미지 업로드
+        if(imageFile != null && !imageFile.isEmpty()){
+            String imageUrl = supabaseStorageService.upload(imageFile);
+            quest.setQuestImage(imageUrl);
+        }
+
         quest.setUpdatedAt(OffsetDateTime.now(ZoneId.of("Asia/Seoul")));
         questRepository.save(quest);
     }
@@ -140,8 +168,7 @@ public class QuestService {
         }
 
         quest.setDeletedAt(OffsetDateTime.now(ZoneId.of("Asia/Seoul"))); // DeletedAt의 값이 들어있는 것을 통해 판단
-        questRepository.save(quest); // 변경 내용 명시적으로 저장
-//        questRepository.deleteById(id); //SoftDelete임을 가정하고 일단 주석처리
+        questRepository.save(quest);
     }
 
     private QuestResponse questToResponse(final Quest quest) {
@@ -162,7 +189,9 @@ public class QuestService {
 
     private Quest requestToEntity(final QuestRequest questRequest, final Quest quest) {
         quest.setTitle(questRequest.getTitle());
-        quest.setQuestImage(questRequest.getQuestImage());
+        //이미지 덮어쓰기 방지 분기 처리
+//        if (questRequest.getQuestImage() != null && !questRequest.getQuestImage().isBlank()) {
+//            quest.setQuestImage(questRequest.getQuestImage()); }
         quest.setDescription(questRequest.getDescription());
         quest.setDeadline(questRequest.getDeadline());
         quest.setIsActive(questRequest.getIsActive() != null ? questRequest.getIsActive() : true);

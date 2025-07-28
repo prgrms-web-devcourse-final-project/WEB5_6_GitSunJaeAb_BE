@@ -20,13 +20,13 @@ import java.time.OffsetDateTime;
 public class MemberQuestResponse {
 
 
-    
+
     // 퀘스트 참여 데이터 필드들
     private Long id;
-    
+
     @NotNull
     private Boolean status;
-    
+
     private String isRecognized;
 
     private String title;
@@ -34,11 +34,11 @@ public class MemberQuestResponse {
     private String answer;
 
     private OffsetDateTime createdAt;
-    
+
     private OffsetDateTime completedAt;
-    
+
     private OffsetDateTime updatedAt;
-    
+
     private OffsetDateTime deletedAt;
 
     private OffsetDateTime submitAt;

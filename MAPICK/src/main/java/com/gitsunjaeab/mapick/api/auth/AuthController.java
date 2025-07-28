@@ -29,6 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,15 +53,8 @@ public class AuthController {
 
         TokenDTO dto = authService.socialLogin(request); // 인증 정보로 로그인 처리 후, access/refresh 토큰 생성
 
-        // 쿠키 굽기
-        // access token 쿠기 만들기
-//        ResponseCookie accessTokenCookie = TokenCookieFactory.create(
-//                TokenType.ACCESS_TOKEN.name(),
-//                dto.getAccessToken(),
-//                dto.getAtExpiresIn()
-//        );
 
-        // refresh token 쿠기 만들기
+        // refresh token 쿠키 만들기
         ResponseCookie refreshTokenCookie = TokenCookieFactory.create(
                 TokenType.REFRESH_TOKEN.name(),
                 dto.getRefreshToken(),
@@ -78,7 +72,6 @@ public class AuthController {
                 .atExpiresIn(dto.getAtExpiresIn()) // access token 만료 시간 전달
                 .grantType(GrantType.BEARER)
                 .build();
-
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -141,8 +134,8 @@ public class AuthController {
 
     // 로그아웃
     // todo 로그아웃 하지 않으면 refresh token 값이 삭제 되지 않음, 추후 어떻게 기존 db의 refresh 값을 삭제 할 것인지 고민
-    // todo 엑세스토큰이 블랙리스트로 저장이 되지 않는 이슈
     // complete
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @PostMapping("/logout")
     @Operation(summary = "로그 아웃")
     public ResponseEntity<LogoutResponse> logout(HttpServletRequest request, HttpServletResponse response) {
@@ -162,6 +155,7 @@ public class AuthController {
 
     // 마이페이지 - 비밀번호 수정 (본인만)
     // complete
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @PutMapping("/password")
     @Operation(summary = "비밀번호 수정", description = "[사용자 전용] 본인만 접근 가능한 비밀번호 변경")
     public ResponseEntity<PasswordChangeResponse> updatePassword(@Valid @RequestBody PasswordRequest passwordRequest,

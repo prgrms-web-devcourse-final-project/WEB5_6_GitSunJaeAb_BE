@@ -10,20 +10,39 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface LayerForkHistoryRepository extends JpaRepository<LayerForkHistory, Long> {
 
-    // 특정 원본 레이어의 포크 이력 조회 (특정 사용자가 포크한 것들)
-    @Query("SELECT fh FROM LayerForkHistory fh WHERE fh.originalLayer = :originalLayer AND fh.member = :member")
+    // 1. 특정 원본 레이어의 포크 이력 조회 (특정 사용자가 포크한 것들) + fetch
+    @Query("""
+        SELECT fh FROM LayerForkHistory fh
+        JOIN FETCH fh.forkedLayer
+        JOIN FETCH fh.originalLayer
+        JOIN FETCH fh.member
+        WHERE fh.originalLayer = :originalLayer AND fh.member = :member
+    """)
     List<LayerForkHistory> findByOriginalLayerAndMember(@Param("originalLayer") Layer originalLayer, @Param("member") Member member);
 
-    // 사용자가 포크한 모든 레이어 이력 조회
-    @Query("SELECT fh FROM LayerForkHistory fh WHERE fh.member = :member")
+    // 2. 사용자가 포크한 모든 레이어 이력 조회 + fetch
+    @Query("""
+        SELECT fh FROM LayerForkHistory fh
+        JOIN FETCH fh.forkedLayer
+        JOIN FETCH fh.originalLayer
+        JOIN FETCH fh.member
+        WHERE fh.member = :member
+    """)
     List<LayerForkHistory> findByMember(@Param("member") Member member);
 
-    // 특정 원본 레이어의 모든 포크 이력 조회
-    @Query("SELECT fh FROM LayerForkHistory fh WHERE fh.originalLayer = :originalLayer")
+    // 3. 특정 원본 레이어의 모든 포크 이력 조회 + fetch
+    @Query("""
+        SELECT fh FROM LayerForkHistory fh
+        JOIN FETCH fh.forkedLayer
+        JOIN FETCH fh.member
+        WHERE fh.originalLayer = :originalLayer
+    """)
     List<LayerForkHistory> findByOriginalLayer(@Param("originalLayer") Layer originalLayer);
 
-    // 포크된 레이어 ID들 조회 (특정 사용자가 특정 원본 레이어를 포크한 결과들)
-    @Query("SELECT fh.forkedLayer.id FROM LayerForkHistory fh WHERE fh.originalLayer = :originalLayer AND fh.member = :member")
+    // 4. 포크된 레이어 ID만 필요하니까 fetch 안 붙임 (지금처럼 그대로 둬도 됨)
+    @Query("""
+        SELECT fh.forkedLayer.id FROM LayerForkHistory fh
+        WHERE fh.originalLayer = :originalLayer AND fh.member = :member
+    """)
     List<Long> findForkedLayerIdsByOriginalLayerAndMember(@Param("originalLayer") Layer originalLayer, @Param("member") Member member);
-
-} 
+}
