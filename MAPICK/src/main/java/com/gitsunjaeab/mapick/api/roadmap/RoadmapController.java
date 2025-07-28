@@ -83,8 +83,11 @@ public class RoadmapController {
         }
 
         Long memberId = principal.getMember().getId();
-        Long roadmapId = roadmapService.createSharedRoadmap(request, memberId, imageFile);
-        return ResponseEntity.ok(RoadmapCreateResponse.of(ResponseCode.OK, "공유지도 생성 완료", roadmapId));
+        final RoadmapAchievementDTO dto = roadmapService.createSharedRoadmap(request, memberId, imageFile);
+
+        RoadmapCreateResponse response = dto.isAchievementUnlocked() ? RoadmapCreateResponse.createWithAchievement(dto) : RoadmapCreateResponse.createShared(dto.getRoadmapId());
+
+        return ResponseEntity.ok(response);
     }
 
     // 공유지도 수정
@@ -152,17 +155,11 @@ public class RoadmapController {
         }
 
         Long memberId = principal.getMember().getId();
-        RoadmapAchievementResponse response = roadmapService.createRoadmap(request, memberId, imageFile);
+        RoadmapAchievementDTO dto = roadmapService.createRoadmap(request, memberId, imageFile);
 
-        if (response.isAchievementUnlocked()) {
-            return ResponseEntity.ok(RoadmapCreateResponse.of(
-                ResponseCode.OK,
-                "로드맵 생성 완료! 업적 '" + response.getAchievement().getName() + "' 을(를) 획득했습니다.",
-                    response.getRoadmapId()
-            ));
-        }
+        RoadmapCreateResponse response = dto.isAchievementUnlocked() ? RoadmapCreateResponse.createWithAchievement(dto) : RoadmapCreateResponse.createPersonal(dto.getRoadmapId());
 
-        return ResponseEntity.ok(RoadmapCreateResponse.of(ResponseCode.OK, "로드맵 생성 완료", response.getRoadmapId()));
+        return ResponseEntity.ok(response);
     }
 
     // 개인 로드맵 수정 NOTE 완
