@@ -80,7 +80,7 @@ public class RoadmapService {
 
     // 공유 지도 생성
     @Transactional
-    public Long createSharedRoadmap(SharedRoadmapCreateRequest request, Long memberId, MultipartFile imageFile) {
+    public RoadmapAchievementDTO createSharedRoadmap(SharedRoadmapCreateRequest request, Long memberId, MultipartFile imageFile) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new NotFoundException("멤버 없음"));
 
@@ -130,7 +130,31 @@ public class RoadmapService {
 
             roadmapHashtagRelationRepository.saveAll(roadmap.getRoadmapMapHashtags());
         }
-        return roadmap.getId();
+
+        // 공유지도 첫 생성 업적
+        Long roadmapCount = roadmapRepository.countByMemberIdAndRoadmapType(memberId, RoadmapType.SHARED);
+        final Long ACHIEVEMENT_ID = 102L;
+
+        if (roadmapCount == 1) {
+            boolean alreadyHas = memberAchievementRepository.existsByMemberIdAndAchievementId(memberId, ACHIEVEMENT_ID);
+            if (!alreadyHas) {
+                Member user = memberRepository.findById(memberId)
+                    .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND, "해당하는 회원이 없습니다."));
+                Achievement achievement = achievementRepository.findById(ACHIEVEMENT_ID)
+                    .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND, "해당하는 업적이 없습니다."));
+
+                memberAchievementRepository.save(
+                    MemberAchievement.builder()
+                        .member(user)
+                        .achievement(achievement)
+                        .achievedAt(OffsetDateTime.now())
+                        .build()
+                );
+                return new RoadmapAchievementDTO(roadmap.getId(), true, new AchievementDTO(achievement));
+            }
+        }
+
+        return new RoadmapAchievementDTO(roadmap.getId(), false, null);
     }
 
     // 공유 지도 수정
@@ -186,7 +210,7 @@ public class RoadmapService {
 
     // 개인 로드맵 생성
     @Transactional
-    public RoadmapAchievementResponse createRoadmap(@Valid RoadmapRequest request, Long memberId ,MultipartFile imageFile) {
+    public RoadmapAchievementDTO createRoadmap(@Valid RoadmapRequest request, Long memberId ,MultipartFile imageFile) {
         Category category = categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카테고리입니다."));
 
@@ -248,11 +272,11 @@ public class RoadmapService {
                         .achievedAt(OffsetDateTime.now())
                         .build()
                 );
-                return new RoadmapAchievementResponse(roadmap.getId(), true, new AchievementDTO(achievement));
+                return new RoadmapAchievementDTO(roadmap.getId(), true, new AchievementDTO(achievement));
             }
         }
 
-        return new RoadmapAchievementResponse(roadmap.getId(), false, null);
+        return new RoadmapAchievementDTO(roadmap.getId(), false, null);
     }
 
     // 개인 로드맵 수정
