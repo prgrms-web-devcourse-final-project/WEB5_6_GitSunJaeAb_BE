@@ -170,10 +170,10 @@ public class MemberController {
     @GetMapping
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @Operation(summary = "[사용자] 회원 정보 조회", description = "[사용자 전용] 본인만 접근 가능한 프로필 조회" )
-    public ResponseEntity<MemberProfileResponse> getMemberProfile() {
+    public ResponseEntity<MemberProfileResponse> getMemberProfile(
+            @AuthenticationPrincipal Principal principal) {
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Long memberId = Long.parseLong(auth.getName());
+        Long memberId = principal.getMember().getId();
 
         MemberDetailDTO memberDetailDto = memberService.getMemberProfile(memberId);
 
@@ -189,11 +189,11 @@ public class MemberController {
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @Operation(summary = "[사용자]회원 정보 수정(프로필)", description = "사용자 회원 정보 수정")
     public ResponseEntity<MemberResponse> updateMember(
+            @AuthenticationPrincipal Principal principal,
             @RequestPart(name = "member") @Valid final MemberProfileUpdateRequest MemberProfileUpdateRequest,
             @RequestPart(name = "imageFile", required = false) MultipartFile imageFile) {
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Long memberId = Long.parseLong(auth.getName());
+        Long memberId = principal.getMember().getId();
 
         memberService.updateMemberProfile(memberId, MemberProfileUpdateRequest,imageFile);
 
@@ -208,10 +208,10 @@ public class MemberController {
     @DeleteMapping ("/withdraw")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @Operation(summary = "[사용자]회원 탈퇴", description = "회원 탈퇴")
-    public ResponseEntity<MemberResponse> withdrawMember() {
+    public ResponseEntity<MemberResponse> withdrawMember(
+            @AuthenticationPrincipal Principal principal) {
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Long memberId = Long.parseLong(auth.getName());
+        Long memberId = principal.getMember().getId();
 
         memberService.deleteMember(memberId); // 소프트 딜리트
 
@@ -228,10 +228,11 @@ public class MemberController {
     @PostMapping("/interests")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @Operation(summary = "[사용자]회원 관심분야 선택", description = "[사용자 전용] 본인만 접근 가능한 관심분야 선택")
-    public ResponseEntity<MemberInterestResponse> createMemberInterest(@Valid @RequestBody MemberInterestRequest memberInterestRequest) {
+    public ResponseEntity<MemberInterestResponse> createMemberInterest(
+            @AuthenticationPrincipal Principal principal,
+            @Valid @RequestBody MemberInterestRequest memberInterestRequest) {
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Long memberId = Long.parseLong(auth.getName());
+        Long memberId = principal.getMember().getId();
 
         memberInterestService.createMemberInterests(memberId,memberInterestRequest);
 
@@ -246,10 +247,11 @@ public class MemberController {
     @PutMapping("/interests")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @Operation(summary = "[사용자]회원 관심분야 수정", description = "[사용자 전용] 본인만 접근 가능한 관심분야 수정")
-    public ResponseEntity<MemberInterestResponse> updateMemberInterest(@Valid @RequestBody MemberInterestRequest memberInterestRequest) {
+    public ResponseEntity<MemberInterestResponse> updateMemberInterest(
+            @AuthenticationPrincipal Principal principal,
+            @Valid @RequestBody MemberInterestRequest memberInterestRequest) {
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Long memberId = Long.parseLong(auth.getName());
+        Long memberId = principal.getMember().getId();
 
         memberInterestService.updateMemberInterests(memberId,memberInterestRequest);
 
@@ -262,7 +264,7 @@ public class MemberController {
 
     // ===== 회원 비밀번호 관리 API =====
 
-    // 마이페이지 - 비밀번호 확인 (본인만) -> todo 완성(예외처리 필요)
+    // 마이페이지 - 비밀번호 확인 (본인만)
     // complete
     @PostMapping("/password/verify")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
