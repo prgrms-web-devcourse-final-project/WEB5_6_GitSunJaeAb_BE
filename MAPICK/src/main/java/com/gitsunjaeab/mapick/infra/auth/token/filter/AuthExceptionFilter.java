@@ -1,55 +1,64 @@
 package com.gitsunjaeab.mapick.infra.auth.token.filter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gitsunjaeab.mapick.common.response.ApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
-import com.gitsunjaeab.mapick.infra.error.exceptions.AuthWebException;
-import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.annotation.Order;
+import org.springframework.security.authentication.AuthenticationServiceException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
+import java.io.IOException;
+
 @Component
+@Slf4j
+@RequiredArgsConstructor
 public class AuthExceptionFilter extends OncePerRequestFilter {
 
-    private final HandlerExceptionResolver handlerExceptionResolver;
-
-    public AuthExceptionFilter(
-        @Qualifier("handlerExceptionResolver")
-        HandlerExceptionResolver handlerExceptionResolver) {
-        this.handlerExceptionResolver = handlerExceptionResolver;
-    }
+    private final ObjectMapper objectMapper;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-        FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
+
+        log.info("🔥 AuthExceptionFilter 실행됨: {}", request.getRequestURI());
 
         try {
             filterChain.doFilter(request, response);
-        } catch (CommonException ex) {
-            throwAuthEx(request, response, ex.code());
-        } catch (JwtException ex) {
-            throwAuthEx(request, response, ResponseCode.UNAUTHORIZED);
+
+        } catch (IllegalArgumentException | JwtException ex) {
+            log.warn("❌ 인증 관련 예외 발생: {}", ex.getMessage());
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+
+            ApiResponse apiResponse = ApiResponse.of(ResponseCode.UNAUTHORIZED);
+            String json = objectMapper.writeValueAsString(apiResponse);
+            log.info("➡️ 응답: {}", json);
+            response.getWriter().write(json);
+
+        } catch (Exception ex) {
+            log.error("❌ 필터 내 처리되지 않은 예외 발생", ex);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR); // 500
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+
+            ApiResponse apiResponse = ApiResponse.of(ResponseCode.INTERNAL_ERROR);
+            String json = objectMapper.writeValueAsString(apiResponse);
+            log.info("➡️ 응답: {}", json);
+            response.getWriter().write(json);
         }
     }
 
-    private void throwAuthEx(HttpServletRequest request, HttpServletResponse response,
-        ResponseCode code) {
-
-        if(code.equals(ResponseCode.INVALID_TOKEN) ||
-            code.equals(ResponseCode.SECURITY_INCIDENT)
-        ){
-            handlerExceptionResolver.resolveException(request, response, null,
-                new AuthWebException(code, "/auth/signin"));
-            return;
-        }
-
-        handlerExceptionResolver.resolveException(request, response, null,
-            new AuthWebException(code));
-    }
 }

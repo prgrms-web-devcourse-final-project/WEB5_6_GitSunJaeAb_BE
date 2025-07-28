@@ -20,6 +20,7 @@ public class CommonException extends RuntimeException {
     }
 
     public String redirect(){return redirect; }
+
     public ResponseCode code() {
         return code;
     }
