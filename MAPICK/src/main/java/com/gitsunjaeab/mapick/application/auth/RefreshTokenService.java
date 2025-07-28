@@ -22,10 +22,10 @@ public class RefreshTokenService {
     }
 
     // (갱신) RefreshToken 재발급 및 AccessToken과 연결
-    public RefreshToken renewingToken(String id, String newTokenId) {
-        RefreshToken refreshToken = findByAccessTokenId(id);
-        refreshToken.setToken(UUID.randomUUID().toString());
-        refreshToken.setAccessTokenId(newTokenId);
+    public RefreshToken renewingToken(String oldAccessTokenId, String newAccessTokenId) {
+        RefreshToken refreshToken = findByAccessTokenId(oldAccessTokenId);
+        refreshToken.setToken(UUID.randomUUID().toString()); // 새 refresh token 저장
+        refreshToken.setAccessTokenId(newAccessTokenId); // 새 access token 저장
         refreshTokenRepository.save(refreshToken);
         return refreshToken;
     }

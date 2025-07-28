@@ -71,25 +71,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
 
-        } catch (ExpiredJwtException ex) {
+        } catch (ExpiredJwtException ex) { // 만료된 토큰
 
             TokenDTO newAccessToken = renewingAccessToken(requestAccessToken, request);
 
-            if (newAccessToken == null) {
-                filterChain.doFilter(request, response);
-                return;
-            } //todo 만료된 토큰 예외 처리
+            if (newAccessToken == null) { // 재발급 불가능 한 경우
+                throw new JwtException("Access Token 만료 및 Refresh Token 없음 → 재로그인 필요");
+            }
 
             RefreshToken newRefreshToken = renewingRefreshToken(ex.getClaims().getId(), newAccessToken.getId());
             responseToken(response, newAccessToken, newRefreshToken);
 
-        }  catch (Exception e) {
-            throw e;
-        } //todo 기타 문제 예외 처리
+        }  catch (Exception ex) {
+            throw ex;
+        }
 
         filterChain.doFilter(request, response);
     }
 
+    // access token 재생성
     private TokenDTO renewingAccessToken(String accessToken, HttpServletRequest request) {
         Authentication authentication = jwtProvider.generateAuthentication(accessToken);
         String refreshToken = jwtProvider.resolveToken(request, TokenType.REFRESH_TOKEN);
@@ -97,20 +97,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         RefreshToken storedRefreshToken = refreshTokenService.findByAccessTokenId(claims.getId());
 
-        if(storedRefreshToken == null) {
-            return null;
+        if(storedRefreshToken == null) { // 저장된 refresh token 이 없는 경우
+            throw new JwtException("❌ 저장된 Refresh Token이 없습니다. 재로그인 필요.");
         }
-        
 
         TokenDTO newAccessToken = jwtProvider.generateAccessToken(authentication);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         return newAccessToken;
     }
 
+    // 응답 토큰 재생성 및 저장
     private RefreshToken renewingRefreshToken(String oldAccessTokenId, String newAccessTokenId) {
         return refreshTokenService.renewingToken(oldAccessTokenId, newAccessTokenId);
     }
 
+    // 응답 쿠키 생성
     private void responseToken(HttpServletResponse response, TokenDTO at, RefreshToken rt) {
         ResponseCookie accessTokenCookie = TokenCookieFactory.create(
             TokenType.ACCESS_TOKEN.name(), at.getAccessToken(), at.getAtExpiresIn()

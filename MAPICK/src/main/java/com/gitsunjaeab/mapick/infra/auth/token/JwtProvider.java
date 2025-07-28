@@ -97,6 +97,7 @@ public class JwtProvider {
 
     // JWT -> 인증 객체 생성
     public Authentication generateAuthentication(String accessToken) {
+
         String email = parseClaim(accessToken).getSubject();
 
         Member member = memberRepository.findByEmail(email)
@@ -105,6 +106,7 @@ public class JwtProvider {
         List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(member.getRole()));
 
         Principal principal = new Principal(member);
+
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 
@@ -124,11 +126,13 @@ public class JwtProvider {
         try{
             Jwts.parser().verifyWith(getSecretKey()).build().parse(requestAccessToken);
             return true;
-        }catch(SecurityException | MalformedJwtException | UnsupportedJwtException | IllegalArgumentException | ExpiredJwtException e){
+        }catch(SecurityException | MalformedJwtException
+               | UnsupportedJwtException | IllegalArgumentException
+               | ExpiredJwtException e){
             System.out.println("❌ JWT 유효성 검사 실패: " + e.getClass().getSimpleName() + " - " + e.getMessage());
             e.printStackTrace();
+            throw e;
         }
-        return false;
     }
 
     // HTTP 요청에서 특정 토큰 꺼내기
