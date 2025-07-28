@@ -2,7 +2,7 @@ package com.gitsunjaeab.mapick.api.notification.dto.response;
 
 import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
 import com.gitsunjaeab.mapick.api.notification.dto.NotificationZzimListDTO;
-import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapSimpleDTO;
+import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.RoadmapSimpleDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerSimpleDTO;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;

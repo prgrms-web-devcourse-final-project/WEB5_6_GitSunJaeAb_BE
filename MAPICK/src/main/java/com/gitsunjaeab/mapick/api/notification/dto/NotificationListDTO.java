@@ -1,9 +1,8 @@
 package com.gitsunjaeab.mapick.api.notification.dto;
 
 import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
-import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapSimpleDTO;
+import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.RoadmapSimpleDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerSimpleDTO;
-import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.notification.AnnouncementType;
 import com.gitsunjaeab.mapick.domain.notification.NotificationType;
 import jakarta.validation.constraints.NotNull;

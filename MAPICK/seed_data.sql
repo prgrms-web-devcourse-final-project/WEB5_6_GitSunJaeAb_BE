@@ -126,15 +126,15 @@ VALUES ('2025-07-11 11:24:43+00', 1, 1, 1),
        ('2025-07-19 12:06:00+00', 12, 1, 8);
 
 -- Layers 데이터
-INSERT INTO public.layers (layer_seq, layer_time, created_at, deleted_at, id, member_id, roadmap_id,
+INSERT INTO public.layers (layer_seq, created_at, deleted_at, layer_temp_id,id, member_id, roadmap_id,
                            updated_at, description, name)
-VALUES (1, '2025-07-13', '2025-07-13 16:23:21.552000 +00:00', null, 1, 1, 1, null, null, '롯데월드몰'),
-       (2, null, '2025-07-13 16:24:06.215000 +00:00', null, 2, 1, 1, null, null, '방이먹자골목'),
-       (1, '2025-07-14', '2025-07-14 09:00:00+00', NULL, 3, 2, 2, NULL, '강남 일대 소개', '강남 탐방'),
-       (2, '2025-07-14', '2025-07-14 09:10:00+00', NULL, 4, 3, 3, NULL, '서울 야경 코스', '야경 투어'),
-       (1, '2025-07-14', '2025-07-14 09:20:00+00', NULL, 5, 4, 4, NULL, '겨울 온천 지역', '온천 가이드'),
-       (2, NULL, '2025-07-14 09:30:00+00', NULL, 6, 1, 1, NULL, '먹자골목 정리', '잠실 맛집'),
-       (3, NULL, '2025-07-14 09:40:00+00', NULL, 7, 2, 2, NULL, '데이트 코스 추천', '서울 데이트');
+VALUES (1,  '2025-07-13 16:23:21.552000 +00:00', null, null,1, 1, 1, null, null, '롯데월드몰'),
+       (2,  '2025-07-13 16:24:06.215000 +00:00', null, null,2, 1, 1, null, null, '방이먹자골목'),
+       (1,  '2025-07-14 09:00:00+00', NULL, null,3, 2, 2, NULL, '강남 일대 소개', '강남 탐방'),
+       (2,  '2025-07-14 09:10:00+00', NULL, null,4, 3, 3, NULL, '서울 야경 코스', '야경 투어'),
+       (1,  '2025-07-14 09:20:00+00', NULL, null,5, 4, 4, NULL, '겨울 온천 지역', '온천 가이드'),
+       (2, '2025-07-14 09:30:00+00', NULL, null,6, 1, 1, NULL, '먹자골목 정리', '잠실 맛집'),
+       (3,  '2025-07-14 09:40:00+00', NULL, null,7, 2, 2, NULL, '데이트 코스 추천', '서울 데이트');
 
 -- Markers 데이터
 INSERT INTO public.markers (lat, lng, marker_seq, created_at, deleted_at, id, layer_id, member_id,
@@ -288,3 +288,5 @@ VALUES
     (103, '지도 공유', 2, now(), now(), NULL),
     (104, 'MZ 핫플', 2, now(), now(), NULL),
     (105, '국토종주', 3, now(), now(), NULL);
+
+\d+ public.layers

@@ -1,13 +1,9 @@
 package com.gitsunjaeab.mapick.api.roadmap;
 
-import com.gitsunjaeab.mapick.api.roadmap.dto.marker.MarkerCreateRequest;
-import com.gitsunjaeab.mapick.api.roadmap.dto.marker.MarkerCustomImageDTO;
-import com.gitsunjaeab.mapick.api.roadmap.dto.marker.MarkerCustomImageResponse;
-import com.gitsunjaeab.mapick.api.roadmap.dto.marker.MarkerDTO;
-import com.gitsunjaeab.mapick.api.roadmap.dto.marker.MarkerResponse;
-import com.gitsunjaeab.mapick.api.roadmap.dto.marker.MarkerUpdateRequest;
+import com.gitsunjaeab.mapick.api.roadmap.dto.marker.*;
 import com.gitsunjaeab.mapick.application.roadmap.MarkerService;
 import com.gitsunjaeab.mapick.domain.auth.Principal;
+import com.gitsunjaeab.mapick.domain.roadmap.Marker;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -34,6 +30,22 @@ import org.springframework.web.multipart.MultipartFile;
 public class MarkerController {
 
     private final MarkerService markerService;
+
+    // ===== 실시간 공유지도 상 레이어 CRUD =====
+    @PostMapping("/sync")
+    @Operation(summary = "마커 동기화", description = "[실시간 공유지도용] 마커 생성/수정/삭제 처리")
+    public ResponseEntity<MarkerResponse> syncMarker(@RequestBody MarkerSyncRequest request) {
+        Marker marker;
+        switch (request.getAction()) {
+            case "add" -> marker = markerService.createFromSync(request);
+            case "update" -> marker = markerService.updateFromSync(request);
+            case "delete" -> marker = markerService.deleteFromSync(request);
+            default -> throw new IllegalArgumentException("지원하지 않는 action: " + request.getAction());
+        }
+
+        return ResponseEntity.ok(MarkerResponse.of(marker, "마커 " + request.getAction() + " 성공"));
+
+    }
 
     /**
      * 관리자 커스텀 이미지 마커

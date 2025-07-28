@@ -72,7 +72,7 @@ public class SecurityConfig {
                 .requestMatchers("/css/**", "/js/**", "/img/**").permitAll()
                 .requestMatchers("/index", "/auth/signin", "/auth/signup", "/auth/socialLogin").anonymous() // 로그인 하지 않은 사용자만 접근 가능
                 .requestMatchers(HttpMethod.POST, "/auth/signin", "/auth/signup" , "/auth/socialLogin","/auth/logout").permitAll() // 누구나 이 URL로 요청 가능
-                .requestMatchers("/swagger-ui/**","/v3/api-docs/**", "/ws/**", "/app/**", "/sub/**", "/info/**").permitAll() // 누구나 이 URL로 요청 가능
+                .requestMatchers("/swagger-ui/**","/v3/api-docs/**",  "/info/**").permitAll() // 누구나 이 URL로 요청 가능
 //              .requestMatchers("/home", "/interests/**", "/mypage/**","/maps/**","/layers/**","/markers/**").hasAnyRole("USER", "ADMIN") // 사용자페이지 접근 권한
                 .anyRequest().permitAll()
             )

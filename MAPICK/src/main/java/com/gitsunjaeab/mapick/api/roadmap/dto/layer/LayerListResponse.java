@@ -34,7 +34,6 @@ public class LayerListResponse implements BaseApiResponse {
                 dto.setName(l.getName());
                 dto.setDescription(l.getDescription());
                 dto.setLayerSeq(l.getLayerSeq());
-                dto.setLayerTime(l.getLayerTime());
                 dto.setCreatedAt(l.getCreatedAt());
                 dto.setMember(l.getMember() != null ? new MemberSimpleDTO(l.getMember()) : null);
                 dto.setRoadmap(l.getRoadmap() != null ? l.getRoadmap().getId() : null);

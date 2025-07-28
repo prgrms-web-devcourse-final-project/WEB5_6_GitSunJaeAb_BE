@@ -1,4 +1,4 @@
-package com.gitsunjaeab.mapick.api.roadmap.dto;
+package com.gitsunjaeab.mapick.api.roadmap.dto.roadmap;
 
 import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
 import lombok.AllArgsConstructor;
