@@ -4,21 +4,22 @@ import com.gitsunjaeab.mapick.api.auth.dto.request.SocialLoginRequest;
 import com.gitsunjaeab.mapick.api.auth.dto.internal.SocialUserInfo;
 import com.gitsunjaeab.mapick.application.member.MemberService;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
-import com.gitsunjaeab.mapick.domain.auth.LoginType;
-import com.gitsunjaeab.mapick.domain.auth.RefreshToken;
-import com.gitsunjaeab.mapick.domain.auth.RefreshTokenRepository;
+import com.gitsunjaeab.mapick.domain.auth.*;
 import com.gitsunjaeab.mapick.api.auth.dto.internal.TokenDTO;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
 import com.gitsunjaeab.mapick.domain.member.code.MemberStatus;
 import com.gitsunjaeab.mapick.infra.auth.token.JwtProvider;
 import com.gitsunjaeab.mapick.infra.auth.token.code.GrantType;
+import com.gitsunjaeab.mapick.infra.auth.token.code.TokenType;
 import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
 
 import java.time.OffsetDateTime;
 import java.util.Optional;
 
 import com.gitsunjaeab.mapick.util.NotFoundException;
+import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -42,6 +43,7 @@ public class AuthService {
     private final MemberService memberService;
     private final GoogleOAuthService googleOAuthService;
     private final PasswordEncoder passwordEncoder;
+    private final AccessTokenBlacklistRepository accessTokenBlacklistRepository;
 
 
     // 소셜 로그인
@@ -100,6 +102,7 @@ public class AuthService {
 
     // 자체 로그인
     // complete
+    @Transactional
     public TokenDTO signin(String email, String password){
 
         // 이메일로 사용자 객체 가져오기
@@ -122,7 +125,7 @@ public class AuthService {
         }
 
         member.setLastLogin(OffsetDateTime.now()); // last login 날짜 추가
-        member.setLoginCount(member.getLoginCount() + 1);
+        member.setLoginCount(member.getLoginCount() + 1); // 로그인 카운트 1 증가
 
 
         authenticateMember(email, password); // 인증 객체 생성 및 Spring Security 등록
@@ -133,11 +136,21 @@ public class AuthService {
     }
 
     // 비밀번호 변경
+    // complete
     @Transactional
-    public TokenDTO updatePassword(Long memberId, String password) {
+    public TokenDTO updatePassword(HttpServletRequest request, Long memberId, String password) {
 
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
+
+        // 계정에 존재하는 기존 refresh token 삭제
+        String accessToken = jwtProvider.resolveToken(request, TokenType.ACCESS_TOKEN);
+
+        // 기존 access token 블랙 리스트 등록
+        if (accessToken != null && !accessToken.isBlank()) {
+
+            accessTokenBlacklistRepository.save(new AccessTokenBlacklist(accessToken));
+        }
 
         refreshTokenRepository.deleteByMember(member);
 
@@ -151,7 +164,28 @@ public class AuthService {
         return tokendto;
     }
 
+    // 로그아웃
+    // complete
+    @Transactional
+    public void logout(HttpServletRequest request) {
+
+        // 계정에 존재하는 기존 refresh token 삭제
+        String accessToken = jwtProvider.resolveToken(request, TokenType.ACCESS_TOKEN);
+
+        Claims claims = jwtProvider.parseClaim(accessToken);
+        String jti = claims.getId();
+
+        // 기존 access token 블랙 리스트 등록
+        if (accessToken != null && !accessToken.isBlank()) {
+
+            accessTokenBlacklistRepository.save(new AccessTokenBlacklist(accessToken));
+        }
+
+        refreshTokenRepository.deleteByAccessTokenId(jti);
+    }
+
     // 인증 객체 생성 및 Spring Security 등록
+    // complete
     public void authenticateMember(String email, String password) {
         // 인증된 사용자 정보 등록용 토큰 생성
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(email, password); // 인증되지 않은 토큰
@@ -160,6 +194,7 @@ public class AuthService {
     }
 
     // JWT 토큰 발급
+    // complete
     public TokenDTO processTokenSignin(Member member) {
 
         TokenDTO accessToken = jwtProvider.generateAccessToken(member.getEmail()); // AccessToken 만들기

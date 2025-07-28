@@ -43,10 +43,6 @@ public class AuthController {
 
     private final AuthService authService;
     private final MemberService memberService;
-    private final JwtProvider jwtProvider;
-    private final RefreshTokenRepository refreshTokenRepository;
-    private final AccessTokenBlacklistRepository accessTokenBlacklistRepository;
-
 
     // 소셜 로그인
     // complete
@@ -144,27 +140,14 @@ public class AuthController {
     }
 
     // 로그아웃
-
     // todo 로그아웃 하지 않으면 refresh token 값이 삭제 되지 않음, 추후 어떻게 기존 db의 refresh 값을 삭제 할 것인지 고민
     // todo 엑세스토큰이 블랙리스트로 저장이 되지 않는 이슈
+    // complete
     @PostMapping("/logout")
     @Operation(summary = "로그 아웃")
-    @Transactional
     public ResponseEntity<LogoutResponse> logout(HttpServletRequest request, HttpServletResponse response) {
 
-        // 계정에 존재하는 기존 refresh token 삭제 1
-        String accessToken = jwtProvider.resolveToken(request, TokenType.ACCESS_TOKEN);
-
-        Claims claims = jwtProvider.parseClaim(accessToken);
-        String jti = claims.getId();
-
-        // 기존 access token 블랙 리스트 등록
-        if (accessToken != null && !accessToken.isBlank()) {
-
-            accessTokenBlacklistRepository.save(new AccessTokenBlacklist(accessToken));
-        }
-
-        refreshTokenRepository.deleteByAccessTokenId(jti);
+       authService.logout(request);
 
         // 쿠키 굽기
         ResponseCookie expiredRefreshToken = TokenCookieFactory.createExpiredToken(TokenType.REFRESH_TOKEN);
@@ -181,26 +164,13 @@ public class AuthController {
     // complete
     @PutMapping("/password")
     @Operation(summary = "비밀번호 수정", description = "[사용자 전용] 본인만 접근 가능한 비밀번호 변경")
-    @Transactional
-    public ResponseEntity<PasswordChangeResponse> updatePassword(@Valid @RequestBody PasswordRequest passwordRequest,HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<PasswordChangeResponse> updatePassword(@Valid @RequestBody PasswordRequest passwordRequest,
+                                                                 HttpServletRequest request, HttpServletResponse response) {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Long memberId = Long.parseLong(auth.getName());
 
-        // 계정에 존재하는 기존 refresh token 삭제
-        String accessToken = jwtProvider.resolveToken(request, TokenType.ACCESS_TOKEN);
-        Claims claims = jwtProvider.parseClaim(accessToken);
-        String jti = claims.getId();
-
-        // 기존 access token 블랙 리스트 등록
-        if (accessToken != null && !accessToken.isBlank()) {
-
-            accessTokenBlacklistRepository.save(new AccessTokenBlacklist(accessToken));
-        }
-
-        refreshTokenRepository.deleteByAccessTokenId(jti);
-
-        TokenDTO tokenDTO = authService.updatePassword(memberId, passwordRequest.getPassword());
+        TokenDTO tokenDTO = authService.updatePassword(request,memberId, passwordRequest.getPassword());
 
         ResponseCookie refreshTokenCookie = TokenCookieFactory.create(
                 TokenType.REFRESH_TOKEN.name(),
