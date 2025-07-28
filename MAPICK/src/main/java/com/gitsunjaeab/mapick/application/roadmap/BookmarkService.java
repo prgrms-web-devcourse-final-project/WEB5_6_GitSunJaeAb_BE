@@ -64,7 +64,7 @@ public class BookmarkService {
         if (!roadmapOwner.getId().equals(memberId)) {
             notificationService.createNotification(
                 roadmapOwner,           // 알림 수신자
-                NotificationType.POST,  // 알림 타입
+                NotificationType.BOOKMARK,  // 알림 타입
                 roadmap,                // 로드맵
                 null,                   // 레이어
                 null,                   // 레이어 라이브러리

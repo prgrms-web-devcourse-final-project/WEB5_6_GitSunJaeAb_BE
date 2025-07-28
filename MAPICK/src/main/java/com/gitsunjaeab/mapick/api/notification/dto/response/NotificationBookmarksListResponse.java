@@ -1,7 +1,7 @@
 package com.gitsunjaeab.mapick.api.notification.dto.response;
 
 import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
-import com.gitsunjaeab.mapick.api.notification.dto.NotificationPostsListDTO;
+import com.gitsunjaeab.mapick.api.notification.dto.NotificationBookmarksListDTO;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.notification.Notification;
@@ -13,24 +13,24 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class NotificationPostsListResponse implements BaseApiResponse {
+public class NotificationBookmarksListResponse implements BaseApiResponse {
 
     private String code;
     private String message;
     private OffsetDateTime timestamp;
-    private List<NotificationPostsListDTO> notifications;
+    private List<NotificationBookmarksListDTO> notifications;
 
     // 공통 처리 로직
-    public static NotificationPostsListResponse of(List<Notification> notificationEntities) {
+    public static NotificationBookmarksListResponse of(List<Notification> notificationEntities) {
         return of(notificationEntities, "알림 목록 조회 성공");
     }
 
     // 생성 패턴용
-    public static NotificationPostsListResponse of(List<Notification> notificationEntities,
+    public static NotificationBookmarksListResponse of(List<Notification> notificationEntities,
         String message) {
-        List<NotificationPostsListDTO> notificationPostsListDTOs = notificationEntities.stream()
+        List<NotificationBookmarksListDTO> notificationBookmarksListDTOS = notificationEntities.stream()
             .map(n -> {
-                NotificationPostsListDTO dto = new NotificationPostsListDTO();
+                NotificationBookmarksListDTO dto = new NotificationBookmarksListDTO();
                 dto.setId(n.getId());
                 dto.setTitle(n.getTitle());
                 dto.setContent(n.getContent());
@@ -46,11 +46,11 @@ public class NotificationPostsListResponse implements BaseApiResponse {
             })
             .toList();
 
-        return new NotificationPostsListResponse(
+        return new NotificationBookmarksListResponse(
             ResponseCode.OK.getCode(),
             message,
             OffsetDateTime.now(),
-            notificationPostsListDTOs
+            notificationBookmarksListDTOS
         );
 
     }
