@@ -9,8 +9,6 @@ import com.gitsunjaeab.mapick.api.member.dto.request.PasswordRequest;
 import com.gitsunjaeab.mapick.api.member.dto.response.*;
 import com.gitsunjaeab.mapick.application.member.MemberInterestService;
 import com.gitsunjaeab.mapick.application.member.MemberService;
-import com.gitsunjaeab.mapick.common.response.ApiResponse;
-import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

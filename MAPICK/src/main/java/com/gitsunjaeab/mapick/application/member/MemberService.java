@@ -203,39 +203,32 @@ public class MemberService {
     // 관리자 - 특정 유저 블랙 리스트 설정
     @Transactional
     public void setMemberBlackList(Long memberId) {
-        try{
 
-        Member member = memberRepository.findById(memberId)
+        Member member = memberRepository.findByIdAndDeletedAtIsNull(memberId)
                 .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
 
-        if (member.getIsBlacklisted() == true){
+        // 회원 블랙 리스트 인지 확인
+        if (member.getIsBlacklisted()){
             throw new CommonException(ResponseCode.ALREADY_REGISTERED_BLACKLIST);
         }
             member.setIsBlacklisted(true);
-
-        }catch (DataIntegrityViolationException e){
-            throw new CommonException(ResponseCode.DB_CONSTRAINT_VIOLATION); // DB 제약 조건 위배
-        }
 
     }
 
     // 관리자 - 특정 유저 블랙 리스트 해제
     @Transactional
     public void clearMemberBlackList(Long memberId) {
-        try{
 
-            Member member = memberRepository.findById(memberId)
+            Member member = memberRepository.findByIdAndDeletedAtIsNull(memberId)
                     .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
 
-            if (member.getIsBlacklisted() == false){
-                throw new CommonException(ResponseCode.MEMBER_NOT_FOUND);
+            // 회원 블랙 리스트가 아닌지 확인
+            if (!member.getIsBlacklisted()){
+                throw new CommonException(ResponseCode.ALREADY_NOT_REGISTERED_BLACKLIST);
             }
 
             member.setIsBlacklisted(false);
 
-        }catch (DataIntegrityViolationException e){
-            throw new CommonException(ResponseCode.DB_CONSTRAINT_VIOLATION); // DB 제약 조건 위배
-        }
     }
 
     // 관리자 - 유저 관리자 권한 부여
