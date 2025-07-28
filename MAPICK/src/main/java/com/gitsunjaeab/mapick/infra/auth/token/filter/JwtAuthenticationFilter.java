@@ -75,10 +75,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             TokenDTO newAccessToken = renewingAccessToken(requestAccessToken, request);
 
-            if (newAccessToken == null) { // 재발급 불가능 한 경우
-                throw new JwtException("Access Token 만료 및 Refresh Token 없음 → 재로그인 필요");
-            }
-
             RefreshToken newRefreshToken = renewingRefreshToken(ex.getClaims().getId(), newAccessToken.getId());
             responseToken(response, newAccessToken, newRefreshToken);
 
@@ -95,9 +91,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String refreshToken = jwtProvider.resolveToken(request, TokenType.REFRESH_TOKEN);
         Claims claims = jwtProvider.parseClaim(accessToken);
 
-        RefreshToken storedRefreshToken = refreshTokenService.findByAccessTokenId(claims.getId());
-
-        if(storedRefreshToken == null) { // 저장된 refresh token 이 없는 경우
+        try{
+            refreshTokenService.findByAccessTokenId(claims.getId());
+        }catch (JwtException e){
             throw new JwtException("❌ 저장된 Refresh Token이 없습니다. 재로그인 필요.");
         }
 

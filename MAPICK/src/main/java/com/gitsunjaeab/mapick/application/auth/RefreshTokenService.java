@@ -4,6 +4,8 @@ import com.gitsunjaeab.mapick.domain.auth.RefreshToken;
 import com.gitsunjaeab.mapick.domain.auth.RefreshTokenRepository;
 import java.util.Optional;
 import java.util.UUID;
+
+import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,8 +32,9 @@ public class RefreshTokenService {
         return refreshToken;
     }
 
-    // (조회) AccessToken에 대응되는 RefreshToken을 찾는 데 사용
     public RefreshToken findByAccessTokenId(String id){
-        return refreshTokenRepository.findByAccessTokenId(id).orElse(null);
+        return refreshTokenRepository.findByAccessTokenId(id)
+                .orElseThrow(() -> new JwtException("❌ AccessToken에 대응되는 RefreshToken이 존재하지 않습니다."));
     }
+
 }
