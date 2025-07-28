@@ -11,14 +11,9 @@ import com.gitsunjaeab.mapick.api.auth.dto.response.SignupResponse;
 import com.gitsunjaeab.mapick.api.member.dto.request.PasswordRequest;
 import com.gitsunjaeab.mapick.application.auth.AuthService;
 import com.gitsunjaeab.mapick.application.member.MemberService;
-import com.gitsunjaeab.mapick.domain.auth.AccessTokenBlacklist;
-import com.gitsunjaeab.mapick.domain.auth.AccessTokenBlacklistRepository;
-import com.gitsunjaeab.mapick.domain.auth.RefreshTokenRepository;
-import com.gitsunjaeab.mapick.infra.auth.token.JwtProvider;
 import com.gitsunjaeab.mapick.infra.auth.token.TokenCookieFactory;
 import com.gitsunjaeab.mapick.infra.auth.token.code.GrantType;
 import com.gitsunjaeab.mapick.infra.auth.token.code.TokenType;
-import io.jsonwebtoken.Claims;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,7 +27,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
