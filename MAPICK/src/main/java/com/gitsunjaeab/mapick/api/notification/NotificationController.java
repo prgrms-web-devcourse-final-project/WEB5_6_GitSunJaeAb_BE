@@ -40,7 +40,7 @@ public class NotificationController {
             memberId);
         String message = switch (notificationType) {
             case ANNOUNCEMENT -> "공지 알림 조회";
-            case POST -> "북마크 알림 조회";
+            case BOOKMARK -> "북마크 알림 조회";
             case QUEST -> "퀘스트 알림 조회";
             case COMMENT -> "댓글 알림 조회";
             case ZZIM -> "찜 알림 조회";
@@ -51,24 +51,6 @@ public class NotificationController {
         return ResponseEntity.ok(NotificationListResponse.success(dtoList, "알림 조회 성공"));
     }
 
-
-//        return switch (notificationType) {
-//            case ANNOUNCEMENT -> ResponseEntity.ok(
-//                NotificationAnnouncementsListResponse.of(notifications, "공지 알림 조회"));
-//            case POST ->
-//                ResponseEntity.ok(NotificationPostsListResponse.of(notifications, "북마크 알림 조회"));
-//            case QUEST ->
-//                ResponseEntity.ok(NotificationQuestListResponse.of(notifications, "퀘스트 알림 조회"));
-//            case COMMENT ->
-//                ResponseEntity.ok(NotificationCommentsListResponse.of(notifications, "댓글 알림 조회"));
-//            case ZZIM ->
-//                ResponseEntity.ok(NotificationZzimListResponse.of(notifications, "찜 알림 조회"));
-//            case FORK ->
-//                ResponseEntity.ok(NotificationForkListResponse.of(notifications, "포크 알림 조회"));
-//
-//            default -> ResponseEntity.ok(NotificationListResponse.of(notifications, "전체 알림 조회 성공"));
-//        };
-//    }
 
     // 알림 개별 읽음 처리
     @PutMapping("/{id}/read")

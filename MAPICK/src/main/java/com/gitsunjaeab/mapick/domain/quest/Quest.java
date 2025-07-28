@@ -82,7 +82,7 @@ public class Quest {
     @OneToMany(mappedBy = "quest", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<QuestRank> questQuestTopSubmitters = new HashSet<>();
 
-//    @OneToMany(mappedBy = "Quest", cascade = CascadeType.REMOVE, orphanRemoval = true)
-//    private Set<Notification> notifications = new HashSet<>();
+    @OneToMany(mappedBy = "quest", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private Set<Notification> notifications = new HashSet<>();
 
 }
