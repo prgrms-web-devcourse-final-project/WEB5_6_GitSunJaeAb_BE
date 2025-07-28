@@ -20,4 +20,26 @@ public interface RoadmapEditorRepository extends JpaRepository<RoadmapEditor, Lo
             "JOIN re.member m " +
             "WHERE re.roadmap.id = :roadmapId AND re.deletedAt IS NULL")
     List<RoadmapEditorSimpleDTO> findAllEditorsByRoadmapId(@Param("roadmapId") Long roadmapId);
+
+    @Query("""
+    SELECT re.roadmap
+    FROM RoadmapEditor re
+    WHERE re.member.id = :memberId
+    AND re.roadmap.roadmapType = 'SHARED'
+    AND re.roadmap.isPublic = true
+    AND re.roadmap.deletedAt IS NULL
+    AND re.deletedAt IS NULL
+""")
+    List<Roadmap> findParticipatedSharedRoadmaps(@Param("memberId") Long memberId);
+
+    @Query("""
+    SELECT re.roadmap.id, re.roadmap.title, re.roadmap.deletedAt, re.deletedAt
+    FROM RoadmapEditor re
+    WHERE re.member.id = :memberId
+    AND re.roadmap.roadmapType = 'SHARED'
+    AND re.roadmap.isPublic = true
+    AND re.deletedAt IS NULL
+    AND re.roadmap.deletedAt IS NULL
+    """)
+    List<Object[]> debugRoadmaps(@Param("memberId") Long memberId);
 }
