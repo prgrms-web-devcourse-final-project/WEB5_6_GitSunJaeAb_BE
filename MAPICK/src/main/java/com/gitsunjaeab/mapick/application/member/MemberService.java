@@ -251,8 +251,8 @@ public class MemberService {
     }
 
     // 회원 삭제/탈퇴(관리자/사용자) - 소프트 딜리트
-    @Transactional
     // complete
+    @Transactional
     public void deleteMember(final Long memberId) {
 
         final Member member = memberRepository.findByIdAndDeletedAtIsNull(memberId)
@@ -267,16 +267,17 @@ public class MemberService {
     }
 
     // 비밀번호 검증
+    // complete
     public boolean verifyPassword(Long memberId, String password) {
 
-        Member member = memberRepository.findById(memberId)
+        Member member = memberRepository.findByIdAndDeletedAtIsNull(memberId)
                 .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
 
         if (!passwordEncoder.matches(password, member.getPassword())) {
             throw new CommonException(ResponseCode.INVALID_PASSWORD);
         }
 
-        return member.getPassword().equals(password);
+        return true;
     }
 
 

@@ -9,6 +9,7 @@ import com.gitsunjaeab.mapick.api.member.dto.request.PasswordRequest;
 import com.gitsunjaeab.mapick.api.member.dto.response.*;
 import com.gitsunjaeab.mapick.application.member.MemberInterestService;
 import com.gitsunjaeab.mapick.application.member.MemberService;
+import com.gitsunjaeab.mapick.domain.auth.Principal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -18,6 +19,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -261,13 +263,15 @@ public class MemberController {
     // ===== 회원 비밀번호 관리 API =====
 
     // 마이페이지 - 비밀번호 확인 (본인만) -> todo 완성(예외처리 필요)
+    // complete
     @PostMapping("/password/verify")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @Operation(summary = "[사용자]비밀번호 확인", description = "[사용자 전용] 본인만 접근 가능한 비밀번호 확인")
-    public ResponseEntity<MemberResponse> verifyPassword(@Valid @RequestBody PasswordRequest passwordRequest) {
+    public ResponseEntity<MemberResponse> verifyPassword(
+            @AuthenticationPrincipal Principal principal,
+            @Valid @RequestBody PasswordRequest passwordRequest) {
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Long memberId = Long.parseLong(auth.getName());
+        Long memberId = principal.getMember().getId();
 
         memberService.verifyPassword(memberId, passwordRequest.getPassword());
 
