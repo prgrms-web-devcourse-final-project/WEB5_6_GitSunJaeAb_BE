@@ -185,21 +185,6 @@ public class MemberService {
         }
     }
 
-    // 회원 삭제/탈퇴(관리자/사용자) - 소프트 딜리트
-    @Transactional
-    public void deleteMember(final Long id) {
-
-        final Member member = memberRepository.findById(id)
-                .orElseThrow(() -> new CommonException(ResponseCode.MEMBER_NOT_FOUND));
-
-        if (member.getDeletedAt() != null) {
-            throw new CommonException(ResponseCode.ALREADY_DELETED_USER);
-        }
-
-        member.setStatus("WITHDRAWN");
-        member.setDeletedAt(OffsetDateTime.now()); // 삭제 날짜에 현재 시간 입력
-    }
-
     // 관리자 - 특정 유저 블랙 리스트 설정
     // complete
     @Transactional
@@ -263,6 +248,22 @@ public class MemberService {
 
             member.setRole("ROLE_USER");
 
+    }
+
+    // 회원 삭제/탈퇴(관리자/사용자) - 소프트 딜리트
+    @Transactional
+    // complete
+    public void deleteMember(final Long memberId) {
+
+        final Member member = memberRepository.findByIdAndDeletedAtIsNull(memberId)
+                .orElseThrow(() -> new CommonException(ResponseCode.MEMBER_NOT_FOUND));
+
+        if (member.getDeletedAt() != null || member.getStatus().equals("WITHDRAWN")) {
+            throw new CommonException(ResponseCode.ALREADY_DELETED_USER);
+        }
+
+        member.setStatus("WITHDRAWN");
+        member.setDeletedAt(OffsetDateTime.now()); // 삭제 날짜에 현재 시간 입력
     }
 
     // 비밀번호 검증

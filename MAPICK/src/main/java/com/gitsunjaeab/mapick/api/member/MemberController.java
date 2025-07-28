@@ -142,7 +142,8 @@ public class MemberController {
 
     // ===== 회원 삭제 API =====
 
-    // 회원 삭제 (관리자 전용) -> todo 완성(예외처리 필요)
+    // 회원 삭제 (관리자 전용)
+    // complete
     @DeleteMapping("{memberId}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "[관리자 전용] 회원 삭제(관리자)", description = "회원 삭제")
