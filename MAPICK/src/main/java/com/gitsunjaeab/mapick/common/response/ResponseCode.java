@@ -22,6 +22,8 @@ public enum ResponseCode {
 
     FORBIDDEN("4030", HttpStatus.FORBIDDEN, "접근 권한이 없습니다."),
     FORBIDDEN_DELETE_BOOKMARK("4031", HttpStatus.FORBIDDEN, "북마크 해제 권한이 없습니다."),
+    BLACKLISTED_USER("4032", HttpStatus.FORBIDDEN, "블랙리스트 처리된 회원입니다."),
+    WITHDRAWN_USER("4033", HttpStatus.FORBIDDEN, "탈퇴한 회원입니다."),
 
     NOT_FOUND("4040", HttpStatus.NOT_FOUND, "존재하지 않는 리소스 입니다."),
     EMAIL_NOT_FOUND("4041", HttpStatus.NOT_FOUND, "존재하지 않는 이메일입니다."),

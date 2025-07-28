@@ -116,12 +116,13 @@ public class MemberService {
     }
 
     // 멤버 리스트 조회
-    public List<MemberListDTO> findAll() {
+    public List<MemberListDTO> getAllMembers() {
 
-        final List<Member> members = memberRepository.findAllByDeletedAtIsNull(Sort.by("id"));
+        final List<Member> members = memberRepository.findAllByDeletedAtIsNull(Sort.by("id")); // 탈퇴하지 않은 사용자들만 죠회
 
         List<MemberListDTO> memberListDTOs = members.stream()
-                .map(MemberListDTO::of).toList();
+                .map(MemberListDTO::of)
+                .toList();
 
         return memberListDTOs;
     }

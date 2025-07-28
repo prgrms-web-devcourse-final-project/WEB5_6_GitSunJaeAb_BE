@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,9 +30,10 @@ public class ReportController {
 
     // ===== 관리자용 API =====
     
-    // 전체 신고 조회 (관리자) -> todo 완성(예외처리 필요)
+    // 전체 신고 조회 (관리자)
+    // complete
     @GetMapping
-    // @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "[관리자]전체 신고 조회", description = "[관리자용] 모든 신고 내역을 조회합니다.")
     public ResponseEntity<ReportListResponse> getAllReports() {
 
@@ -45,9 +47,10 @@ public class ReportController {
 
     }
 
-    // 특정 신고 상세 조회 (관리자) -> todo 완성(예외처리 필요)
+    // 특정 신고 상세 조회 (관리자)
+    // complete
     @GetMapping("/{reportId}")
-    // @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "[관리자]특정 신고 상세 조회", description = "[관리자용] 특정 신고의 상세 정보를 조회합니다.")
     public ResponseEntity<ReportResponse> getReport(@PathVariable(name = "reportId") final Long reportId) {
 
@@ -59,9 +62,10 @@ public class ReportController {
                 .body(response);
     }
 
-    // 특정 신고 처리 완료 (관리자) -> todo 완성(예외처리 필요)
+    // 특정 신고 처리 완료 (관리자)
+    // complete
     @GetMapping("/admin/{reportId}")
-    // @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "[관리자]신고 처리 완료", description = "[관리자용] 신고 상태를 변경하여 처리 완료합니다.")
     public ResponseEntity<ReportProcessResponse> processReport(@PathVariable(name = "reportId") final Long reportId) {
 
@@ -75,8 +79,10 @@ public class ReportController {
 
     // ===== 사용자용 API (신고 생성) =====
     
-    // 지도(로드맵) 신고 생성 -> todo 완성(예외처리 필요)
+    // 지도(로드맵) 신고 생성
+    // complete
     @PostMapping("/maps/{roadmapId}")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @Operation(summary = "[사용자]지도 신고 생성", description = "[사용자용] 특정 지도(로드맵)에 대한 신고를 접수합니다.")
     public ResponseEntity<MapReportResponse> reportMap(@PathVariable(name = "roadmapId") final Long roadmapId,
             @RequestBody @Valid final MapReportRequest mapReportRequest) {
@@ -90,8 +96,10 @@ public class ReportController {
     }
 
 
-    // 마커 신고 생성 -> todo org.hibernate.LazyInitializationException: 해결 필요
+    // 마커 신고 생성
+    // complete
     @PostMapping("/markers/{markerId}")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @Operation(summary = "[사용자]마커 신고 생성", description = "[사용자용] 특정 마커에 대한 신고를 접수합니다.")
     public ResponseEntity<MarkerReportResponse> reportMarker(@PathVariable(name = "markerId") final Long markerId,
                                                     @RequestBody @Valid final MarkerReportRequest markerReportRequest) {
@@ -104,8 +112,10 @@ public class ReportController {
                 .body(response);
     }
 
-    // 퀘스트 신고 생성 -> todo org.hibernate.LazyInitializationException: 해결 필요
+    // 퀘스트 신고 생성
+    // complete
     @PostMapping("/quests/{questId}")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @Operation(summary = "[사용자]퀘스트 신고 생성", description = "[사용자용] 특정 퀘스트에 대한 신고를 접수합니다.")
     public ResponseEntity<QuestReportResponse> reportQuest(@PathVariable(name = "questId") final Long questId,
             @RequestBody @Valid final QuestReportRequest questReportRequest) {

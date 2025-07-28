@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 
+
+//점수를 입력해서 부여하는 방식이 아니기 때문에 안쓰일거라 예상
 @Getter
 @Setter
 public class QuestRankRequest {

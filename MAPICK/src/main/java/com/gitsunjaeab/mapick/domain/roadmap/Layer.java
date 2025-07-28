@@ -21,7 +21,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
-import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -50,6 +49,9 @@ public class Layer {
     )
     private Long id;
 
+    @Column(name = "layer_temp_id", unique = true)
+    private Long layerTempId;
+
     @Column(nullable = false)
     private String name;
 
@@ -59,8 +61,6 @@ public class Layer {
     @Column
     private Integer layerSeq;
 
-    @Column
-    private LocalDate layerTime;
 
     @CreatedDate // 생성 시간 서버 자동처리
     @Convert(converter = OffsetDateTimeConverter.class)
@@ -108,7 +108,6 @@ public class Layer {
         this.name = request.getName();
         this.description = request.getDescription();
         this.layerSeq = request.getLayerSeq();
-        this.layerTime = request.getLayerTime();
 
         // 연관 관계 수정
         this.member = member;

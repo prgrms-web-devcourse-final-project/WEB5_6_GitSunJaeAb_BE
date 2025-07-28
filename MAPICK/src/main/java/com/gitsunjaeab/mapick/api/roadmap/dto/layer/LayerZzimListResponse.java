@@ -1,14 +1,13 @@
 package com.gitsunjaeab.mapick.api.roadmap.dto.layer;
 
 import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
-import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapSimpleDTO;
+import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.RoadmapSimpleDTO;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.roadmap.Layer;
 import com.gitsunjaeab.mapick.domain.roadmap.LayerForkHistory;
 import java.time.OffsetDateTime;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import lombok.AllArgsConstructor;
@@ -37,7 +36,6 @@ public class LayerZzimListResponse implements BaseApiResponse {
         private String name;
         private String description;
         private Integer layerSeq;
-        private LocalDate layerTime;
         private OffsetDateTime createdAt;
         private OffsetDateTime updatedAt;
         private OffsetDateTime deletedAt;
@@ -78,7 +76,6 @@ public class LayerZzimListResponse implements BaseApiResponse {
                     layer.getName(),
                     layer.getDescription(),
                     layer.getLayerSeq(),
-                    layer.getLayerTime(),
                     layer.getCreatedAt(),
                     layer.getUpdatedAt(),
                     layer.getDeletedAt(),
