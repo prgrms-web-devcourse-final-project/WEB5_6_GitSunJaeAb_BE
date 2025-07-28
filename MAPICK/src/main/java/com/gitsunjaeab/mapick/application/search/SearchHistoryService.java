@@ -10,11 +10,13 @@ import com.gitsunjaeab.mapick.domain.search.SearchRepository;
 import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -44,19 +46,33 @@ public class SearchHistoryService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CommonException(ResponseCode.MEMBER_NOT_FOUND));
 
-        Search search = searchRepository.findByMemberIdAndKeywordIs(memberId,searchRequest.getKeyword());
+        Optional<Search> optionalSearch = searchRepository.findByMemberIdAndKeywordIs(memberId,searchRequest.getKeyword());
 
-        if(search==null){
-            Search newsearch = Search.builder()
+        if(optionalSearch.isEmpty()){ // 결과가 없는 경우
+
+            Search search = Search.builder()
                     .keyword(searchRequest.getKeyword())
                     .member(member)
                     .build();
 
-            searchRepository.save(newsearch);
-        } else if (search.getDeletedAt() != null) {
-            search.setDeletedAt(null);
-        } else {
-            search.setUpdatedAt(OffsetDateTime.now());
+            try {
+                searchRepository.save(search);
+            } catch (DataIntegrityViolationException e) {
+                throw new CommonException(ResponseCode.SAVE_FAILED);
+            }
+
+        } else{ // 결과가 있는 경우
+
+            Search search = optionalSearch.get();
+
+            if(search.getDeletedAt() != null){ // 지워졌던 결과 라면
+                search.setDeletedAt(null);
+                search.setUpdatedAt(OffsetDateTime.now());
+            }
+            else{ // 존재하는 결과라면
+
+                search.setUpdatedAt(OffsetDateTime.now());
+            }
         }
     }
 
