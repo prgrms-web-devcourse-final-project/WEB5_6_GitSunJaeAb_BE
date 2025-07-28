@@ -90,8 +90,8 @@ public class MemberQuest {
     private String description;
 
 
-//    @OneToMany(mappedBy = "MemberQuest", cascade = CascadeType.REMOVE, orphanRemoval = true)
-//    private Set<Notification> notifications = new HashSet<>();
+    @OneToMany(mappedBy = "MemberQuest", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private Set<Notification> notifications = new HashSet<>();
 
 
 
