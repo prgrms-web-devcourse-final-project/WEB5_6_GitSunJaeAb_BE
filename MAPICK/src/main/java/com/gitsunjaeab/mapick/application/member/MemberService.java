@@ -22,6 +22,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import java.io.IOException;
+
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -115,7 +117,8 @@ public class MemberService {
         }
     }
 
-    // 멤버 리스트 조회
+    // 멤버 리스트 조회 - 관리자
+    // complete
     public List<MemberListDTO> getAllMembers() {
 
         final List<Member> members = memberRepository.findAllByDeletedAtIsNull(Sort.by("id")); // 탈퇴하지 않은 사용자들만 죠회
@@ -128,6 +131,7 @@ public class MemberService {
     }
 
     // 멤버 상세 조회(상세 버전) - 관리자
+    // complete
     public MemberDTO getMember(final Long memberId) {
 
         final Member member = memberRepository.findByIdAndDeletedAtIsNull(memberId)
@@ -138,11 +142,12 @@ public class MemberService {
         return memberDTO;
     }
 
-    // 사용자 정보 조회 -사용자
+    // 사용자 정보 조회 - 사용자
+    // complete
     @Transactional
-    public MemberDetailDTO getMemberProfile(Long memberId) {
+    public MemberDetailDTO getMemberProfile(final Long memberId) {
 
-        Member member = memberRepository.findById(memberId)
+        final Member member = memberRepository.findByIdAndDeletedAtIsNull(memberId)
                 .orElseThrow(() -> new CommonException(ResponseCode.MEMBER_NOT_FOUND));
 
         List<MemberInterest> memberInterests = memberInterestRepository.findAllByMemberId(memberId);
@@ -157,32 +162,36 @@ public class MemberService {
     }
 
     // 사용자 정보(프로필) 수정
+    // complete
     @Transactional
     public void updateMemberProfile(final Long memberId,
                                     final MemberProfileUpdateRequest memberProfileUpdateRequest,
                                     MultipartFile imageFile) {
-        try{
-        final Member member = memberRepository.findById(memberId)
+
+        final Member member = memberRepository.findByIdAndDeletedAtIsNull(memberId)
                 .orElseThrow(() -> new CommonException(ResponseCode.MEMBER_NOT_FOUND));
 
         String nickname = memberProfileUpdateRequest.getNickname();
 
 
-        if (nickname != null && !nickname.isBlank()) {
+        if (nickname != null && !nickname.isBlank() && !nickname.equals(member.getNickname())) {
+            if(memberRepository.existsByNickname(nickname)){
+                throw new CommonException(ResponseCode.NICKNAME_DUPLICATED);
+            }
             member.setNickname(nickname);
         }
 
         if (imageFile != null && !imageFile.isEmpty()) {
-            String imageUrl = supabaseStorageService.upload(imageFile);
-            member.setProfileImage(imageUrl);
+            try {
+                String imageUrl = supabaseStorageService.upload(imageFile);
+                member.setProfileImage(imageUrl);
+            } catch (RuntimeException e) {
+                throw new CommonException(ResponseCode.FILE_UPLOAD_FAILED);
+            }
         }
 
         member.setUpdatedAt(OffsetDateTime.now());
 
-
-        }catch (DataIntegrityViolationException e){
-            throw new CommonException(ResponseCode.DB_CONSTRAINT_VIOLATION); // DB 제약 조건 위배
-        }
     }
 
     // 관리자 - 특정 유저 블랙 리스트 설정

@@ -44,7 +44,8 @@ public class MemberController {
 
     // ===== 회원 조회 API =====
 
-    // 전체 회원 조회 (관리자 전용) -> todo 완성(예외처리 필요)
+    // 전체 회원 조회 (관리자 전용)
+    // complete
     @GetMapping("/list")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "[관리자 전용] 전체 회원 조회 (관리자)", description = "[관리자 전용] 관리자만 접근 가능한 전체 회원 목록 조회" )
@@ -59,7 +60,8 @@ public class MemberController {
                 .body(response);
     }
 
-    // 특정 회원 상세 조회 (관리자 전용) -> todo 완성(예외처리 필요)
+    // 특정 회원 상세 조회 (관리자 전용)
+    // complete
     @GetMapping("{memberId}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "[관리자 전용] 특정 회원 조회(괸라자) ", description = " 특정 회원 정보 조회")
@@ -166,7 +168,8 @@ public class MemberController {
      *
      */
 
-    // 본인 회원 정보 조회 (프로필) -> todo 완성(예외처리 필요)
+    // 본인 회원 정보 조회 (프로필)
+    // complete
     @GetMapping
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @Operation(summary = "[사용자] 회원 정보 조회", description = "[사용자 전용] 본인만 접근 가능한 프로필 조회" )
@@ -184,7 +187,8 @@ public class MemberController {
                 .body(response);
     }
 
-    // 회원 정보 수정 (프로필) -> todo 프로필 사진 변경 되게 수정
+    // 회원 정보 수정 (프로필)
+    // complete
     @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @Operation(summary = "[사용자]회원 정보 수정(프로필)", description = "사용자 회원 정보 수정")
@@ -204,7 +208,8 @@ public class MemberController {
                 .body(response);
     }
 
-    // 회원 탈퇴 (사용자) -> todo 완성(예외처리 필요)
+    // 회원 탈퇴 (사용자)
+    // complete
     @DeleteMapping ("/withdraw")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @Operation(summary = "[사용자]회원 탈퇴", description = "회원 탈퇴")
