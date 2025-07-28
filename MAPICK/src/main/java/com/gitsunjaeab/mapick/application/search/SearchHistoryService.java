@@ -79,6 +79,7 @@ public class SearchHistoryService {
 
 
     // 최근 검색어 삭제
+    // complete
     @Transactional
     public void deleteSearchHistory(Long memberId,String keyword) {
 
@@ -89,6 +90,7 @@ public class SearchHistoryService {
     }
 
     // 최근 검색어 목록 삭제
+    // complete
     @Transactional
     public void deleteSearchHistoryList(Long memberId) {
 
