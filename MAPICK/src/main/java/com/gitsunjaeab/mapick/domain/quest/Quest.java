@@ -1,6 +1,7 @@
 package com.gitsunjaeab.mapick.domain.quest;
 
 import com.gitsunjaeab.mapick.domain.member.Member;
+import com.gitsunjaeab.mapick.domain.notification.Notification;
 import com.gitsunjaeab.mapick.domain.report.Report;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -80,5 +81,8 @@ public class Quest {
 
     @OneToMany(mappedBy = "quest", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<QuestRank> questQuestTopSubmitters = new HashSet<>();
+
+//    @OneToMany(mappedBy = "Quest", cascade = CascadeType.REMOVE, orphanRemoval = true)
+//    private Set<Notification> notifications = new HashSet<>();
 
 }

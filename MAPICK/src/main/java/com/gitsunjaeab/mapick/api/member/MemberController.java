@@ -42,6 +42,8 @@ public class MemberController {
      *
      */
 
+    // ===== 회원 조회 API =====
+
     // 전체 회원 조회 (관리자 전용) -> todo 완성(예외처리 필요)
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/list")
@@ -71,6 +73,8 @@ public class MemberController {
                 .status(HttpStatus.OK)
                 .body(response);
     }
+
+    // ===== 회원 블랙리스트 설정/해제 API =====
 
     // 회원의 블랙리스트 설정 (관리자 전용) -> todo 완성(예외처리 필요)
     @PreAuthorize("hasRole('ADMIN')")
@@ -102,6 +106,8 @@ public class MemberController {
                 .body(response);
     }
 
+    // ===== 회원 관리자 권한 부여/회수 API =====
+
     // 회원 관리자 권한 부여 (관리자 전용) -> todo 완성(예외처리 필요)
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/role/{memberId}")
@@ -132,6 +138,8 @@ public class MemberController {
                 .body(response);
     }
 
+    // ===== 회원 삭제 API =====
+
     // 회원 삭제 (관리자 전용) -> todo 완성(예외처리 필요)
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("{memberId}")
@@ -154,7 +162,7 @@ public class MemberController {
      */
 
     // 본인 회원 정보 조회 (프로필) -> todo 완성(예외처리 필요)
-    //    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @GetMapping
     @Operation(summary = "[사용자] 회원 정보 조회", description = "[사용자 전용] 본인만 접근 가능한 프로필 조회" )
     public ResponseEntity<MemberProfileResponse> getMemberProfile() {
@@ -172,7 +180,7 @@ public class MemberController {
     }
 
     // 회원 정보 수정 (프로필) -> todo 프로필 사진 변경 되게 수정
-    //    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "[사용자]회원 정보 수정(프로필)", description = "사용자 회원 정보 수정")
     public ResponseEntity<MemberResponse> updateMember(
@@ -192,7 +200,7 @@ public class MemberController {
     }
 
     // 회원 탈퇴 (사용자) -> todo 완성(예외처리 필요)
-    //    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @DeleteMapping ("/withdraw")
     @Operation(summary = "[사용자]회원 탈퇴", description = "회원 탈퇴")
     public ResponseEntity<MemberResponse> withdrawMember() {
@@ -212,7 +220,7 @@ public class MemberController {
     // ===== 회원 관심분야 관리 API =====
 
     // 회원 관심분야 선택 (본인만) -> todo 완성(예외처리 필요)
-    //    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @PostMapping("/interests")
     @Operation(summary = "[사용자]회원 관심분야 선택", description = "[사용자 전용] 본인만 접근 가능한 관심분야 선택")
     public ResponseEntity<MemberInterestResponse> createMemberInterest(@Valid @RequestBody MemberInterestRequest memberInterestRequest) {
@@ -230,7 +238,7 @@ public class MemberController {
     }
 
     // 회원 관심분야 수정 (본인만) -> todo 완성
-    //    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @PutMapping("/interests")
     @Operation(summary = "[사용자]회원 관심분야 수정", description = "[사용자 전용] 본인만 접근 가능한 관심분야 수정")
     public ResponseEntity<MemberInterestResponse> updateMemberInterest(@Valid @RequestBody MemberInterestRequest memberInterestRequest) {
@@ -250,7 +258,7 @@ public class MemberController {
     // ===== 회원 비밀번호 관리 API =====
 
     // 마이페이지 - 비밀번호 확인 (본인만) -> todo 완성(예외처리 필요)
-//    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @PostMapping("/password/verify")
     @Operation(summary = "[사용자]비밀번호 확인", description = "[사용자 전용] 본인만 접근 가능한 비밀번호 확인")
     public ResponseEntity<MemberResponse> verifyPassword(@Valid @RequestBody PasswordRequest passwordRequest) {

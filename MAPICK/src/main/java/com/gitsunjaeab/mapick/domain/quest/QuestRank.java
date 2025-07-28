@@ -39,6 +39,9 @@ public class QuestRank {
     @Column(nullable = false)
     private Integer rank;
 
+    @Column(nullable = false)
+    private Integer score = 0;
+
     @Column
     private OffsetDateTime completedAt;
 

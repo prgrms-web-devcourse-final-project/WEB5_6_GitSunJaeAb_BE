@@ -15,6 +15,9 @@ public class QuestRankDTO {
     @NotNull
     private Integer rank;
 
+    //랭킹 점수
+    private Integer score;
+
     private OffsetDateTime completedAt;
 
     private OffsetDateTime createdAt;

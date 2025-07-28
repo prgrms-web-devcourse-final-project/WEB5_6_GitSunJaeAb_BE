@@ -14,7 +14,6 @@ public class MemberQuestCreateRequest {
 
     @NotBlank
     private String title;    // 증빙 제목
-    private String evidenceImage;    // 증빙 이미지 URL
     private String description;    // 증빙 내용/설명
 
     @NotBlank
