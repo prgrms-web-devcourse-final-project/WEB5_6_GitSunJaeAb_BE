@@ -62,7 +62,7 @@ public class ReportService {
     @Transactional(readOnly = true)
     public ReportDetailDTO getReportDetail(Long reportId) {
 
-        Report report = reportRepository.findById(reportId)
+        final Report report = reportRepository.findById(reportId)
                 .orElseThrow(() -> new CommonException(ResponseCode.REPORT_NOT_FOUND));
 
         ReportDetailDTO reportDetailDTO = ReportDetailDTO.of(report);
@@ -74,13 +74,16 @@ public class ReportService {
     @Transactional
     public void processReport(Long reportId) {
 
-        Report report = reportRepository.findById(reportId)
+        final Report report = reportRepository.findById(reportId)
                 .orElseThrow(() -> new CommonException(ResponseCode.REPORT_NOT_FOUND));
-        
+
+        if(report.getStatus().equals(ReportStatus.RESOLVED)){
+            throw new CommonException(ResponseCode.ALREADY_PROCESSED);
+        }
+
         report.setStatus(ReportStatus.RESOLVED);
         report.setResolvedAt(OffsetDateTime.now());
-        
-        reportRepository.save(report);
+
     }
 
     // ===== 사용자용 신고 생성 메서드들 =====
@@ -89,10 +92,10 @@ public class ReportService {
     @Transactional
     public ReportDTO createMapReport(Long roadmapId, MapReportRequest mapReportRequest) {
 
-        Member reporter = memberRepository.findById(mapReportRequest.getReporterId())
+        final Member reporter = memberRepository.findById(mapReportRequest.getReporterId())
                 .orElseThrow(() -> new CommonException(ResponseCode.REPORTER_NOT_FOUND));
-        
-        Roadmap roadmap = roadmapRepository.findById(roadmapId)
+
+        final Roadmap roadmap = roadmapRepository.findById(roadmapId)
                 .orElseThrow(() -> new CommonException(ResponseCode.MAP_NOT_FOUND));
         
         Report report = Report.builder()

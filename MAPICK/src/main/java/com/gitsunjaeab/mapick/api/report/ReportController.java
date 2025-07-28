@@ -72,6 +72,7 @@ public class ReportController {
             @PathVariable(name = "reportId") final Long reportId) {
 
         reportService.processReport(reportId);
+
         ReportProcessResponse response = ReportProcessResponse.of();
 
         return ResponseEntity
