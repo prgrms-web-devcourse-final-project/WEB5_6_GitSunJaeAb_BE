@@ -5,6 +5,7 @@ import com.gitsunjaeab.mapick.api.search.dto.request.SearchRequest;
 import com.gitsunjaeab.mapick.api.search.dto.response.SearchListResponse;
 import com.gitsunjaeab.mapick.application.search.SearchHistoryService;
 import com.gitsunjaeab.mapick.application.search.SearchService;
+import com.gitsunjaeab.mapick.domain.auth.Principal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,12 +29,12 @@ public class SearchController {
     private final SearchService searchService;
     private final SearchHistoryService searchHistoryService;
 
-    @GetMapping
-    public ResponseEntity<SearchListResponse> search(@RequestParam("keyword") String keyword) {
-        SearchListResponse resultResponse = searchService.search(keyword);
-
-        return ResponseEntity.ok(resultResponse);
-    }
+//    @GetMapping
+//    public ResponseEntity<SearchListResponse> search(@RequestParam("keyword") String keyword) {
+//        SearchListResponse resultResponse = searchService.search(keyword);
+//
+//        return ResponseEntity.ok(resultResponse);
+//    }
 
 
     // 최신 검색 목록 조회
@@ -40,10 +42,10 @@ public class SearchController {
     @GetMapping("/list")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @Operation(summary = "최신 검색 목록 조회", description = "최신 검색 목록 조회" )
-    public ResponseEntity<SearchListResponse> getSearchHistories() {
+    public ResponseEntity<SearchListResponse> getSearchHistories(
+            @AuthenticationPrincipal Principal principal) {
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Long memberId = Long.parseLong(auth.getName());
+        Long memberId = principal.getMember().getId();
 
         List<SearchHistoryDTO> searchHistoryDTOs = searchHistoryService.getSearchHistories(memberId);
 
@@ -59,10 +61,11 @@ public class SearchController {
     @PostMapping
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @Operation(summary = "최신 검색 목록 저장", description = "최신 검색 목록 저장" )
-    public ResponseEntity<SearchListResponse> saveSearchHistory(@RequestBody SearchRequest searchRequest) {
+    public ResponseEntity<SearchListResponse> saveSearchHistory(
+            @AuthenticationPrincipal Principal principal,
+            @RequestBody SearchRequest searchRequest) {
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Long memberId = Long.parseLong(auth.getName());
+        Long memberId = principal.getMember().getId();
 
         searchHistoryService.saveSearchHistory(memberId,searchRequest);
 
@@ -78,10 +81,11 @@ public class SearchController {
     @DeleteMapping
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @Operation(summary = "최신 검색 항목 단일 삭제", description = "최신 검색 항목 단일 삭제" )
-    public ResponseEntity<SearchListResponse> deletSearchHistory(@RequestParam("keyword") String keyword) {
+    public ResponseEntity<SearchListResponse> deletSearchHistory(
+            @AuthenticationPrincipal Principal principal,
+            @RequestParam("keyword") String keyword) {
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Long memberId = Long.parseLong(auth.getName());
+        Long memberId = principal.getMember().getId();
 
         searchHistoryService.deleteSearchHistory(memberId,keyword);
 
@@ -98,10 +102,10 @@ public class SearchController {
     @DeleteMapping("/list")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @Operation(summary = "최신 검색 목록 삭제", description = "최신 검색 목록 삭제" )
-    public ResponseEntity<SearchListResponse> deletSearchHistoryList() {
+    public ResponseEntity<SearchListResponse> deletSearchHistoryList(
+            @AuthenticationPrincipal Principal principal) {
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Long memberId = Long.parseLong(auth.getName());
+        Long memberId = principal.getMember().getId();
 
         searchHistoryService.deleteSearchHistoryList(memberId);
 
