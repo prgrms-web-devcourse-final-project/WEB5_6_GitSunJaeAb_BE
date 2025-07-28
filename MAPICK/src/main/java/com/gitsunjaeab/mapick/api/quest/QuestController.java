@@ -162,4 +162,24 @@ public class QuestController {
         MemberQuestJudgeResponse response = memberQuestService.judgeMemberQuest(request, judgeMember);
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "퀘스트 판별 완료"));
     }
+
+    @GetMapping("/{questId}/ranking")
+    @Operation(summary = "퀘스트 정답자 랭킹 조회", description = "정답 맞춘 순서대로 퀘스트 참여자 랭킹을 조회합니다.")
+    public ResponseEntity<List<MemberQuestRankResponse>> getQuestRankingByCorrectOrder(
+        @PathVariable(name = "questId") Long questId
+    ) {
+        List<MemberQuestRankResponse> ranking = memberQuestService.getRankedMembersByQuest(questId);
+        return ResponseEntity.ok(ranking);
+    }
+
+    @GetMapping("/{questId}/ranking/top3")
+    @Operation(summary = "퀘스트 상위 3명 랭킹 조회", description = "정답 맞춘 순서 기준으로 상위 3명만 조회합니다.")
+    public ResponseEntity<List<MemberQuestRankResponse>> getTop3QuestRanking(
+        @PathVariable(name = "questId") Long questId
+    ) {
+        List<MemberQuestRankResponse> top3 = memberQuestService.getTop3RankedMembersByQuest(questId);
+        return ResponseEntity.ok(top3);
+    }
+
+
 }

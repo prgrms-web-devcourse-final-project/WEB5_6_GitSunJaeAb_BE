@@ -5,6 +5,7 @@ import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestCreateRequest;
 import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestCreateResponse;
 import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestJudgeRequest;
 import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestJudgeResponse;
+import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestRankResponse;
 import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestResponse;
 import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestUpdateRequest;
 import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestUpdateResponse;
@@ -20,7 +21,9 @@ import com.gitsunjaeab.mapick.util.NotFoundException;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -62,10 +65,10 @@ public class MemberQuestService {
                 .orElseThrow(NotFoundException::new);
     }
 
-    //(참여자)내가 여태 참여한 퀘스트 조회
+    //(참여자) 내가 여태 참여한 퀘스트 조회
     public List<MemberQuestResponse> findByMember(Member member) {
         return memberQuestRepository.findByMember(member).stream()
-            .map(this::toResponse) // 또는 MemberQuestResponse.of(mq)
+            .map(this::toResponse)
             .toList();
     }
 
@@ -196,17 +199,12 @@ public class MemberQuestService {
         final MemberQuest memberQuest = memberQuestRepository
             .findWithQuestAndMemberById(request.getMemberQuestId())
             .orElseThrow(() -> new NotFoundException("참여 내역을 찾을 수 없습니다."));
-
-
         // 권한 확인: judgeMember = 제출자 (제출자인지 확인)
         if (!memberQuest.getQuest().getMember().getId().equals(judgeMember.getId())) {
             throw new NotFoundException("퀘스트 판정 권한이 없습니다.");
         }
-
-
         //Null값 확인
         Boolean recognized = request.getIsRecognized();
-
         if (recognized == null){
             throw new IllegalStateException("정답여부를 판단해 주세요");
         }
@@ -216,15 +214,46 @@ public class MemberQuestService {
         memberQuest.setUpdatedAt(OffsetDateTime.now(ZoneId.of("Asia/Seoul")));
 
         // 정답일 경우 점수를 부여
-        if (recognized){
-            final Member submitter = memberQuest.getMember();
-            final Quest quest = memberQuest.getQuest();
-            questRankService.addScore(submitter,quest,100); //100점씩
-        }
+//        if (recognized){
+//            final Member submitter = memberQuest.getMember();
+//            final Quest quest = memberQuest.getQuest();
+//            questRankService.addScore(submitter,quest,100); //100점씩
+//        }
 
         // 저장 후 DTO로 반환
         return MemberQuestJudgeResponse.of(memberQuestRepository.save(memberQuest));
     }
+
+    // 퀘스트별 랭킹 정렬 조회
+    public List<MemberQuestRankResponse> getRankedMembersByQuest(final Long questId) {
+        // 정답 처리된 참여자만 조회
+        final List<MemberQuest> recognized = memberQuestRepository.findByQuestIdAndRecognizedTrue(questId);
+
+        // 정렬: createdAt → updatedAt 순
+        final List<MemberQuest> sorted = recognized.stream()
+            .sorted(Comparator.comparing(memberQuest ->
+                memberQuest.getCreatedAt() != null ? memberQuest.getCreatedAt() : memberQuest.getUpdatedAt()
+            ))
+            .toList();
+
+        // 랭크 매기기
+        AtomicInteger rankCounter = new AtomicInteger(1);
+        return sorted.stream()
+            .map(mq -> new MemberQuestRankResponse(
+                rankCounter.getAndIncrement(),
+                mq.getMember().getId(),
+                mq.getMember().getNickname(),
+                mq.getMember().getProfileImage()
+            ))
+            .toList();
+    }
+
+    //top3 선별
+    public List<MemberQuestRankResponse> getTop3RankedMembersByQuest(Long questId) {
+        List<MemberQuestRankResponse> fullRanking = getRankedMembersByQuest(questId);
+        return fullRanking.stream().limit(3).toList();
+    }
+
 
     // 참여 취소 이건 추후 상황봐서
     public void deleteMemberQuest(final Long id) {

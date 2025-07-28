@@ -1,6 +1,8 @@
 package com.gitsunjaeab.mapick.domain.quest;
 
 import com.gitsunjaeab.mapick.domain.member.Member;
+import com.gitsunjaeab.mapick.domain.notification.Notification;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -88,11 +90,9 @@ public class MemberQuest {
     private String description;
 
 
-//    @OneToMany(mappedBy = "comment", cascade = CascadeType.REMOVE, orphanRemoval = true)
+//    @OneToMany(mappedBy = "MemberQuest", cascade = CascadeType.REMOVE, orphanRemoval = true)
 //    private Set<Notification> notifications = new HashSet<>();
-//
-    //잠시 주석 처리
-//    @OneToMany(mappedBy = "memberQuest")
-//    private Set<MemberQuestEvidence> memberQuestMemberQuestEvidences = new HashSet<>();
+
+
 
 }
