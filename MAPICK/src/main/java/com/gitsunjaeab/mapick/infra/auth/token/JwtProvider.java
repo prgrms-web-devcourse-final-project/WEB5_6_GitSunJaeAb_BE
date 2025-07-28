@@ -16,7 +16,6 @@ import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SecurityException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Base64;
@@ -24,7 +23,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import javax.crypto.SecretKey;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -56,21 +54,20 @@ public class JwtProvider {
     private SecretKey secretKey;
 
     // 비밀 키 만들기
-    public SecretKey getSecretKey() {
-        if (secretKey == null) {
-            String base64Key = Base64.getEncoder().encodeToString(key.getBytes());
-            secretKey = Keys.hmacShaKeyFor(base64Key.getBytes(StandardCharsets.UTF_8));
+    public SecretKey getSecretKey(){
+        if(secretKey == null){
+            secretKey  = Keys.hmacShaKeyFor(key.getBytes(StandardCharsets.UTF_8));
         }
         return secretKey;
     }
 
-    // JWT 발급(로그인 시)
-    public TokenDTO generateAccessToken(Authentication authentication) {
+    // JWT 발급
+    public TokenDTO generateAccessToken(Authentication authentication){
         return generateAccessToken(authentication.getName());
     }
 
-    // JWT 발급(재발급 시)
-    public TokenDTO generateAccessToken(String email) {
+    // JWT 발급
+    public TokenDTO generateAccessToken(String email){
         String id = UUID.randomUUID().toString();
         long now = new Date().getTime();
         Date atExpiresIn = new Date(now + atExpiration); // 만료일자 생성
@@ -82,13 +79,12 @@ public class JwtProvider {
         List<String> authorities = List.of(member.getRole());
 
         String accessToken = Jwts.builder()
-                .subject(email)
-                .id(id)
-                .expiration(atExpiresIn)
-                .claim("authorities", authorities)
-                .claim("memberId", member.getId())
-                .signWith(getSecretKey())
-                .compact();
+            .subject(email)
+            .id(id)
+            .expiration(atExpiresIn)
+            .claim("authorities", authorities)
+            .signWith(getSecretKey())
+            .compact();
 
         TokenDTO tokenDto = TokenDTO.builder()
                 .id(id)
@@ -101,6 +97,7 @@ public class JwtProvider {
 
     // JWT -> 인증 객체 생성
     public Authentication generateAuthentication(String accessToken) {
+
         String email = parseClaim(accessToken).getSubject();
 
         Member member = memberRepository.findByEmail(email)
@@ -109,6 +106,7 @@ public class JwtProvider {
         List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(member.getRole()));
 
         Principal principal = new Principal(member);
+
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 
@@ -128,12 +126,13 @@ public class JwtProvider {
         try {
             Jwts.parser().verifyWith(getSecretKey()).build().parse(requestAccessToken);
             return true;
-        } catch (SecurityException | MalformedJwtException | UnsupportedJwtException | IllegalArgumentException |
-                 ExpiredJwtException e) {
+        }catch(SecurityException | MalformedJwtException
+               | UnsupportedJwtException | IllegalArgumentException
+               | ExpiredJwtException e){
             System.out.println("❌ JWT 유효성 검사 실패: " + e.getClass().getSimpleName() + " - " + e.getMessage());
             e.printStackTrace();
+            throw e;
         }
-        return false;
     }
 
     // HTTP 요청에서 특정 토큰 꺼내기
