@@ -21,9 +21,6 @@ public class ReportSimpleDTO {
 
     private Long id;
 
-//    @Size(max = 255)
-//    private String reportType;
-
     private MemberSimpleDTO reporter;  // 신고자
 
     private MemberSimpleDTO reportedMember;  // 피신고자
@@ -49,9 +46,9 @@ public class ReportSimpleDTO {
                 .id(report.getId())
                 .reporter(MemberSimpleDTO.of(report.getReporter()))
                 .reportedMember(MemberSimpleDTO.of(report.getReportedMember()))
-                .roadmap(report.getRoadmap().getId())
-                .marker(report.getMarker().getId())
-                .quest(report.getQuest().getId())
+                .roadmap(report.getRoadmap() != null ? report.getRoadmap().getId() : null)
+                .marker(report.getMarker() != null ? report.getMarker().getId() : null)
+                .quest(report.getQuest() != null ? report.getQuest().getId() : null)
                 .status(report.getStatus())
                 .createdAt(report.getCreatedAt())
                 .resolvedAt(report.getResolvedAt())

@@ -3,12 +3,7 @@ package com.gitsunjaeab.mapick.application.roadmap;
 import com.gitsunjaeab.mapick.api.roadmap.dto.marker.*;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
-import com.gitsunjaeab.mapick.domain.roadmap.Layer;
-import com.gitsunjaeab.mapick.domain.roadmap.LayerRepository;
-import com.gitsunjaeab.mapick.domain.roadmap.Marker;
-import com.gitsunjaeab.mapick.domain.roadmap.MarkerCustomImage;
-import com.gitsunjaeab.mapick.domain.roadmap.MarkerCustomImageRepository;
-import com.gitsunjaeab.mapick.domain.roadmap.MarkerRepository;
+import com.gitsunjaeab.mapick.domain.roadmap.*;
 import com.gitsunjaeab.mapick.infra.storage.SupabaseStorageService;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import jakarta.persistence.EntityNotFoundException;
@@ -25,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class MarkerService {
 
+    private final RoadmapEditorService roadmapEditorService;
     private final MarkerRepository markerRepository;
     private final SupabaseStorageService supabaseStorageService;
     private final LayerRepository layerRepository;
@@ -48,6 +44,8 @@ public class MarkerService {
         }
 
         final Marker marker = request.toEntity(layer, member, customImage);
+
+        roadmapEditorService.registerEditorIfNotExists(layer.getRoadmap().getId(), member.getId());
         return markerRepository.save(marker);
     }
 
@@ -63,6 +61,10 @@ public class MarkerService {
         }
 
         applyUpdateRequestToMarker(marker, request, newCustomImage);
+
+        Long roadmapId = marker.getLayer().getRoadmap().getId();
+        Long memberId = marker.getMember().getId();
+        roadmapEditorService.registerEditorIfNotExists(roadmapId, memberId);
         return marker;
     }
 
@@ -70,8 +72,11 @@ public class MarkerService {
     public Marker deleteFromSync(MarkerSyncRequest request) {
         Marker marker = markerRepository.findByMarkerTempId(request.getMarkerTempId())
                 .orElseThrow(() -> new IllegalArgumentException("마커 없음"));
-
         markerRepository.delete(marker);
+
+        Long roadmapId = marker.getLayer().getRoadmap().getId();
+        Long memberId = marker.getMember().getId();
+        roadmapEditorService.registerEditorIfNotExists(roadmapId, memberId);
         return marker;
     }
 

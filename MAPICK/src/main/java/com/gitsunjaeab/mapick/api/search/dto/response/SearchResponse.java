@@ -12,7 +12,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class SearchListResponse implements BaseApiResponse {
+public class SearchResponse implements BaseApiResponse {
 
     private String code;
     private String message;
@@ -24,8 +24,8 @@ public class SearchListResponse implements BaseApiResponse {
 
 
 
-    public static SearchListResponse get(List<SearchHistoryDTO> SearchHistoryDTOs) {
-        return new SearchListResponse(
+    public static SearchResponse getList(List<SearchHistoryDTO> SearchHistoryDTOs) {
+        return new SearchResponse(
                 ResponseCode.OK.getCode(),
                 "최근 검색어 목록 조회 완료",
                 OffsetDateTime.now(),
@@ -33,8 +33,8 @@ public class SearchListResponse implements BaseApiResponse {
         );
     }
 
-    public static SearchListResponse save() {
-        return new SearchListResponse(
+    public static SearchResponse save() {
+        return new SearchResponse(
                 ResponseCode.OK.getCode(),
                 "최근 검색어 저장 완료",
                 OffsetDateTime.now(),
@@ -42,8 +42,8 @@ public class SearchListResponse implements BaseApiResponse {
         );
     }
 
-    public static SearchListResponse remove() {
-        return new SearchListResponse(
+    public static SearchResponse remove() {
+        return new SearchResponse(
                 ResponseCode.OK.getCode(),
                 "최근 검색어 삭제 완료",
                 OffsetDateTime.now(),
@@ -51,8 +51,8 @@ public class SearchListResponse implements BaseApiResponse {
         );
     }
 
-    public static SearchListResponse removeList() {
-        return new SearchListResponse(
+    public static SearchResponse removeList() {
+        return new SearchResponse(
                 ResponseCode.OK.getCode(),
                 "최근 검색어 목록 삭제 완료",
                 OffsetDateTime.now(),
