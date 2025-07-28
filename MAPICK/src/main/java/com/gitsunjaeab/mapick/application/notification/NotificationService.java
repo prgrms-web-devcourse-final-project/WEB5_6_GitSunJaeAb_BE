@@ -4,6 +4,7 @@ import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
 import com.gitsunjaeab.mapick.api.notification.dto.NotificationListDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapSimpleDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerSimpleDTO;
+import com.gitsunjaeab.mapick.api.roadmap.dto.marker.MarkerSimpleDTO;
 import com.gitsunjaeab.mapick.domain.comment.Comment;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.notification.Notification;
@@ -163,6 +164,13 @@ public class NotificationService {
                     ? new LayerSimpleDTO(n.getLayerLibrary().getLayer()) : null);
                 dto.setRelatedQuestId(n.getMemberQuest() != null ? n.getMemberQuest().getId() : null);
                 dto.setRelatedCommentId(null); // TODO: 댓글 알림 있으면 추후 세팅
+
+                if (n.getLayerLibrary() != null && n.getLayerLibrary().getLayer() != null) {
+                    List<MarkerSimpleDTO> markers = n.getLayerLibrary().getLayer().getLayerMarkers().stream()
+                        .map(MarkerSimpleDTO::from)
+                        .toList();
+                    dto.setRelatedMarkers(markers);
+                }
 
                 return dto;
             })
