@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -53,12 +54,13 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
         "LEFT JOIN FETCH n.comment c " +
         "LEFT JOIN FETCH c.member " +
         "LEFT JOIN FETCH n.roadmap " +
-        "LEFT JOIN FETCH n.layerLibrary " +
+        "LEFT JOIN FETCH n.layerLibrary ll " +
+        "LEFT JOIN FETCH ll.layer " +
         "LEFT JOIN FETCH n.quest " +
         "LEFT JOIN FETCH n.memberQuest " +
         "WHERE n.deletedAt IS NULL AND n.member.id = :memberId " +
         "ORDER BY n.createdAt DESC")
-    List<Notification> findAllWithAllRelationsByMemberId(Long memberId);
+    List<Notification> findAllWithAllRelationsByMemberId(@Param("memberId") Long memberId);
 
     // 본인(memberId) 알림 타입별 fetch join (삭제된 알림 제외)
     @Query("SELECT n FROM Notification n " +

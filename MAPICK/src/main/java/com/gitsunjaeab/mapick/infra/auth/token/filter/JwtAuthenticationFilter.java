@@ -57,10 +57,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String requestAccessToken = jwtProvider.resolveToken(request, TokenType.ACCESS_TOKEN); // access token 추출
 
         try {
+
             if (requestAccessToken == null || requestAccessToken.isBlank()) { // 빈 jtw가 오는 경우
 //                throw new IllegalArgumentException("Access Token is missing or empty.");
                 filterChain.doFilter(request, response);
                 return;
+
             }
 
             if (accessTokenBlacklistRepository.existsByToken(requestAccessToken)) {
