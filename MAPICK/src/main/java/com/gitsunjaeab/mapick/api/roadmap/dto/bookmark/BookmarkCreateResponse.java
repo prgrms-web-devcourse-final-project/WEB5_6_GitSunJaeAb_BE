@@ -5,7 +5,7 @@ import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Getter
 @AllArgsConstructor
@@ -13,13 +13,13 @@ public class BookmarkCreateResponse implements BaseApiResponse {
 
     private final String code;
     private final String message;
-    private final LocalDateTime timestamp;
+    private final OffsetDateTime timestamp;
 
     public static BookmarkCreateResponse of(ResponseCode responseCode, String message) {
         return new BookmarkCreateResponse(
                 responseCode.getCode(),
                 message,
-                LocalDateTime.now()
+                OffsetDateTime.now()
         );
     }
 }

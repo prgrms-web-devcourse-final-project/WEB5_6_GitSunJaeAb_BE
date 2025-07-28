@@ -6,7 +6,7 @@ import com.gitsunjaeab.mapick.domain.roadmap.Hashtag;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Getter
@@ -14,7 +14,7 @@ import java.util.List;
 public class HashtagListResponse implements BaseApiResponse {
     private String code;
     private String message;
-    private LocalDateTime timestamp;
+    private OffsetDateTime timestamp;
     private List<HashtagResponse> hashtags;
 
     public static HashtagListResponse of(List<Hashtag> hashtagEntities) {
@@ -31,7 +31,7 @@ public class HashtagListResponse implements BaseApiResponse {
         return new HashtagListResponse(
             ResponseCode.OK.getCode(),
             "해시태그 목록 조회 성공",
-            LocalDateTime.now(),
+            OffsetDateTime.now(),
             hashtagResponses
         );
     }

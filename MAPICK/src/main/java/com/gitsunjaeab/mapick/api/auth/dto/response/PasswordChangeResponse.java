@@ -6,7 +6,7 @@ import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import lombok.Builder;
 import lombok.Data;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Data
 @Builder
@@ -14,14 +14,14 @@ import java.time.LocalDateTime;
 public class PasswordChangeResponse implements BaseApiResponse {
     private String code;
     private String message;
-    private LocalDateTime timestamp;
+    private OffsetDateTime timestamp;
     private TokenDTO tokenDTO;
 
     public static PasswordChangeResponse of(TokenDTO tokenDTO) {
         return new PasswordChangeResponse(
             ResponseCode.CHANGE_PASSWORD_SUCCESS.getCode(),
             ResponseCode.CHANGE_PASSWORD_SUCCESS.getMessage(),
-            LocalDateTime.now(),
+            OffsetDateTime.now(),
             tokenDTO
         );
     }

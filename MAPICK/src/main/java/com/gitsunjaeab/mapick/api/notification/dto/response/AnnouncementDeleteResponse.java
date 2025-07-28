@@ -2,7 +2,7 @@ package com.gitsunjaeab.mapick.api.notification.dto.response;
 
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -11,14 +11,14 @@ import lombok.Getter;
 public class AnnouncementDeleteResponse implements BaseApiResponse {
     private String code;
     private String message;
-    private LocalDateTime timestamp;
+    private OffsetDateTime timestamp;
 
     // 공지 삭제 성공 응답 생성용
     public static AnnouncementDeleteResponse of(String message) {
         return new AnnouncementDeleteResponse(
             ResponseCode.OK.getCode(),
             message,
-            LocalDateTime.now()
+            OffsetDateTime.now()
         );
     }
 } 

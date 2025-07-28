@@ -6,7 +6,7 @@ import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import lombok.Builder;
 import lombok.Data;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Data
 @Builder
@@ -14,14 +14,14 @@ import java.time.LocalDateTime;
 public class SigninResponse implements BaseApiResponse {
     private String code;
     private String message;
-    private LocalDateTime timestamp;
+    private OffsetDateTime timestamp;
     private TokenDTO token;
 
     public static SigninResponse social(TokenDTO tokenDTO) {
         return new SigninResponse(
                 ResponseCode.SOCIAL_SIGNIN_SUCCESS.getCode(),
                 ResponseCode.SOCIAL_SIGNIN_SUCCESS.getMessage(),
-                LocalDateTime.now(),
+                OffsetDateTime.now(),
                 tokenDTO
         );
     }
@@ -30,7 +30,7 @@ public class SigninResponse implements BaseApiResponse {
         return new SigninResponse(
                 ResponseCode.SIGNIN_SUCCESS.getCode(),
                 ResponseCode.SIGNIN_SUCCESS.getMessage(),
-                LocalDateTime.now(),
+                OffsetDateTime.now(),
                 tokenDTO
         );
     }

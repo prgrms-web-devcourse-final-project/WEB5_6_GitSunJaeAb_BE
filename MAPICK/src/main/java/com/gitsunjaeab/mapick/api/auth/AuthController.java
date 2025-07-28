@@ -1,18 +1,18 @@
 package com.gitsunjaeab.mapick.api.auth;
 
+import com.gitsunjaeab.mapick.api.auth.dto.internal.TokenDTO;
 import com.gitsunjaeab.mapick.api.auth.dto.request.SigninRequest;
 import com.gitsunjaeab.mapick.api.auth.dto.request.SignupRequest;
 import com.gitsunjaeab.mapick.api.auth.dto.request.SocialLoginRequest;
 import com.gitsunjaeab.mapick.api.auth.dto.response.LogoutResponse;
-import com.gitsunjaeab.mapick.api.auth.dto.response.SigninResponse;
 import com.gitsunjaeab.mapick.api.auth.dto.response.PasswordChangeResponse;
-import com.gitsunjaeab.mapick.api.auth.dto.internal.TokenDTO;
+import com.gitsunjaeab.mapick.api.auth.dto.response.SigninResponse;
 import com.gitsunjaeab.mapick.api.auth.dto.response.SignupResponse;
 import com.gitsunjaeab.mapick.api.member.dto.request.PasswordRequest;
 import com.gitsunjaeab.mapick.application.auth.AuthService;
 import com.gitsunjaeab.mapick.application.member.MemberService;
-import com.gitsunjaeab.mapick.common.response.ApiResponse;
-import com.gitsunjaeab.mapick.common.response.ResponseCode;
+import com.gitsunjaeab.mapick.domain.auth.AccessTokenBlacklist;
+import com.gitsunjaeab.mapick.domain.auth.AccessTokenBlacklistRepository;
 import com.gitsunjaeab.mapick.domain.auth.RefreshTokenRepository;
 import com.gitsunjaeab.mapick.infra.auth.token.JwtProvider;
 import com.gitsunjaeab.mapick.infra.auth.token.TokenCookieFactory;
@@ -31,6 +31,7 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -42,9 +43,6 @@ public class AuthController {
 
     private final AuthService authService;
     private final MemberService memberService;
-    private final JwtProvider jwtProvider;
-    private final RefreshTokenRepository refreshTokenRepository;
-
 
     // 소셜 로그인
     // complete
@@ -142,59 +140,38 @@ public class AuthController {
     }
 
     // 로그아웃
+    // todo 로그아웃 하지 않으면 refresh token 값이 삭제 되지 않음, 추후 어떻게 기존 db의 refresh 값을 삭제 할 것인지 고민
+    // todo 엑세스토큰이 블랙리스트로 저장이 되지 않는 이슈
     // complete
     @PostMapping("/logout")
     @Operation(summary = "로그 아웃")
     public ResponseEntity<LogoutResponse> logout(HttpServletRequest request, HttpServletResponse response) {
 
-        // 계정에 존재하는 기존 refresh token 및 access token 삭제 1
-        String accessToken = jwtProvider.resolveToken(request, TokenType.ACCESS_TOKEN);
-        Claims claims = jwtProvider.parseClaim(accessToken);
-        String jti = claims.getId();
-
-        refreshTokenRepository.deleteByAccessTokenId(jti);
-
-        // 계정에 존재하는 기존 refresh token 및 access token 삭제 2
-//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//        Long memberId = Long.parseLong(auth.getName());
-//        refreshTokenRepository.deleteByMemberId(memberId);
-
-        // todo 로그아웃 하지 않으면 refresh token 값이 삭제 되지 않음, 추후 어떻게 기존 db의 refresh 값을 삭제 할 것인지 고민
+       authService.logout(request);
 
         // 쿠키 굽기
-//      ResponseCookie expiredAccessToken = TokenCookieFactory.createExpiredToken(TokenType.ACCESS_TOKEN);
         ResponseCookie expiredRefreshToken = TokenCookieFactory.createExpiredToken(TokenType.REFRESH_TOKEN);
-//      ResponseCookie expiredSessionId = TokenCookieFactory.createExpiredToken(TokenType.AUTH_SERVER_SESSION_ID);
-
 
         // 응답 헤더에 추가
-//      response.addHeader("Set-Cookie", expiredAccessToken.toString());
         response.addHeader("Set-Cookie", expiredRefreshToken.toString());
-//      response.addHeader("Set-Cookie", expiredSessionId.toString());
 
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(LogoutResponse.logout());
     }
 
-
     // 마이페이지 - 비밀번호 수정 (본인만)
+    // complete
     @PutMapping("/password")
     @Operation(summary = "비밀번호 수정", description = "[사용자 전용] 본인만 접근 가능한 비밀번호 변경")
-    public ResponseEntity<PasswordChangeResponse> updatePassword(@Valid @RequestBody PasswordRequest passwordRequest, HttpServletResponse response) {
-
-        // todo 이전 엑세스 토큰의 블랙 리스트 처리 필요
+    public ResponseEntity<PasswordChangeResponse> updatePassword(@Valid @RequestBody PasswordRequest passwordRequest,
+                                                                 HttpServletRequest request, HttpServletResponse response) {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Long memberId = Long.parseLong(auth.getName());
 
-        TokenDTO tokenDTO = authService.updatePassword(memberId, passwordRequest.getPassword());
+        TokenDTO tokenDTO = authService.updatePassword(request,memberId, passwordRequest.getPassword());
 
-        ResponseCookie accessTokenCookie = TokenCookieFactory.create(
-                TokenType.ACCESS_TOKEN.name(),
-                tokenDTO.getAccessToken(),
-                tokenDTO.getAtExpiresIn()
-        );
         ResponseCookie refreshTokenCookie = TokenCookieFactory.create(
                 TokenType.REFRESH_TOKEN.name(),
                 tokenDTO.getRefreshToken(),

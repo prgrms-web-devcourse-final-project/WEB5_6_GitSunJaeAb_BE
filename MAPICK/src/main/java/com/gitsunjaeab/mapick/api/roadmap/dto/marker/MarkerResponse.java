@@ -3,7 +3,7 @@ package com.gitsunjaeab.mapick.api.roadmap.dto.marker;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -17,7 +17,7 @@ public class MarkerResponse implements BaseApiResponse {
 
     private String code;
     private String message;
-    private LocalDateTime timestamp;
+    private OffsetDateTime timestamp;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private MarkerDTO marker;
@@ -26,7 +26,7 @@ public class MarkerResponse implements BaseApiResponse {
         return new MarkerResponse(
             ResponseCode.OK.getCode(),
             "마커 생성 완료",
-            LocalDateTime.now(),
+            OffsetDateTime.now(),
             null
         );
     }
@@ -35,7 +35,7 @@ public class MarkerResponse implements BaseApiResponse {
         return new MarkerResponse(
             ResponseCode.OK.getCode(),
             "마커 조회 성공",
-            LocalDateTime.now(),
+            OffsetDateTime.now(),
             dto
         );
     }
@@ -44,7 +44,7 @@ public class MarkerResponse implements BaseApiResponse {
         return new MarkerResponse(
             ResponseCode.OK.getCode(),
             "마커 수정 완료",
-            LocalDateTime.now(),
+            OffsetDateTime.now(),
             null
         );
     }
@@ -53,7 +53,7 @@ public class MarkerResponse implements BaseApiResponse {
         return new MarkerResponse(
             ResponseCode.OK.getCode(),
             "마커 삭제 완료",
-            LocalDateTime.now(),
+            OffsetDateTime.now(),
             null
         );
     }

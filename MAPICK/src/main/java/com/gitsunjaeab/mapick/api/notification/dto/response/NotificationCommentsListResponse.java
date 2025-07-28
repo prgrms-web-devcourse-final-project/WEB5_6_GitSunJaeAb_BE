@@ -8,7 +8,7 @@ import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapSimpleDTO;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.notification.Notification;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,7 +19,7 @@ public class NotificationCommentsListResponse implements BaseApiResponse {
 
     private String code;
     private String message;
-    private LocalDateTime timestamp;
+    private OffsetDateTime timestamp;
     private List<NotificationCommentsListDTO> notifications;
     private List<RoadmapSimpleDTO> roadmaps;
     private List<QuestSimpleDTO> quests;
@@ -59,7 +59,7 @@ public class NotificationCommentsListResponse implements BaseApiResponse {
         return new NotificationCommentsListResponse(
             ResponseCode.OK.getCode(),
             message,
-            LocalDateTime.now(),
+            OffsetDateTime.now(),
             notificationCommentsListDTOs,
             null,
             null
