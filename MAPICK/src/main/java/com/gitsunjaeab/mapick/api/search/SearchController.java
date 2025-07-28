@@ -2,7 +2,7 @@ package com.gitsunjaeab.mapick.api.search;
 
 import com.gitsunjaeab.mapick.api.search.dto.SearchHistoryDTO;
 import com.gitsunjaeab.mapick.api.search.dto.request.SearchRequest;
-import com.gitsunjaeab.mapick.api.search.dto.response.SearchListResponse;
+import com.gitsunjaeab.mapick.api.search.dto.response.SearchResponse;
 import com.gitsunjaeab.mapick.application.search.SearchHistoryService;
 import com.gitsunjaeab.mapick.application.search.SearchService;
 import com.gitsunjaeab.mapick.domain.auth.Principal;
@@ -13,9 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -42,14 +40,14 @@ public class SearchController {
     @GetMapping("/list")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @Operation(summary = "최신 검색 목록 조회", description = "최신 검색 목록 조회" )
-    public ResponseEntity<SearchListResponse> getSearchHistories(
+    public ResponseEntity<SearchResponse> getSearchHistories(
             @AuthenticationPrincipal Principal principal) {
 
         Long memberId = principal.getMember().getId();
 
         List<SearchHistoryDTO> searchHistoryDTOs = searchHistoryService.getSearchHistories(memberId);
 
-        SearchListResponse response = SearchListResponse.get(searchHistoryDTOs);
+        SearchResponse response = SearchResponse.getList(searchHistoryDTOs);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -61,7 +59,7 @@ public class SearchController {
     @PostMapping
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @Operation(summary = "최신 검색 목록 저장", description = "최신 검색 목록 저장" )
-    public ResponseEntity<SearchListResponse> saveSearchHistory(
+    public ResponseEntity<SearchResponse> saveSearchHistory(
             @AuthenticationPrincipal Principal principal,
             @RequestBody SearchRequest searchRequest) {
 
@@ -69,7 +67,7 @@ public class SearchController {
 
         searchHistoryService.saveSearchHistory(memberId,searchRequest);
 
-        SearchListResponse response = SearchListResponse.save();
+        SearchResponse response = SearchResponse.save();
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -81,7 +79,7 @@ public class SearchController {
     @DeleteMapping
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @Operation(summary = "최신 검색 항목 단일 삭제", description = "최신 검색 항목 단일 삭제" )
-    public ResponseEntity<SearchListResponse> deletSearchHistory(
+    public ResponseEntity<SearchResponse> deletSearchHistory(
             @AuthenticationPrincipal Principal principal,
             @RequestParam("keyword") String keyword) {
 
@@ -89,7 +87,7 @@ public class SearchController {
 
         searchHistoryService.deleteSearchHistory(memberId,keyword);
 
-        SearchListResponse response = SearchListResponse.remove();
+        SearchResponse response = SearchResponse.remove();
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -102,14 +100,14 @@ public class SearchController {
     @DeleteMapping("/list")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @Operation(summary = "최신 검색 목록 삭제", description = "최신 검색 목록 삭제" )
-    public ResponseEntity<SearchListResponse> deletSearchHistoryList(
+    public ResponseEntity<SearchResponse> deletSearchHistoryList(
             @AuthenticationPrincipal Principal principal) {
 
         Long memberId = principal.getMember().getId();
 
         searchHistoryService.deleteSearchHistoryList(memberId);
 
-        SearchListResponse response = SearchListResponse.removeList();
+        SearchResponse response = SearchResponse.removeList();
 
         return ResponseEntity
                 .status(HttpStatus.OK)
