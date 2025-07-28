@@ -10,14 +10,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.annotation.Order;
-import org.springframework.security.authentication.AuthenticationServiceException;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.web.servlet.HandlerExceptionResolver;
+
+import java.io.IOException;
 
 import java.io.IOException;
 
@@ -37,11 +33,13 @@ public class AuthExceptionFilter extends OncePerRequestFilter {
         try {
             filterChain.doFilter(request, response);
 
+
         } catch (IllegalArgumentException | JwtException ex) {
             log.warn("❌ 인증 관련 예외 발생: {}", ex.getMessage());
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
+
 
             ApiResponse apiResponse = ApiResponse.of(ResponseCode.UNAUTHORIZED);
             String json = objectMapper.writeValueAsString(apiResponse);
