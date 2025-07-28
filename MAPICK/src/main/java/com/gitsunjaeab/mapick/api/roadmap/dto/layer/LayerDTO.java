@@ -2,7 +2,7 @@ package com.gitsunjaeab.mapick.api.roadmap.dto.layer;
 
 import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.RoadmapSimpleDTO;
-import com.gitsunjaeab.mapick.domain.roadmap.Layer;
+import com.gitsunjaeab.mapick.domain.roadmap.layer.Layer;
 import java.time.OffsetDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

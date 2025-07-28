@@ -1,8 +1,9 @@
-package com.gitsunjaeab.mapick.api.roadmap.dto.layer;
+package com.gitsunjaeab.mapick.api.roadmap.dto.layer.response;
 
+import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerDetailDTO;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
-import com.gitsunjaeab.mapick.domain.roadmap.Layer;
+import com.gitsunjaeab.mapick.domain.roadmap.layer.Layer;
 import java.time.OffsetDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

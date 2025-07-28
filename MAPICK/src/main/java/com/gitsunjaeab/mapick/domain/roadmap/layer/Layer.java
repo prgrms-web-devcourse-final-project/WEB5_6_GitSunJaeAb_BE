@@ -1,6 +1,8 @@
-package com.gitsunjaeab.mapick.domain.roadmap;
+package com.gitsunjaeab.mapick.domain.roadmap.layer;
 
 
+import com.gitsunjaeab.mapick.domain.roadmap.Marker;
+import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
 import com.gitsunjaeab.mapick.infra.converter.OffsetDateTimeConverter;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Convert;
@@ -8,7 +10,7 @@ import jakarta.persistence.EntityListeners;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerRequest;
+import com.gitsunjaeab.mapick.api.roadmap.dto.layer.request.LayerRequest;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

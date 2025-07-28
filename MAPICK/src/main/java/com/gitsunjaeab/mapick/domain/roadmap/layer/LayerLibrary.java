@@ -1,6 +1,7 @@
-package com.gitsunjaeab.mapick.domain.roadmap;
+package com.gitsunjaeab.mapick.domain.roadmap.layer;
 
 import com.gitsunjaeab.mapick.domain.member.Member;
+import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
 import com.gitsunjaeab.mapick.infra.converter.OffsetDateTimeConverter;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -64,6 +65,10 @@ public class LayerLibrary {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "layer_id")
     private Layer layer;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "roadmap_id")
+    private Roadmap roadmap;
 
     @Column(nullable = false)
     private boolean isZzim = false; // 기본값 : 찜 안한 상태
