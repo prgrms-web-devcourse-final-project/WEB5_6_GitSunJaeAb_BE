@@ -1,6 +1,7 @@
 package com.gitsunjaeab.mapick.api.member.dto;
 
 import com.gitsunjaeab.mapick.domain.member.Member;
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -28,12 +29,18 @@ public class MemberSimpleDTO {
     @Size(max = 255)
     private String profileImage;
 
+    @Size(max = 255)
+    private String role;
+
+
+
     public MemberSimpleDTO(Member member) {
         this.id = member.getId();
         this.name = member.getName();
         this.nickname = member.getNickname();
         this.email = member.getEmail();
         this.profileImage = member.getProfileImage() != null ? member.getProfileImage() : null;
+        this.role = member.getRole();
     }
 
     public static MemberSimpleDTO from(Member member) {
@@ -48,6 +55,7 @@ public class MemberSimpleDTO {
                 .nickname(member.getNickname())
                 .email(member.getEmail())
                 .profileImage(member.getProfileImage())
+                .role(member.getRole())
                 .build();
     }
 

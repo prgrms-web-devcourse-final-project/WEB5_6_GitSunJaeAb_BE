@@ -57,6 +57,7 @@ public class BookmarkService {
         bookmark.setRoadmap(roadmap);
         bookmark.setMember(member);
         bookmark.setCreatedAt(OffsetDateTime.now());
+        roadmap.setLikeCount(roadmap.getLikeCount() + 1);
 
         // === 알림 발송 로직 (북마크 시)===
         Member roadmapOwner = roadmap.getMember();
@@ -81,8 +82,15 @@ public class BookmarkService {
         Bookmark bookmark = bookmarkRepository.findById(bookmarkId)
                 .orElseThrow(() -> new NotFoundException("북마크가 존재하지 않습니다."));
 
+
         if (!bookmark.getMember().getId().equals(memberId)) {
             throw new ForbiddenException(ResponseCode.FORBIDDEN);
+        }
+
+        Roadmap roadmap = bookmark.getRoadmap();
+        Integer currentLikeCount = roadmap.getLikeCount();
+        if (currentLikeCount != null && currentLikeCount > 0) {
+            roadmap.setLikeCount(currentLikeCount - 1);
         }
 
         bookmarkRepository.delete(bookmark);
