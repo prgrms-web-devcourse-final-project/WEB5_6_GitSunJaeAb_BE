@@ -1,7 +1,7 @@
 package com.gitsunjaeab.mapick.api.roadmap.dto.marker;
 
 import com.gitsunjaeab.mapick.domain.member.Member;
-import com.gitsunjaeab.mapick.domain.roadmap.Layer;
+import com.gitsunjaeab.mapick.domain.roadmap.layer.Layer;
 import com.gitsunjaeab.mapick.domain.roadmap.Marker;
 import com.gitsunjaeab.mapick.domain.roadmap.MarkerCustomImage;
 import lombok.AllArgsConstructor;

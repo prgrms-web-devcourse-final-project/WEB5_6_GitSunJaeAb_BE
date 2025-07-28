@@ -1,7 +1,8 @@
-package com.gitsunjaeab.mapick.domain.roadmap;
+package com.gitsunjaeab.mapick.domain.roadmap.layer;
 
 import com.gitsunjaeab.mapick.domain.member.Member;
 
+import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
 import java.util.List;
 import java.util.Optional;
 
