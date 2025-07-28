@@ -109,6 +109,16 @@ public class QuestController {
         return ResponseEntity.ok(MemberQuestListResponse.of(memberQuestService.findByQuestId(questId)));
     }
 
+    @GetMapping("/memberQuest/my")
+    @Operation(summary = "내가 참여한 퀘스트 목록 조회", description = "현재 로그인한 사용자가 참여한 퀘스트 목록을 조회합니다.")
+    public ResponseEntity<MemberQuestListResponse> getMyParticipatedQuests(
+        @AuthenticationPrincipal Principal principal) {
+        if (principal == null) throw new IllegalStateException("인증된 유저 정보 없음");
+
+        Member member = principal.getMember();
+        return ResponseEntity.ok(MemberQuestListResponse.of(memberQuestService.findByMember(member)));
+    }
+
     @PostMapping(value = "/{questId}/memberQuest", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "퀘스트 참여 신청 및 증빙자료 제출", description = "[참여자용] 특정 퀘스트에 참여 신청을 합니다.")
     public ResponseEntity<ApiResponse> participateInQuest(

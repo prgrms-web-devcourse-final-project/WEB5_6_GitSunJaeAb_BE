@@ -61,6 +61,14 @@ public class MemberQuestService {
                 .map(this::toResponse)
                 .orElseThrow(NotFoundException::new);
     }
+
+    //(참여자)내가 여태 참여한 퀘스트 조회
+    public List<MemberQuestResponse> findByMember(Member member) {
+        return memberQuestRepository.findByMember(member).stream()
+            .map(this::toResponse) // 또는 MemberQuestResponse.of(mq)
+            .toList();
+    }
+
     //-------------------------------------------------------------------------
 
     //(참여자) 퀘스트 참여
@@ -243,29 +251,4 @@ public class MemberQuestService {
         return response;
     }
 
-//    // Request → Entity 변환
-//    private void requestToEntity(final MemberQuestRequest request, final MemberQuest memberQuest) {
-//        // 기본 상태 설정
-//        memberQuest.setStatus(true); // 대기 상태로 초기화
-//        memberQuest.setIsRecognized("N"); // 인정 여부 초기값
-//
-//        //요청값 반영
-//        memberQuest.setTitle(request.getTitle());
-//        memberQuest.setAnswer(request.getAnswer());
-//        memberQuest.setImageUrl(request.getEvidenceImage());
-//        memberQuest.setDescription(request.getDescription());
-//        memberQuest.setSubmitAt(java.time.OffsetDateTime.now());
-
-
-//        // 연관 엔티티 설정
-//        final Quest quest = questRepository.findById(request.getQuest())
-//                .orElseThrow(() -> new NotFoundException("quest not found"));
-//        memberQuest.setQuest(quest);
-//
-////        memberQuest.setMember(member);
-////        //기존 코드
-//        final Member member = memberRepository.findById(request.getMember())
-//                .orElseThrow(() -> new NotFoundException("member not found"));
-//        memberQuest.setMember(member);
-//    }
 }
