@@ -25,6 +25,7 @@ public class SearchHistoryService {
     private final MemberRepository memberRepository;
 
     // 최근 검색어 목록 조회
+    // complete
     public List<SearchHistoryDTO> getSearchHistories(Long memberId) {
 
         final List<Search> searches = searchRepository.findAllByMemberIdAndDeletedAtIsNull(memberId);
