@@ -5,9 +5,12 @@ import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestCreateRequest;
 import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestCreateResponse;
 import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestJudgeRequest;
 import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestJudgeResponse;
+import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestRankResponse;
 import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestResponse;
+import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestSubmissionDTO;
 import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestUpdateRequest;
 import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestUpdateResponse;
+import com.gitsunjaeab.mapick.api.quest.dto.MemberRankingDTO;
 import com.gitsunjaeab.mapick.application.notification.NotificationService;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.notification.NotificationType;
@@ -15,15 +18,19 @@ import com.gitsunjaeab.mapick.domain.quest.MemberQuest;
 import com.gitsunjaeab.mapick.domain.quest.MemberQuestRepository;
 import com.gitsunjaeab.mapick.domain.quest.Quest;
 import com.gitsunjaeab.mapick.domain.quest.QuestRepository;
+import com.gitsunjaeab.mapick.infra.storage.SupabaseStorageService;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +39,8 @@ public class MemberQuestService {
     private final MemberQuestRepository memberQuestRepository;
     private final QuestRepository questRepository;
     private final NotificationService notificationService;
+    private final SupabaseStorageService supabaseStorageService;
+    private final QuestRankService questRankService;
 
 
     // 전체 참여 목록 조회 //확인
@@ -57,21 +66,37 @@ public class MemberQuestService {
                 .map(this::toResponse)
                 .orElseThrow(NotFoundException::new);
     }
+
+    //(참여자) 내가 여태 참여한 퀘스트 조회
+    public List<MemberQuestResponse> findByMember(Member member) {
+        return memberQuestRepository.findByMember(member).stream()
+            .map(this::toResponse)
+            .toList();
+    }
+
     //-------------------------------------------------------------------------
 
     //(참여자) 퀘스트 참여
     @Transactional
-    public MemberQuestCreateResponse createMemberQuest(final MemberQuestCreateRequest request,
-        final Member member) {
+    public MemberQuestCreateResponse createMemberQuest(
+        final MemberQuestCreateRequest request,
+        final Member member,
+        final MultipartFile imageFile
+    ) {
         final Quest quest = questRepository.findById(request.getQuestId())
             .orElseThrow(() -> new NotFoundException("퀘스트를 찾을 수 없습니다."));
+
 
         final MemberQuest memberQuest = new MemberQuest();
         memberQuest.setQuest(quest);
         memberQuest.setMember(member);
         memberQuest.setTitle(request.getTitle());
         memberQuest.setAnswer(request.getAnswer());
-        memberQuest.setImageUrl(request.getEvidenceImage());
+        if(imageFile != null && !imageFile.isEmpty()){
+            String uploadedUrl = supabaseStorageService.upload(imageFile);
+            memberQuest.setImageUrl(uploadedUrl);
+        }
+
         memberQuest.setDescription(request.getDescription());
         memberQuest.setSubmitAt(OffsetDateTime.now(ZoneId.of("Asia/Seoul")));
         memberQuest.setStatus(true);
@@ -143,7 +168,8 @@ public class MemberQuestService {
     public MemberQuestUpdateResponse updateMemberQuest(
         final Long id,
         final MemberQuestUpdateRequest request,
-        final Member member
+        final Member member,
+        final MultipartFile imageFile
     ) {
         final MemberQuest memberQuest = memberQuestRepository.findById(id)
             .orElseThrow(() -> new NotFoundException("참여 내역을 찾을 수 없습니다."));
@@ -155,7 +181,12 @@ public class MemberQuestService {
         }
         memberQuest.setTitle(request.getTitle());
         memberQuest.setAnswer(request.getAnswer());
-        memberQuest.setImageUrl(request.getEvidenceImage());
+
+        if(imageFile != null && !imageFile.isEmpty()){
+            String uploadedUrl = supabaseStorageService.upload(imageFile);
+            memberQuest.setImageUrl(uploadedUrl);
+        }
+
         memberQuest.setDescription(request.getDescription());
         memberQuest.setUpdatedAt(OffsetDateTime.now(ZoneId.of("Asia/Seoul")));
 
@@ -167,26 +198,97 @@ public class MemberQuestService {
         final MemberQuestJudgeRequest request,
         final Member judgeMember
     ) {
-        final MemberQuest memberQuest = memberQuestRepository.findById(request.getMemberQuestId())
+        final MemberQuest memberQuest = memberQuestRepository
+            .findWithQuestAndMemberById(request.getMemberQuestId())
             .orElseThrow(() -> new NotFoundException("참여 내역을 찾을 수 없습니다."));
-
         // 권한 확인: judgeMember = 제출자 (제출자인지 확인)
         if (!memberQuest.getQuest().getMember().getId().equals(judgeMember.getId())) {
             throw new NotFoundException("퀘스트 판정 권한이 없습니다.");
         }
+        //Null값 확인
+        Boolean recognized = request.getIsRecognized();
+        if (recognized == null){
+            throw new IllegalStateException("정답여부를 판단해 주세요");
+        }
 
         // 정답 여부 설정
-        memberQuest.setIsRecognized(request.getIsRecognized() ? "Y" : "N");
+        memberQuest.setIsRecognized(recognized ? "Y" : "N");
         memberQuest.setUpdatedAt(OffsetDateTime.now(ZoneId.of("Asia/Seoul")));
 
         // 저장 후 DTO로 반환
         return MemberQuestJudgeResponse.of(memberQuestRepository.save(memberQuest));
     }
 
+    // 퀘스트별 랭킹 정렬 조회
+    public List<MemberQuestRankResponse> getRankedMembersByQuest(final Long questId) {
+        // 정답 처리된 참여자만 조회
+        final List<MemberQuest> recognized = memberQuestRepository.findByQuestIdAndRecognizedTrue(questId);
+
+        // 정렬: createdAt → updatedAt 순
+        final List<MemberQuest> sorted = recognized.stream()
+            .sorted(Comparator.comparing(memberQuest ->
+                memberQuest.getCreatedAt() != null ? memberQuest.getCreatedAt() : memberQuest.getUpdatedAt()
+            ))
+            .toList();
+
+        // 랭크 매기기
+        AtomicInteger rankCounter = new AtomicInteger(1);
+        return sorted.stream()
+            .map(mq -> new MemberQuestRankResponse(
+                rankCounter.getAndIncrement(),
+                mq.getMember().getId(),
+                mq.getMember().getNickname(),
+                mq.getMember().getProfileImage()
+            ))
+            .toList();
+    }
+
+    //top3 선별
+    public List<MemberQuestRankResponse> getTop3RankedMembersByQuest(Long questId) {
+        List<MemberQuestRankResponse> fullRanking = getRankedMembersByQuest(questId);
+        return fullRanking.stream().limit(3).toList();
+    }
+
+
     // 참여 취소 이건 추후 상황봐서
     public void deleteMemberQuest(final Long id) {
         memberQuestRepository.deleteById(id);
     }
+
+    public List<MemberQuestSubmissionDTO> getSubmissions(Long questId) {
+        final List<MemberQuest> memberQuests = memberQuestRepository.findWithMemberByQuestId(questId);
+
+        return memberQuests.stream()
+            .map(memberQuest -> new MemberQuestSubmissionDTO(
+                memberQuest.getImageUrl(),
+                "Y".equalsIgnoreCase(memberQuest.getIsRecognized()),
+                memberQuest.getMember().getNickname(),
+                memberQuest.getUpdatedAt() != null ? memberQuest.getUpdatedAt() : memberQuest.getCreatedAt()
+            ))
+            .toList();
+    }
+
+    //
+    public List<MemberRankingDTO> getRanking(Long questId) {
+        final List<MemberQuest> recognized = memberQuestRepository.findByQuestIdAndRecognizedTrue(questId);
+
+        final List<MemberQuest> sorted = recognized.stream()
+            .sorted(Comparator.comparing(memberQuest ->
+                memberQuest.getCreatedAt() != null ? memberQuest.getCreatedAt() : memberQuest.getUpdatedAt()
+            ))
+            .toList();
+
+        AtomicInteger rankCounter = new AtomicInteger(1);
+        return sorted.stream()
+            .map(memberQuest -> new MemberRankingDTO(
+                rankCounter.getAndIncrement(),
+                memberQuest.getMember().getNickname(),
+                memberQuest.getMember().getProfileImage()
+            ))
+            .toList();
+    }
+
+
 
     // Entity → Response 변환
     private MemberQuestResponse toResponse(final MemberQuest memberQuest) {
@@ -208,29 +310,4 @@ public class MemberQuestService {
         return response;
     }
 
-//    // Request → Entity 변환
-//    private void requestToEntity(final MemberQuestRequest request, final MemberQuest memberQuest) {
-//        // 기본 상태 설정
-//        memberQuest.setStatus(true); // 대기 상태로 초기화
-//        memberQuest.setIsRecognized("N"); // 인정 여부 초기값
-//
-//        //요청값 반영
-//        memberQuest.setTitle(request.getTitle());
-//        memberQuest.setAnswer(request.getAnswer());
-//        memberQuest.setImageUrl(request.getEvidenceImage());
-//        memberQuest.setDescription(request.getDescription());
-//        memberQuest.setSubmitAt(java.time.OffsetDateTime.now());
-
-
-//        // 연관 엔티티 설정
-//        final Quest quest = questRepository.findById(request.getQuest())
-//                .orElseThrow(() -> new NotFoundException("quest not found"));
-//        memberQuest.setQuest(quest);
-//
-////        memberQuest.setMember(member);
-////        //기존 코드
-//        final Member member = memberRepository.findById(request.getMember())
-//                .orElseThrow(() -> new NotFoundException("member not found"));
-//        memberQuest.setMember(member);
-//    }
 }

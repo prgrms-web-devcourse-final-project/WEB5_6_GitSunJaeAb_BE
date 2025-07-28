@@ -1,6 +1,7 @@
 package com.gitsunjaeab.mapick.application.roadmap;
 
 import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerZzimSimpleDTO;
+import com.gitsunjaeab.mapick.api.roadmap.dto.marker.MarkerSimpleDTO;
 import com.gitsunjaeab.mapick.application.notification.NotificationService;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.member.Member;
@@ -16,6 +17,7 @@ import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
 import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
 import java.time.OffsetDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -56,7 +58,7 @@ public class LayerLibraryService {
         List<Long> layerIds = layerLibraryRepository.findLayerIdsByMemberId(member.getId());
 
         if (layerIds.isEmpty()) {
-            return new LayerZzimSimpleDTO(member, List.of(), Map.of());
+            return new LayerZzimSimpleDTO(member, List.of(), Map.of(), Map.of());
         }
 
         List<Layer> layers = layerRepository.findAllByIdWithMember(layerIds);
@@ -68,7 +70,15 @@ public class LayerLibraryService {
                 layer -> layerForkHistoryRepository.findByOriginalLayerAndMember(layer, member)
             ));
 
-        return new LayerZzimSimpleDTO(member, layers, forkHistoriesMap);
+        Map<Long, List<MarkerSimpleDTO>> markerMap = new HashMap<>();
+        for (Layer layer : layers) {
+            List<MarkerSimpleDTO> markers = layer.getLayerMarkers().stream()
+                .map(MarkerSimpleDTO::from)
+                .collect(Collectors.toList());
+            markerMap.put(layer.getId(), markers);
+        }
+
+        return new LayerZzimSimpleDTO(member, layers, forkHistoriesMap, markerMap );
     }
 
 

@@ -4,6 +4,8 @@ import com.gitsunjaeab.mapick.domain.auth.RefreshToken;
 import com.gitsunjaeab.mapick.domain.auth.RefreshTokenRepository;
 import java.util.Optional;
 import java.util.UUID;
+
+import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,16 +24,17 @@ public class RefreshTokenService {
     }
 
     // (갱신) RefreshToken 재발급 및 AccessToken과 연결
-    public RefreshToken renewingToken(String id, String newTokenId) {
-        RefreshToken refreshToken = findByAccessTokenId(id);
-        refreshToken.setToken(UUID.randomUUID().toString());
-        refreshToken.setAccessTokenId(newTokenId);
+    public RefreshToken renewingToken(String oldAccessTokenId, String newAccessTokenId) {
+        RefreshToken refreshToken = findByAccessTokenId(oldAccessTokenId);
+        refreshToken.setToken(UUID.randomUUID().toString()); // 새 refresh token 저장
+        refreshToken.setAccessTokenId(newAccessTokenId); // 새 access token 저장
         refreshTokenRepository.save(refreshToken);
         return refreshToken;
     }
 
-    // (조회) AccessToken에 대응되는 RefreshToken을 찾는 데 사용
     public RefreshToken findByAccessTokenId(String id){
-        return refreshTokenRepository.findByAccessTokenId(id).orElse(null);
+        return refreshTokenRepository.findByAccessTokenId(id)
+                .orElseThrow(() -> new JwtException("❌ AccessToken에 대응되는 RefreshToken이 존재하지 않습니다."));
     }
+
 }

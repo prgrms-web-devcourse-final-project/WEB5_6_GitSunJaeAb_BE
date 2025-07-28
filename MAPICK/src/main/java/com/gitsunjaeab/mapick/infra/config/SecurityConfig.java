@@ -6,9 +6,9 @@ import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.infra.auth.UserDetailsServiceImpl;
 import com.gitsunjaeab.mapick.infra.auth.token.filter.AuthExceptionFilter;
 import com.gitsunjaeab.mapick.infra.auth.token.filter.JwtAuthenticationFilter;
-import com.gitsunjaeab.mapick.infra.auth.token.filter.LogoutFilter;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,7 +24,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -32,17 +31,18 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity(prePostEnabled = true)
 @EnableCaching
 @RequiredArgsConstructor
+@Slf4j
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final AuthExceptionFilter authExceptionFilter;
-    private final LogoutFilter logoutFilter;
+//    private final LogoutFilter logoutFilter;
     private final ObjectMapper objectMapper;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .cors(Customizer.withDefaults())
+            .cors(Customizer.withDefaults()) // 교차 출처 요청 허용
             .csrf(AbstractHttpConfigurer::disable) // csrf 비활성화
             .formLogin(AbstractHttpConfigurer::disable) // 기본 인증 비활성화
             .logout(AbstractHttpConfigurer::disable) // 기본 로그아웃 비활성화
@@ -55,6 +55,7 @@ public class SecurityConfig {
                     response.setCharacterEncoding("UTF-8");
 
                     ApiResponse apiResponse = ApiResponse.of(ResponseCode.FORBIDDEN);
+                    log.info(objectMapper.writeValueAsString(apiResponse));
                     String json = objectMapper.writeValueAsString(apiResponse);
                     response.getWriter().write(json);
                 })
@@ -64,6 +65,8 @@ public class SecurityConfig {
                     response.setCharacterEncoding("UTF-8");
 
                     ApiResponse apiResponse = ApiResponse.of(ResponseCode.UNAUTHORIZED);
+                    log.info(objectMapper.writeValueAsString(apiResponse));
+                    log.info(apiResponse.toString());
                     String json = objectMapper.writeValueAsString(apiResponse);
                     response.getWriter().write(json);
                 })
@@ -71,13 +74,14 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/css/**", "/js/**", "/img/**").permitAll()
                 .requestMatchers("/index", "/auth/signin", "/auth/signup", "/auth/socialLogin").anonymous() // 로그인 하지 않은 사용자만 접근 가능
+
                 .requestMatchers(HttpMethod.POST, "/auth/signin", "/auth/signup" , "/auth/socialLogin","/auth/logout").permitAll() // 누구나 이 URL로 요청 가능
-                .requestMatchers("/swagger-ui/**","/v3/api-docs/**",  "/info/**").permitAll() // 누구나 이 URL로 요청 가능
-//              .requestMatchers("/home", "/interests/**", "/mypage/**","/maps/**","/layers/**","/markers/**").hasAnyRole("USER", "ADMIN") // 사용자페이지 접근 권한
+
+                .requestMatchers("/swagger-ui/**","/v3/api-docs/**", "/ws/**").permitAll() // 누구나 이 URL로 요청 가능
+//                .requestMatchers("/home","/members/**", "/interests/**", "/mypage/**","/maps/**","/layers/**","/markers/**").hasAnyRole("USER", "ADMIN") // 사용자페이지 접근 권한
                 .anyRequest().permitAll()
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-//            .addFilterBefore(logoutFilter, JwtAuthenticationFilter.class)
             .addFilterBefore(authExceptionFilter, JwtAuthenticationFilter.class);
 
         return http.build();
@@ -89,13 +93,10 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AccessDeniedHandler accessDeniedHandler() {
-        return (request, response, accessDeniedException) -> {
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);  // 권한 없음
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-            response.getWriter().write("{\"code\": \"4030\", \"message\": \"접근 권한이 없습니다.\"}");
-        };
+    public AuthenticationManager authenticationManager(HttpSecurity http, PasswordEncoder passwordEncoder, UserDetailsServiceImpl userDetailsService) throws Exception {
+        AuthenticationManagerBuilder builder = http.getSharedObject(AuthenticationManagerBuilder.class);
+        builder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
+        return builder.build();
     }
 
     // CORS 관련 보안 정책 추가
@@ -114,12 +115,5 @@ public class SecurityConfig {
 //        source.registerCorsConfiguration("/**", corsConfig); // 모든 경로에 적용
 //        return source;
 //    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http, PasswordEncoder passwordEncoder, UserDetailsServiceImpl userDetailsService) throws Exception {
-        AuthenticationManagerBuilder builder = http.getSharedObject(AuthenticationManagerBuilder.class);
-        builder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
-        return builder.build();
-    }
 
 }
