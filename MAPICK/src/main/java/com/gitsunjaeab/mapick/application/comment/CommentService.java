@@ -6,6 +6,7 @@ import com.gitsunjaeab.mapick.api.comment.dto.CommentDTO;
 import com.gitsunjaeab.mapick.api.comment.dto.CommentRequest;
 import com.gitsunjaeab.mapick.application.notification.NotificationService;
 import com.gitsunjaeab.mapick.common.EntityFinder;
+import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.achievement.Achievement;
 import com.gitsunjaeab.mapick.domain.achievement.MemberAchievement;
 import com.gitsunjaeab.mapick.domain.achievement.MemberAchievementRepository;
@@ -15,6 +16,7 @@ import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.notification.NotificationType;
 import com.gitsunjaeab.mapick.domain.quest.Quest;
 import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
+import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
 import com.gitsunjaeab.mapick.infra.error.exceptions.UnauthorizedAccessException;
 import jakarta.validation.Valid;
 import java.time.OffsetDateTime;
@@ -34,11 +36,11 @@ public class CommentService {
     private final EntityFinder entityFinder;
 
     @Transactional
-    public CommentAchievementDTO create(final CommentRequest request, final Long memberId) {
+    public CommentAchievementDTO create( @Valid final CommentRequest request, final Long memberId) {
         final Comment comment = new Comment();
         DtoToEntity(request, comment, memberId);
 
-        Comment savedComment = commentRepository.save(comment);
+        final Comment savedComment = commentRepository.save(comment);
         notifyRoadmapOrQuestOwner(savedComment, memberId);
         Optional<AchievementDTO> achievementDTO = checkAndGrantCommentAchievement(memberId);
 
@@ -50,7 +52,7 @@ public class CommentService {
     }
 
     @Transactional
-    public List<CommentDTO> findAllCommentsInRoadmaps(Long roadmapId) {
+    public List<CommentDTO> findAllCommentsInRoadmaps(final Long roadmapId) {
         entityFinder.findRoadmapById(roadmapId);
         final List<Comment> comments = commentRepository.findAllByRoadmap_Id(roadmapId);
 
@@ -60,7 +62,7 @@ public class CommentService {
     }
 
     @Transactional
-    public List<CommentDTO> findAllCommentsInQuest(Long questId) {
+    public List<CommentDTO> findAllCommentsInQuest(final Long questId) {
         entityFinder.findQuestById(questId);
         final List<Comment> comments = commentRepository.findAllByQuest_Id(questId);
 
@@ -71,14 +73,15 @@ public class CommentService {
 
     @Transactional
     public CommentDTO getComment(final Long commentId) {
-        Comment comment = entityFinder.findCommentById(commentId);
+        final Comment comment = entityFinder.findCommentById(commentId);
 
         return new CommentDTO(comment);
     }
 
     @Transactional
-    public CommentDTO update(Long commentId, Long memberId, @Valid CommentRequest request) {
-        Comment comment = entityFinder.findCommentById(commentId);
+
+    public CommentDTO update(final Long commentId, final Long memberId, @Valid final CommentRequest request) {
+        final Comment comment = entityFinder.findCommentById(commentId);
 
         if (!comment.getMember().getId().equals(memberId)) {
             throw new UnauthorizedAccessException("댓글 수정은 해당 댓글의 작성자만 가능합니다.");
@@ -92,8 +95,8 @@ public class CommentService {
     }
 
     @Transactional
-    public void delete(final Long commentId, Long memberId) {
-        Comment comment = entityFinder.findCommentById(commentId);
+    public void delete(final Long commentId, final Long memberId) {
+        final Comment comment = entityFinder.findCommentById(commentId);
 
         if (!comment.getMember().getId().equals(memberId)) {
             throw new UnauthorizedAccessException("댓글 삭제는 해당 댓글의 작성자만 가능합니다.");
@@ -103,7 +106,7 @@ public class CommentService {
     }
 
     @Transactional
-    public List<Comment> findAllCommentsByMember(Long memberId) {
+    public List<Comment> findAllCommentsByMember(final Long memberId) {
 
         return commentRepository.findAllByMember_Id(memberId);
     }
@@ -116,7 +119,7 @@ public class CommentService {
 
         // 둘 다 있는 경우
         if (request.getRoadmapId() != null && request.getQuestId() != null) {
-            throw new IllegalArgumentException("로드맵과 퀘스트 중 하나에만 댓글을 달 수 있습니다.");
+            throw new CommonException(ResponseCode.INVALID_INPUT, "로드맵과 퀘스트 중 하나에만 댓글을 달 수 있습니다.");
         }
 
         // 둘 다 null 인 경우
@@ -141,7 +144,7 @@ public class CommentService {
         comment.setMember(member);
     }
 
-    private void notifyRoadmapOrQuestOwner(Comment comment, Long commenterId) {
+    private void notifyRoadmapOrQuestOwner(final Comment comment, final Long commenterId) {
         if (comment.getRoadmap() != null) {
             Member owner = comment.getRoadmap().getMember();
             if (!owner.getId().equals(commenterId)) {
@@ -159,7 +162,7 @@ public class CommentService {
         }
     }
 
-    private Optional<AchievementDTO> checkAndGrantCommentAchievement(Long memberId) {
+    private Optional<AchievementDTO> checkAndGrantCommentAchievement(final Long memberId) {
         final long commentCount = commentRepository.countByMemberId(memberId);
         final long ACHIEVEMENT_ID = 103L;
 
