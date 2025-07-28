@@ -6,6 +6,7 @@ import com.gitsunjaeab.mapick.api.report.dto.ReportDetailDTO;
 import com.gitsunjaeab.mapick.api.report.dto.request.MapReportRequest;
 import com.gitsunjaeab.mapick.api.report.dto.request.QuestReportRequest;
 import com.gitsunjaeab.mapick.api.report.dto.request.MarkerReportRequest;
+import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.report.ReportRepository;
 import com.gitsunjaeab.mapick.domain.report.ReportStatus;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
@@ -18,6 +19,7 @@ import com.gitsunjaeab.mapick.domain.quest.QuestRepository;
 import com.gitsunjaeab.mapick.api.report.dto.ReportSimpleDTO;
 import com.gitsunjaeab.mapick.domain.report.Report;
 import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
+import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import java.time.OffsetDateTime;
@@ -56,23 +58,24 @@ public class ReportService {
     }
 
     // [관리자] 특정 신고 조회
+    // complete
     @Transactional(readOnly = true)
     public ReportDetailDTO getReportDetail(Long reportId) {
 
         Report report = reportRepository.findById(reportId)
-                .orElseThrow(() -> new EntityNotFoundException("해당 신고가 존재하지 않습니다. id=" + reportId));
+                .orElseThrow(() -> new CommonException(ResponseCode.REPORT_NOT_FOUND));
 
         ReportDetailDTO reportDetailDTO = ReportDetailDTO.of(report);
 
         return reportDetailDTO;
     }
 
-    // 신고 처리 완료 (관리자용)
+    // [관리자] 신고 처리 완료
     @Transactional
     public void processReport(Long reportId) {
 
         Report report = reportRepository.findById(reportId)
-                .orElseThrow(() -> new NotFoundException("신고를 찾을 수 없습니다"));
+                .orElseThrow(() -> new CommonException(ResponseCode.REPORT_NOT_FOUND));
         
         report.setStatus(ReportStatus.RESOLVED);
         report.setResolvedAt(OffsetDateTime.now());
@@ -87,10 +90,10 @@ public class ReportService {
     public ReportDTO createMapReport(Long roadmapId, MapReportRequest mapReportRequest) {
 
         Member reporter = memberRepository.findById(mapReportRequest.getReporterId())
-                .orElseThrow(() -> new NotFoundException("신고자를 찾을 수 없습니다"));
+                .orElseThrow(() -> new CommonException(ResponseCode.REPORTER_NOT_FOUND));
         
         Roadmap roadmap = roadmapRepository.findById(roadmapId)
-                .orElseThrow(() -> new NotFoundException("지도를 찾을 수 없습니다"));
+                .orElseThrow(() -> new CommonException(ResponseCode.MAP_NOT_FOUND));
         
         Report report = Report.builder()
                 .reporter(reporter)
@@ -109,7 +112,7 @@ public class ReportService {
 
     }
 
-    // 마커 신고 생성 -> todo org.hibernate.LazyInitializationException: 해결 필요
+    // 마커 신고 생성
     @Transactional
     public ReportDTO createMarkerReport(Long markerId, MarkerReportRequest markerReportRequest) {
 
@@ -135,7 +138,7 @@ public class ReportService {
         return reportDTO;
     }
     
-    // 퀘스트 신고 생성 -> todo org.hibernate.LazyInitializationException: 해결 필요
+    // 퀘스트 신고 생성
     @Transactional
     public ReportDTO createQuestReport(Long questId, QuestReportRequest questReportRequest) {
 

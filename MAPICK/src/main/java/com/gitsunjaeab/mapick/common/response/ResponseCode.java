@@ -30,6 +30,9 @@ public enum ResponseCode {
     MEMBER_NOT_FOUND("4042", HttpStatus.NOT_FOUND, "존재하지 않는 회원입니다."),
     INTEREST_NOT_FOUND("4043", HttpStatus.NOT_FOUND, "존재하지 않는 관심분야 입니다."),
     IMAGE_NOT_FOUND("4044", HttpStatus.NOT_FOUND, "존재하지 않는 사진 입니다."),
+    REPORT_NOT_FOUND("4044", HttpStatus.NOT_FOUND, "존재하지 않는 신고 입니다."),
+    MAP_NOT_FOUND("4044", HttpStatus.NOT_FOUND, "존재하지 않는 지도 입니다."),
+    REPORTER_NOT_FOUND("4044", HttpStatus.NOT_FOUND, "존재하지 않는 신고자 입니다."),
 
 
 
