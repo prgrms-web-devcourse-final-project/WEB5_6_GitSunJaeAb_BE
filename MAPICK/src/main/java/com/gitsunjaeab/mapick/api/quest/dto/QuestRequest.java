@@ -31,7 +31,6 @@ public class QuestRequest {
     private OffsetDateTime deadline;
 
     @Schema(description = "퀘스트 활성화 여부", example = "true")
-    @NotNull
     @JsonProperty("isActive")
     private Boolean isActive;
 

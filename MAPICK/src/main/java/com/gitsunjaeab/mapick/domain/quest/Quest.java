@@ -57,6 +57,9 @@ public class Quest {
     @Column(nullable = false)
     private OffsetDateTime deadline;
 
+    @Column(nullable = false)
+    private Long viewCount = 0L;
+
     @Column
     private OffsetDateTime createdAt;
 

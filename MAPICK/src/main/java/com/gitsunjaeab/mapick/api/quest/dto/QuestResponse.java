@@ -33,6 +33,7 @@ public class QuestResponse {
 
     private OffsetDateTime deadline;
 
+
     @NotNull
     @JsonProperty("isActive")
     private Boolean isActive;
@@ -45,9 +46,10 @@ public class QuestResponse {
 
     private OffsetDateTime deletedAt;
 
-//    private Long member;
-
     private MemberSimpleDTO member;
+
+    private Long viewCount;
+
     public static QuestResponse of(com.gitsunjaeab.mapick.domain.quest.Quest quest) {
         QuestResponse response = new QuestResponse();
         response.setId(quest.getId());
@@ -65,7 +67,7 @@ public class QuestResponse {
         if (quest.getMember() != null) {
             response.setMember(MemberSimpleDTO.of(quest.getMember()));
         }
-
+        response.setViewCount(quest.getViewCount());
         return response;
     }
 
@@ -83,6 +85,7 @@ public class QuestResponse {
         response.setUpdatedAt(questDTO.getUpdatedAt());
         response.setDeletedAt(questDTO.getDeletedAt());
         response.setMember(questDTO.getMember());
+        response.setViewCount(questDTO.getViewCount());
         return response;
     }
     
@@ -100,7 +103,8 @@ public class QuestResponse {
             questResponse.getCompletedAt(),
             questResponse.getUpdatedAt(),
             questResponse.getDeletedAt(),
-            questResponse.getMember()
+            questResponse.getMember(),
+            questResponse.getViewCount()
         );
     }
     
@@ -118,7 +122,9 @@ public class QuestResponse {
             questResponse.getCompletedAt(),
             questResponse.getUpdatedAt(),
             questResponse.getDeletedAt(),
-            questResponse.getMember()
+            questResponse.getMember(),
+            questResponse.getViewCount()
+
         );
     }
     
@@ -136,7 +142,9 @@ public class QuestResponse {
             questResponse.getCompletedAt(),
             questResponse.getUpdatedAt(),
             questResponse.getDeletedAt(),
-            questResponse.getMember()
+            questResponse.getMember(),
+            questResponse.getViewCount()
+
         );
     }
 
@@ -154,7 +162,9 @@ public class QuestResponse {
             questDTO.getCompletedAt(),
             questDTO.getUpdatedAt(),
             questDTO.getDeletedAt(),
-            questDTO.getMember()
+            questDTO.getMember(),
+            questDTO.getViewCount()
+
         );
     }
     
@@ -171,7 +181,8 @@ public class QuestResponse {
             questDTO.getCompletedAt(),
             questDTO.getUpdatedAt(),
             questDTO.getDeletedAt(),
-            questDTO.getMember()
+            questDTO.getMember(),
+            questDTO.getViewCount()
         );
     }
 

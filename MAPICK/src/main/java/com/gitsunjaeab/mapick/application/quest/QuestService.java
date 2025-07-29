@@ -24,6 +24,7 @@ import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
 import com.gitsunjaeab.mapick.infra.storage.SupabaseStorageService;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import com.gitsunjaeab.mapick.util.ReferencedWarning;
+import jakarta.transaction.Transactional;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -179,6 +180,16 @@ public class QuestService {
         questRepository.save(quest);
     }
 
+    @Transactional
+    public QuestResponse getWithViews(final Long id) {
+        Quest quest = questRepository.findWithMemberById(id)
+            .orElseThrow(NotFoundException::new);
+        quest.setViewCount(quest.getViewCount() + 1);
+        questRepository.save(quest);
+
+        return questToResponse(quest);
+    }
+
     private QuestResponse questToResponse(final Quest quest) {
         QuestResponse questResponse = new QuestResponse();
         questResponse.setId(quest.getId());
@@ -192,6 +203,7 @@ public class QuestService {
         questResponse.setUpdatedAt(quest.getUpdatedAt());
         questResponse.setDeletedAt(quest.getDeletedAt());
         questResponse.setMember(MemberSimpleDTO.from(quest.getMember()));
+        questResponse.setViewCount(quest.getViewCount());
         return questResponse;
     }
 

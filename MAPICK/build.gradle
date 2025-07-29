@@ -98,7 +98,7 @@ dependencies {
 
 
 //    // Google Secret Manager(로컬에서 돌릴땐 빼야함)
-    implementation 'com.google.cloud:spring-cloud-gcp-starter-secretmanager:3.5.2'
+//    implementation 'com.google.cloud:spring-cloud-gcp-starter-secretmanager:3.5.2'
 
 
 }
