@@ -2,12 +2,11 @@ package com.gitsunjaeab.mapick.application.category;
 
 import com.gitsunjaeab.mapick.api.category.dto.CategoryDTO;
 import com.gitsunjaeab.mapick.api.category.dto.CategoryRequest;
+import com.gitsunjaeab.mapick.common.EntityFinder;
 import com.gitsunjaeab.mapick.domain.category.Category;
 import com.gitsunjaeab.mapick.domain.category.CategoryRepository;
-import com.gitsunjaeab.mapick.domain.roadmap.BookmarkRepository;
 import com.gitsunjaeab.mapick.infra.storage.SupabaseStorageService;
 import jakarta.persistence.EntityNotFoundException;
-import java.time.OffsetDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
@@ -22,26 +21,27 @@ public class CategoryService {
 
     private final CategoryRepository categoryRepository;
     private final SupabaseStorageService supabaseStorageService;
-    private final BookmarkRepository bookmarkRepository;
+    private final EntityFinder entityFinder;
 
     @Transactional
     public void create(CategoryRequest request, MultipartFile imageFile) {
-        Category category = new Category();
-        category.setName(request.getName());
-        category.setDescription(request.getDescription());
-        category.setCreatedAt(OffsetDateTime.now());
+        Category category = new Category(request);
 
         if (imageFile != null && !imageFile.isEmpty()) {
             String imageUrl = supabaseStorageService.upload(imageFile);
             category.setCategoryImage(imageUrl);
         }
+
         categoryRepository.save(category);
     }
 
-    public List<Category> findAll() {
-        return categoryRepository.findAll(Sort.by("id"));
-    }
+    @Transactional
+    public List<CategoryDTO> findAll() {
+        final List<Category> categories = categoryRepository.findAll(Sort.by("id"));
 
+        return categories.stream()
+            .map(CategoryDTO::new).toList();
+    }
 
     public List<CategoryDTO> getTop5List() {
         List<Category> categories = categoryRepository.findTop5Categories();

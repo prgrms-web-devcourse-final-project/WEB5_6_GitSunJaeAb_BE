@@ -1,5 +1,6 @@
 package com.gitsunjaeab.mapick.domain.category;
 
+import com.gitsunjaeab.mapick.api.category.dto.CategoryRequest;
 import com.gitsunjaeab.mapick.domain.member.MemberInterest;
 import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
 import jakarta.persistence.CascadeType;
@@ -15,6 +16,7 @@ import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
@@ -22,6 +24,7 @@ import lombok.Setter;
 @Table(name = "Categories")
 @Getter
 @Setter
+@NoArgsConstructor
 public class Category {
 
     @Id
@@ -55,4 +58,10 @@ public class Category {
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<Roadmap> roadmaps = new HashSet<>();
+
+    public Category(CategoryRequest request) {
+        this.name = request.getName();
+        this.description = request.getDescription();
+        this.createdAt = OffsetDateTime.now();
+    }
 }

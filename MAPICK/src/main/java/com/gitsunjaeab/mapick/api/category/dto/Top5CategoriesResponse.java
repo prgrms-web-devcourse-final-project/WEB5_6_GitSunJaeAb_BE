@@ -16,7 +16,7 @@ public class Top5CategoriesResponse implements BaseApiResponse {
     private OffsetDateTime timestamp;
     private List<CategoryDTO> categories;
 
-    public static Top5CategoriesResponse of(List<CategoryDTO> dtoList) {
+    public static Top5CategoriesResponse get(List<CategoryDTO> dtoList) {
         return new Top5CategoriesResponse(
             ResponseCode.OK.getCode(),
             "상위 5개 인기 카테고리 조회 성공",
