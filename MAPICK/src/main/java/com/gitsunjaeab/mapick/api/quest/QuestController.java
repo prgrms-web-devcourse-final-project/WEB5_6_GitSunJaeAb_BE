@@ -95,7 +95,9 @@ public class QuestController {
     @GetMapping("/{questsId}")
     @Operation(summary = "퀘스트 상세 조회", description = "[참여자용] 특정 퀘스트의 상세 정보를 조회합니다.")
     public ResponseEntity<QuestDetailResponse> getQuest(@PathVariable(name = "questsId") Long questsId) {
-        return ResponseEntity.ok(QuestDetailResponse.of(questService.get(questsId)));
+
+        QuestResponse response = questService.getWithViews(questsId);
+        return ResponseEntity.ok(QuestDetailResponse.of(response));
     }
 
     //퀘스트 + 참여자 답안 + 랭킹 까지
@@ -189,7 +191,7 @@ public class QuestController {
     }
 
     @GetMapping("/{questId}/correctRanking")
-    @Operation(summary = "퀘스트 정답자 랭킹 조회", description = "정답 맞춘 순서대로 퀘스트 참여자 랭킹을 조회합니다.")
+    @Operation(summary = "퀘스트 전체 랭킹 정답자 순 조회", description = "정답 맞춘 순서대로 퀘스트 참여자 랭킹을 조회합니다.")
     public ResponseEntity<List<MemberQuestRankResponse>> getQuestRankingByCorrectOrder(
         @PathVariable(name = "questId") Long questId
     ) {

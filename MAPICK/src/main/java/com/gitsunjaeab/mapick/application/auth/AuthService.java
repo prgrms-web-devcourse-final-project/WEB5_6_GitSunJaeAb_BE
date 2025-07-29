@@ -9,12 +9,14 @@ import com.gitsunjaeab.mapick.api.auth.dto.internal.TokenDTO;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
 import com.gitsunjaeab.mapick.domain.member.code.MemberStatus;
+import com.gitsunjaeab.mapick.infra.auth.UserDetailsServiceImpl;
 import com.gitsunjaeab.mapick.infra.auth.token.JwtProvider;
 import com.gitsunjaeab.mapick.infra.auth.token.code.GrantType;
 import com.gitsunjaeab.mapick.infra.auth.token.code.TokenType;
 import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import com.gitsunjaeab.mapick.util.NotFoundException;
@@ -26,6 +28,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -44,6 +47,7 @@ public class AuthService {
     private final GoogleOAuthService googleOAuthService;
     private final PasswordEncoder passwordEncoder;
     private final AccessTokenBlacklistRepository accessTokenBlacklistRepository;
+    private final UserDetailsServiceImpl userDetailsServiceImpl;
 
 
     // 소셜 로그인
@@ -80,6 +84,17 @@ public class AuthService {
                 throw new CommonException(ResponseCode.WITHDRAWN_USER);
             }
 
+            Principal principal = (Principal)userDetailsServiceImpl.loadUserByUsername(email);
+
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(
+                            principal,
+                            null,
+                            principal.getAuthorities()
+                    );
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
             existing.setLastLogin(OffsetDateTime.now()); // last login 날짜 추가
             existing.setLoginCount(existing.getLoginCount() + 1);
 
@@ -93,6 +108,17 @@ public class AuthService {
         // 해당 이메일로 가입된 계정이 없는 경우 - 회원 가입
 
             Member member = memberService.registerNewSocialMember(userInfo, request.getProvider());
+
+            Principal principal = Principal.createPrincipal(member, List.of(new SimpleGrantedAuthority(member.getRole())));
+
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(
+                            principal,
+                            null,
+                            principal.getAuthorities()
+                    );
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
 
             TokenDTO tokendto = processTokenSignin(member); // jwt 토큰 발급
 
@@ -169,21 +195,20 @@ public class AuthService {
     @Transactional
     public void logout(HttpServletRequest request) {
 
-        // 계정에 존재하는 기존 refresh token 삭제
         String accessToken = jwtProvider.resolveToken(request, TokenType.ACCESS_TOKEN);
 
         Claims claims = jwtProvider.parseClaim(accessToken);
         String jti = claims.getId();
 
-        log.info(accessToken);
+
         // 기존 access token 블랙 리스트 등록
         if (accessToken != null && !accessToken.isBlank()) {
 
             accessTokenBlacklistRepository.save(new AccessTokenBlacklist(accessToken));
         }
-        log.info("=========================");
-        refreshTokenRepository.deleteByAccessTokenId(jti);
-        log.info("=========================");
+
+        refreshTokenRepository.deleteByjti(jti);
+
     }
 
     // 인증 객체 생성 및 Spring Security 등록
@@ -200,7 +225,7 @@ public class AuthService {
     public TokenDTO processTokenSignin(Member member) {
 
         TokenDTO accessToken = jwtProvider.generateAccessToken(member.getEmail()); // AccessToken 만들기
-        RefreshToken refreshToken = new RefreshToken(member, accessToken.getId()); // RefreshToken 만들기
+        RefreshToken refreshToken = new RefreshToken(member, accessToken.getJti()); // RefreshToken 만들기
 
         try{
             refreshTokenRepository.save(refreshToken); // RefreshToken 저장
@@ -210,7 +235,7 @@ public class AuthService {
 
         TokenDTO tokenDto = TokenDTO.builder()
                 .accessToken(accessToken.getAccessToken())
-                .refreshToken(refreshToken.getToken())
+                .refreshToken(refreshToken.getRefreshToken())
                 .atExpiresIn(jwtProvider.getAtExpiration()) // access token의 만료 시간
                 .rtExpiresIn(jwtProvider.getRtExpiration()) // refresh token의 만료 시간
                 .grantType(GrantType.BEARER)

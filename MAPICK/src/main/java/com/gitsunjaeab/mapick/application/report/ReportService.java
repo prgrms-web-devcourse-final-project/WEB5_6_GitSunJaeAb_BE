@@ -90,9 +90,10 @@ public class ReportService {
     // [사용자] 지도(로드맵) 신고 생성
     // complete
     @Transactional
-    public ReportDTO createMapReport(Long roadmapId, MapReportRequest mapReportRequest) {
+    public ReportDTO createMapReport(Long memberId, Long roadmapId, MapReportRequest mapReportRequest) {
 
-        final Member reporter = memberRepository.findById(mapReportRequest.getReporterId())
+        final Member reporter = memberRepository.findById(memberId)
+
                 .orElseThrow(() -> new CommonException(ResponseCode.REPORTER_NOT_FOUND));
 
         final Roadmap roadmap = roadmapRepository.findById(roadmapId)
@@ -126,13 +127,14 @@ public class ReportService {
     // [사용자] 마커 신고 생성
     // complete
     @Transactional
-    public ReportDTO createMarkerReport(Long markerId, MarkerReportRequest markerReportRequest) {
+    public ReportDTO createMarkerReport(Long memberId, Long markerId, MarkerReportRequest markerReportRequest) {
 
-        final Member reporter = memberRepository.findById(markerReportRequest.getReporterId())
+        final Member reporter = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CommonException(ResponseCode.REPORTER_NOT_FOUND));
 
         final Marker marker = markerRepository.findById(markerId)
                 .orElseThrow(() -> new CommonException(ResponseCode.MARKER_NOT_FOUND));
+
 
         if(reportRepository.existsByReporterAndMarker(reporter, marker)){
             throw new CommonException(ResponseCode.ALREADY_REPORTED);
@@ -161,13 +163,14 @@ public class ReportService {
     // [사용자] 퀘스트 신고 생성
     // complete
     @Transactional
-    public ReportDTO createQuestReport(Long questId, QuestReportRequest questReportRequest) {
+    public ReportDTO createQuestReport(Long memberId, Long questId, QuestReportRequest questReportRequest) {
 
-        final Member reporter = memberRepository.findById(questReportRequest.getReporterId())
+        final Member reporter = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CommonException(ResponseCode.REPORTER_NOT_FOUND));
 
         final Quest quest = questRepository.findById(questId)
                 .orElseThrow(() -> new CommonException(ResponseCode.QUEST_NOT_FOUND));
+
 
         if(reportRepository.existsByReporterAndQuest(reporter, quest)){
             throw new CommonException(ResponseCode.ALREADY_REPORTED);

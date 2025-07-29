@@ -133,7 +133,8 @@ public class MemberController {
     @DeleteMapping("/role/{memberId}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "[관리자 전용] 특정 회원 관리자 권한 회수 (관리자)", description = "[관리자 전용] 특정 회원 관리자 권한 회수 ")
-    public ResponseEntity<MemberRoleUpdateResponse> removeMemberRole(@PathVariable(name = "memberId") final Long memberId) {
+    public ResponseEntity<MemberRoleUpdateResponse> removeMemberRole(
+            @PathVariable(name = "memberId") final Long memberId) {
 
         memberService.clearMemberRoleAdmin(memberId);
 

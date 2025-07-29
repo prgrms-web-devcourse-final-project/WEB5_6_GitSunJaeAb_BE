@@ -61,14 +61,17 @@ public class JwtProvider {
         return secretKey;
     }
 
-    // JWT 발급
+    // 인증 객체로 JWT 발급
     public TokenDTO generateAccessToken(Authentication authentication){
-        return generateAccessToken(authentication.getName());
+        String email = ((Principal) authentication.getPrincipal()).getMember().getEmail();
+        return generateAccessToken(email);
     }
 
-    // JWT 발급
+    // 유저 정보로 JWT 발급
     public TokenDTO generateAccessToken(String email){
-        String id = UUID.randomUUID().toString();
+
+        String jti = UUID.randomUUID().toString(); // jti
+
         long now = new Date().getTime();
         Date atExpiresIn = new Date(now + atExpiration); // 만료일자 생성
 
@@ -80,14 +83,14 @@ public class JwtProvider {
 
         String accessToken = Jwts.builder()
             .subject(email)
-            .id(id)
+            .id(jti) // jti
             .expiration(atExpiresIn)
             .claim("authorities", authorities)
             .signWith(getSecretKey())
             .compact();
 
         TokenDTO tokenDto = TokenDTO.builder()
-                .id(id)
+                .jti(jti) // jti
                 .accessToken(accessToken)
                 .atExpiresIn(atExpiration)
                 .build();
@@ -101,7 +104,7 @@ public class JwtProvider {
         String email = parseClaim(accessToken).getSubject();
 
         Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CommonException(ResponseCode.MEMBER_NOT_FOUND));
 
         List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(member.getRole()));
 
