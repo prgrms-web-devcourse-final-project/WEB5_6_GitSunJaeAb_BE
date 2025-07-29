@@ -4,12 +4,9 @@ package com.gitsunjaeab.mapick.application.roadmap;
 import com.gitsunjaeab.mapick.api.roadmap.dto.hashtag.HashtagDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.hashtag.HashtagListResponse;
 import com.gitsunjaeab.mapick.api.roadmap.dto.hashtag.HashtagRequest;
-import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerListResponse;
-import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.Hashtag;
 import com.gitsunjaeab.mapick.domain.roadmap.HashtagRepository;
-import com.gitsunjaeab.mapick.domain.roadmap.Layer;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapHashtagRelationRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapHashtagRelation;
 import com.gitsunjaeab.mapick.util.NotFoundException;
@@ -19,11 +16,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.convert.ReadingConverter;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

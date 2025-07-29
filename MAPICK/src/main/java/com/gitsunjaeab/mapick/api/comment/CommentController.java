@@ -44,7 +44,7 @@ public class CommentController {
     @Operation(summary = "지도 댓글 생성", description = "[사용자] 특정 로드맵/공유지도의 댓글 생성")
     @PostMapping("/roadmaps")
     public ResponseEntity<CommentResponse> createRoadmapComment(
-        @AuthenticationPrincipal Principal principal,
+        @AuthenticationPrincipal final Principal principal,
         @RequestBody @Valid final CommentRequest request
     ) {
         return createComment(principal, request);
@@ -52,10 +52,10 @@ public class CommentController {
 
     @Operation(summary = "지도 댓글 목록 조회", description = "[사용자] 특정 로드맵/공유지도의 모든 댓글을 조회")
     @GetMapping("/roadmaps")
-    public ResponseEntity<CommentListResponse> getAllCommentsInMaps(@RequestParam Long roadmapId) {
+    public ResponseEntity<CommentListResponse> getRoadmapComments(@RequestParam final Long roadmapId) {
 
-        List<CommentDTO> commentDTOList= commentService.findAllCommentsInRoadmaps(roadmapId);
-        CommentListResponse response = CommentListResponse.get(commentDTOList);
+        final List<CommentDTO> commentDTOList= commentService.findAllCommentsInRoadmaps(roadmapId);
+        final CommentListResponse response = CommentListResponse.get(commentDTOList);
 
         return ResponseEntity.ok(response);
     }
@@ -68,7 +68,7 @@ public class CommentController {
     @Operation(summary = "퀘스트 댓글 생성", description = "[사용자] 특정 퀘스트의 댓글 생성")
     @PostMapping("/quests")
     public ResponseEntity<CommentResponse> createQuestComment(
-        @AuthenticationPrincipal Principal principal,
+        @AuthenticationPrincipal final Principal principal,
         @RequestBody @Valid final CommentRequest request
     ) {
         return createComment(principal, request);
@@ -76,11 +76,11 @@ public class CommentController {
 
     @Operation(summary = "퀘스트 댓글 목록 조회", description = "[사용자] 특정 퀘스트의 모든 댓글을 조회")
     @GetMapping("/quests")
-    public ResponseEntity<CommentListResponse> getQuestComments(@RequestParam Long questId) {
+    public ResponseEntity<CommentListResponse> getQuestComments(@RequestParam final Long questId) {
 
-        List<CommentDTO> commentDTOList= commentService.findAllCommentsInQuest(questId);
-        CommentListResponse response = CommentListResponse.get(commentDTOList);
-
+        final List<CommentDTO> commentDTOList= commentService.findAllCommentsInQuest(questId);
+        final CommentListResponse response = CommentListResponse.get(commentDTOList);
+  
         return ResponseEntity.ok(response);
     }
 
@@ -94,35 +94,36 @@ public class CommentController {
     public ResponseEntity<CommentResponse> getComment(
         @PathVariable(name = "commentId") final Long commentId)
     {
-        CommentDTO dto = commentService.getComment(commentId);
-        CommentResponse response = CommentResponse.get(dto);
+        final CommentDTO dto = commentService.getComment(commentId);
+        final CommentResponse response = CommentResponse.get(dto);
 
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "댓글 수정", description = "[댓글 작성자/게시글 작성자] 특정 댓글 수정")
+    @Operation(summary = "댓글 수정", description = "[작성자] 특정 댓글 수정")
     @PutMapping("/{commentId}")
-    public ResponseEntity<CommentResponse> updateRoadmapComment(
+    public ResponseEntity<CommentResponse> updateComment(
         @AuthenticationPrincipal Principal principal,
         @PathVariable(name = "commentId") final Long commentId,
         @RequestBody @Valid final CommentRequest request) {
 
-        Long memberId = principal.getMember().getId();
-        CommentDTO commentDTO = commentService.update(commentId, memberId, request);
-        CommentResponse response = CommentResponse.update(commentDTO);
+        final Long memberId = principal.getMember().getId();
+        final CommentDTO commentDTO = commentService.update(commentId, memberId, request);
+        final CommentResponse response = CommentResponse.update(commentDTO);
 
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "댓글 삭제", description = "[댓글 작성자/게시글 작성자] 댓글 삭제")
+
+    @Operation(summary = "댓글 삭제", description = "[작성자] 댓글 삭제")
     @DeleteMapping("/{commentId}")
     public ResponseEntity<CommentResponse> deleteComment(
         @AuthenticationPrincipal Principal principal,
         @PathVariable(name = "commentId") final Long commentId) {
 
-        Long memberId = principal.getMember().getId();
+        final Long memberId = principal.getMember().getId();
         commentService.delete(commentId, memberId);
-        CommentResponse response = CommentResponse.delete();
+        final CommentResponse response = CommentResponse.delete();
 
         return ResponseEntity.ok(response);
     }
@@ -136,20 +137,20 @@ public class CommentController {
     public ResponseEntity<MemberCommentListResponse> getAllCommentsByMember(
         @AuthenticationPrincipal Principal principal)
     {
-        Long memberId = principal.getMember().getId();
-        List<Comment> comments = commentService.findAllCommentsByMember(memberId);
-        MemberCommentListResponse response = MemberCommentListResponse.of(comments);
+        final Long memberId = principal.getMember().getId();
+        final List<Comment> comments = commentService.findAllCommentsByMember(memberId);
+        final MemberCommentListResponse response = MemberCommentListResponse.of(comments);
 
         return ResponseEntity.ok(response);
     }
 
     // 댓글 생성
     private ResponseEntity<CommentResponse> createComment(
-        Principal principal,
-        CommentRequest request
+        final Principal principal,
+        final CommentRequest request
     ) {
-        Long memberId = principal.getMember().getId();
-        CommentAchievementDTO dto = commentService.create(request, memberId);
+        final Long memberId = principal.getMember().getId();
+        final CommentAchievementDTO dto = commentService.create(request, memberId);
 
         CommentResponse response = dto.isAchievementUnlocked()
             ? CommentResponse.createWithAchievement(dto)

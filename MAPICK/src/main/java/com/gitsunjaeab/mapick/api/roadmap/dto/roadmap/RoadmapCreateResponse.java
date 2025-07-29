@@ -1,5 +1,7 @@
 package com.gitsunjaeab.mapick.api.roadmap.dto.roadmap;
 
+import com.gitsunjaeab.mapick.api.comment.dto.CommentAchievementDTO;
+import com.gitsunjaeab.mapick.api.comment.dto.CommentResponse;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import lombok.AllArgsConstructor;
@@ -16,13 +18,31 @@ public class RoadmapCreateResponse implements BaseApiResponse {
     private final OffsetDateTime timestamp;
     private final Long roadmapId;
 
-    public static RoadmapCreateResponse of(ResponseCode responseCode, String message, Long roadmapId) {
+    public static RoadmapCreateResponse createShared(Long roadmapId) {
         return new RoadmapCreateResponse(
-                responseCode.getCode(),
-                message,
+                ResponseCode.OK.getCode(),
+                "공유지도 생성 완료",
                 OffsetDateTime.now(),
                 roadmapId
         );
     }
 
+    public static RoadmapCreateResponse createPersonal(Long roadmapId) {
+        return new RoadmapCreateResponse(
+            ResponseCode.OK.getCode(),
+            "로드맵 생성 완료",
+            OffsetDateTime.now(),
+            roadmapId
+        );
+    }
+
+    public static RoadmapCreateResponse createWithAchievement(
+        RoadmapAchievementDTO roadmapAchievementDTO) {
+        return new RoadmapCreateResponse(
+            ResponseCode.OK.getCode(),
+            "공유지도 생성 완료! 업적 '" + roadmapAchievementDTO.getAchievement().getName() + "' 을(를) 획득했습니다.",
+            OffsetDateTime.now(),
+            roadmapAchievementDTO.getRoadmapId()
+        );
+    }
 }

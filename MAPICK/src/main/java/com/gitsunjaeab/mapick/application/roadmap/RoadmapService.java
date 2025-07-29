@@ -21,10 +21,10 @@ import com.gitsunjaeab.mapick.domain.roadmap.Bookmark;
 import com.gitsunjaeab.mapick.domain.roadmap.BookmarkRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.Hashtag;
 import com.gitsunjaeab.mapick.domain.roadmap.HashtagRepository;
-import com.gitsunjaeab.mapick.domain.roadmap.Layer;
-import com.gitsunjaeab.mapick.domain.roadmap.LayerLibraryRepository;
-import com.gitsunjaeab.mapick.domain.roadmap.LayerLibraryRepository.RoadmapCitationProjection;
-import com.gitsunjaeab.mapick.domain.roadmap.LayerRepository;
+import com.gitsunjaeab.mapick.domain.roadmap.layer.Layer;
+import com.gitsunjaeab.mapick.domain.roadmap.layer.LayerLibraryRepository;
+import com.gitsunjaeab.mapick.domain.roadmap.layer.LayerLibraryRepository.RoadmapCitationProjection;
+import com.gitsunjaeab.mapick.domain.roadmap.layer.LayerRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapEditor;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapEditorRepository;
@@ -32,6 +32,7 @@ import com.gitsunjaeab.mapick.domain.roadmap.RoadmapHashtagRelation;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapHashtagRelationRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapType;
+import com.gitsunjaeab.mapick.domain.roadmap.*;
 import com.gitsunjaeab.mapick.infra.auth.AuthHelper;
 import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
 import com.gitsunjaeab.mapick.infra.error.exceptions.InvalidRoadmapTypeException;
@@ -66,6 +67,7 @@ public class RoadmapService {
     private final BookmarkRepository bookmarkRepository;
     private final RoadmapHashtagRelationRepository roadmapHashtagRelationRepository;
     private final ReportRepository reportRepository;
+    private final MarkerRepository markerRepository;
     @Autowired
     private LayerLibraryRepository layerLibraryRepository;
     private final CategoryRepository categoryRepository;
@@ -80,7 +82,7 @@ public class RoadmapService {
 
     // 공유 지도 생성
     @Transactional
-    public Long createSharedRoadmap(SharedRoadmapCreateRequest request, Long memberId, MultipartFile imageFile) {
+    public RoadmapAchievementDTO createSharedRoadmap(SharedRoadmapCreateRequest request, Long memberId, MultipartFile imageFile) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new NotFoundException("멤버 없음"));
 
@@ -130,7 +132,31 @@ public class RoadmapService {
 
             roadmapHashtagRelationRepository.saveAll(roadmap.getRoadmapMapHashtags());
         }
-        return roadmap.getId();
+
+        // 공유지도 첫 생성 업적
+        Long roadmapCount = roadmapRepository.countByMemberIdAndRoadmapType(memberId, RoadmapType.SHARED);
+        final Long ACHIEVEMENT_ID = 102L;
+
+        if (roadmapCount == 1) {
+            boolean alreadyHas = memberAchievementRepository.existsByMemberIdAndAchievementId(memberId, ACHIEVEMENT_ID);
+            if (!alreadyHas) {
+                Member user = memberRepository.findById(memberId)
+                    .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND, "해당하는 회원이 없습니다."));
+                Achievement achievement = achievementRepository.findById(ACHIEVEMENT_ID)
+                    .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND, "해당하는 업적이 없습니다."));
+
+                memberAchievementRepository.save(
+                    MemberAchievement.builder()
+                        .member(user)
+                        .achievement(achievement)
+                        .achievedAt(OffsetDateTime.now())
+                        .build()
+                );
+                return new RoadmapAchievementDTO(roadmap.getId(), true, new AchievementDTO(achievement));
+            }
+        }
+
+        return new RoadmapAchievementDTO(roadmap.getId(), false, null);
     }
 
     // 공유 지도 수정
@@ -186,7 +212,7 @@ public class RoadmapService {
 
     // 개인 로드맵 생성
     @Transactional
-    public RoadmapAchievementResponse createRoadmap(@Valid RoadmapRequest request, Long memberId ,MultipartFile imageFile) {
+    public RoadmapAchievementDTO createRoadmap(@Valid RoadmapRequest request, Long memberId ,MultipartFile imageFile) {
         Category category = categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카테고리입니다."));
 
@@ -248,11 +274,11 @@ public class RoadmapService {
                         .achievedAt(OffsetDateTime.now())
                         .build()
                 );
-                return new RoadmapAchievementResponse(roadmap.getId(), true, new AchievementDTO(achievement));
+                return new RoadmapAchievementDTO(roadmap.getId(), true, new AchievementDTO(achievement));
             }
         }
 
-        return new RoadmapAchievementResponse(roadmap.getId(), false, null);
+        return new RoadmapAchievementDTO(roadmap.getId(), false, null);
     }
 
     // 개인 로드맵 수정
@@ -309,7 +335,6 @@ public class RoadmapService {
 
         boolean isOwner = roadmap.getMember().getId().equals(member.getId());
         boolean isAdmin = member.getRole().equals("ROLE_ADMIN");
-
         boolean isReported = reportRepository.existsByRoadmapId(roadmapId);
 
         if (!(isOwner || (isAdmin && isReported))) {
@@ -317,7 +342,13 @@ public class RoadmapService {
         }
 
         roadmapHashtagRelationRepository.deleteByRoadmap(roadmap);
+        List<Layer> layers = layerRepository.findByRoadmapIdAndDeletedAtIsNull(roadmapId);
+        for (Layer layer : layers) {
+            markerRepository.deleteByLayerId(layer.getId()); // 직접 삭제 쿼리 필요
 
+            layer.setRoadmap(null);
+            layer.setDeletedAt(OffsetDateTime.now());
+        }
         roadmap.setDeletedAt(OffsetDateTime.now());
     }
 
@@ -330,7 +361,7 @@ public class RoadmapService {
 
     @Transactional(readOnly = true)
     public RoadmapListResponse getAllPersonalRoadmapsWithCitation(Member member) {
-        List<Roadmap> roadmaps = roadmapRepository.findAllByIsPublicTrueAndRoadmapType(RoadmapType.PERSONAL);
+        List<Roadmap> roadmaps = roadmapRepository.findAllByIsPublicTrueAndRoadmapTypeAndDeletedAtIsNull(RoadmapType.PERSONAL);
         Set<Long> bookmarkedIds = bookmarkRepository.findRoadmapIdsByMemberId(member.getId()).stream().collect(Collectors.toSet());
         return buildRoadmapListResponse(roadmaps);
     }
@@ -343,7 +374,7 @@ public class RoadmapService {
 
     @Transactional(readOnly = true)
     public RoadmapListResponse getAllSharedRoadmapsWithCitation() {
-        List<Roadmap> roadmaps = roadmapRepository.findAllByIsPublicTrueAndRoadmapType(RoadmapType.SHARED);
+        List<Roadmap> roadmaps = roadmapRepository.findAllByIsPublicTrueAndRoadmapTypeAndDeletedAtIsNull(RoadmapType.SHARED);
         return buildRoadmapListResponse(roadmaps);
     }
 
@@ -357,6 +388,41 @@ public class RoadmapService {
     public RoadmapListResponse findAllRoadmapsByMember(Long memberId) {
         List<Roadmap> roadmaps = roadmapRepository.findAllByMember_IdAndDeletedAtIsNull(memberId);
         return buildRoadmapListResponse(roadmaps);
+    }
+
+    @Transactional(readOnly = true)
+    public RoadmapListResponse getMyParticipatedSharedRoadmapsWithCitation(Long memberId) {
+        // 사용자가 참여한 공유지도 조회
+        List<Roadmap> roadmaps = roadmapEditorRepository.findParticipatedSharedRoadmaps(memberId);
+        System.out.println("참여한 로드맵 개수: " + roadmaps.size());
+
+        if (roadmaps.isEmpty()) {
+            return RoadmapListResponse.of(Collections.emptyList(), Collections.emptyMap(), Collections.emptyMap());
+        }
+
+        List<Long> roadmapIds = roadmaps.stream()
+                .map(Roadmap::getId)
+                .collect(Collectors.toList());
+
+        // 인용 수 조회
+        List<RoadmapCitationProjection> projections =
+                layerLibraryRepository.countDistinctMemberByRoadmapIds(roadmapIds);
+        Map<Long, Long> citationCountMap = projections.stream()
+                .collect(Collectors.toMap(
+                        RoadmapCitationProjection::getRoadmapId,
+                        RoadmapCitationProjection::getCitationCount
+                ));
+
+        // 북마크 정보 조회
+        List<Bookmark> bookmarks = bookmarkRepository.findByMemberId(memberId);
+        Map<Long, Long> roadmapIdToBookmarkIdMap = bookmarks.stream()
+                .filter(b -> roadmapIds.contains(b.getRoadmap().getId()))
+                .collect(Collectors.toMap(
+                        b -> b.getRoadmap().getId(),
+                        Bookmark::getId
+                ));
+
+        return RoadmapListResponse.of(roadmaps, citationCountMap, roadmapIdToBookmarkIdMap);
     }
 
     @Transactional(readOnly = true)
@@ -390,26 +456,10 @@ public class RoadmapService {
     public RoadmapResponse get(final Long id, final Member member) {
         Roadmap roadmap = roadmapRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException("해당 로드맵이 존재하지 않습니다. id=" + id));
+        roadmap.setViewCount(roadmap.getViewCount()+1);
 
         return RoadmapResponse.of(roadmap);
     }
-
-
-//    @Transactional
-//    public Long create(final RoadmapRequest request) {
-//        final Roadmap roadmap =  new Roadmap();
-//        roadmapToEntity(request, roadmap);
-//        return roadmapRepository.save(roadmap).getId();
-//    }
-//
-//    public void update(final Long id, final RoadmapRequest request) {
-//        final Roadmap roadmap = roadmapRepository.findById(id)
-//                .orElseThrow(NotFoundException::new);
-//        roadmapToEntity(request, roadmap);
-//        roadmapRepository.save(roadmap);
-//    }
-
-
 
     private RoadmapDTO roadmapToDTO(final Roadmap roadmap, final RoadmapDTO roadmapDTO) {
         roadmapDTO.setId(roadmap.getId());
@@ -428,42 +478,6 @@ public class RoadmapService {
         return roadmapDTO;
     }
 
-//    private Roadmap roadmapToEntity(final RoadmapRequest request, final Roadmap roadmap) {
-//        roadmap.setTitle(request.getTitle());
-//        roadmap.setDescription(request.getDescription());
-//        roadmap.setThumbnail(request.getThumbnail());
-//        roadmap.setIsPublic(request.getIsPublic());
-//
-//        Set<RoadmapHashtagRelation> relations = request.getHashtags().stream()
-//            .map(hashtagDTO -> {
-//                RoadmapHashtagRelation relation = new RoadmapHashtagRelation();
-//                relation.setHashtag(new Hashtag(hashtagDTO.getId()));
-//                relation.setRoadmap(roadmap);
-//                return relation;
-//            })
-//            .collect(Collectors.toSet());
-//        roadmap.setRoadmapMapHashtags(relations);
-//
-//        roadmap.setIsAnimated(request.getIsAnimated());
-//        roadmap.setLikeCount(request.getLikeCount());
-//        roadmap.setViewCount(request.getViewCount());
-//        roadmap.setRoadmapType(RoadmapType.valueOf(request.getRoadmapType()));
-//        roadmap.setCreatedAt(request.getCreatedAt());
-//        roadmap.setUpdatedAt(request.getUpdatedAt());
-//        roadmap.setDeletedAt(request.getDeletedAt());
-//
-//        final Member member = request.getMember() == null ? null : memberRepository.findById(request.getMember())
-//            .orElseThrow(() -> new NotFoundException("member not found"));
-//        roadmap.setMember(member);
-//
-//        final Roadmap originalMap = request.getOriginalRoadmap() == null ? null : roadmapRepository.findById(request.getOriginalRoadmap())
-//            .orElseThrow(() -> new NotFoundException("originalMap not found"));
-//        roadmap.setOriginalRoadmap(originalMap);
-//
-//        return roadmap;
-//    }
-
-
     public ReferencedWarning getReferencedWarning(final Long id) {
         final ReferencedWarning referencedWarning = new ReferencedWarning();
         final Roadmap roadmap = roadmapRepository.findById(id)
@@ -480,7 +494,7 @@ public class RoadmapService {
             referencedWarning.addParam(mapMapEditor.getId());
             return referencedWarning;
         }
-        final Layer mapLayer = layerRepository.findFirstByRoadmap(roadmap);
+        final Layer mapLayer = layerRepository.findFirstNotDeletedByRoadmap(roadmap);
         if (mapLayer != null) {
             referencedWarning.setKey("roadmap.layer.roadmap.referenced");
             referencedWarning.addParam(mapLayer.getId());

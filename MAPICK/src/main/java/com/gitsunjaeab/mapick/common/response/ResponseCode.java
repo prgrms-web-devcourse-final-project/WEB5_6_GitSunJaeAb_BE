@@ -40,7 +40,6 @@ public enum ResponseCode {
     QUEST_NOT_FOUND("4044", HttpStatus.NOT_FOUND, "존재하지 않는 퀘스트 입니다."),
 
 
-
     CONFLICT("4090", HttpStatus.CONFLICT, "충돌이 발생하였습니다."),
     NICKNAME_DUPLICATED("4091", HttpStatus.CONFLICT, "중복된 닉네임입니다."),
     ALREADY_REGISTERED_EMAIL("4092", HttpStatus.CONFLICT, "이미 가입된 이메일입니다."),

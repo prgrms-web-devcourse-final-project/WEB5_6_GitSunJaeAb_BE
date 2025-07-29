@@ -93,6 +93,7 @@ public class ReportService {
     public ReportDTO createMapReport(Long memberId, Long roadmapId, MapReportRequest mapReportRequest) {
 
         final Member reporter = memberRepository.findById(memberId)
+
                 .orElseThrow(() -> new CommonException(ResponseCode.REPORTER_NOT_FOUND));
 
         final Roadmap roadmap = roadmapRepository.findById(roadmapId)
@@ -134,6 +135,7 @@ public class ReportService {
         final Marker marker = markerRepository.findById(markerId)
                 .orElseThrow(() -> new CommonException(ResponseCode.MARKER_NOT_FOUND));
 
+
         if(reportRepository.existsByReporterAndMarker(reporter, marker)){
             throw new CommonException(ResponseCode.ALREADY_REPORTED);
         }
@@ -168,6 +170,7 @@ public class ReportService {
 
         final Quest quest = questRepository.findById(questId)
                 .orElseThrow(() -> new CommonException(ResponseCode.QUEST_NOT_FOUND));
+
 
         if(reportRepository.existsByReporterAndQuest(reporter, quest)){
             throw new CommonException(ResponseCode.ALREADY_REPORTED);

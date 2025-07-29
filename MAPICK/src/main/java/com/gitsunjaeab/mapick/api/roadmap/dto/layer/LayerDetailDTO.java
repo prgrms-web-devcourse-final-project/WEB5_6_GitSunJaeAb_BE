@@ -4,9 +4,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.RoadmapSimpleDTO;
-import com.gitsunjaeab.mapick.domain.roadmap.Layer;
+import com.gitsunjaeab.mapick.domain.roadmap.layer.Layer;
 
 import java.time.OffsetDateTime;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -28,16 +29,16 @@ public class LayerDetailDTO {
 
     public static LayerDetailDTO from(Layer layer, boolean isZzim) {
         return new LayerDetailDTO(
-            layer.getId(),
-            layer.getName(),
-            layer.getDescription(),
-            layer.getLayerSeq(),
-            isZzim, // layerTime 아래로 이동
-            layer.getCreatedAt(),
-            layer.getUpdatedAt(),
-            layer.getDeletedAt(),
-            new MemberSimpleDTO(layer.getMember()),
-            new RoadmapSimpleDTO(layer.getRoadmap())
+                layer.getId(),
+                layer.getName(),
+                layer.getDescription(),
+                layer.getLayerSeq(),
+                isZzim, // layerTime 아래로 이동
+                layer.getCreatedAt(),
+                layer.getUpdatedAt(),
+                layer.getDeletedAt(),
+                new MemberSimpleDTO(layer.getMember()),
+                layer.getRoadmap() != null ? new RoadmapSimpleDTO(layer.getRoadmap()) : null
         );
     }
 }

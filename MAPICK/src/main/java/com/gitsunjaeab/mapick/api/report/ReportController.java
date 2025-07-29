@@ -89,7 +89,6 @@ public class ReportController {
      * 사용자
      */
 
-
     // [사용자] 지도(로드맵) 신고 생성
     // complete
     @PostMapping("/maps/{roadmapId}")
@@ -103,6 +102,7 @@ public class ReportController {
         Long memberId = principal.getMember().getId();
 
         ReportDTO reportDTO = reportService.createMapReport(memberId,roadmapId, mapReportRequest);
+
 
         MapReportResponse response = MapReportResponse.of(reportDTO);
 
@@ -126,6 +126,7 @@ public class ReportController {
 
         ReportDTO reportDTO = reportService.createMarkerReport(memberId,markerId, markerReportRequest);
 
+
         MarkerReportResponse response = MarkerReportResponse.of(reportDTO);
 
         return ResponseEntity
@@ -146,6 +147,7 @@ public class ReportController {
         Long memberId = principal.getMember().getId();
 
         ReportDTO reportDTO = reportService.createQuestReport(memberId,questId, questReportRequest);
+
 
         QuestReportResponse response = QuestReportResponse.of(reportDTO);
 

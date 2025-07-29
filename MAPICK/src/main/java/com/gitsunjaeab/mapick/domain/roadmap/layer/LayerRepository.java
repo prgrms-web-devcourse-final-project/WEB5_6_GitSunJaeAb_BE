@@ -1,7 +1,8 @@
-package com.gitsunjaeab.mapick.domain.roadmap;
+package com.gitsunjaeab.mapick.domain.roadmap.layer;
 
 import com.gitsunjaeab.mapick.domain.member.Member;
 
+import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,8 +47,8 @@ public interface LayerRepository extends JpaRepository<Layer, Long> {
     @Query("SELECT l FROM Layer l WHERE l.roadmap = :roadmap AND l.deletedAt IS NULL AND (l.isBlocked = false OR l.isBlocked IS NULL)")
     Layer findFirstByRoadmap(@Param("roadmap") Roadmap roadmap);
 
-
-
+    @Query("SELECT l FROM Layer l WHERE l.roadmap = :roadmap AND l.deletedAt IS NULL")
+    Layer findFirstNotDeletedByRoadmap(@Param("roadmap") Roadmap roadmap);
 
     // ===== 미사용 =====
 
@@ -69,6 +70,9 @@ public interface LayerRepository extends JpaRepository<Layer, Long> {
     int softDeleteById(@Param("layerId") Long layerId);
 
     Optional<Layer> findByLayerTempId(Long layerTempId);
+
+    @Query("SELECT l FROM Layer l WHERE l.roadmap.id = :roadmapId AND l.deletedAt IS NULL")
+    List<Layer> findByRoadmapIdAndDeletedAtIsNull(@Param("roadmapId") Long roadmapId);
 
     // 로드맵 fetch join (필요할때 쓰려고 만들어놓음)
 //    @Query("""

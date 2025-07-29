@@ -83,8 +83,11 @@ public class RoadmapController {
         }
 
         Long memberId = principal.getMember().getId();
-        Long roadmapId = roadmapService.createSharedRoadmap(request, memberId, imageFile);
-        return ResponseEntity.ok(RoadmapCreateResponse.of(ResponseCode.OK, "공유지도 생성 완료", roadmapId));
+        final RoadmapAchievementDTO dto = roadmapService.createSharedRoadmap(request, memberId, imageFile);
+
+        RoadmapCreateResponse response = dto.isAchievementUnlocked() ? RoadmapCreateResponse.createWithAchievement(dto) : RoadmapCreateResponse.createShared(dto.getRoadmapId());
+
+        return ResponseEntity.ok(response);
     }
 
     // 공유지도 수정
@@ -152,17 +155,11 @@ public class RoadmapController {
         }
 
         Long memberId = principal.getMember().getId();
-        RoadmapAchievementResponse response = roadmapService.createRoadmap(request, memberId, imageFile);
+        RoadmapAchievementDTO dto = roadmapService.createRoadmap(request, memberId, imageFile);
 
-        if (response.isAchievementUnlocked()) {
-            return ResponseEntity.ok(RoadmapCreateResponse.of(
-                ResponseCode.OK,
-                "로드맵 생성 완료! 업적 '" + response.getAchievement().getName() + "' 을(를) 획득했습니다.",
-                    response.getRoadmapId()
-            ));
-        }
+        RoadmapCreateResponse response = dto.isAchievementUnlocked() ? RoadmapCreateResponse.createWithAchievement(dto) : RoadmapCreateResponse.createPersonal(dto.getRoadmapId());
 
-        return ResponseEntity.ok(RoadmapCreateResponse.of(ResponseCode.OK, "로드맵 생성 완료", response.getRoadmapId()));
+        return ResponseEntity.ok(response);
     }
 
     // 개인 로드맵 수정 NOTE 완
@@ -208,13 +205,27 @@ public class RoadmapController {
             throw new UnauthenticatedException(ResponseCode.UNAUTHORIZED);
         }
         Member member = principal.getMember();
-        final ReferencedWarning referencedWarning = roadmapService.getReferencedWarning(roadmapId);
-        if (referencedWarning != null) {
-            throw new ReferencedException(referencedWarning);
-        }
+//        final ReferencedWarning referencedWarning = roadmapService.getReferencedWarning(roadmapId);
+//        if (referencedWarning != null) {
+//            throw new ReferencedException(referencedWarning);
+//        }
         roadmapService.delete(roadmapId, member);
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "삭제 완료"));
     }
 
+
+    @GetMapping("/shared/participated")
+    @Operation(summary = "내가 참여한 공유지도 조회", description = "[사용자용] 내가 협업한 공유지도 목록 반환")
+    public ResponseEntity<RoadmapListResponse> getMyParticipatedSharedRoadmaps(
+            @AuthenticationPrincipal Principal principal) {
+
+        if (principal == null || principal.getMember() == null) {
+            throw new UnauthenticatedException(ResponseCode.UNAUTHORIZED);
+        }
+
+        Long memberId = principal.getMember().getId();
+        RoadmapListResponse response = roadmapService.getMyParticipatedSharedRoadmapsWithCitation(memberId);
+        return ResponseEntity.ok(response);
+    }
 
 }

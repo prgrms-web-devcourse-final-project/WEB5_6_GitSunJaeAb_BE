@@ -159,6 +159,14 @@ public class QuestService {
         questRepository.save(quest);
     }
 
+    public List<QuestResponse> findByWriter(Member member) {
+        List<Quest> quests = questRepository.findByMember(member);
+        return quests.stream()
+            .map(QuestResponse::of)
+            .toList();
+    }
+
+
     public void delete(final Long id, final String currentMemberEmail) {
         final Quest quest = questRepository.findWithMemberById(id)
                 .orElseThrow(NotFoundException::new);
@@ -189,9 +197,6 @@ public class QuestService {
 
     private Quest requestToEntity(final QuestRequest questRequest, final Quest quest) {
         quest.setTitle(questRequest.getTitle());
-        //이미지 덮어쓰기 방지 분기 처리
-//        if (questRequest.getQuestImage() != null && !questRequest.getQuestImage().isBlank()) {
-//            quest.setQuestImage(questRequest.getQuestImage()); }
         quest.setDescription(questRequest.getDescription());
         quest.setDeadline(questRequest.getDeadline());
         quest.setIsActive(questRequest.getIsActive() != null ? questRequest.getIsActive() : true);

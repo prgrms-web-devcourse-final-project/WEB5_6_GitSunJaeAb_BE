@@ -1,16 +1,18 @@
 package com.gitsunjaeab.mapick.application.roadmap;
 
 import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerDetailDTO;
-import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerRequest;
-import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerSyncRequest;
+import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerListDTO;
+import com.gitsunjaeab.mapick.api.roadmap.dto.layer.request.LayerRequest;
+import com.gitsunjaeab.mapick.api.roadmap.dto.layer.request.LayerSyncRequest;
+import com.gitsunjaeab.mapick.api.roadmap.dto.layer.response.LayerResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.auth.Role;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
-import com.gitsunjaeab.mapick.domain.roadmap.Layer;
-import com.gitsunjaeab.mapick.domain.roadmap.LayerLibrary;
-import com.gitsunjaeab.mapick.domain.roadmap.LayerLibraryRepository;
-import com.gitsunjaeab.mapick.domain.roadmap.LayerRepository;
+import com.gitsunjaeab.mapick.domain.roadmap.layer.Layer;
+import com.gitsunjaeab.mapick.domain.roadmap.layer.LayerLibrary;
+import com.gitsunjaeab.mapick.domain.roadmap.layer.LayerLibraryRepository;
+import com.gitsunjaeab.mapick.domain.roadmap.layer.LayerRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.Marker;
 import com.gitsunjaeab.mapick.domain.roadmap.MarkerRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
@@ -18,36 +20,28 @@ import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
 import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import com.gitsunjaeab.mapick.util.ReferencedWarning;
-
 import java.time.OffsetDateTime;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class LayerService {
 
+    private final RoadmapEditorService roadmapEditorService;
     private final LayerRepository layerRepository;
     private final MemberRepository memberRepository;
     private final RoadmapRepository roadmapRepository;
     private final MarkerRepository markerRepository;
     private final LayerLibraryRepository layerLibraryRepository;
 
-    public LayerService(final LayerRepository layerRepository,
-        final MemberRepository memberRepository, final RoadmapRepository roadmapRepository,
-        final MarkerRepository markerRepository,
-        final LayerLibraryRepository layerLibraryRepository) {
-        this.layerRepository = layerRepository;
-        this.memberRepository = memberRepository;
-        this.roadmapRepository = roadmapRepository;
-        this.markerRepository = markerRepository;
-        this.layerLibraryRepository = layerLibraryRepository;
-    }
 
     // ===== 실시간 공유지도 상 CRUD =====
 
     @Transactional
-    public Layer  createFromSync(LayerSyncRequest request) {
+    public LayerResponse createFromSync(LayerSyncRequest request) {
         Member member = memberRepository.findById(request.getMemberId())
                 .orElseThrow(() -> new IllegalArgumentException("사용자 없음"));
 
@@ -61,28 +55,37 @@ public class LayerService {
         layer.setMember(member);
         layer.setRoadmap(roadmap);
         layer.setLayerTempId(request.getLayerTempId());
-        return layerRepository.save(layer);
+
+        Layer saved = layerRepository.save(layer);
+
+        roadmapEditorService.registerEditorIfNotExists(roadmap.getId(), member.getId());
+
+        return LayerResponse.of(saved, false, "레이어 생성 성공");
     }
 
     @Transactional
-    public Layer  updateFromSync(LayerSyncRequest request) {
+    public LayerResponse   updateFromSync(LayerSyncRequest request) {
         Layer layer = layerRepository.findByLayerTempId(request.getLayerTempId())
                 .orElseThrow(() -> new IllegalArgumentException("레이어를 찾을 수 없음"));
 
         layer.setName(request.getName());
         layer.setDescription(request.getDescription());
         layer.setLayerSeq(request.getLayerSeq());
-        return layerRepository.save(layer);
+
+        return LayerResponse.of(layerRepository.save(layer), false, "레이어 수정 성공");
     }
 
     @Transactional
-    public Layer deleteByTempId(Long layerTempId) {
+    public LayerResponse  deleteByTempId(Long layerTempId) {
         Layer layer = layerRepository.findByLayerTempId(layerTempId)
                 .orElseThrow(() -> new IllegalArgumentException("레이어를 찾을 수 없음"));
 
         if (layer.getDeletedAt() != null) {
             throw new CommonException(ResponseCode.ALREADY_PROCESSED);
         }
+        markerRepository.deleteAllByLayerId(layer.getId());
+
+        layer.setRoadmap(null);
 
         ReferencedWarning warning = getReferencedWarning(layer.getId());
         if (warning != null) {
@@ -91,28 +94,50 @@ public class LayerService {
 
         layerLibraryRepository.softDeleteAllByLayer(layer.getId());
         layer.setDeletedAt(OffsetDateTime.now());
-        return layerRepository.save(layer);
+
+        return LayerResponse.of(layerRepository.save(layer), false, "레이어 삭제 성공");
     }
 
     // ===== 기본 CRUD =====
 
     // 로드맵의 레이어 조회
+    // 정적 팩토리 메서드로 구현 완료 todo 예외 처리 필요
     @Transactional(readOnly = true)
-    public List<Layer> findAllLayersOnRoadmap(Long roadmapId) {
-        if (roadmapId == null) {
-            // 전체 레이어 조회 (삭제되지 않은 것만 조회) - 모든 연관 엔티티 함께 조회
-            return layerRepository.findAllNotDeletedWithAssociations();
-        } else {
-            // 특정 로드맵 레이어 조회 - 모든 연관 엔티티 함께 조회
-            return layerRepository.findAllByRoadmap_IdWithAssociations(roadmapId);
+    public List<LayerListDTO> findAllLayersOnRoadmap(Long roadmapId) {
+
+        if (roadmapId == null) {// 전체 레이어 조회 (삭제되지 않은 것만 조회) - 모든 연관 엔티티 함께 조회
+
+            List<Layer> layers = layerRepository.findAllNotDeletedWithAssociations();
+
+            // 엔티티 리스트 -> DTO 리스트 변환
+            List<LayerListDTO> layerDTOs = layers.stream()
+                .map(LayerListDTO::of)
+                .toList();
+
+            return layerDTOs;
+
+        } else { // 특정 로드맵 레이어 조회 - 모든 연관 엔티티 함께 조회
+
+            List<Layer> layers = layerRepository.findAllByRoadmap_IdWithAssociations(roadmapId);
+
+            // 엔티티 리스트 -> DTO 리스트 변환
+            List<LayerListDTO> layerDTOs = layers.stream()
+                .map(LayerListDTO::of)
+                .toList();
+
+            return layerDTOs;
         }
     }
 
-    // 레이어 상세 조회 (삭제되지 않은 것만 조회) 
+    // 레이어 상세 조회 (삭제되지 않은 것만 조회)
     @Transactional(readOnly = true)
     public LayerDetailDTO getLayerDetail(final Long layerId, final Long memberId) {
-        Layer layer = layerRepository.findByIdWithMember(layerId)
-            .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND));
+
+        final Member member = memberRepository.findByIdAndDeletedAtIsNull(memberId)
+            .orElseThrow(() -> new CommonException(ResponseCode.MEMBER_NOT_FOUND));
+
+        final Layer layer = layerRepository.findByIdWithMember(layerId)
+            .orElseThrow(() -> new CommonException(ResponseCode.LAYER_NOT_FOUND));
 
         // 삭제된 레이어 체크
         if (layer.getDeletedAt() != null) {
@@ -121,21 +146,20 @@ public class LayerService {
 
         // 찜 여부 확인
         boolean isZzim = false;
-        if (memberId != null) {
-            Member member = memberRepository.findById(memberId).orElse(null);
-            if (member != null) {
-                isZzim = layerLibraryRepository.existsByMemberAndLayer(member, layer);
-            }
-        }
+        isZzim = layerLibraryRepository.existsByMemberAndLayer(member, layer);
 
-        return LayerDetailDTO.from(layer, isZzim);
+        LayerDetailDTO layerDetailDTO = LayerDetailDTO.from(layer, isZzim);
+
+        return layerDetailDTO;
     }
 
     // 레이어 생성
     public Layer create(final LayerRequest request, Long memberId, Long roadmapId) {
+
         // 연관 Entity 조회
         Member member = memberRepository.findById(memberId)
             .orElseThrow(() -> new CommonException(ResponseCode.MEMBER_NOT_FOUND));
+
         Roadmap roadmap = roadmapRepository.findById(roadmapId)
             .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND));
 
@@ -149,6 +173,7 @@ public class LayerService {
     // 레이어 수정
     @Transactional
     public Layer update(Long id, LayerRequest request, Long memberId) {
+
         // 기존 레이어 조회 (Member와 함께 조회하여 LazyInitializationException 방지)
         Layer layer = layerRepository.findByIdWithMember(id)
             .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND));
@@ -170,6 +195,7 @@ public class LayerService {
     // 레이어 삭제
     @Transactional
     public Layer delete(Long id, Long memberId) {
+
         Layer layer = layerRepository.findByIdWithMember(id)
             .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND));
 
@@ -187,7 +213,9 @@ public class LayerService {
             }
             throw new CommonException(ResponseCode.FORBIDDEN);
         }
+        markerRepository.deleteAllByLayerId(layer.getId());
 
+        layer.setRoadmap(null);
 
         // 참조 무결성 검사
         ReferencedWarning warning = getReferencedWarning(layer.getId());
@@ -208,6 +236,7 @@ public class LayerService {
 
     @Transactional(readOnly = true)
     public Layer findById(Long id) {
+
         return layerRepository.findById(id)
                 .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND));
     }

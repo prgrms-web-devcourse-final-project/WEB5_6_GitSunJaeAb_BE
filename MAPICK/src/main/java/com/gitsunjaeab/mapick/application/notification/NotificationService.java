@@ -13,8 +13,8 @@ import com.gitsunjaeab.mapick.domain.notification.NotificationType;
 import com.gitsunjaeab.mapick.domain.quest.MemberQuest;
 import com.gitsunjaeab.mapick.domain.quest.Quest;
 import com.gitsunjaeab.mapick.domain.roadmap.Bookmark;
-import com.gitsunjaeab.mapick.domain.roadmap.Layer;
-import com.gitsunjaeab.mapick.domain.roadmap.LayerLibrary;
+import com.gitsunjaeab.mapick.domain.roadmap.layer.Layer;
+import com.gitsunjaeab.mapick.domain.roadmap.layer.LayerLibrary;
 import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -71,13 +71,10 @@ public class NotificationService {
                 content = layerLibrary.getMember().getNickname()
                     + "님이 " + layer.getName() + "을(를) 인용했어요!";
                 break;
-            case POST:
+            case BOOKMARK:
                 if (roadmap != null) {
                     title = "🔖 로드맵 북마크 알림";
                     content = "'" + bookmark.getMember().getNickname() + "' 님이 내 '" + roadmap.getTitle() + "' 로드맵을 북마크 했어요!";
-                } else if (quest != null) {
-                    title = "🔖 퀘스트 북마크 알림";
-                    content = "'" + bookmark.getMember().getNickname() + "' 님이 내 '" + quest.getTitle() + "' 퀘스트를 북마크 했어요!";
                 }
                 break;
             case QUEST:
@@ -146,10 +143,20 @@ public class NotificationService {
                 MemberSimpleDTO sender = null;
                 if (n.getLayerLibrary() != null && n.getLayerLibrary().getMember() != null) {
                     sender = new MemberSimpleDTO(n.getLayerLibrary().getMember());
-                } else if (n.getMemberQuest() != null && n.getMemberQuest().getMember() != null) {
-                    sender = new MemberSimpleDTO(n.getMemberQuest().getMember());
+                } else if (n.getQuest() != null && n.getQuest().getMember() != null) {
+                    sender = new MemberSimpleDTO(n.getQuest().getMember());
+                } else if (n.getComment() != null && n.getComment().getMember() != null) {
+                    sender = new MemberSimpleDTO(n.getComment().getMember());
+                } else if (n.getLayerForkHistory() != null && n.getLayerForkHistory().getMember() != null) {
+                    sender = new MemberSimpleDTO(n.getLayerForkHistory().getMember());
+                } else if (n.getAnnouncement() != null && n.getAnnouncement().getMember() != null) {
+                    sender = new MemberSimpleDTO(n.getAnnouncement().getMember());
+                } else if (n.getBookmark() != null && n.getBookmark().getMember() != null) {
+                    sender = new MemberSimpleDTO(n.getBookmark().getMember());
                 }
-                dto.setSender(sender);
+                dto.setSender(
+                    n.getSenderMember() != null ? new MemberSimpleDTO(n.getSenderMember()) : null
+                );
 
                 dto.setCreatedAt(n.getCreatedAt());
                 dto.setUpdatedAt(n.getUpdatedAt());
@@ -162,7 +169,7 @@ public class NotificationService {
                 dto.setRelatedRoadmap(n.getRoadmap() != null ? new RoadmapSimpleDTO(n.getRoadmap()) : null);
                 dto.setRelatedLayer(n.getLayerLibrary() != null && n.getLayerLibrary().getLayer() != null
                     ? new LayerSimpleDTO(n.getLayerLibrary().getLayer()) : null);
-                dto.setRelatedQuestId(n.getMemberQuest() != null ? n.getMemberQuest().getId() : null);
+                dto.setRelatedQuestId(n.getMemberQuest() != null ? n.getMemberQuest().getQuest().getId() : null);
                 dto.setRelatedCommentId(null); // TODO: 댓글 알림 있으면 추후 세팅
 
                 if (n.getLayerLibrary() != null && n.getLayerLibrary().getLayer() != null) {
