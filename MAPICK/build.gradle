@@ -97,7 +97,7 @@ dependencies {
     implementation 'org.webjars:stomp-websocket:2.3.4'
 
 
-//    // Google Secret Manager(로컬에서 돌릴땐 빼야함)
+//    // Google Secret Manager
     implementation 'com.google.cloud:spring-cloud-gcp-starter-secretmanager:3.5.2'
 
 

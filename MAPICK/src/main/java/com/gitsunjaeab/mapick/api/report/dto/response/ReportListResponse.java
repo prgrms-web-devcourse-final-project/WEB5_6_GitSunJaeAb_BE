@@ -1,6 +1,6 @@
 package com.gitsunjaeab.mapick.api.report.dto.response;
 
-import com.gitsunjaeab.mapick.api.report.dto.ReportSimpleDTO;
+import com.gitsunjaeab.mapick.api.report.dto.internal.ReportSimpleDTO;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import java.time.OffsetDateTime;

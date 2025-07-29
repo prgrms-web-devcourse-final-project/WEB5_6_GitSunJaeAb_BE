@@ -19,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -115,4 +116,18 @@ public class RestExceptionAdvice {
             )
         );
     }
+
+    // request 요청 유효값 검증
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiResponse> handleValidationException(MethodArgumentNotValidException e) {
+        String errorMessage = e.getBindingResult().getFieldErrors().stream()
+                .findFirst()
+                .map(err -> err.getDefaultMessage())
+                .orElse("요청이 유효하지 않습니다.");
+        log.info("request 요청 유효값 검증 예외 처리");
+
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.INVALID_INPUT, errorMessage));
+    }
+
+
 }

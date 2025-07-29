@@ -1,8 +1,8 @@
 package com.gitsunjaeab.mapick.api.member;
 
-import com.gitsunjaeab.mapick.api.member.dto.MemberDTO;
-import com.gitsunjaeab.mapick.api.member.dto.MemberDetailDTO;
-import com.gitsunjaeab.mapick.api.member.dto.MemberListDTO;
+import com.gitsunjaeab.mapick.api.member.dto.internal.MemberDTO;
+import com.gitsunjaeab.mapick.api.member.dto.internal.MemberDetailDTO;
+import com.gitsunjaeab.mapick.api.member.dto.internal.MemberListDTO;
 import com.gitsunjaeab.mapick.api.member.dto.request.MemberInterestRequest;
 import com.gitsunjaeab.mapick.api.member.dto.request.MemberProfileUpdateRequest;
 import com.gitsunjaeab.mapick.api.member.dto.request.PasswordRequest;
@@ -18,9 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -65,7 +63,8 @@ public class MemberController {
     @GetMapping("{memberId}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "[관리자 전용] 특정 회원 조회(괸라자) ", description = " 특정 회원 정보 조회")
-    public ResponseEntity<MemberResponse> getMember(@PathVariable(name = "memberId") final Long memberId) {
+    public ResponseEntity<MemberResponse> getMember(
+            @PathVariable(name = "memberId") final Long memberId) {
 
         MemberDTO memberDTO = memberService.getMember(memberId);
 
@@ -83,7 +82,8 @@ public class MemberController {
     @PutMapping("/blacklist/{memberId}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "[관리자 전용] 블랙리스트 여부 변경 (관리자)", description = "[관리자 전용] 회원의 블랙 리스트 여부 수정")
-    public ResponseEntity<MemberBlackListResponse> addMemberBlackList(@PathVariable(name = "memberId") final Long memberId) {
+    public ResponseEntity<MemberBlackListResponse> addMemberBlackList(
+            @PathVariable(name = "memberId") final Long memberId) {
 
         memberService.setMemberBlackList(memberId);
 
@@ -99,7 +99,8 @@ public class MemberController {
     @DeleteMapping("/blacklist/{memberId}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "[관리자 전용] 블랙리스트 여부 변경 (관리자)", description = "[관리자 전용] 회원의 블랙 리스트 여부 수정")
-    public ResponseEntity<MemberBlackListResponse> removeMemberBlackList(@PathVariable(name = "memberId") final Long memberId) {
+    public ResponseEntity<MemberBlackListResponse> removeMemberBlackList(
+            @PathVariable(name = "memberId") final Long memberId) {
 
         memberService.clearMemberBlackList(memberId);
 
@@ -117,7 +118,8 @@ public class MemberController {
     @PutMapping("/role/{memberId}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "[관리자 전용] 특정 회원 관리자 설정 (관리자)", description = "[관리자 전용] 특정 회원 관리자 설정 ")
-    public ResponseEntity<MemberRoleUpdateResponse> addMemberRole(@PathVariable(name = "memberId") final Long memberId) {
+    public ResponseEntity<MemberRoleUpdateResponse> addMemberRole(
+            @PathVariable(name = "memberId") final Long memberId) {
 
         memberService.setMemberRoleAdmin(memberId);
 
@@ -152,7 +154,8 @@ public class MemberController {
     @DeleteMapping("{memberId}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "[관리자 전용] 회원 삭제(관리자)", description = "회원 삭제")
-    public ResponseEntity<MemberResponse> deleteMember(@PathVariable(name = "memberId") final Long memberId) {
+    public ResponseEntity<MemberResponse> deleteMember(
+            @PathVariable(name = "memberId") final Long memberId) {
 
         memberService.deleteMember(memberId); // 소프트 딜리트
 

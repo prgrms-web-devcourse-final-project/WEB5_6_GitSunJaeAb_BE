@@ -1,12 +1,10 @@
 package com.gitsunjaeab.mapick.api.member.dto.response;
 
-import com.gitsunjaeab.mapick.api.member.dto.MemberDTO;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 
 /**

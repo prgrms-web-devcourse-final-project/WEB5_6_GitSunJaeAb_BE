@@ -1,19 +1,19 @@
-package com.gitsunjaeab.mapick.api.member.dto;
+package com.gitsunjaeab.mapick.api.member.dto.internal;
 
 import com.gitsunjaeab.mapick.domain.member.Member;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import java.time.OffsetDateTime;
+
 import lombok.*;
 
-import java.time.OffsetDateTime;
-import java.util.List;
 
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class MemberDetailDTO {
+public class MemberDTO {
 
     private Long id;
 
@@ -52,11 +52,6 @@ public class MemberDetailDTO {
 
     private OffsetDateTime lastLogin;
 
-    private Long loginCount;
-
-    @Size(max = 255)
-    private List<MemberInterestDTO> memberInterests; // 회원의 관심 분야
-
     @NotNull
     private OffsetDateTime createdAt;
 
@@ -64,26 +59,23 @@ public class MemberDetailDTO {
 
     private OffsetDateTime deletedAt;
 
-    public static MemberDetailDTO of(Member member,List<MemberInterestDTO> memberInterestDTOList ) {
-        return MemberDetailDTO.builder()
+    public static MemberDTO of(Member member) {
+        return MemberDTO.builder()
                 .id(member.getId())
                 .isBlacklisted(member.getIsBlacklisted())
                 .name(member.getName())
                 .nickname(member.getNickname())
                 .email(member.getEmail())
                 .password(member.getPassword())
-                .loginType(member.getLoginType().name())
+                .loginType(member.getLoginType().toString())
                 .provider(member.getProvider())
                 .role(member.getRole())
                 .status(member.getStatus())
                 .profileImage(member.getProfileImage())
                 .lastLogin(member.getLastLogin())
-                .memberInterests(memberInterestDTOList)
-                .loginCount(member.getLoginCount())
                 .createdAt(member.getCreatedAt())
                 .updatedAt(member.getUpdatedAt())
                 .deletedAt(member.getDeletedAt())
                 .build();
     }
-
 }

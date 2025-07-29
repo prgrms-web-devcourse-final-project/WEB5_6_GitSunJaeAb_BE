@@ -2,9 +2,8 @@ package com.gitsunjaeab.mapick.api.roadmap.dto.roadmap;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.gitsunjaeab.mapick.api.category.dto.CategorySimpleDTO;
-import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
+import com.gitsunjaeab.mapick.api.member.dto.internal.MemberSimpleDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.hashtag.HashtagDTO;
-import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerListDTO;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapType;
 
 import java.time.OffsetDateTime;

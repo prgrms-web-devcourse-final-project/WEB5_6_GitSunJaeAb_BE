@@ -1,6 +1,6 @@
 package com.gitsunjaeab.mapick.api.member.dto.response;
 
-import com.gitsunjaeab.mapick.api.member.dto.MemberDetailDTO;
+import com.gitsunjaeab.mapick.api.member.dto.internal.MemberDetailDTO;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import lombok.AllArgsConstructor;
