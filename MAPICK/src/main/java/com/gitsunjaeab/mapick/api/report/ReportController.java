@@ -103,7 +103,6 @@ public class ReportController {
 
         ReportDTO reportDTO = reportService.createMapReport(memberId,roadmapId, mapReportRequest);
 
-
         MapReportResponse response = MapReportResponse.of(reportDTO);
 
         return ResponseEntity

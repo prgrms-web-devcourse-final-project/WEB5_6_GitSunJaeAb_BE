@@ -10,8 +10,20 @@ public enum ResponseCode {
 
     //todo 코드 정리 필요
 
+    // 성공
+    OK("2000", HttpStatus.OK, "정상적으로 완료되었습니다."),
+    SIGNUP_SUCCESS("2001", HttpStatus.OK, "회원가입 성공입니다."),
+    SIGNIN_SUCCESS("2002", HttpStatus.OK, "로그인 성공입니다."),
+    SOCIAL_SIGNIN_SUCCESS("2003", HttpStatus.OK, "소셜 로그인 성공입니다."),
+    VERITY_PASSWORD_SUCCESS("2004", HttpStatus.OK, "비밀번호 검증 성공 입니다."),
+    CHANGE_PASSWORD_SUCCESS("2005", HttpStatus.OK, "비밀번호 변경 성공 입니다."),
+    LOGOUT_SUCCESS("2006", HttpStatus.OK, "로그아웃 되었습니다."),
+
 
     // 클라이언트 에러
+    /**
+     * 400 Bad Request - 요청 구문이 잘못됨(파라미터, JSON, Validation 등)
+     * */
     INVALID_INPUT("4000", HttpStatus.BAD_REQUEST, "잘못된 요청 데이터입니다."),
     EMAIL_ALREADY_REGISTERED_LOCALLY("4014", HttpStatus.BAD_REQUEST, "이미 로컬로 가입된 이메일입니다."),
     PROVIDER_MISMATCH("4014", HttpStatus.BAD_REQUEST, "잘못된 provider 입니다."),
@@ -59,16 +71,9 @@ public enum ResponseCode {
     // 내부 오류
     INTERNAL_ERROR("5000", HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류입니다."),
     FILE_UPLOAD_FAILED("5001", HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패했습니다."),
-    SAVE_FAILED("5002", HttpStatus.INTERNAL_SERVER_ERROR, "저장에 실패했습니다."),
+    SAVE_FAILED("5002", HttpStatus.INTERNAL_SERVER_ERROR, "저장에 실패했습니다.");
 
-    // 성공
-    OK("2000", HttpStatus.OK, "정상적으로 완료되었습니다."),
-    SIGNUP_SUCCESS("2001", HttpStatus.OK, "회원가입 성공입니다."),
-    SIGNIN_SUCCESS("2002", HttpStatus.OK, "로그인 성공입니다."),
-    SOCIAL_SIGNIN_SUCCESS("2003", HttpStatus.OK, "소셜 로그인 성공입니다."),
-    VERITY_PASSWORD_SUCCESS("2004", HttpStatus.OK, "비밀번호 검증 성공 입니다."),
-    CHANGE_PASSWORD_SUCCESS("2005", HttpStatus.OK, "비밀번호 변경 성공 입니다."),
-    LOGOUT_SUCCESS("2006", HttpStatus.OK, "로그아웃 되었습니다.");
+
 
 
     private final String code;

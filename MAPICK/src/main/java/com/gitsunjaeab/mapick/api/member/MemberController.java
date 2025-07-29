@@ -62,7 +62,7 @@ public class MemberController {
     // complete
     @GetMapping("{memberId}")
     @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "[관리자 전용] 특정 회원 조회(괸라자) ", description = " 특정 회원 정보 조회")
+    @Operation(summary = "[관리자 전용] 특정 회원 조회(괸리자) ", description = " 특정 회원 정보 조회")
     public ResponseEntity<MemberResponse> getMember(
             @PathVariable(name = "memberId") final Long memberId) {
 
@@ -79,6 +79,7 @@ public class MemberController {
 
     // 회원의 블랙리스트 설정 (관리자 전용)
     // complete
+    //todo  /members/{memberId}/blacklist 로 변경 필요
     @PutMapping("/blacklist/{memberId}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "[관리자 전용] 블랙리스트 여부 변경 (관리자)", description = "[관리자 전용] 회원의 블랙 리스트 여부 수정")
@@ -96,6 +97,7 @@ public class MemberController {
 
     // 회원의 블랙리스트 해제 (관리자 전용)
     // complete
+    //todo  /members/{memberId}/blacklist 로 변경 필요
     @DeleteMapping("/blacklist/{memberId}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "[관리자 전용] 블랙리스트 여부 변경 (관리자)", description = "[관리자 전용] 회원의 블랙 리스트 여부 수정")
@@ -115,6 +117,7 @@ public class MemberController {
 
     // 회원 관리자 권한 부여 (관리자 전용)
     // complete
+    //todo  /members/{memberId}/role 로 변경 필요
     @PutMapping("/role/{memberId}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "[관리자 전용] 특정 회원 관리자 설정 (관리자)", description = "[관리자 전용] 특정 회원 관리자 설정 ")
@@ -132,6 +135,7 @@ public class MemberController {
 
     // 회원 관리자 권한 회수(관리자 전용)
     // complete
+    //todo  /members/{memberId}/role 로 변경 필요
     @DeleteMapping("/role/{memberId}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "[관리자 전용] 특정 회원 관리자 권한 회수 (관리자)", description = "[관리자 전용] 특정 회원 관리자 권한 회수 ")
@@ -174,6 +178,8 @@ public class MemberController {
 
     // 본인 회원 정보 조회 (프로필)
     // complete
+
+    // 본인 정보를 조회 할때 me 라는 키워드를 붙인다. users/me - > 이걸로 구분 가능
     @GetMapping
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @Operation(summary = "[사용자] 회원 정보 조회", description = "[사용자 전용] 본인만 접근 가능한 프로필 조회" )

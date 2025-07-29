@@ -60,10 +60,11 @@ public class MemberResponse implements BaseApiResponse {
         );
     }
 
+    // 비밀번호 검증 성공
     public static MemberResponse verifyPassword( ) {
         return new MemberResponse(
-                ResponseCode.OK.getCode(),
-                "비밀번호 검증 성공",
+                ResponseCode.VERITY_PASSWORD_SUCCESS.getCode(),
+                ResponseCode.VERITY_PASSWORD_SUCCESS.getMessage(),
                 OffsetDateTime.now(),
                 null
         );
