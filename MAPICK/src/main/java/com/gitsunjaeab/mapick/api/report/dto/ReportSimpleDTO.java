@@ -46,6 +46,7 @@ public class ReportSimpleDTO {
                 .id(report.getId())
                 .reporter(MemberSimpleDTO.of(report.getReporter()))
                 .reportedMember(MemberSimpleDTO.of(report.getReportedMember()))
+                .description(report.getDescription())
                 .roadmap(report.getRoadmap() != null ? report.getRoadmap().getId() : null)
                 .marker(report.getMarker() != null ? report.getMarker().getId() : null)
                 .quest(report.getQuest() != null ? report.getQuest().getId() : null)
