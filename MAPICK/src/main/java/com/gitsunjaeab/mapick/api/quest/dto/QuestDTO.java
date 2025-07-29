@@ -1,7 +1,7 @@
 package com.gitsunjaeab.mapick.api.quest.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
+import com.gitsunjaeab.mapick.api.member.dto.internal.MemberSimpleDTO;
 import com.gitsunjaeab.mapick.domain.quest.Quest;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

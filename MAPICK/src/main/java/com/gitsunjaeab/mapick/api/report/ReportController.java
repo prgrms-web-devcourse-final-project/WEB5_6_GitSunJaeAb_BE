@@ -1,8 +1,8 @@
 package com.gitsunjaeab.mapick.api.report;
 
-import com.gitsunjaeab.mapick.api.report.dto.ReportDTO;
-import com.gitsunjaeab.mapick.api.report.dto.ReportDetailDTO;
-import com.gitsunjaeab.mapick.api.report.dto.ReportSimpleDTO;
+import com.gitsunjaeab.mapick.api.report.dto.internal.ReportDTO;
+import com.gitsunjaeab.mapick.api.report.dto.internal.ReportDetailDTO;
+import com.gitsunjaeab.mapick.api.report.dto.internal.ReportSimpleDTO;
 import com.gitsunjaeab.mapick.api.report.dto.request.MapReportRequest;
 import com.gitsunjaeab.mapick.api.report.dto.request.MarkerReportRequest;
 import com.gitsunjaeab.mapick.api.report.dto.request.QuestReportRequest;
@@ -102,7 +102,6 @@ public class ReportController {
         Long memberId = principal.getMember().getId();
 
         ReportDTO reportDTO = reportService.createMapReport(memberId,roadmapId, mapReportRequest);
-
 
         MapReportResponse response = MapReportResponse.of(reportDTO);
 

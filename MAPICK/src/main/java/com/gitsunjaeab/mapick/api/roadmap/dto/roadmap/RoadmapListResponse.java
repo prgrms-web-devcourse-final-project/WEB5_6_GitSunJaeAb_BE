@@ -1,7 +1,7 @@
 package com.gitsunjaeab.mapick.api.roadmap.dto.roadmap;
 
 import com.gitsunjaeab.mapick.api.category.dto.CategorySimpleDTO;
-import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
+import com.gitsunjaeab.mapick.api.member.dto.internal.MemberSimpleDTO;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.api.roadmap.dto.hashtag.HashtagDTO;

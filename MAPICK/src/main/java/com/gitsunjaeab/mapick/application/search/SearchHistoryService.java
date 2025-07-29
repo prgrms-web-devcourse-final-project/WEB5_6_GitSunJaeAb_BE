@@ -1,6 +1,6 @@
 package com.gitsunjaeab.mapick.application.search;
 
-import com.gitsunjaeab.mapick.api.search.dto.SearchHistoryDTO;
+import com.gitsunjaeab.mapick.api.search.dto.internal.SearchHistoryDTO;
 import com.gitsunjaeab.mapick.api.search.dto.request.SearchRequest;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.member.Member;

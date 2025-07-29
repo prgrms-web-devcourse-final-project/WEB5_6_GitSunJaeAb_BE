@@ -2,7 +2,7 @@ package com.gitsunjaeab.mapick.api.roadmap.dto.layer;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
+import com.gitsunjaeab.mapick.api.member.dto.internal.MemberSimpleDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.RoadmapSimpleDTO;
 import com.gitsunjaeab.mapick.domain.roadmap.layer.Layer;
 

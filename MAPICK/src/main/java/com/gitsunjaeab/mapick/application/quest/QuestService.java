@@ -1,7 +1,7 @@
 package com.gitsunjaeab.mapick.application.quest;
 
 import com.gitsunjaeab.mapick.api.achievement.dto.AchievementDTO;
-import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
+import com.gitsunjaeab.mapick.api.member.dto.internal.MemberSimpleDTO;
 import com.gitsunjaeab.mapick.api.quest.dto.QuestAchievementResponse;
 import com.gitsunjaeab.mapick.api.quest.dto.QuestRequest;
 import com.gitsunjaeab.mapick.api.quest.dto.QuestResponse;
