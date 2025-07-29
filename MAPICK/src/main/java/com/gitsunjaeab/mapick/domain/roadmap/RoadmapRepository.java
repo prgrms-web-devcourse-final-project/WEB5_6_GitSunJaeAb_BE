@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface RoadmapRepository extends JpaRepository<Roadmap, Long> {
 
-    List<Roadmap> findAllByIsPublicTrueAndRoadmapType(RoadmapType roadmapType);
+    List<Roadmap> findAllByIsPublicTrueAndRoadmapTypeAndDeletedAtIsNull(RoadmapType roadmapType);
 
     Roadmap findFirstByMember(Member member);
 
@@ -27,4 +27,6 @@ public interface RoadmapRepository extends JpaRepository<Roadmap, Long> {
     List<Roadmap> findAllByMemberAndDeletedAtIsNull(Member member);
 
     Long countByMemberId(Long memberId);
+
+    Long countByMemberIdAndRoadmapType(Long memberId, RoadmapType roadmapType);
 }

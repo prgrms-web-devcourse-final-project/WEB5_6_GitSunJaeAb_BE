@@ -1,6 +1,8 @@
 package com.gitsunjaeab.mapick.domain.quest;
 
 import com.gitsunjaeab.mapick.domain.member.Member;
+import com.gitsunjaeab.mapick.domain.notification.Notification;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -45,7 +47,7 @@ public class MemberQuest {
     private Boolean status;
 
     //정답여부
-    @Column(nullable = false)
+    @Column(name = "is_recognized")
     private String isRecognized;
 
     //
@@ -88,8 +90,9 @@ public class MemberQuest {
     private String description;
 
 
-    //잠시 주석 처리
-//    @OneToMany(mappedBy = "memberQuest")
-//    private Set<MemberQuestEvidence> memberQuestMemberQuestEvidences = new HashSet<>();
+    @OneToMany(mappedBy = "memberQuest", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private Set<Notification> notifications = new HashSet<>();
+
+
 
 }

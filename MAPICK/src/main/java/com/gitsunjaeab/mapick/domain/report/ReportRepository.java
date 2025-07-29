@@ -23,4 +23,16 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
     Report findFirstByQuest(Quest quest);
 
     boolean existsByRoadmapId(Long roadmapId);
+
+    // 신고자와 로드맵 조합으로 중복 신고 확인
+    boolean existsByReporterAndRoadmap(Member reporter, Roadmap roadmap);
+
+    // 신고자와 마커 조합으로 중복 신고 확인
+    boolean existsByReporterAndMarker(Member reporter, Marker marker);
+
+    // 신고자와 퀘스트 조합으로 중복 신고 확인
+    boolean existsByReporterAndQuest(Member reporter, Quest quest);
+
+
+
 }

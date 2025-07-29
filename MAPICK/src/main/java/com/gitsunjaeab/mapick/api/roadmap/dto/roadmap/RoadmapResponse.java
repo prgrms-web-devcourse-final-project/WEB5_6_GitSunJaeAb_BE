@@ -86,6 +86,7 @@ public class RoadmapResponse implements BaseApiResponse {
         roadmapInfo.setViewCount(r.getViewCount());
 
         List<LayerWithMarkerDTO> layers = r.getRoadmapLayers().stream()
+                .filter(layer -> layer.getDeletedAt() == null)
                 .map(LayerWithMarkerDTO::new)
                 .collect(Collectors.toList());
         roadmapInfo.setLayers(layers);

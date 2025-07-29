@@ -1,12 +1,15 @@
 package com.gitsunjaeab.mapick.domain.roadmap;
 
 import com.gitsunjaeab.mapick.domain.member.Member;
+import com.gitsunjaeab.mapick.domain.roadmap.layer.Layer;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 
 public interface MarkerRepository extends JpaRepository<Marker, Long> {
@@ -26,4 +29,15 @@ public interface MarkerRepository extends JpaRepository<Marker, Long> {
             "WHERE m.id = :id")
     Optional<Marker> findByIdWithLayerAndRoadmap(@Param("id") Long id);
 
+    Optional<Marker> findByMarkerTempId(Long markerTempId);
+
+    @Transactional
+    @Modifying
+    @Query("DELETE FROM Marker m WHERE m.layer.id = :layerId")
+    void deleteByLayerId(@Param("layerId") Long layerId);
+
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM Marker m WHERE m.layer.id = :layerId")
+    void deleteAllByLayerId(@Param("layerId") Long layerId);
 }

@@ -6,8 +6,8 @@ import com.gitsunjaeab.mapick.domain.auth.Role;
 import com.gitsunjaeab.mapick.domain.notification.Notification;
 import com.gitsunjaeab.mapick.domain.roadmap.Bookmark;
 import com.gitsunjaeab.mapick.domain.comment.Comment;
-import com.gitsunjaeab.mapick.domain.roadmap.Layer;
-import com.gitsunjaeab.mapick.domain.roadmap.LayerLibrary;
+import com.gitsunjaeab.mapick.domain.roadmap.layer.Layer;
+import com.gitsunjaeab.mapick.domain.roadmap.layer.LayerLibrary;
 import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapEditor;
 import com.gitsunjaeab.mapick.domain.roadmap.Marker;
@@ -23,7 +23,6 @@ import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
@@ -118,10 +117,6 @@ public class Member {
     @OneToMany(mappedBy = "member")
     @Builder.Default
     private Set<RoadmapEditor> memberRoadmapEditors = new HashSet<>();
-
-    @OneToMany(mappedBy = "invitedBy")
-    @Builder.Default
-    private Set<RoadmapEditor> invitedByRoadmapEditors = new HashSet<>();
 
     @OneToMany(mappedBy = "member")
     @Builder.Default

@@ -1,14 +1,14 @@
 package com.gitsunjaeab.mapick.api.roadmap.dto.layer;
 
 import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
-import com.gitsunjaeab.mapick.api.roadmap.dto.RoadmapSimpleDTO;
+import com.gitsunjaeab.mapick.api.roadmap.dto.marker.MarkerSimpleDTO;
+import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.RoadmapSimpleDTO;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.member.Member;
-import com.gitsunjaeab.mapick.domain.roadmap.Layer;
-import com.gitsunjaeab.mapick.domain.roadmap.LayerForkHistory;
+import com.gitsunjaeab.mapick.domain.roadmap.layer.Layer;
+import com.gitsunjaeab.mapick.domain.roadmap.layer.LayerForkHistory;
 import java.time.OffsetDateTime;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import lombok.AllArgsConstructor;
@@ -30,31 +30,32 @@ public class LayerZzimListResponse implements BaseApiResponse {
     // 찜한 레이어 (포크 이력 포함) - DTO 없이 직접 처리
     private List<LayerWithForkHistoryDTO> layers;
 
+
     @Getter
     @AllArgsConstructor
     public static class LayerWithForkHistoryDTO {
+
         private Long id;
         private String name;
         private String description;
         private Integer layerSeq;
-        private LocalDate layerTime;
         private OffsetDateTime createdAt;
         private OffsetDateTime updatedAt;
         private OffsetDateTime deletedAt;
         private MemberSimpleDTO member;
         private RoadmapSimpleDTO roadmap;
         private List<LayerForkHistoryDTO> forkHistories;
+        private List<MarkerSimpleDTO> markers;
     }
 
-    public static LayerZzimListResponse of(Member loginMember, List<Layer> layers, Map<Long, List<LayerForkHistory>> forkHistoriesMap) {
-        return of(loginMember, layers, forkHistoriesMap, "찜한 레이어 조회 성공");
-    }
+    // 찜한레이어 리스트 + 포크이력 + 마커정보
+    public static LayerZzimListResponse of(
+        Member loginMember,
+        List<Layer> layers,
+        Map<Long, List<LayerForkHistory>> forkHistoriesMap,
+        String message) {
 
-    public static LayerZzimListResponse of(LayerZzimSimpleDTO layerZzimSimpleDTO, String message) {
-        return of(layerZzimSimpleDTO.getMember(), layerZzimSimpleDTO.getLayers(), layerZzimSimpleDTO.getForkHistoriesMap(), message);
-    }
-
-    public static LayerZzimListResponse of(Member loginMember, List<Layer> layers, Map<Long, List<LayerForkHistory>> forkHistoriesMap, String message) {
+        // 찜한 레이어가 없을 경우
         if (layers.isEmpty()) {
             return new LayerZzimListResponse(
                 ResponseCode.OK.getCode(),
@@ -65,6 +66,7 @@ public class LayerZzimListResponse implements BaseApiResponse {
             );
         }
 
+        // 레이어별로 프크 이력 DTO 로 변환해서 묶기
         List<LayerWithForkHistoryDTO> layerDTOs = layers.stream()
             .map(layer -> {
                 List<LayerForkHistoryDTO> forkHistoryDTOs = forkHistoriesMap
@@ -73,29 +75,50 @@ public class LayerZzimListResponse implements BaseApiResponse {
                     .map(LayerForkHistoryDTO::from)
                     .toList();
 
+                List<MarkerSimpleDTO> markerDTOs = layer.getLayerMarkers().stream()
+                    .map(MarkerSimpleDTO::from)
+                    .toList();
+
                 return new LayerWithForkHistoryDTO(
                     layer.getId(),
                     layer.getName(),
                     layer.getDescription(),
                     layer.getLayerSeq(),
-                    layer.getLayerTime(),
                     layer.getCreatedAt(),
                     layer.getUpdatedAt(),
                     layer.getDeletedAt(),
                     new MemberSimpleDTO(layer.getMember()),
                     new RoadmapSimpleDTO(layer.getRoadmap()),
-                    forkHistoryDTOs
+                    forkHistoryDTOs,
+                    markerDTOs
                 );
             })
             .toList();
 
+        // 최종 응답 객체 반환
         return new LayerZzimListResponse(
             ResponseCode.OK.getCode(),
             message, // 커스텀 메시지 사용
             OffsetDateTime.now(),
             new MemberSimpleDTO(loginMember),
-            layerDTOs
-        );
+            layerDTOs);
+    }
+
+    // 단순 조회시 사용
+    public static LayerZzimListResponse of(
+        Member loginMember,
+        List<Layer> layers,
+        Map<Long, List<LayerForkHistory>> forkHistoriesMap) {
+        return of(loginMember, layers, forkHistoriesMap, "찜한 레이어 조회 성공");
+    }
+
+
+    public static LayerZzimListResponse of(LayerZzimSimpleDTO dto, String message) {
+        return of(
+            dto.getMember(),
+            dto.getLayers(),
+            dto.getForkHistoriesMap(),
+            message);
     }
 }
 

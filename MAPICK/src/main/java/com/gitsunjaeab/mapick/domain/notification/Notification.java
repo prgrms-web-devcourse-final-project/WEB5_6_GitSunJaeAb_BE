@@ -6,8 +6,9 @@ import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.quest.MemberQuest;
 import com.gitsunjaeab.mapick.domain.quest.Quest;
 import com.gitsunjaeab.mapick.domain.roadmap.Bookmark;
-import com.gitsunjaeab.mapick.domain.roadmap.Layer;
-import com.gitsunjaeab.mapick.domain.roadmap.LayerLibrary;
+import com.gitsunjaeab.mapick.domain.roadmap.layer.Layer;
+import com.gitsunjaeab.mapick.domain.roadmap.layer.LayerForkHistory;
+import com.gitsunjaeab.mapick.domain.roadmap.layer.LayerLibrary;
 import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
 import com.gitsunjaeab.mapick.infra.converter.OffsetDateTimeConverter;
 import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
@@ -137,6 +138,10 @@ public class Notification {
     @JoinColumn(name = "bookmark_id")
     private Bookmark bookmark;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "layerforkHistory_id")
+    private LayerForkHistory layerForkHistory;
+
 
     // ===== UTIL =====
     // Enum 값 저장 검증 로직
@@ -146,6 +151,23 @@ public class Notification {
             throw new CommonException(ResponseCode.SAVE_FAILED,
                 "NotificationType.All 은 저장할 수 없습니다.");
         }
+    }
+    // 알림의 sender (발신자) 리턴
+    public Member getSenderMember() {
+        if (this.layerLibrary != null && this.layerLibrary.getMember() != null) {
+            return this.layerLibrary.getMember();
+        } else if (this.quest != null && this.quest.getMember() != null) {
+            return this.quest.getMember();
+        } else if (this.comment != null && this.comment.getMember() != null) {
+            return this.comment.getMember();
+        } else if (this.layerForkHistory != null && this.layerForkHistory.getMember() != null) {
+            return this.layerForkHistory.getMember();
+        } else if (this.announcement != null && this.announcement.getMember() != null) {
+            return this.announcement.getMember();
+        } else if (this.bookmark != null && this.bookmark.getMember() != null) {
+            return this.bookmark.getMember();
+        }
+        return null;
     }
 
 }

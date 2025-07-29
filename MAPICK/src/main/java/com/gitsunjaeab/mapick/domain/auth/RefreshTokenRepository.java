@@ -7,11 +7,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface RefreshTokenRepository extends JpaRepository<RefreshToken, String> {
 
-    Optional<RefreshToken> findByAccessTokenId(String id);
+    Optional<RefreshToken> findByjti(String jti);
 
-    long deleteByToken(String token);
-    long deleteByAccessTokenId(String accessTokenId);
+    long deleteByjti(String jti);
 
     void deleteByMember(Member member);
-    void deleteByMemberId(Long memberId);
+
 }

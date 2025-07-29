@@ -10,13 +10,4 @@ public class ErrorResponse implements BaseApiResponse {
     private String code;
     private String message;
     private OffsetDateTime timestamp;
-
-    public static ErrorResponse of(ResponseCode code) {
-        return new ErrorResponse(
-            code.getCode(),
-            code.getMessage(),
-            OffsetDateTime.now()
-        );
-    }
 }
-

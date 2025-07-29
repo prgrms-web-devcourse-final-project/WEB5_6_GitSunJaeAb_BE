@@ -2,6 +2,7 @@ package com.gitsunjaeab.mapick.domain.roadmap;
 
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.report.Report;
+import com.gitsunjaeab.mapick.domain.roadmap.layer.Layer;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -46,6 +47,9 @@ public class Marker {
             generator = "primary_sequence"
     )
     private Long id;
+
+    @Column(name = "marker_temp_id", unique = true)
+    private Long markerTempId;
 
     @Column
     private String name;

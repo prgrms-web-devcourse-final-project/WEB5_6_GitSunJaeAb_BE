@@ -19,13 +19,14 @@ public class RefreshToken {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
-    private String accessTokenId;
 
-    private String token;
+    private String jti;
 
-    public RefreshToken(Member member, String accessTokenId) {
+    private String refreshToken;
+
+    public RefreshToken(Member member, String jti) {
         this.member = member;
-        this.accessTokenId = accessTokenId;
-        this.token = UUID.randomUUID().toString();
+        this.jti = jti;
+        this.refreshToken = UUID.randomUUID().toString();
     }
 }

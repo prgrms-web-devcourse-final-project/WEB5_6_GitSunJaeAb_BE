@@ -1,6 +1,7 @@
 package com.gitsunjaeab.mapick.api.quest.dto;
 
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,6 +9,9 @@ import lombok.Setter;
 @Setter
 public class MemberQuestJudgeRequest {
 
+    @NotNull
     private Long memberQuestId;
+
+    @NotNull
     private Boolean isRecognized;
 }
