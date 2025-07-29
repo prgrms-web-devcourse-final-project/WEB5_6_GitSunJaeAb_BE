@@ -28,6 +28,8 @@ public class QuestDTO {
 
     private String description;
 
+    private String hint;
+
     private OffsetDateTime deadline;
 
     @NotNull
@@ -51,6 +53,7 @@ public class QuestDTO {
         this.title = quest.getTitle();
         this.questImage = quest.getQuestImage();
         this.description = quest.getDescription();
+        this.hint = quest.getDescription();
         this.deadline = quest.getDeadline();
         this.isActive = quest.getIsActive();
         this.createdAt = quest.getCreatedAt();

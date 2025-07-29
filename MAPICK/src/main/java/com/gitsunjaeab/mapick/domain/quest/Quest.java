@@ -51,6 +51,9 @@ public class Quest {
     @Column(columnDefinition = "text")
     private String description;
 
+    @Column(length = 300)
+    private String hint;
+
     @Column(nullable = false)
     private Boolean isActive;
 

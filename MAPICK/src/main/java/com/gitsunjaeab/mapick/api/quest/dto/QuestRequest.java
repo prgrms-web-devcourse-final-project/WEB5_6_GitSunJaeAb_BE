@@ -27,6 +27,10 @@ public class QuestRequest {
     @Schema(description = "퀘스트 설명", example = "한강에서 찍은 인증샷을 제출하세요.")
     private String description;
 
+    @Schema(description = "퀘스트 힌트", example = "이거 보면 어딘지 알겠죠?!")
+    @Size(max = 300)
+    private String hint;
+
     @Schema(description = "퀘스트 마감일", example = "2025-08-01T23:59:59+09:00")
     private OffsetDateTime deadline;
 

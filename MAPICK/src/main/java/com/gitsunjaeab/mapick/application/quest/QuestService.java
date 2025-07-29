@@ -196,6 +196,7 @@ public class QuestService {
         questResponse.setTitle(quest.getTitle());
         questResponse.setQuestImage(quest.getQuestImage());
         questResponse.setDescription(quest.getDescription());
+        questResponse.setHint(quest.getHint());
         questResponse.setDeadline(quest.getDeadline());
         questResponse.setIsActive(quest.getIsActive());
         questResponse.setCreatedAt(quest.getCreatedAt());
@@ -210,6 +211,7 @@ public class QuestService {
     private Quest requestToEntity(final QuestRequest questRequest, final Quest quest) {
         quest.setTitle(questRequest.getTitle());
         quest.setDescription(questRequest.getDescription());
+        quest.setHint(questRequest.getHint());
         quest.setDeadline(questRequest.getDeadline());
         quest.setIsActive(questRequest.getIsActive() != null ? questRequest.getIsActive() : true);
         return quest;

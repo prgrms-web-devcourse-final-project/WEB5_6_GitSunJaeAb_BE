@@ -31,6 +31,8 @@ public class QuestResponse {
 
     private String description;
 
+    private String hint;
+
     private OffsetDateTime deadline;
 
 
@@ -56,6 +58,7 @@ public class QuestResponse {
         response.setTitle(quest.getTitle());
         response.setQuestImage(quest.getQuestImage());
         response.setDescription(quest.getDescription());
+        response.setHint(quest.getHint());
         response.setDeadline(quest.getDeadline());
         response.setIsActive(quest.getIsActive());
         response.setCreatedAt(quest.getCreatedAt());
@@ -78,6 +81,7 @@ public class QuestResponse {
         response.setTitle(questDTO.getTitle());
         response.setQuestImage(questDTO.getQuestImage());
         response.setDescription(questDTO.getDescription());
+        response.setHint(questDTO.getHint());
         response.setDeadline(questDTO.getDeadline()); // 마감기한 추가
         response.setIsActive(questDTO.getIsActive());
         response.setCreatedAt(questDTO.getCreatedAt());
@@ -97,6 +101,7 @@ public class QuestResponse {
             questResponse.getTitle(),
             questResponse.getQuestImage(),
             questResponse.getDescription(),
+            questResponse.getHint(),
             questResponse.getDeadline(),
             questResponse.getIsActive(),
             questResponse.getCreatedAt(),
@@ -116,6 +121,7 @@ public class QuestResponse {
             questResponse.getTitle(),
             questResponse.getQuestImage(),
             questResponse.getDescription(),
+            questResponse.getHint(),
             questResponse.getDeadline(),
             questResponse.getIsActive(),
             questResponse.getCreatedAt(),
@@ -136,6 +142,7 @@ public class QuestResponse {
             questResponse.getTitle(),
             questResponse.getQuestImage(),
             questResponse.getDescription(),
+            questResponse.getHint(),
             questResponse.getDeadline(),
             questResponse.getIsActive(),
             questResponse.getCreatedAt(),
@@ -156,6 +163,7 @@ public class QuestResponse {
             questDTO.getTitle(),
             questDTO.getQuestImage(),
             questDTO.getDescription(),
+            questDTO.getHint(),
             questDTO.getDeadline(),
             questDTO.getIsActive(),
             questDTO.getCreatedAt(),
@@ -175,6 +183,7 @@ public class QuestResponse {
             questDTO.getTitle(),
             questDTO.getQuestImage(),
             questDTO.getDescription(),
+            questDTO.getHint(),
             questDTO.getDeadline(),
             questDTO.getIsActive(),
             questDTO.getCreatedAt(),
