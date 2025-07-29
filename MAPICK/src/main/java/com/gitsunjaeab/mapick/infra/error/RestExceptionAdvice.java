@@ -27,28 +27,34 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 public class RestExceptionAdvice {
 
+    // 비즈니스 로직에서 발생하는 공통 예외 처리
     @ExceptionHandler(CommonException.class)
     public ResponseEntity<ApiResponse> handleCommonException(CommonException e) {
         e.printStackTrace();
+        log.info("RestExceptionAdvice에서 처리");
         return ResponseEntity.ok(ApiResponse.of(e.code()));
     }
 
+    // 인가 실패(403) 발생 시 처리 (ex. 권한 없는 리소스 접근)
     @ExceptionHandler(AccessDeniedException.class)
     public ApiResponse handleAccessDenied(AccessDeniedException e) {
         e.printStackTrace();
-        return ApiResponse.of(ResponseCode.FORBIDDEN); // 403
+        log.info("RestExceptionAdvice에서 처리");
+        return ApiResponse.of(ResponseCode.FORBIDDEN);
     }
 
+    // 인증 실패(401) 발생 시 처리 (ex. 로그인 안 된 사용자, 잘못된 인증 토큰 등)
     @ExceptionHandler(AuthenticationException.class)
     public ApiResponse handleAuthentication(AuthenticationException e) {
         e.printStackTrace();
+        log.info("RestExceptionAdvice에서 처리");
         return ApiResponse.of(ResponseCode.UNAUTHORIZED); // 401
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ApiResponse> handleIllegalArgumentException(IllegalArgumentException e) {
         log.error("잘못된 요청 매개변수 오류: {}", e.getMessage());
-
+        log.info("RestExceptionAdvice에서 처리");
         return ResponseEntity
             .status(ResponseCode.INVALID_INPUT.getStatus())
             .body(ApiResponse.of(ResponseCode.INVALID_INPUT, e.getMessage()));
@@ -58,6 +64,7 @@ public class RestExceptionAdvice {
     public ResponseEntity<ApiResponse> handleDataIntegrityViolationException(
         DataIntegrityViolationException e) {
         log.error("DB 제약 조건 위반 오류 발생: {}", e.getMessage());
+        log.info("RestExceptionAdvice에서 처리");
 
         // 중복 키 오류 메시지 커스터마이징
         String errorMessage = "DB 제약 조건에 위배되었습니다.";
@@ -72,11 +79,30 @@ public class RestExceptionAdvice {
             .body(ApiResponse.of(ResponseCode.DB_CONSTRAINT_VIOLATION, errorMessage));
     }
 
+    // request 요청 유효값 검증
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiResponse> handleValidationException(MethodArgumentNotValidException e) {
+        String errorMessage = e.getBindingResult().getFieldErrors().stream()
+                .findFirst()
+                .map(err -> err.getDefaultMessage())
+                .orElse("요청이 유효하지 않습니다.");
+        log.info("RestExceptionAdvice에서 처리");
+        log.info("✅ 요청 유효성 검증 실패: {}", errorMessage);
+
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.INVALID_INPUT, errorMessage));
+    }
+
+    // 기타 처리되지 않은 예외 처리 (500 Internal Server Error)
     @ExceptionHandler(Exception.class)
     public ApiResponse handleEtcException(Exception e) {
         e.printStackTrace(); // 디버깅용 로그
+        log.info("RestExceptionAdvice에서 처리");
         return ApiResponse.of(ResponseCode.INTERNAL_ERROR);
     }
+
+    /**
+     * 커스텀 예외
+     * */
 
     @ExceptionHandler(UnauthenticatedException.class)
     public ResponseEntity<ApiResponse> handleUnauthenticatedException(UnauthenticatedException e) {
@@ -117,17 +143,7 @@ public class RestExceptionAdvice {
         );
     }
 
-    // request 요청 유효값 검증
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiResponse> handleValidationException(MethodArgumentNotValidException e) {
-        String errorMessage = e.getBindingResult().getFieldErrors().stream()
-                .findFirst()
-                .map(err -> err.getDefaultMessage())
-                .orElse("요청이 유효하지 않습니다.");
-        log.info("request 요청 유효값 검증 예외 처리");
 
-        return ResponseEntity.ok(ApiResponse.of(ResponseCode.INVALID_INPUT, errorMessage));
-    }
 
 
 }
