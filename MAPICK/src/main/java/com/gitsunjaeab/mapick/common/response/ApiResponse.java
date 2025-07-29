@@ -48,5 +48,15 @@ public class ApiResponse<T> implements BaseApiResponse {
             data
         );
     }
+
+    // 인증 필터 용
+    public static <T> ApiResponse<T> of(ResponseCode responseCode, T data) {
+        return new ApiResponse<>(
+                responseCode.getCode(),
+                responseCode.getMessage(),
+                OffsetDateTime.now(),
+                data
+        );
+    }
 }
 
