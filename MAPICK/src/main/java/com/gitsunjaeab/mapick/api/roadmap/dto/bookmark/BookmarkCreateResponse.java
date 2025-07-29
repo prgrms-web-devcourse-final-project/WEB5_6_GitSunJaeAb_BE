@@ -14,12 +14,21 @@ public class BookmarkCreateResponse implements BaseApiResponse {
     private final String code;
     private final String message;
     private final OffsetDateTime timestamp;
+    private final Long bookmarkId;
 
-    public static BookmarkCreateResponse of(ResponseCode responseCode, String message) {
+    public static BookmarkCreateResponse of(ResponseCode responseCode, String message, Long bookmarkId) {
         return new BookmarkCreateResponse(
                 responseCode.getCode(),
                 message,
-                OffsetDateTime.now()
+                OffsetDateTime.now(),
+                bookmarkId
         );
+    }
+
+    public BookmarkCreateResponse(String code, String message, OffsetDateTime timestamp) {
+        this.code = code;
+        this.message = message;
+        this.timestamp = timestamp;
+        this.bookmarkId = null;
     }
 }

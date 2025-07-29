@@ -49,9 +49,9 @@ public class BookmarkController {
 
         Long memberId = principal.getMember().getId();
 
-        bookmarkService.create(roadmapId, memberId);
+        Long bookmarkId = bookmarkService.create(roadmapId, memberId);
 
-        return ResponseEntity.ok(BookmarkCreateResponse.of(ResponseCode.OK, "북마크 등록 완료"));
+        return ResponseEntity.ok(BookmarkCreateResponse.of(ResponseCode.OK, "북마크 등록 완료", bookmarkId));
     }
 
     // 로드맵 북마크 해제
