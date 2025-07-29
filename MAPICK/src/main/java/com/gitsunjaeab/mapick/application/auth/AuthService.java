@@ -169,21 +169,20 @@ public class AuthService {
     @Transactional
     public void logout(HttpServletRequest request) {
 
-        // 계정에 존재하는 기존 refresh token 삭제
         String accessToken = jwtProvider.resolveToken(request, TokenType.ACCESS_TOKEN);
 
         Claims claims = jwtProvider.parseClaim(accessToken);
         String jti = claims.getId();
 
-        log.info(accessToken);
+
         // 기존 access token 블랙 리스트 등록
         if (accessToken != null && !accessToken.isBlank()) {
 
             accessTokenBlacklistRepository.save(new AccessTokenBlacklist(accessToken));
         }
-        log.info("=========================");
-        refreshTokenRepository.deleteByAccessTokenId(jti);
-        log.info("=========================");
+
+        refreshTokenRepository.deleteByjti(jti);
+
     }
 
     // 인증 객체 생성 및 Spring Security 등록
@@ -200,7 +199,7 @@ public class AuthService {
     public TokenDTO processTokenSignin(Member member) {
 
         TokenDTO accessToken = jwtProvider.generateAccessToken(member.getEmail()); // AccessToken 만들기
-        RefreshToken refreshToken = new RefreshToken(member, accessToken.getId()); // RefreshToken 만들기
+        RefreshToken refreshToken = new RefreshToken(member, accessToken.getJti()); // RefreshToken 만들기
 
         try{
             refreshTokenRepository.save(refreshToken); // RefreshToken 저장
@@ -210,7 +209,7 @@ public class AuthService {
 
         TokenDTO tokenDto = TokenDTO.builder()
                 .accessToken(accessToken.getAccessToken())
-                .refreshToken(refreshToken.getToken())
+                .refreshToken(refreshToken.getRefreshToken())
                 .atExpiresIn(jwtProvider.getAtExpiration()) // access token의 만료 시간
                 .rtExpiresIn(jwtProvider.getRtExpiration()) // refresh token의 만료 시간
                 .grantType(GrantType.BEARER)

@@ -83,6 +83,9 @@ public class LayerService {
         if (layer.getDeletedAt() != null) {
             throw new CommonException(ResponseCode.ALREADY_PROCESSED);
         }
+        markerRepository.deleteAllByLayerId(layer.getId());
+
+        layer.setRoadmap(null);
 
         ReferencedWarning warning = getReferencedWarning(layer.getId());
         if (warning != null) {
@@ -210,7 +213,9 @@ public class LayerService {
             }
             throw new CommonException(ResponseCode.FORBIDDEN);
         }
+        markerRepository.deleteAllByLayerId(layer.getId());
 
+        layer.setRoadmap(null);
 
         // 참조 무결성 검사
         ReferencedWarning warning = getReferencedWarning(layer.getId());

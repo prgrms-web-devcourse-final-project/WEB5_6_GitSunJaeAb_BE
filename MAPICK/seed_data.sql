@@ -7,12 +7,12 @@ VALUES
     (false, '2025-06-30 10:48:44.000000 +00:00', null, 1, null, null, 'aaa@aaa.com',
      'LOCAL', '노선우', '노션우',
      '{bcrypt}$2a$10$XroGKhkHXI0k7rqK1ayr/.417Q9mV9Mc.RmYH6CBhEjuuoblz5qVK',
-     null, null, 'ROLE_USER', '2025-07-11 09:16:33.910784'),
+     null, null, 'ROLE_USER', 'ACTIVE'),
 
     (false, '2025-07-11 09:16:33.910752 +00:00', null, 2, null, null, 'bbb@aaa.com',
      'LOCAL', '임서현', '임세령',
      '{bcrypt}$2a$10$XroGKhkHXI0k7rqK1ayr/.417Q9mV9Mc.RmYH6CBhEjuuoblz5qVK',
-     null, null, 'ROLE_USER', '2025-07-11 09:16:33.910784'),
+     null, null, 'ROLE_USER', 'ACTIVE'),
 
     (true, '2025-07-13 14:03:48.420649 +00:00', null, 3, null, '2025-07-13 14:03:48.420668 +00:00',
      'ccc@ccc.com', 'LOCAL', '김나단', '김가나단',
@@ -246,7 +246,7 @@ VALUES ('2025-07-13 15:14:28.674000 +00:00', 2, 2, 1, null, '오 이거 괜찮�
 -- Notifications 데이터
 -- 1. 🔥 핫 게시글! (게시글 관련 → 연관 없음)
 INSERT INTO notifications (id, title, content, member_id, is_read, announcement_type, notification_type, roadmap_id, created_at)
-VALUES (nextval('primary_sequence'), '🔥 핫 게시글!', '너의 게시글이 인기폭발이야!', 1, true, NULL, 'POST', 1, NOW());
+VALUES (nextval('primary_sequence'), '🔥 핫 게시글!', '너의 게시글이 인기폭발이야!', 1, true, NULL, 'BOOKMARK', 1, NOW());
 
 -- 2. 🎯 퀘스트 참여 (퀘스트 관련 → 연관 없음)
 INSERT INTO notifications (id, title, content, member_id, is_read, announcement_type, notification_type, roadmap_id, created_at)
@@ -290,3 +290,47 @@ VALUES
     (105, '국토종주', 3, now(), now(), NULL);
 
 SELECT * FROM map_editors WHERE member_id = 109;
+
+INSERT INTO map_editors (created_at, deleted_at, id, member_id, roadmap_id, permission)
+VALUES
+    ('2025-07-28 18:55:30.493661', null, 1,1, 2,  'EDIT' ),
+    ('2025-07-28 18:55:30.493633', null, 2,1, 6, 'EDIT' ),
+    ('2025-07-28 18:55:30.493633', null, 3,1, 8, 'EDIT' ),
+    ('2025-07-28 18:55:30.493633', null, 4,1, 10, 'EDIT' ),
+    ('2025-07-28 18:55:30.493633', null, 5,2, 2,'EDIT' ),
+    ('2025-07-28 18:55:30.493633', null, 6,2, 8, 'EDIT' ),
+    ('2025-07-28 18:55:30.493633', null, 7,2, 10, 'EDIT' ),
+    ('2025-07-28 18:55:30.493633', null, 8,3, 2, 'EDIT' ),
+    ('2025-07-28 18:55:30.493633', null, 9,3, 10,'EDIT' );
+
+
+
+
+-- Achievements 데이터
+INSERT INTO "public"."achievements" ("id", "image", "name")
+VALUES ('100', 'https://lyrvpfgoxwppqtuuolav.supabase.co/storage/v1/object/public/mapick/3206db68-8ab0-4fb1-8087-d8e68b219059', '첫 발자국'),
+       ('101', 'https://lyrvpfgoxwppqtuuolav.supabase.co/storage/v1/object/public/mapick/3206db68-8ab0-4fb1-8087-d8e68b219059', '김정호'),
+       ('102', 'https://lyrvpfgoxwppqtuuolav.supabase.co/storage/v1/object/public/mapick/3206db68-8ab0-4fb1-8087-d8e68b219059', '퀘스터'),
+       ('103', 'https://lyrvpfgoxwppqtuuolav.supabase.co/storage/v1/object/public/mapick/3206db68-8ab0-4fb1-8087-d8e68b219059', '댓글요정'),
+       ('104', 'https://lyrvpfgoxwppqtuuolav.supabase.co/storage/v1/object/public/mapick//21e0bf51-8fb5-42ac-8697-d43d85a0c7d1', '첫 댓글러'),
+       ('105', 'https://lyrvpfgoxwppqtuuolav.supabase.co/storage/v1/object/public/mapick//21e0bf51-8fb5-42ac-8697-d43d85a0c7d1', '길잡이'),
+       ('106', 'https://lyrvpfgoxwppqtuuolav.supabase.co/storage/v1/object/public/mapick//21e0bf51-8fb5-42ac-8697-d43d85a0c7d1', '로드맵 마스터'),
+       ('107', 'https://lyrvpfgoxwppqtuuolav.supabase.co/storage/v1/object/public/mapick//21e0bf51-8fb5-42ac-8697-d43d85a0c7d1', '인증왕'),
+       ('108', 'https://lyrvpfgoxwppqtuuolav.supabase.co/storage/v1/object/public/mapick//21e0bf51-8fb5-42ac-8697-d43d85a0c7d1', '공유의 달인'),
+       ('109', 'https://lyrvpfgoxwppqtuuolav.supabase.co/storage/v1/object/public/mapick//21e0bf51-8fb5-42ac-8697-d43d85a0c7d1', '탐험가'),
+       ('110', null, '코멘터'),
+       ('111', null, '좋아요 요정'),
+       ('112', null, '10회 로그인'),
+       ('113', null, '연속 로그인 3일'),
+       ('114', null, '첫 퀘스트 완료');
+
+
+ALTER TABLE notifications
+    DROP CONSTRAINT notifications_notification_type_check;
+
+ALTER TABLE notifications
+    ADD CONSTRAINT notifications_notification_type_check
+        CHECK (notification_type IN (
+                                     'BOOKMARK', 'QUEST', 'QUEST_DEADLINE', 'COMMENT',
+                                     'ZZIM', 'FORK', 'ANNOUNCEMENT', 'ETC'
+            ));
