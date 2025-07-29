@@ -68,6 +68,7 @@ public class RoadmapService {
     private final RoadmapHashtagRelationRepository roadmapHashtagRelationRepository;
     private final ReportRepository reportRepository;
     private final MarkerRepository markerRepository;
+    private final LayerService layerService;
     @Autowired
     private LayerLibraryRepository layerLibraryRepository;
     private final CategoryRepository categoryRepository;
@@ -344,10 +345,7 @@ public class RoadmapService {
         roadmapHashtagRelationRepository.deleteByRoadmap(roadmap);
         List<Layer> layers = layerRepository.findByRoadmapIdAndDeletedAtIsNull(roadmapId);
         for (Layer layer : layers) {
-            markerRepository.deleteByLayerId(layer.getId()); // 직접 삭제 쿼리 필요
-
-            layer.setRoadmap(null);
-            layer.setDeletedAt(OffsetDateTime.now());
+            layerService.delete(layer.getId(), member.getId());
         }
         roadmap.setDeletedAt(OffsetDateTime.now());
     }

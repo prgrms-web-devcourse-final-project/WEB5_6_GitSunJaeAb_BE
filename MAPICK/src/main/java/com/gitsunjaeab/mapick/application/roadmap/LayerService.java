@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class LayerService {
 
+    private final MarkerService markerService;
     private final RoadmapEditorService roadmapEditorService;
     private final LayerRepository layerRepository;
     private final MemberRepository memberRepository;
@@ -83,7 +84,11 @@ public class LayerService {
         if (layer.getDeletedAt() != null) {
             throw new CommonException(ResponseCode.ALREADY_PROCESSED);
         }
-        markerRepository.deleteAllByLayerId(layer.getId());
+        List<Marker> markers = markerRepository.findAllByLayer_Id(layer.getId());
+
+        for (Marker marker : markers) {
+            markerService.delete(marker.getId());
+        }
 
         layer.setRoadmap(null);
 
@@ -213,7 +218,11 @@ public class LayerService {
             }
             throw new CommonException(ResponseCode.FORBIDDEN);
         }
-        markerRepository.deleteAllByLayerId(layer.getId());
+
+        List<Marker> markers = markerRepository.findAllByLayer_Id(layer.getId());
+        for (Marker marker : markers) {
+            markerService.delete(marker.getId());
+        }
 
         layer.setRoadmap(null);
 

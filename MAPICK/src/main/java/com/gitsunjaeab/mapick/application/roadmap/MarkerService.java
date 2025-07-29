@@ -53,7 +53,7 @@ public class MarkerService {
     @Transactional
     public Marker updateFromSync(final MarkerSyncRequest request) {
         final Marker marker = markerRepository.findByMarkerTempId(request.getMarkerTempId())
-                .orElseThrow(() -> new NotFoundException("존재하지 않는 markerTempId입니다."));
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 markerTempId 입니다."));
 
         MarkerCustomImage newCustomImage = null;
         if (request.getCustomImageId() != null && !request.getCustomImageId().toString().isBlank()) {
