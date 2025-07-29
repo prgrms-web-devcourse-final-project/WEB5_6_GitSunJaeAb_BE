@@ -28,7 +28,7 @@ spring:
   cloud:
     gcp:
       secretmanager:
-        enabled: true
+        enabled: false
 
   jpa:
     hibernate:

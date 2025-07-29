@@ -1,6 +1,10 @@
 package com.gitsunjaeab.mapick.api.quest.dto;
 
+
 import com.gitsunjaeab.mapick.api.member.dto.internal.MemberSimpleDTO;
+
+import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
+
 import com.gitsunjaeab.mapick.domain.quest.MemberQuest;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -48,7 +52,6 @@ public class MemberQuestResponse {
 
     private Long quest;
 
-   //private QuestDTO quest;
 
 
     // 퀘스트 참여 생성 응답

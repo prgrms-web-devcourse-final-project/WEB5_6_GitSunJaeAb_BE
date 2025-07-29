@@ -51,11 +51,17 @@ public class Quest {
     @Column(columnDefinition = "text")
     private String description;
 
+    @Column(length = 300)
+    private String hint;
+
     @Column(nullable = false)
     private Boolean isActive;
 
     @Column(nullable = false)
     private OffsetDateTime deadline;
+
+    @Column(nullable = false)
+    private Long viewCount = 0L;
 
     @Column
     private OffsetDateTime createdAt;
