@@ -7,12 +7,12 @@ VALUES
     (false, '2025-06-30 10:48:44.000000 +00:00', null, 1, null, null, 'aaa@aaa.com',
      'LOCAL', '노선우', '노션우',
      '{bcrypt}$2a$10$XroGKhkHXI0k7rqK1ayr/.417Q9mV9Mc.RmYH6CBhEjuuoblz5qVK',
-     null, null, 'ROLE_USER', '2025-07-11 09:16:33.910784'),
+     null, null, 'ROLE_USER', 'ACTIVE'),
 
     (false, '2025-07-11 09:16:33.910752 +00:00', null, 2, null, null, 'bbb@aaa.com',
      'LOCAL', '임서현', '임세령',
      '{bcrypt}$2a$10$XroGKhkHXI0k7rqK1ayr/.417Q9mV9Mc.RmYH6CBhEjuuoblz5qVK',
-     null, null, 'ROLE_USER', '2025-07-11 09:16:33.910784'),
+     null, null, 'ROLE_USER', 'ACTIVE'),
 
     (true, '2025-07-13 14:03:48.420649 +00:00', null, 3, null, '2025-07-13 14:03:48.420668 +00:00',
      'ccc@ccc.com', 'LOCAL', '김나단', '김가나단',
