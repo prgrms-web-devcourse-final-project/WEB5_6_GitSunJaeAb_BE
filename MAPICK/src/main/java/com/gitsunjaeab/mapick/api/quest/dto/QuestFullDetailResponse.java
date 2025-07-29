@@ -1,8 +1,6 @@
 package com.gitsunjaeab.mapick.api.quest.dto;
 
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
-import com.gitsunjaeab.mapick.domain.member.Member;
-import com.gitsunjaeab.mapick.domain.quest.Quest;
 import java.time.OffsetDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;

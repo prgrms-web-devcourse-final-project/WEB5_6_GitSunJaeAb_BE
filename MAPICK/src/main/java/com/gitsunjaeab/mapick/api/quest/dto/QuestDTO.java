@@ -28,6 +28,8 @@ public class QuestDTO {
 
     private String description;
 
+    private String hint;
+
     private OffsetDateTime deadline;
 
     @NotNull
@@ -44,11 +46,14 @@ public class QuestDTO {
 
     private MemberSimpleDTO member;
 
+    private Long viewCount;
+
     public QuestDTO(Quest quest) {
         this.id = quest.getId();
         this.title = quest.getTitle();
         this.questImage = quest.getQuestImage();
         this.description = quest.getDescription();
+        this.hint = quest.getDescription();
         this.deadline = quest.getDeadline();
         this.isActive = quest.getIsActive();
         this.createdAt = quest.getCreatedAt();
@@ -56,5 +61,6 @@ public class QuestDTO {
         this.updatedAt = quest.getUpdatedAt();
         this.deletedAt = quest.getDeletedAt();
         this.member = quest.getMember() != null ? new MemberSimpleDTO(quest.getMember()) : null;
+        this.viewCount = quest.getViewCount();
     }
 }
