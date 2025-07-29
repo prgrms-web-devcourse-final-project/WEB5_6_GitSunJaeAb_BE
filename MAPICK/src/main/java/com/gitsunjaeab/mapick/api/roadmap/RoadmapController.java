@@ -205,10 +205,10 @@ public class RoadmapController {
             throw new UnauthenticatedException(ResponseCode.UNAUTHORIZED);
         }
         Member member = principal.getMember();
-        final ReferencedWarning referencedWarning = roadmapService.getReferencedWarning(roadmapId);
-        if (referencedWarning != null) {
-            throw new ReferencedException(referencedWarning);
-        }
+//        final ReferencedWarning referencedWarning = roadmapService.getReferencedWarning(roadmapId);
+//        if (referencedWarning != null) {
+//            throw new ReferencedException(referencedWarning);
+//        }
         roadmapService.delete(roadmapId, member);
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.OK, "삭제 완료"));
     }
