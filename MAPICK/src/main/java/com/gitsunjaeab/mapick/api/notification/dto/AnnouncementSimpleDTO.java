@@ -1,6 +1,6 @@
 package com.gitsunjaeab.mapick.api.notification.dto;
 
-import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
+import com.gitsunjaeab.mapick.api.member.dto.internal.MemberSimpleDTO;
 import com.gitsunjaeab.mapick.domain.notification.Announcement;
 import com.gitsunjaeab.mapick.domain.notification.AnnouncementType;
 import java.time.OffsetDateTime;

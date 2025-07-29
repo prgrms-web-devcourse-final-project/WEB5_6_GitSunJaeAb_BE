@@ -1,8 +1,7 @@
 package com.gitsunjaeab.mapick.api.roadmap.dto.layer;
 
-import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
+import com.gitsunjaeab.mapick.api.member.dto.internal.MemberSimpleDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.RoadmapSimpleDTO;
-import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
 import com.gitsunjaeab.mapick.domain.roadmap.layer.Layer;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
