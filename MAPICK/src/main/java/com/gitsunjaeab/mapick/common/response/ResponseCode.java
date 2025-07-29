@@ -39,6 +39,7 @@ public enum ResponseCode {
     MARKER_NOT_FOUND("4044", HttpStatus.NOT_FOUND, "존재하지 않는 마커 입니다."),
     QUEST_NOT_FOUND("4044", HttpStatus.NOT_FOUND, "존재하지 않는 퀘스트 입니다."),
     SEARCH_NOT_FOUND("4044", HttpStatus.NOT_FOUND, "존재하지 않는 검색결과 입니다."),
+    LAYER_NOT_FOUND("4044", HttpStatus.NOT_FOUND, "존재하지 않는 레이어 입니다."),
 
 
 

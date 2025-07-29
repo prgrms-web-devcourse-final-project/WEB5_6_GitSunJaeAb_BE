@@ -7,20 +7,20 @@ import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
 import com.gitsunjaeab.mapick.domain.notification.NotificationType;
-import com.gitsunjaeab.mapick.domain.roadmap.Layer;
-import com.gitsunjaeab.mapick.domain.roadmap.LayerForkHistory;
-import com.gitsunjaeab.mapick.domain.roadmap.LayerForkHistoryRepository;
-import com.gitsunjaeab.mapick.domain.roadmap.LayerLibrary;
-import com.gitsunjaeab.mapick.domain.roadmap.LayerLibraryRepository;
-import com.gitsunjaeab.mapick.domain.roadmap.LayerRepository;
+import com.gitsunjaeab.mapick.domain.roadmap.layer.Layer;
+import com.gitsunjaeab.mapick.domain.roadmap.layer.LayerForkHistory;
+import com.gitsunjaeab.mapick.domain.roadmap.layer.LayerForkHistoryRepository;
+import com.gitsunjaeab.mapick.domain.roadmap.layer.LayerLibrary;
+import com.gitsunjaeab.mapick.domain.roadmap.layer.LayerLibraryRepository;
+import com.gitsunjaeab.mapick.domain.roadmap.layer.LayerRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
 import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
 import java.time.OffsetDateTime;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class LayerLibraryService {
 
     private final LayerLibraryRepository layerLibraryRepository;
@@ -37,28 +38,16 @@ public class LayerLibraryService {
     private final LayerForkHistoryRepository layerForkHistoryRepository;
     private final NotificationService notificationService;
 
-    public LayerLibraryService(final LayerLibraryRepository layerLibraryRepository,
-        LayerRepository layerRepository, MemberRepository memberRepository,
-        RoadmapRepository roadmapRepository,
-        LayerForkHistoryRepository layerForkHistoryRepository,
-        NotificationService notificationService) {
-        this.layerLibraryRepository = layerLibraryRepository;
-        this.layerRepository = layerRepository;
-        this.memberRepository = memberRepository;
-        this.roadmapRepository = roadmapRepository;
-        this.layerForkHistoryRepository = layerForkHistoryRepository;
-        this.notificationService = notificationService;
-    }
-
     // ===== 마이페이지 : 레이어 찜 관리  =====
 
     // 찜 조회
     @Transactional(readOnly = true)
     public LayerZzimSimpleDTO findAllMemberLayers(Member member) {
+
         List<Long> layerIds = layerLibraryRepository.findLayerIdsByMemberId(member.getId());
 
         if (layerIds.isEmpty()) {
-            return new LayerZzimSimpleDTO(member, List.of(), Map.of(), Map.of());
+            return new LayerZzimSimpleDTO(member, List.of(), Map.of(), List.of());
         }
 
         List<Layer> layers = layerRepository.findAllByIdWithMember(layerIds);
@@ -70,15 +59,12 @@ public class LayerLibraryService {
                 layer -> layerForkHistoryRepository.findByOriginalLayerAndMember(layer, member)
             ));
 
-        Map<Long, List<MarkerSimpleDTO>> markerMap = new HashMap<>();
-        for (Layer layer : layers) {
-            List<MarkerSimpleDTO> markers = layer.getLayerMarkers().stream()
-                .map(MarkerSimpleDTO::from)
-                .collect(Collectors.toList());
-            markerMap.put(layer.getId(), markers);
-        }
+        List<MarkerSimpleDTO> markers = layers.stream()
+            .flatMap(layer -> layer.getLayerMarkers().stream())
+            .map(MarkerSimpleDTO::from)
+            .collect(Collectors.toList());
 
-        return new LayerZzimSimpleDTO(member, layers, forkHistoriesMap, markerMap );
+        return new LayerZzimSimpleDTO(member, layers, forkHistoriesMap, markers);
     }
 
 
@@ -108,7 +94,8 @@ public class LayerLibraryService {
         layerLibraryRepository.save(layerLibrary);
 
         // 찜 기록 조회 (모든 연관 엔티티와 함께)
-        LayerLibrary savedLibrary = layerLibraryRepository.findByIdWithAllAssociations(layerLibrary.getId())
+        LayerLibrary savedLibrary = layerLibraryRepository.findByIdWithAllAssociations(
+                layerLibrary.getId())
             .orElseThrow(() -> new CommonException(ResponseCode.SAVE_FAILED));
 
         // 찜 알림 발송 로직 
@@ -201,7 +188,8 @@ public class LayerLibraryService {
         layerForkHistoryRepository.save(forkHistory);
 
         // 찜 기록 조회 (포크 알림 발송용)
-        LayerLibrary layerLibrary = layerLibraryRepository.findByMemberAndLayer(member, originalLayer)
+        LayerLibrary layerLibrary = layerLibraryRepository.findByMemberAndLayer(member,
+                originalLayer)
             .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND));
 
         // 포크 알림 발송 로직 (찜 알림과 동일한 패턴)

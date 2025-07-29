@@ -1,11 +1,10 @@
-package com.gitsunjaeab.mapick.api.roadmap.dto.layer;
+package com.gitsunjaeab.mapick.api.roadmap.dto.layer.request;
 
 import com.gitsunjaeab.mapick.domain.member.Member;
-import com.gitsunjaeab.mapick.domain.roadmap.Layer;
+import com.gitsunjaeab.mapick.domain.roadmap.layer.Layer;
 import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

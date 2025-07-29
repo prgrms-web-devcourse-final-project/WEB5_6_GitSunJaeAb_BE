@@ -2,7 +2,7 @@ package com.gitsunjaeab.mapick.domain.notification;
 
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.quest.MemberQuest;
-import com.gitsunjaeab.mapick.domain.roadmap.LayerLibrary;
+import com.gitsunjaeab.mapick.domain.roadmap.layer.LayerLibrary;
 import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
 import com.gitsunjaeab.mapick.infra.converter.OffsetDateTimeConverter;
 import jakarta.persistence.CascadeType;

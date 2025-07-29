@@ -1,4 +1,4 @@
-package com.gitsunjaeab.mapick.api.roadmap.dto.layer;
+package com.gitsunjaeab.mapick.api.roadmap.dto.layer.request;
 
 import lombok.Getter;
 import lombok.Setter;

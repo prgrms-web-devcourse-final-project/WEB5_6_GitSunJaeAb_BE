@@ -1,7 +1,7 @@
 package com.gitsunjaeab.mapick.api.roadmap.dto.layer;
 
 import com.gitsunjaeab.mapick.api.roadmap.dto.marker.MarkerDTO;
-import com.gitsunjaeab.mapick.domain.roadmap.Layer;
+import com.gitsunjaeab.mapick.domain.roadmap.layer.Layer;
 import lombok.Getter;
 import lombok.Setter;
 
