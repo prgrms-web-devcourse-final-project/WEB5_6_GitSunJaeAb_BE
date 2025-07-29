@@ -2,10 +2,10 @@ package com.gitsunjaeab.mapick.application.member;
 
 import com.gitsunjaeab.mapick.api.auth.dto.internal.SocialUserInfo;
 import com.gitsunjaeab.mapick.api.auth.dto.request.SignupRequest;
-import com.gitsunjaeab.mapick.api.member.dto.MemberDTO;
-import com.gitsunjaeab.mapick.api.member.dto.MemberDetailDTO;
-import com.gitsunjaeab.mapick.api.member.dto.MemberInterestDTO;
-import com.gitsunjaeab.mapick.api.member.dto.MemberListDTO;
+import com.gitsunjaeab.mapick.api.member.dto.internal.MemberDTO;
+import com.gitsunjaeab.mapick.api.member.dto.internal.MemberDetailDTO;
+import com.gitsunjaeab.mapick.api.member.dto.internal.MemberInterestDTO;
+import com.gitsunjaeab.mapick.api.member.dto.internal.MemberListDTO;
 import com.gitsunjaeab.mapick.api.member.dto.request.MemberProfileUpdateRequest;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.auth.LoginType;

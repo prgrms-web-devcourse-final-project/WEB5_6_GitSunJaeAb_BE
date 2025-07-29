@@ -1,4 +1,4 @@
-package com.gitsunjaeab.mapick.api.search.dto;
+package com.gitsunjaeab.mapick.api.search.dto.internal;
 
 import com.gitsunjaeab.mapick.domain.search.Search;
 import lombok.Builder;

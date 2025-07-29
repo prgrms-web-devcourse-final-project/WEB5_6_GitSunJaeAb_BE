@@ -1,7 +1,6 @@
-package com.gitsunjaeab.mapick.api.member.dto;
+package com.gitsunjaeab.mapick.api.member.dto.internal;
 
 import com.gitsunjaeab.mapick.domain.member.Member;
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;

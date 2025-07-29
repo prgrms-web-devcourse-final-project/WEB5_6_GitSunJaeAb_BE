@@ -1,15 +1,17 @@
-package com.gitsunjaeab.mapick.api.report.dto;
+package com.gitsunjaeab.mapick.api.report.dto.internal;
 
-import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
+import com.gitsunjaeab.mapick.api.member.dto.internal.MemberSimpleDTO;
+import com.gitsunjaeab.mapick.api.quest.dto.QuestReportDTO;
+import com.gitsunjaeab.mapick.api.roadmap.dto.marker.MarkerReportDTO;
+import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.RoadmapReportDTO;
 import com.gitsunjaeab.mapick.domain.report.Report;
 import com.gitsunjaeab.mapick.domain.report.ReportStatus;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotNull;
+import lombok.*;
 
 import java.time.OffsetDateTime;
-
-import lombok.*;
 
 
 @Getter
@@ -17,9 +19,12 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReportSimpleDTO {
+public class ReportDTO {
 
     private Long id;
+
+//    @Size(max = 255)
+//    private String reportType;
 
     private MemberSimpleDTO reporter;  // 신고자
 
@@ -27,11 +32,11 @@ public class ReportSimpleDTO {
 
     private String description;
 
-    private Long roadmap;
+    private RoadmapReportDTO roadmap;
 
-    private Long marker;
+    private MarkerReportDTO marker;
 
-    private Long quest;
+    private QuestReportDTO quest;
 
     @NotNull
     @Enumerated(EnumType.STRING)
@@ -41,15 +46,14 @@ public class ReportSimpleDTO {
 
     private OffsetDateTime resolvedAt;
 
-    public static ReportSimpleDTO of(Report report) {
-        return ReportSimpleDTO.builder()
+    public static ReportDTO of(Report report) {
+        return ReportDTO.builder()
                 .id(report.getId())
                 .reporter(MemberSimpleDTO.of(report.getReporter()))
                 .reportedMember(MemberSimpleDTO.of(report.getReportedMember()))
-                .description(report.getDescription())
-                .roadmap(report.getRoadmap() != null ? report.getRoadmap().getId() : null)
-                .marker(report.getMarker() != null ? report.getMarker().getId() : null)
-                .quest(report.getQuest() != null ? report.getQuest().getId() : null)
+                .roadmap(report.getRoadmap() != null ? RoadmapReportDTO.of(report.getRoadmap()) : null)
+                .marker(report.getMarker() != null ? MarkerReportDTO.of(report.getMarker()) : null)
+                .quest(report.getQuest() != null ? QuestReportDTO.of(report.getQuest()) : null)
                 .status(report.getStatus())
                 .createdAt(report.getCreatedAt())
                 .resolvedAt(report.getResolvedAt())

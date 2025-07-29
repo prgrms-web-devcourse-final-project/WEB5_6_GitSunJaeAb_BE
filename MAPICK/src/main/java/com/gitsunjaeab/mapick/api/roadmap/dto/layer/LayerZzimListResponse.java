@@ -1,6 +1,6 @@
 package com.gitsunjaeab.mapick.api.roadmap.dto.layer;
 
-import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
+import com.gitsunjaeab.mapick.api.member.dto.internal.MemberSimpleDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.marker.MarkerSimpleDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.RoadmapSimpleDTO;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;

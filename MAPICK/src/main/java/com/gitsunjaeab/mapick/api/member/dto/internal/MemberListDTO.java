@@ -1,4 +1,4 @@
-package com.gitsunjaeab.mapick.api.member.dto;
+package com.gitsunjaeab.mapick.api.member.dto.internal;
 
 import com.gitsunjaeab.mapick.domain.member.Member;
 import jakarta.validation.constraints.NotNull;
