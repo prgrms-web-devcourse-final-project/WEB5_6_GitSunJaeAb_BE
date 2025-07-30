@@ -358,7 +358,7 @@ public class RoadmapService {
         return RoadmapListResponse.of(roadmaps, citationCountMap, roadmapIdToBookmarkIdMap);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public RoadmapResponse get(final Long id, final Member member) {
         Roadmap roadmap = roadmapRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("해당 로드맵이 존재하지 않습니다. id=" + id));
