@@ -1,9 +1,9 @@
 package com.gitsunjaeab.mapick.application.api.achievement;
 
-import com.gitsunjaeab.mapick.application.api.achievement.dto.AchievementDTO;
-import com.gitsunjaeab.mapick.application.api.achievement.dto.AchievementListResponse;
-import com.gitsunjaeab.mapick.application.api.achievement.dto.MemberAchievementDTO;
-import com.gitsunjaeab.mapick.application.api.achievement.dto.MemberAchievementListResponse;
+import com.gitsunjaeab.mapick.application.api.achievement.dto.internal.AchievementDTO;
+import com.gitsunjaeab.mapick.application.api.achievement.dto.response.AchievementListResponse;
+import com.gitsunjaeab.mapick.application.api.achievement.dto.internal.MemberAchievementDTO;
+import com.gitsunjaeab.mapick.application.api.achievement.dto.response.MemberAchievementListResponse;
 import com.gitsunjaeab.mapick.application.domain.achievement.AchievementService;
 import com.gitsunjaeab.mapick.application.domain.auth.Principal;
 import io.swagger.v3.oas.annotations.Operation;

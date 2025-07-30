@@ -1,6 +1,6 @@
 package com.gitsunjaeab.mapick.application.api.roadmap.dto.roadmap.response;
 
-import com.gitsunjaeab.mapick.application.api.roadmap.dto.roadmap.RoadmapAchievementDTO;
+import com.gitsunjaeab.mapick.application.api.roadmap.dto.roadmap.internal.RoadmapAchievementDTO;
 import com.gitsunjaeab.mapick.infra.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.infra.common.response.ResponseCode;
 import lombok.AllArgsConstructor;

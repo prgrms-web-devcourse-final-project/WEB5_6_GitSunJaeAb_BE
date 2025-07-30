@@ -1,6 +1,6 @@
 package com.gitsunjaeab.mapick.application.api.notification;
 
-import com.gitsunjaeab.mapick.application.api.notification.dto.NotificationListDTO;
+import com.gitsunjaeab.mapick.application.api.notification.dto.internal.NotificationListDTO;
 import com.gitsunjaeab.mapick.application.api.notification.dto.response.NotificationListResponse;
 import com.gitsunjaeab.mapick.application.api.notification.dto.response.NotificationReadResponse;
 import com.gitsunjaeab.mapick.application.domain.notification.NotificationService;

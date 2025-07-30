@@ -1,11 +1,11 @@
 package com.gitsunjaeab.mapick.application.api.comment;
 
-import com.gitsunjaeab.mapick.application.api.comment.dto.CommentAchievementDTO;
-import com.gitsunjaeab.mapick.application.api.comment.dto.CommentDTO;
-import com.gitsunjaeab.mapick.application.api.comment.dto.CommentListResponse;
-import com.gitsunjaeab.mapick.application.api.comment.dto.CommentRequest;
-import com.gitsunjaeab.mapick.application.api.comment.dto.CommentResponse;
-import com.gitsunjaeab.mapick.application.api.comment.dto.MemberCommentListResponse;
+import com.gitsunjaeab.mapick.application.api.comment.dto.internal.CommentAchievementDTO;
+import com.gitsunjaeab.mapick.application.api.comment.dto.internal.CommentDTO;
+import com.gitsunjaeab.mapick.application.api.comment.dto.response.CommentListResponse;
+import com.gitsunjaeab.mapick.application.api.comment.dto.request.CommentRequest;
+import com.gitsunjaeab.mapick.application.api.comment.dto.response.CommentResponse;
+import com.gitsunjaeab.mapick.application.api.comment.dto.response.MemberCommentListResponse;
 import com.gitsunjaeab.mapick.application.domain.comment.CommentService;
 import com.gitsunjaeab.mapick.application.domain.auth.Principal;
 import com.gitsunjaeab.mapick.application.domain.comment.Comment;

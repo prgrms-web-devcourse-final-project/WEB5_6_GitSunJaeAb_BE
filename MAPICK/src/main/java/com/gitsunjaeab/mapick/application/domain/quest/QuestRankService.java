@@ -1,7 +1,7 @@
 package com.gitsunjaeab.mapick.application.domain.quest;
 
 
-import com.gitsunjaeab.mapick.application.api.quest.dto.QuestRankResponse;
+import com.gitsunjaeab.mapick.application.api.quest.dto.response.QuestRankResponse;
 import com.gitsunjaeab.mapick.infra.common.EntityFinder;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

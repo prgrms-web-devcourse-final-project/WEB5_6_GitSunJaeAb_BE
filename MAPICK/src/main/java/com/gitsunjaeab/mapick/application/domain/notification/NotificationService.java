@@ -1,10 +1,10 @@
 package com.gitsunjaeab.mapick.application.domain.notification;
 
 import com.gitsunjaeab.mapick.application.api.member.dto.internal.MemberSimpleDTO;
-import com.gitsunjaeab.mapick.application.api.notification.dto.NotificationListDTO;
-import com.gitsunjaeab.mapick.application.api.roadmap.dto.roadmap.RoadmapSimpleDTO;
-import com.gitsunjaeab.mapick.application.api.roadmap.dto.layer.LayerSimpleDTO;
-import com.gitsunjaeab.mapick.application.api.roadmap.dto.marker.MarkerSimpleDTO;
+import com.gitsunjaeab.mapick.application.api.notification.dto.internal.NotificationListDTO;
+import com.gitsunjaeab.mapick.application.api.roadmap.dto.roadmap.internal.RoadmapSimpleDTO;
+import com.gitsunjaeab.mapick.application.api.roadmap.dto.layer.internal.LayerSimpleDTO;
+import com.gitsunjaeab.mapick.application.api.roadmap.dto.marker.internal.MarkerSimpleDTO;
 import com.gitsunjaeab.mapick.application.domain.comment.Comment;
 import com.gitsunjaeab.mapick.application.domain.member.Member;
 import com.gitsunjaeab.mapick.application.domain.notification.code.NotificationType;

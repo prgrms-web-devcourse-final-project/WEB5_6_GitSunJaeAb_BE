@@ -21,9 +21,6 @@ public class SearchResponse implements BaseApiResponse {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<SearchHistoryDTO> SearchHistoryDTOs;
 
-
-
-
     public static SearchResponse getList(List<SearchHistoryDTO> SearchHistoryDTOs) {
         return new SearchResponse(
                 ResponseCode.OK.getCode(),

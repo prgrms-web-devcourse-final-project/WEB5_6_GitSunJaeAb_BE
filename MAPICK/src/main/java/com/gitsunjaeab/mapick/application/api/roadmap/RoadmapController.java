@@ -1,7 +1,7 @@
 package com.gitsunjaeab.mapick.application.api.roadmap;
 
-import com.gitsunjaeab.mapick.application.api.roadmap.dto.roadmap.RoadmapAchievementDTO;
-import com.gitsunjaeab.mapick.application.api.roadmap.dto.roadmap.RoadmapEditorSimpleDTO;
+import com.gitsunjaeab.mapick.application.api.roadmap.dto.roadmap.internal.RoadmapAchievementDTO;
+import com.gitsunjaeab.mapick.application.api.roadmap.dto.roadmap.internal.RoadmapEditorSimpleDTO;
 import com.gitsunjaeab.mapick.application.api.roadmap.dto.roadmap.request.RoadmapRequest;
 import com.gitsunjaeab.mapick.application.api.roadmap.dto.roadmap.request.SharedRoadmapCreateRequest;
 import com.gitsunjaeab.mapick.application.api.roadmap.dto.roadmap.request.SharedRoadmapUpdateRequest;

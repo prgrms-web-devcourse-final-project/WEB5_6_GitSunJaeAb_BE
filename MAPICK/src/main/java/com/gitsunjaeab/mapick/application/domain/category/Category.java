@@ -1,6 +1,6 @@
 package com.gitsunjaeab.mapick.application.domain.category;
 
-import com.gitsunjaeab.mapick.application.api.category.dto.CategoryRequest;
+import com.gitsunjaeab.mapick.application.api.category.dto.request.CategoryRequest;
 import com.gitsunjaeab.mapick.application.domain.member.MemberInterest;
 import com.gitsunjaeab.mapick.application.domain.roadmap.roadmap.Roadmap;
 import jakarta.persistence.CascadeType;

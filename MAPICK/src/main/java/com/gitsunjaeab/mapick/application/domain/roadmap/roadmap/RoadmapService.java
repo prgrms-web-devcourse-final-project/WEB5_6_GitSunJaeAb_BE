@@ -1,8 +1,8 @@
 package com.gitsunjaeab.mapick.application.domain.roadmap.roadmap;
 
-import com.gitsunjaeab.mapick.application.api.achievement.dto.AchievementDTO;
-import com.gitsunjaeab.mapick.application.api.roadmap.dto.hashtag.HashtagRequest;
-import com.gitsunjaeab.mapick.application.api.roadmap.dto.roadmap.RoadmapAchievementDTO;
+import com.gitsunjaeab.mapick.application.api.achievement.dto.internal.AchievementDTO;
+import com.gitsunjaeab.mapick.application.api.roadmap.dto.hashtag.request.HashtagRequest;
+import com.gitsunjaeab.mapick.application.api.roadmap.dto.roadmap.internal.RoadmapAchievementDTO;
 import com.gitsunjaeab.mapick.application.api.roadmap.dto.roadmap.request.RoadmapRequest;
 import com.gitsunjaeab.mapick.application.api.roadmap.dto.roadmap.request.SharedRoadmapCreateRequest;
 import com.gitsunjaeab.mapick.application.api.roadmap.dto.roadmap.request.SharedRoadmapUpdateRequest;

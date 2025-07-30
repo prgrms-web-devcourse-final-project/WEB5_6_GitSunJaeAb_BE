@@ -1,7 +1,7 @@
 package com.gitsunjaeab.mapick.application.domain.roadmap.hashtag;
 
-import com.gitsunjaeab.mapick.application.api.roadmap.dto.hashtag.HashtagDTO;
-import com.gitsunjaeab.mapick.application.api.roadmap.dto.hashtag.HashtagRequest;
+import com.gitsunjaeab.mapick.application.api.roadmap.dto.hashtag.internal.HashtagDTO;
+import com.gitsunjaeab.mapick.application.api.roadmap.dto.hashtag.request.HashtagRequest;
 import com.gitsunjaeab.mapick.infra.common.EntityFinder;
 import java.util.ArrayList;
 import java.util.List;

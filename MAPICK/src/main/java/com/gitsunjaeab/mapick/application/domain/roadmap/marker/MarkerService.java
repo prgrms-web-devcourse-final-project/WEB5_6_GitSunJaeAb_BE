@@ -1,11 +1,11 @@
 package com.gitsunjaeab.mapick.application.domain.roadmap.marker;
 
-import com.gitsunjaeab.mapick.application.api.roadmap.dto.marker.MarkerCreateRequest;
-import com.gitsunjaeab.mapick.application.api.roadmap.dto.marker.MarkerCustomImageDTO;
-import com.gitsunjaeab.mapick.application.api.roadmap.dto.marker.MarkerDTO;
-import com.gitsunjaeab.mapick.application.api.roadmap.dto.marker.MarkerRequest;
-import com.gitsunjaeab.mapick.application.api.roadmap.dto.marker.MarkerSyncRequest;
-import com.gitsunjaeab.mapick.application.api.roadmap.dto.marker.MarkerUpdateRequest;
+import com.gitsunjaeab.mapick.application.api.roadmap.dto.marker.request.MarkerCreateRequest;
+import com.gitsunjaeab.mapick.application.api.roadmap.dto.marker.internal.MarkerCustomImageDTO;
+import com.gitsunjaeab.mapick.application.api.roadmap.dto.marker.internal.MarkerDTO;
+import com.gitsunjaeab.mapick.application.api.roadmap.dto.marker.request.MarkerRequest;
+import com.gitsunjaeab.mapick.application.api.roadmap.dto.marker.request.MarkerSyncRequest;
+import com.gitsunjaeab.mapick.application.api.roadmap.dto.marker.request.MarkerUpdateRequest;
 import com.gitsunjaeab.mapick.application.domain.roadmap.roadmapeditor.RoadmapEditorService;
 import com.gitsunjaeab.mapick.infra.common.EntityFinder;
 import com.gitsunjaeab.mapick.application.domain.member.Member;

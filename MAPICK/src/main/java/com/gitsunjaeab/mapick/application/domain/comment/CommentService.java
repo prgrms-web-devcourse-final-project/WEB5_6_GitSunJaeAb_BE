@@ -1,9 +1,9 @@
 package com.gitsunjaeab.mapick.application.domain.comment;
 
-import com.gitsunjaeab.mapick.application.api.achievement.dto.AchievementDTO;
-import com.gitsunjaeab.mapick.application.api.comment.dto.CommentAchievementDTO;
-import com.gitsunjaeab.mapick.application.api.comment.dto.CommentDTO;
-import com.gitsunjaeab.mapick.application.api.comment.dto.CommentRequest;
+import com.gitsunjaeab.mapick.application.api.achievement.dto.internal.AchievementDTO;
+import com.gitsunjaeab.mapick.application.api.comment.dto.internal.CommentAchievementDTO;
+import com.gitsunjaeab.mapick.application.api.comment.dto.internal.CommentDTO;
+import com.gitsunjaeab.mapick.application.api.comment.dto.request.CommentRequest;
 import com.gitsunjaeab.mapick.application.domain.notification.NotificationService;
 import com.gitsunjaeab.mapick.infra.common.EntityFinder;
 import com.gitsunjaeab.mapick.infra.common.response.ResponseCode;

@@ -1,6 +1,6 @@
 package com.gitsunjaeab.mapick.application.api.roadmap.dto.roadmap.response;
 
-import com.gitsunjaeab.mapick.application.api.roadmap.dto.roadmap.RoadmapEditorSimpleDTO;
+import com.gitsunjaeab.mapick.application.api.roadmap.dto.roadmap.internal.RoadmapEditorSimpleDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

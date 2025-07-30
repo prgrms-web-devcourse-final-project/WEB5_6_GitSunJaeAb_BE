@@ -1,10 +1,10 @@
 package com.gitsunjaeab.mapick.application.domain.quest;
 
-import com.gitsunjaeab.mapick.application.api.achievement.dto.AchievementDTO;
+import com.gitsunjaeab.mapick.application.api.achievement.dto.internal.AchievementDTO;
 import com.gitsunjaeab.mapick.application.api.member.dto.internal.MemberSimpleDTO;
-import com.gitsunjaeab.mapick.application.api.quest.dto.QuestAchievementResponse;
-import com.gitsunjaeab.mapick.application.api.quest.dto.QuestRequest;
-import com.gitsunjaeab.mapick.application.api.quest.dto.QuestResponse;
+import com.gitsunjaeab.mapick.application.api.quest.dto.response.QuestAchievementResponse;
+import com.gitsunjaeab.mapick.application.api.quest.dto.request.QuestRequest;
+import com.gitsunjaeab.mapick.application.api.quest.dto.response.QuestResponse;
 import com.gitsunjaeab.mapick.application.domain.achievement.Achievement;
 import com.gitsunjaeab.mapick.application.domain.achievement.MemberAchievement;
 import com.gitsunjaeab.mapick.application.domain.achievement.MemberAchievementRepository;
