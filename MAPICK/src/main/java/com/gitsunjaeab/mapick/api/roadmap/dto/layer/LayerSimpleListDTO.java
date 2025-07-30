@@ -7,7 +7,7 @@ import java.util.List;
 
 @Getter
 @AllArgsConstructor
-public class LayerSimpleListDto {
+public class LayerSimpleListDTO {
     private Long id;
     private String name;
     private String description;

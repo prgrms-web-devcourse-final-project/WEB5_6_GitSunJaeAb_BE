@@ -1,6 +1,8 @@
-package com.gitsunjaeab.mapick.api.roadmap.dto.layer;
+package com.gitsunjaeab.mapick.api.roadmap.dto.layer.response;
 
 import com.gitsunjaeab.mapick.api.member.dto.internal.MemberSimpleDTO;
+import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerForkHistoryDTO;
+import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerZzimSimpleDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.marker.MarkerSimpleDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.RoadmapSimpleDTO;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
@@ -25,7 +27,7 @@ public class LayerZzimListResponse implements BaseApiResponse {
     private OffsetDateTime timestamp;
 
     // 찜한 사용자
-    private MemberSimpleDTO memberSimpleDTO;
+    private MemberSimpleDTO member;
 
     // 찜한 레이어 (포크 이력 포함) - DTO 없이 직접 처리
     private List<LayerWithForkHistoryDTO> layers;

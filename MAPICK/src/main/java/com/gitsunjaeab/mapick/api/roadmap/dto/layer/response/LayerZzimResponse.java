@@ -1,7 +1,7 @@
-package com.gitsunjaeab.mapick.api.roadmap.dto.layer;
+package com.gitsunjaeab.mapick.api.roadmap.dto.layer.response;
 
 import com.gitsunjaeab.mapick.api.member.dto.internal.MemberSimpleDTO;
-import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.RoadmapSimpleDTO;
+import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerDTO;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.roadmap.layer.LayerLibrary;
@@ -20,24 +20,31 @@ public class LayerZzimResponse implements BaseApiResponse {
     private OffsetDateTime timestamp;
 
     // 찜한 사용자
-    private MemberSimpleDTO memberSimpleDTO;
+    private MemberSimpleDTO member;
 
     // 찜한 레이어
     private LayerDTO layers;
     private OffsetDateTime deleteAt;
 
-    private RoadmapSimpleDTO roadmaps;
-
-
-    public static LayerZzimResponse of(LayerLibrary library, String message) {
+    public static LayerZzimResponse zzim(LayerLibrary library, String message) {
         return new LayerZzimResponse(
             ResponseCode.OK.getCode(),
             message, // 응답 메시지 커스텀 반환
             OffsetDateTime.now(),
             new MemberSimpleDTO(library.getMember()),
             new LayerDTO(library.getLayer()),
-            library.getDeletedAt(),
-            new RoadmapSimpleDTO(library.getLayer().getRoadmap())
+            library.getDeletedAt()
+        );
+    }
+
+    public static LayerZzimResponse removeZzim(LayerLibrary library, String message) {
+        return new LayerZzimResponse(
+            ResponseCode.OK.getCode(),
+            message, // 응답 메시지 커스텀 반환
+            OffsetDateTime.now(),
+            new MemberSimpleDTO(library.getMember()),
+            new LayerDTO(library.getLayer()),
+            library.getDeletedAt()
         );
     }
 }

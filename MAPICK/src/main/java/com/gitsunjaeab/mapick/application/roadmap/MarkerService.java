@@ -1,17 +1,21 @@
 package com.gitsunjaeab.mapick.application.roadmap;
 
-import com.gitsunjaeab.mapick.api.roadmap.dto.marker.*;
+import com.gitsunjaeab.mapick.api.roadmap.dto.marker.MarkerCreateRequest;
+import com.gitsunjaeab.mapick.api.roadmap.dto.marker.MarkerCustomImageDTO;
+import com.gitsunjaeab.mapick.api.roadmap.dto.marker.MarkerDTO;
+import com.gitsunjaeab.mapick.api.roadmap.dto.marker.MarkerRequest;
+import com.gitsunjaeab.mapick.api.roadmap.dto.marker.MarkerSyncRequest;
+import com.gitsunjaeab.mapick.api.roadmap.dto.marker.MarkerUpdateRequest;
+import com.gitsunjaeab.mapick.common.EntityFinder;
 import com.gitsunjaeab.mapick.domain.member.Member;
-import com.gitsunjaeab.mapick.domain.member.MemberRepository;
-import com.gitsunjaeab.mapick.domain.roadmap.*;
+import com.gitsunjaeab.mapick.domain.roadmap.Marker;
+import com.gitsunjaeab.mapick.domain.roadmap.MarkerCustomImage;
+import com.gitsunjaeab.mapick.domain.roadmap.MarkerCustomImageRepository;
+import com.gitsunjaeab.mapick.domain.roadmap.MarkerRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.layer.Layer;
-import com.gitsunjaeab.mapick.domain.roadmap.layer.LayerRepository;
 import com.gitsunjaeab.mapick.infra.storage.SupabaseStorageService;
-import com.gitsunjaeab.mapick.util.NotFoundException;
-import jakarta.persistence.EntityNotFoundException;
 import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,24 +28,19 @@ public class MarkerService {
     private final RoadmapEditorService roadmapEditorService;
     private final MarkerRepository markerRepository;
     private final SupabaseStorageService supabaseStorageService;
-    private final LayerRepository layerRepository;
-    private final MemberRepository memberRepository;
     private final MarkerCustomImageRepository markerCustomImageRepository;
+    private final EntityFinder entityFinder;
 
-    // ===== 실시간 공유지도 상 CRUD =====
-
+    // ===== 실시간 공유지도 상 CRUD =====\
     @Transactional
     public Marker createFromSync(MarkerSyncRequest request) {
-        Member member = memberRepository.findById(request.getMemberId())
-                .orElseThrow(() -> new IllegalArgumentException("사용자 없음"));
+        Member member = entityFinder.findMemberById(request.getMemberId());
 
-        Layer layer = layerRepository.findByLayerTempId(request.getLayerTempId())
-                .orElseThrow(() -> new IllegalArgumentException("레이어 없음"));
+        Layer layer = entityFinder.findLayerById(request.getLayerTempId());
 
         MarkerCustomImage customImage = null;
         if (request.getCustomImageId() != null) {
-            customImage = markerCustomImageRepository.findById(request.getCustomImageId())
-                    .orElseThrow(() -> new NotFoundException("해당 커스텀 마커 이미지가 존재하지 않습니다."));
+            customImage = entityFinder.findByMarkerCustomId(request.getCustomImageId());
         }
 
         final Marker marker = request.toEntity(layer, member, customImage);
@@ -52,16 +51,14 @@ public class MarkerService {
 
     @Transactional
     public Marker updateFromSync(final MarkerSyncRequest request) {
-        final Marker marker = markerRepository.findByMarkerTempId(request.getMarkerTempId())
-                .orElseThrow(() -> new NotFoundException("존재하지 않는 markerTempId 입니다."));
+        final Marker marker = entityFinder.findByMarkerTempId(request.getMarkerTempId());
 
         MarkerCustomImage newCustomImage = null;
         if (request.getCustomImageId() != null && !request.getCustomImageId().toString().isBlank()) {
-            newCustomImage = markerCustomImageRepository.findById(request.getCustomImageId())
-                    .orElseThrow(() -> new NotFoundException("해당 커스텀 마커 이미지가 존재하지 않습니다."));
+            newCustomImage = entityFinder.findByMarkerCustomId(request.getCustomImageId());
         }
 
-        applyUpdateRequestToMarker(marker, request, newCustomImage);
+        applySyncRequestToMarker(marker, request, newCustomImage);
 
         Long roadmapId = marker.getLayer().getRoadmap().getId();
         Long memberId = marker.getMember().getId();
@@ -71,8 +68,7 @@ public class MarkerService {
 
     @Transactional
     public Marker deleteFromSync(MarkerSyncRequest request) {
-        Marker marker = markerRepository.findByMarkerTempId(request.getMarkerTempId())
-                .orElseThrow(() -> new IllegalArgumentException("마커 없음"));
+        Marker marker = entityFinder.findByMarkerTempId(request.getMarkerTempId());
         markerRepository.delete(marker);
 
         Long roadmapId = marker.getLayer().getRoadmap().getId();
@@ -86,8 +82,8 @@ public class MarkerService {
      */
 
     @Transactional
-    public void createCustomImage(String name, MultipartFile imageFile) {
-        MarkerCustomImage customImage = new MarkerCustomImage();
+    public void createCustomImage(final String name, final MultipartFile imageFile) {
+        final MarkerCustomImage customImage = new MarkerCustomImage();
         customImage.setName(name);
 
         if (imageFile != null && !imageFile.isEmpty()) {
@@ -99,7 +95,7 @@ public class MarkerService {
     }
 
     public List<MarkerCustomImageDTO> getCustomImages() {
-        List<MarkerCustomImage> customImages = markerCustomImageRepository.findAll();
+        final List<MarkerCustomImage> customImages = markerCustomImageRepository.findAll();
 
         return customImages.stream()
             .map(MarkerCustomImageDTO::of)
@@ -107,9 +103,8 @@ public class MarkerService {
     }
 
     @Transactional
-    public void updateCustomImage(Long customImageId, String name, MultipartFile imageFile) {
-        MarkerCustomImage customImage = markerCustomImageRepository.findById(customImageId)
-            .orElseThrow(() -> new EntityNotFoundException("해당 커스텀 이미지를 찾을 수 없습니다."));
+    public void updateCustomImage(final Long customImageId, final String name, final MultipartFile imageFile) {
+        final MarkerCustomImage customImage = entityFinder.findByMarkerCustomId(customImageId);
 
         if (!(name == null))
             customImage.setName(name);
@@ -120,7 +115,8 @@ public class MarkerService {
         }
     }
 
-    public void deleteCustomImage(Long customImageId) {
+    @Transactional
+    public void deleteCustomImage(final Long customImageId) {
         markerCustomImageRepository.deleteById(customImageId);
     }
 
@@ -130,17 +126,12 @@ public class MarkerService {
 
     @Transactional
     public void create(final Long memberId, final MarkerCreateRequest request) {
-        Layer layer = layerRepository.findById(request.getLayerId())
-            .orElseThrow(() -> new NotFoundException("해당 레이어가 존재하지 않습니다."));
-
-        Member member = Optional.ofNullable(memberId)
-            .flatMap(memberRepository::findById)
-            .orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다"));
+        Layer layer = entityFinder.findLayerById(request.getLayerId());
+        Member member = entityFinder.findMemberById(memberId);
 
         MarkerCustomImage customImage = null;
         if (request.getCustomImageId() != null) {
-            customImage = markerCustomImageRepository.findById(request.getCustomImageId())
-                .orElseThrow(() -> new NotFoundException("해당 커스텀 마커 이미지가 존재하지 않습니다."));
+            customImage = entityFinder.findByMarkerCustomId(request.getCustomImageId());
         }
 
         final Marker marker = request.toEntity(layer, member, customImage);
@@ -149,24 +140,21 @@ public class MarkerService {
 
     @Transactional
     public MarkerDTO get(final Long markerId) {
-        Marker marker = markerRepository.findById(markerId)
-            .orElseThrow(() -> new NotFoundException("해당 마커가 존재하지 않습니다."));
+        Marker marker = entityFinder.findByMarkerId(markerId);
 
         return new MarkerDTO(marker);
     }
 
     @Transactional
     public void update(final Long markerId, final MarkerUpdateRequest request) {
-        final Marker marker = markerRepository.findById(markerId)
-            .orElseThrow(() -> new NotFoundException("존재하지 않는 마커 ID 입니다."));
+        final Marker marker = entityFinder.findByMarkerId(markerId);
 
         MarkerCustomImage newCustomImage = null;
         if (request.getCustomImageId() != null) {
-            newCustomImage = markerCustomImageRepository.findById(request.getCustomImageId())
-                .orElseThrow(() -> new NotFoundException("해당 커스텀 마커 이미지가 존재하지 않습니다."));
+            newCustomImage = entityFinder.findByMarkerCustomId(request.getCustomImageId());
         }
 
-        applyUpdateRequestToMarker(marker, request, newCustomImage);
+        applySyncRequestToMarker(marker, request, newCustomImage);
     }
 
     @Transactional
@@ -174,21 +162,17 @@ public class MarkerService {
         markerRepository.deleteById(id);
     }
 
-    private void applyUpdateRequestToMarker(Marker marker, MarkerUpdateRequest request, MarkerCustomImage customImage) {
-        if (request.getName() != null) marker.setName(request.getName());
-        if (request.getDescription() != null) marker.setDescription(request.getDescription());
-        if (request.getAddress() != null) marker.setAddress(request.getAddress());
-        if (request.getLat() != null) marker.setLat(request.getLat());
-        if (request.getLng() != null) marker.setLng(request.getLng());
-        marker.setColor(request.getColor());
-        if (request.getMarkerSeq() != null) marker.setMarkerSeq(request.getMarkerSeq());
-        marker.setCustomImage(customImage);
 
-        marker.setUpdatedAt(OffsetDateTime.now());
+    private void applySyncRequestToMarker(Marker marker, MarkerUpdateRequest request, MarkerCustomImage customImage) {
+        applyRequestToMarker(marker, request, customImage);
     }
 
     // 실시간 공유지도 협업 시 마커 수정 update
-    private void applyUpdateRequestToMarker(Marker marker, MarkerSyncRequest request, MarkerCustomImage customImage) {
+    private void applySyncRequestToMarker(Marker marker, MarkerSyncRequest request, MarkerCustomImage customImage) {
+        applyRequestToMarker(marker, request, customImage);
+    }
+
+    private void applyRequestToMarker(Marker marker, MarkerRequest request, MarkerCustomImage customImage) {
         if (request.getName() != null) marker.setName(request.getName());
         if (request.getDescription() != null) marker.setDescription(request.getDescription());
         if (request.getAddress() != null) marker.setAddress(request.getAddress());
