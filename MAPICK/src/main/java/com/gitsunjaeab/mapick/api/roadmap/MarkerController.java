@@ -153,7 +153,7 @@ public class MarkerController {
 
     @Operation(summary = "마커 삭제", description = "[작성자] 특정 마커를 삭제")
     @DeleteMapping("/{markerId}")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<MarkerResponse> deleteMarker(
         @PathVariable(name = "markerId") final Long markerId) {
 

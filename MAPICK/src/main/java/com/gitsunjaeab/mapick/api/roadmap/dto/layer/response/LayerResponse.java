@@ -80,7 +80,7 @@ public class LayerResponse implements BaseApiResponse {
     }
 
     public static LayerResponse createFork(Layer forkedLayer, Layer originLayer, Roadmap originRoadmap, Roadmap targetRoadmap, boolean isForked, String message) {
-        // 포크된 레이어의 roadmap 정보는 제거
+        // 포크된 레이어의 roadmap 정보는 타겟 로드맵으로 설정
         LayerDetailDTO forkedLayerDTO = LayerDetailDTO.from(forkedLayer, false);
         forkedLayerDTO = new LayerDetailDTO(
             forkedLayerDTO.getId(),
@@ -92,7 +92,7 @@ public class LayerResponse implements BaseApiResponse {
             forkedLayerDTO.getUpdatedAt(),
             forkedLayerDTO.getDeletedAt(),
             forkedLayerDTO.getMember(),
-            null // roadmap 정보 제거
+            targetRoadmap != null ? new RoadmapSimpleDTO(targetRoadmap) : null // 타겟 로드맵 정보 포함
         );
         
         return new LayerResponse(
