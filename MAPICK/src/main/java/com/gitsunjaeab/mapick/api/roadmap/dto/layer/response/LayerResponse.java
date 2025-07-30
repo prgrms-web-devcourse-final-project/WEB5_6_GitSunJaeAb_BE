@@ -1,16 +1,18 @@
 package com.gitsunjaeab.mapick.api.roadmap.dto.layer.response;
 
 import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerDetailDTO;
+import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.RoadmapSimpleDTO;
 import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.roadmap.layer.Layer;
+import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
 import java.time.OffsetDateTime;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
 
 @Getter
-@AllArgsConstructor
+@Setter
 public class LayerResponse implements BaseApiResponse {
 
     // 커스텀 응답 필드들
@@ -19,13 +21,31 @@ public class LayerResponse implements BaseApiResponse {
     private OffsetDateTime timestamp;
     private LayerDetailDTO layer;
 
+    // 포크 정보 필드 (간단하게)
+    private Long forkedFromLayerId; // 포크한 원본 레이어 ID
+    private String forkedFromRoadmapTitle; // 포크한 원본 로드맵 제목
+
+    // 생성자 추가
+    public LayerResponse() {}
+
+    public LayerResponse(String code, String message, OffsetDateTime timestamp, LayerDetailDTO layer, 
+                        Long forkedFromLayerId, String forkedFromRoadmapTitle) {
+        this.code = code;
+        this.message = message;
+        this.timestamp = timestamp;
+        this.layer = layer;
+        this.forkedFromLayerId = forkedFromLayerId;
+        this.forkedFromRoadmapTitle = forkedFromRoadmapTitle;
+    }
+
 
     public static LayerResponse create(Layer layer, boolean isZzim, String message) {
         return new LayerResponse(
             ResponseCode.OK.getCode(),
             message,
             OffsetDateTime.now(),
-            LayerDetailDTO.from(layer, isZzim)
+            LayerDetailDTO.from(layer, isZzim),
+            null, null
         );
     }
 
@@ -34,7 +54,8 @@ public class LayerResponse implements BaseApiResponse {
             ResponseCode.OK.getCode(),
             message,
             OffsetDateTime.now(),
-            layerDetailDTO
+            layerDetailDTO,
+            null, null
         );
     }
 
@@ -43,7 +64,8 @@ public class LayerResponse implements BaseApiResponse {
             ResponseCode.OK.getCode(),
             message,
             OffsetDateTime.now(),
-            LayerDetailDTO.from(layer, isZzim)
+            LayerDetailDTO.from(layer, isZzim),
+            null, null
         );
     }
 
@@ -52,7 +74,34 @@ public class LayerResponse implements BaseApiResponse {
             ResponseCode.OK.getCode(),
             message,
             OffsetDateTime.now(),
-            LayerDetailDTO.from(layer, isZzim)
+            LayerDetailDTO.from(layer, isZzim),
+            null, null
+        );
+    }
+
+    public static LayerResponse createFork(Layer forkedLayer, Layer originLayer, Roadmap originRoadmap, Roadmap targetRoadmap, boolean isForked, String message) {
+        // 포크된 레이어의 roadmap 정보는 제거
+        LayerDetailDTO forkedLayerDTO = LayerDetailDTO.from(forkedLayer, false);
+        forkedLayerDTO = new LayerDetailDTO(
+            forkedLayerDTO.getId(),
+            forkedLayerDTO.getName(),
+            forkedLayerDTO.getDescription(),
+            forkedLayerDTO.getLayerSeq(),
+            forkedLayerDTO.isZzim(),
+            forkedLayerDTO.getCreatedAt(),
+            forkedLayerDTO.getUpdatedAt(),
+            forkedLayerDTO.getDeletedAt(),
+            forkedLayerDTO.getMember(),
+            null // roadmap 정보 제거
+        );
+        
+        return new LayerResponse(
+            ResponseCode.OK.getCode(),
+            message,
+            OffsetDateTime.now(),
+            forkedLayerDTO,
+            originLayer != null ? originLayer.getId() : null,
+            originRoadmap != null ? originRoadmap.getTitle() : null
         );
     }
 }

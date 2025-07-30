@@ -14,13 +14,13 @@ import lombok.NoArgsConstructor;
 public class LayerZzimSimpleDTO {
     
     private Member member;
-    private List<Layer> layers;
+    private List<LayerSimpleDTO> layers;
     private Map<Long, List<LayerForkHistory>> forkHistoriesMap;
     private List<MarkerSimpleDTO> markers;
 
     public LayerZzimSimpleDTO(
         Member member,
-        List<Layer> layers,
+        List<LayerSimpleDTO> layers,
         Map<Long, List<LayerForkHistory>> forkHistoriesMap,
         List<MarkerSimpleDTO> markers
     ) {

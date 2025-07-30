@@ -1,5 +1,6 @@
-package com.gitsunjaeab.mapick.application.roadmap;
+package com.gitsunjaeab.mapick.application.roadmap.Layer;
 
+import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerSimpleDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerZzimSimpleDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.marker.MarkerSimpleDTO;
 import com.gitsunjaeab.mapick.application.notification.NotificationService;
@@ -50,21 +51,32 @@ public class LayerLibraryService {
             return new LayerZzimSimpleDTO(member, List.of(), Map.of(), List.of());
         }
 
-        List<Layer> layers = layerRepository.findAllByIdWithMember(layerIds);
+        final List<Layer> layers = layerRepository.findByIdWithAllAssociations(layerIds);
+
+        if (layers.isEmpty()) {
+            throw new CommonException(ResponseCode.LAYER_NOT_FOUND);
+        }
+
+        // DTO 변환
+        List<LayerSimpleDTO> layerDtos = layers.stream()
+            .map(LayerSimpleDTO::from)
+            .toList();
 
         // 각 레이어별 포크 이력을 Map으로 조회
-        Map<Long, List<LayerForkHistory>> forkHistoriesMap = layers.stream()
-            .collect(Collectors.toMap(
-                Layer::getId,
-                layer -> layerForkHistoryRepository.findByOriginalLayerAndMember(layer, member)
-            ));
+        // layerId 목록 기반으로 forkHistory + roadmap + category 한 번에 패치
+        List<LayerForkHistory> forkHistories = layerForkHistoryRepository.findWithRoadmapAndCategory(
+            layerIds);
+
+        // 레이어 ID 기준으로 그룹핑
+        Map<Long, List<LayerForkHistory>> forkHistoriesMap = forkHistories.stream()
+            .collect(Collectors.groupingBy(fh -> fh.getOriginalLayer().getId()));
 
         List<MarkerSimpleDTO> markers = layers.stream()
             .flatMap(layer -> layer.getLayerMarkers().stream())
             .map(MarkerSimpleDTO::from)
             .collect(Collectors.toList());
 
-        return new LayerZzimSimpleDTO(member, layers, forkHistoriesMap, markers);
+        return new LayerZzimSimpleDTO(member, layerDtos, forkHistoriesMap, markers);
     }
 
 
@@ -209,32 +221,6 @@ public class LayerLibraryService {
         // 찜 기록 조회해서 반환
 //        return layerLibraryRepository.findByMemberAndLayer(member, originalLayer)
 //            .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND));
-        return new ForkResult(layerLibrary, savedForkedLayer, targetRoadmap);
+        return new ForkResult(originalLayer, originalLayer.getRoadmap(), savedForkedLayer, targetRoadmap);
     }
-
-    public class ForkResult {
-
-        private final LayerLibrary library;
-        private final Layer forkedLayer;
-        private final Roadmap targetRoadmap;
-
-        public ForkResult(LayerLibrary library, Layer forkedLayer, Roadmap targetRoadmap) {
-            this.library = library;
-            this.forkedLayer = forkedLayer;
-            this.targetRoadmap = targetRoadmap;
-        }
-
-        public LayerLibrary library() {
-            return library;
-        }
-
-        public Layer forkedLayer() {
-            return forkedLayer;
-        }
-
-        public Roadmap targetRoadmap() {
-            return targetRoadmap;
-        }
-    }
-
 }

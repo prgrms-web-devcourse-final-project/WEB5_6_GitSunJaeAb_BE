@@ -166,7 +166,9 @@ public class Member {
     @Builder.Default
     private Set<MemberAchievement> memberAchievements = new HashSet<>();
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE,
+        orphanRemoval = true)
+    @Builder.Default
     private Set<Notification> notifications = new HashSet<>();
 
 }

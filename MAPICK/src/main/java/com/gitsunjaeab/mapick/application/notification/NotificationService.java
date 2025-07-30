@@ -68,8 +68,12 @@ public class NotificationService {
         switch (type) {
             case FORK:
                 title = "🍴포크 발생!";
-                content = layerLibrary.getMember().getNickname()
-                    + "님이 " + layer.getName() + "을(를) 인용했어요!";
+                // layerLibrary가 null이거나 member가 null인 경우 안전하게 처리
+                String forkerNickname = (layerLibrary != null && layerLibrary.getMember() != null) 
+                    ? layerLibrary.getMember().getNickname() 
+                    : "누군가";
+                String layerName = (layer != null) ? layer.getName() : "레이어";
+                content = forkerNickname + "님이 " + layerName + "을(를) 인용했어요!";
                 break;
             case BOOKMARK:
                 if (roadmap != null) {

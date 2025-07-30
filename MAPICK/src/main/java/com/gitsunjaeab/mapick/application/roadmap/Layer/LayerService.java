@@ -1,19 +1,25 @@
-package com.gitsunjaeab.mapick.application.roadmap;
+package com.gitsunjaeab.mapick.application.roadmap.Layer;
 
 import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerDetailDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerListDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.layer.request.LayerRequest;
 import com.gitsunjaeab.mapick.api.roadmap.dto.layer.request.LayerSyncRequest;
 import com.gitsunjaeab.mapick.api.roadmap.dto.layer.response.LayerResponse;
+import com.gitsunjaeab.mapick.application.notification.NotificationService;
+import com.gitsunjaeab.mapick.application.roadmap.MarkerService;
+import com.gitsunjaeab.mapick.application.roadmap.RoadmapEditorService;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.auth.Role;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
+import com.gitsunjaeab.mapick.domain.notification.NotificationType;
 import com.gitsunjaeab.mapick.domain.roadmap.Marker;
 import com.gitsunjaeab.mapick.domain.roadmap.MarkerRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.layer.Layer;
+import com.gitsunjaeab.mapick.domain.roadmap.layer.LayerForkHistory;
+import com.gitsunjaeab.mapick.domain.roadmap.layer.LayerForkHistoryRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.layer.LayerLibrary;
 import com.gitsunjaeab.mapick.domain.roadmap.layer.LayerLibraryRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.layer.LayerRepository;
@@ -22,6 +28,7 @@ import com.gitsunjaeab.mapick.util.NotFoundException;
 import com.gitsunjaeab.mapick.util.ReferencedWarning;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +44,8 @@ public class LayerService {
     private final RoadmapRepository roadmapRepository;
     private final MarkerRepository markerRepository;
     private final LayerLibraryRepository layerLibraryRepository;
+    private final LayerForkHistoryRepository layerForkHistoryRepository;
+    private final NotificationService notificationService;
 
     // ===== 실시간 공유지도 상 CRUD =====
 
@@ -158,19 +167,92 @@ public class LayerService {
     }
 
     // 레이어 생성
-    public Layer create(final LayerRequest request, Long memberId, Long roadmapId) {
+    @Transactional
+    public ForkResult create(final LayerRequest request, Long memberId, Long targetRoadmapId) {
 
         // 연관 Entity 조회
         Member member = memberRepository.findById(memberId)
             .orElseThrow(() -> new CommonException(ResponseCode.MEMBER_NOT_FOUND));
 
-        Roadmap roadmap = roadmapRepository.findById(roadmapId)
+        // 레이어 포크 분기 (찜 여부, 중복 포크, 소유자 확인, 알림발송 등)
+        if (request.getOriginalLayerId() != null) {
+            // 포크 처리 - roadmapId는 사용하지 않음
+            Layer originalLayer = layerRepository.findByIdWithMember(request.getOriginalLayerId())
+                .orElseThrow(() -> new CommonException(ResponseCode.LAYER_NOT_FOUND));
+            Roadmap originRoadmap = originalLayer.getRoadmap();
+
+            // 삭제된 레이어 체크
+            if (originalLayer.getDeletedAt() != null) {
+                throw new CommonException(ResponseCode.FORBIDDEN);
+            }
+
+            // 찜 여부 확인 - 찜을 해야만 포크 가능
+            Optional<LayerLibrary> layerLibraryOpt = layerLibraryRepository.findValidZzimByMemberAndLayer(member, originalLayer);
+            boolean existsZzim = layerLibraryOpt.isPresent();
+            if (!existsZzim) {
+                throw new CommonException(ResponseCode.NOT_FOUND);
+            }
+
+            // 중복 포크 방지
+            List<LayerForkHistory> existingForks = layerForkHistoryRepository
+                .findByOriginalLayerAndMember(originalLayer, member);
+            if (!existingForks.isEmpty()) {
+                throw new CommonException(ResponseCode.ALREADY_PROCESSED);
+            }
+
+            // 타겟 로드맵 검증
+            Roadmap targetRoadmap = roadmapRepository.findById(targetRoadmapId)
+                .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND));
+
+            // 타겟 로드맵 소유자 확인
+            if (!targetRoadmap.getMember().getId().equals(memberId)) {
+                throw new CommonException(ResponseCode.FORBIDDEN);
+            }
+
+            // 레이어 복사 (포크)
+            Layer forkedLayer = new Layer();
+            forkedLayer.setName(originalLayer.getName());
+            forkedLayer.setDescription(originalLayer.getDescription());
+            forkedLayer.setLayerSeq(originalLayer.getLayerSeq());
+            forkedLayer.setMember(member);
+            forkedLayer.setRoadmap(targetRoadmap);
+
+            Layer savedForkedLayer = layerRepository.save(forkedLayer);
+
+            // 포크 이력 저장
+            LayerForkHistory forkHistory = new LayerForkHistory();
+            forkHistory.setOriginalLayer(originalLayer);
+            forkHistory.setForkedLayer(savedForkedLayer);
+            forkHistory.setMember(member);
+            layerForkHistoryRepository.save(forkHistory);
+
+            // 찜 기록 조회 (포크 알림 발송용) - 이미 위에서 조회했으므로 재사용
+            LayerLibrary layerLibrary = layerLibraryOpt.get();
+
+            // 포크 알림 발송 로직 (찜 알림과 동일한 패턴)
+            Member layerOwner = originalLayer.getMember();
+            notificationService.createNotification(
+                layerOwner,            // 알림 받을 대상 (레이어 소유자)
+                NotificationType.FORK, // 알림 타입
+                targetRoadmap,         // 로드맵 정보
+                originalLayer,         // 레이어 정보
+                layerLibrary,          // 찜 기록 정보
+                null,                  // 퀘스트
+                null,                  // 멤버퀘스트
+                null,                  // 댓글
+                null                   // 북마크
+            );
+            // 포크된 레이어 반환
+            return new ForkResult(originalLayer, originRoadmap, savedForkedLayer, targetRoadmap);
+        }
+        
+        // 일반 생성 - roadmapId 사용
+        Roadmap roadmap = roadmapRepository.findById(request.getRoadmapId())
             .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND));
-
         Layer layer = Layer.fromRequest(request, member, roadmap);
+        Layer createdLayer = layerRepository.save(layer);
+        return new ForkResult(null, null, createdLayer, roadmap);
 
-        // 저장 & 생성된 레이어 반환
-        return layerRepository.save(layer);
     }
 
     // 레이어 수정

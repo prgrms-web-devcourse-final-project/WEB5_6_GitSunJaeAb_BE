@@ -116,11 +116,40 @@ public class LayerZzimListResponse implements BaseApiResponse {
 
 
     public static LayerZzimListResponse of(LayerZzimSimpleDTO dto, String message) {
-        return of(
-            dto.getMember(),
-            dto.getLayers(),
-            dto.getForkHistoriesMap(),
-            message);
+        List<LayerWithForkHistoryDTO> layerDTOs = dto.getLayers().stream()
+            .map(layerSimpleDTO -> {
+                List<LayerForkHistoryDTO> forkHistoryDTOs = dto.getForkHistoriesMap()
+                    .getOrDefault(layerSimpleDTO.getId(), List.of())
+                    .stream()
+                    .map(LayerForkHistoryDTO::from)
+                    .toList();
+
+                List<MarkerSimpleDTO> markerDTOs = dto.getMarkers().stream()
+                    .filter(m -> m.getLayerId().equals(layerSimpleDTO.getId()))
+                    .toList();
+
+                return new LayerWithForkHistoryDTO(
+                    layerSimpleDTO.getId(),
+                    layerSimpleDTO.getName(),
+                    layerSimpleDTO.getDescription(),
+                    layerSimpleDTO.getLayerSeq(),
+                    layerSimpleDTO.getCreatedAt(),
+                    null, // updatedAt
+                    null, // deletedAt
+                    null, // MemberSimpleDTO
+                    null, // RoadmapSimpleDTO
+                    forkHistoryDTOs,
+                    markerDTOs
+                );
+            }).toList();
+
+        return new LayerZzimListResponse(
+            ResponseCode.OK.getCode(),
+            message,
+            OffsetDateTime.now(),
+            new MemberSimpleDTO(dto.getMember()),
+            layerDTOs
+        );
     }
 }
 
