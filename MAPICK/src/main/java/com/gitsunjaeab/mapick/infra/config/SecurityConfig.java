@@ -1,8 +1,8 @@
 package com.gitsunjaeab.mapick.infra.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gitsunjaeab.mapick.common.response.ApiResponse;
-import com.gitsunjaeab.mapick.common.response.ResponseCode;
+import com.gitsunjaeab.mapick.infra.common.response.ApiResponse;
+import com.gitsunjaeab.mapick.infra.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.infra.auth.UserDetailsServiceImpl;
 import com.gitsunjaeab.mapick.infra.auth.token.filter.AuthExceptionFilter;
 import com.gitsunjaeab.mapick.infra.auth.token.filter.JwtAuthenticationFilter;

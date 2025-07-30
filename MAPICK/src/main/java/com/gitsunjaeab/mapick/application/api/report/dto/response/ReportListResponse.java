@@ -1,0 +1,33 @@
+package com.gitsunjaeab.mapick.application.api.report.dto.response;
+
+import com.gitsunjaeab.mapick.application.api.report.dto.internal.ReportSimpleDTO;
+import com.gitsunjaeab.mapick.infra.common.response.BaseApiResponse;
+import com.gitsunjaeab.mapick.infra.common.response.ResponseCode;
+import java.time.OffsetDateTime;
+import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+/**
+ * 신고 목록(List) 반환 Response
+ */
+
+@Getter
+@AllArgsConstructor
+public class ReportListResponse implements BaseApiResponse {
+
+    private String code;
+    private String message;
+    private OffsetDateTime timestamp;
+    private List<ReportSimpleDTO> reportSimpleDTOS;
+
+    public static ReportListResponse of(List<ReportSimpleDTO> reportSimpleDTOS) {
+
+        return new ReportListResponse(
+            ResponseCode.OK.getCode(),
+            "전체 신고내역 조회 성공",
+            OffsetDateTime.now(),
+            reportSimpleDTOS
+        );
+    }
+}

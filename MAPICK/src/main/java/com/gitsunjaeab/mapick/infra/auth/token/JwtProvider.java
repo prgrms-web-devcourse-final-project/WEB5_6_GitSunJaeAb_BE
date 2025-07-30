@@ -1,10 +1,10 @@
 package com.gitsunjaeab.mapick.infra.auth.token;
 
-import com.gitsunjaeab.mapick.common.response.ResponseCode;
-import com.gitsunjaeab.mapick.domain.auth.Principal;
-import com.gitsunjaeab.mapick.api.auth.dto.internal.TokenDTO;
-import com.gitsunjaeab.mapick.domain.member.Member;
-import com.gitsunjaeab.mapick.domain.member.MemberRepository;
+import com.gitsunjaeab.mapick.infra.common.response.ResponseCode;
+import com.gitsunjaeab.mapick.application.domain.auth.Principal;
+import com.gitsunjaeab.mapick.application.api.auth.dto.internal.TokenDTO;
+import com.gitsunjaeab.mapick.application.domain.member.Member;
+import com.gitsunjaeab.mapick.application.domain.member.MemberRepository;
 import com.gitsunjaeab.mapick.infra.auth.token.code.TokenType;
 import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
 import io.jsonwebtoken.Claims;
@@ -18,7 +18,6 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -30,7 +29,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service

@@ -1,6 +1,6 @@
 package com.gitsunjaeab.mapick.infra.error.exceptions;
 
-import com.gitsunjaeab.mapick.common.response.ResponseCode;
+import com.gitsunjaeab.mapick.infra.common.response.ResponseCode;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

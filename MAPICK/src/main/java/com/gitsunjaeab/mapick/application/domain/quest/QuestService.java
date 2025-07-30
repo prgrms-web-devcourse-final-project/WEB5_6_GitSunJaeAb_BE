@@ -1,0 +1,210 @@
+package com.gitsunjaeab.mapick.application.domain.quest;
+
+import com.gitsunjaeab.mapick.application.api.achievement.dto.internal.AchievementDTO;
+import com.gitsunjaeab.mapick.application.api.member.dto.internal.MemberSimpleDTO;
+import com.gitsunjaeab.mapick.application.api.quest.dto.response.QuestAchievementResponse;
+import com.gitsunjaeab.mapick.application.api.quest.dto.request.QuestRequest;
+import com.gitsunjaeab.mapick.application.api.quest.dto.response.QuestResponse;
+import com.gitsunjaeab.mapick.application.domain.achievement.Achievement;
+import com.gitsunjaeab.mapick.application.domain.achievement.MemberAchievement;
+import com.gitsunjaeab.mapick.application.domain.achievement.MemberAchievementRepository;
+import com.gitsunjaeab.mapick.application.domain.member.Member;
+import com.gitsunjaeab.mapick.infra.common.EntityFinder;
+import com.gitsunjaeab.mapick.infra.common.response.ResponseCode;
+import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
+import com.gitsunjaeab.mapick.infra.storage.SupabaseStorageService;
+import jakarta.transaction.Transactional;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+
+@Service
+@RequiredArgsConstructor
+public class QuestService {
+
+    private final QuestRepository questRepository;
+    private final MemberAchievementRepository memberAchievementRepository;
+    private final SupabaseStorageService supabaseStorageService;
+    private final EntityFinder entityFinder;
+
+    // 만료 퀘스트 자동 비활성화
+    @Scheduled(cron = "0 */1 * * * *") // 1분마다 확인
+    @Transactional
+    public void deactivateExpiredQuests() {
+        OffsetDateTime now = OffsetDateTime.now();
+        List<Quest> expiredQuests = questRepository.findAllByDeadlineBeforeAndIsActiveTrue(now);
+
+        for (Quest quest : expiredQuests) {
+            quest.setIsActive(false);
+        }
+
+        if (!expiredQuests.isEmpty()) {
+            questRepository.saveAll(expiredQuests);
+            System.out.println("[스케줄러] 만료 퀘스트 " + expiredQuests.size() + "건 비활성화 완료!");
+        }
+    }
+
+    // 전체 퀘스트 조회
+    public List<QuestResponse> findAll(Boolean isActive) {
+        final List<Quest> all = questRepository.findAllWithMember();
+        final List<Quest> filtered = new ArrayList<>();
+
+        for (Quest q : all) {
+            if (isActive == null || q.getIsActive().equals(isActive)) {
+                filtered.add(q);
+            }
+        }
+
+        return filtered.stream()
+            .map(this::questToResponse)
+            .toList();
+    }
+
+    // 특정 퀘스트 조회
+    public QuestResponse get(final Long questId) {
+        Quest quest = entityFinder.findWithMemberById(questId);
+
+        return questToResponse(quest);
+    }
+
+    public QuestAchievementResponse create (
+        final QuestRequest questRequest,
+        final Member member,
+        final MultipartFile imageFile
+    ) {
+        final Quest quest = new Quest();
+        requestToEntity(questRequest, quest);
+        quest.setMember(member); // 작성자
+        quest.setCreatedAt(OffsetDateTime.now(ZoneId.of("Asia/Seoul")));
+
+        //이미지 업로드
+        if(imageFile != null && !imageFile.isEmpty()){
+            String imageUrl = supabaseStorageService.upload(imageFile);
+            quest.setQuestImage(imageUrl);
+        }
+
+        questRepository.save(quest);
+
+        // 퀘스트 첫 생성 업적
+        Long memberId = member.getId();
+        Long questCount = questRepository.countByMemberId(memberId);
+        final Long ACHIEVEMENT_ID = 101L;
+
+        if (questCount == 1) {
+            boolean alreadyHas = memberAchievementRepository.existsByMemberIdAndAchievementId(memberId, ACHIEVEMENT_ID);
+            if (!alreadyHas) {
+                Member user = entityFinder.findMemberById(memberId);
+                Achievement achievement = entityFinder.findAchievementById(ACHIEVEMENT_ID);
+
+                memberAchievementRepository.save(
+                    MemberAchievement.builder()
+                        .member(member)
+                        .achievement(achievement)
+                        .achievedAt(OffsetDateTime.now())
+                        .build()
+                );
+                return new QuestAchievementResponse(quest.getId(), true, new AchievementDTO(achievement));
+            }
+        }
+
+        return new QuestAchievementResponse(quest.getId(), false, null);
+    }
+
+    //퀘스트 수정
+    public void update(
+        final Long questId,
+        final QuestRequest questRequest,
+        final String currentMemberEmail,
+        final MultipartFile imageFile
+    ) {
+
+        final Quest quest = entityFinder.findWithMemberById(questId);
+
+        if (!quest.getMember().getEmail().equals(currentMemberEmail)) {
+            throw new RuntimeException("작성자만 퀘스트를 수정할 수 있습니다.");
+        }
+
+        requestToEntity(questRequest, quest);
+
+        //이미지 업로드
+        if(imageFile != null && !imageFile.isEmpty()){
+            String imageUrl = supabaseStorageService.upload(imageFile);
+            quest.setQuestImage(imageUrl);
+        }
+
+        quest.setUpdatedAt(OffsetDateTime.now(ZoneId.of("Asia/Seoul")));
+        questRepository.save(quest);
+    }
+
+    public List<QuestResponse> findByWriter(Member member) {
+        List<Quest> quests = questRepository.findByMember(member);
+        return quests.stream()
+            .map(QuestResponse::of)
+            .toList();
+    }
+
+//  if문을 써서 작성자랑 관리자가 삭제할 수 있게 hasroll() -> 바이크
+    public void delete(final Long questId, final Member currentMember) {
+        final Quest quest;
+
+        if ("ROLE_ADMIN".equals(currentMember.getRole())) {
+            quest = questRepository.findIncludingDeletedById(questId)
+                .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND, "해당하는 퀘스트가 없습니다."));
+            questRepository.delete(quest); // 하드 삭제
+            return;
+        }
+
+        // 일반 작성자는 soft delete만 가능
+        quest = entityFinder.findWithMemberById(questId);
+
+        if (!quest.getMember().getId().equals(currentMember.getId())) {
+            throw new RuntimeException("작성자만 퀘스트를 삭제할 수 있습니다.");
+        }
+
+
+        quest.setDeletedAt(OffsetDateTime.now(ZoneId.of("Asia/Seoul"))); // DeletedAt의 값이 들어있는 것을 통해 판단
+        questRepository.save(quest);
+    }
+
+    @Transactional
+    public QuestResponse getWithViews(final Long questId) {
+        Quest quest = entityFinder.findWithMemberById(questId);
+        quest.setViewCount(quest.getViewCount() + 1);
+        questRepository.save(quest);
+
+        return questToResponse(quest);
+    }
+
+    private QuestResponse questToResponse(final Quest quest) {
+        QuestResponse questResponse = new QuestResponse();
+        questResponse.setId(quest.getId());
+        questResponse.setTitle(quest.getTitle());
+        questResponse.setQuestImage(quest.getQuestImage());
+        questResponse.setDescription(quest.getDescription());
+        questResponse.setHint(quest.getHint());
+        questResponse.setDeadline(quest.getDeadline());
+        questResponse.setIsActive(quest.getIsActive());
+        questResponse.setCreatedAt(quest.getCreatedAt());
+        questResponse.setCompletedAt(quest.getCompletedAt());
+        questResponse.setUpdatedAt(quest.getUpdatedAt());
+        questResponse.setDeletedAt(quest.getDeletedAt());
+        questResponse.setMember(MemberSimpleDTO.from(quest.getMember()));
+        questResponse.setViewCount(quest.getViewCount());
+        return questResponse;
+    }
+
+    private Quest requestToEntity(final QuestRequest questRequest, final Quest quest) {
+        quest.setTitle(questRequest.getTitle());
+        quest.setDescription(questRequest.getDescription());
+        quest.setHint(questRequest.getHint());
+        quest.setDeadline(questRequest.getDeadline());
+        quest.setIsActive(questRequest.getIsActive() != null ? questRequest.getIsActive() : true);
+        return quest;
+    }
+}
