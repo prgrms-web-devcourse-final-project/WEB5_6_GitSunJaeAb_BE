@@ -1,6 +1,7 @@
 package com.gitsunjaeab.mapick.domain.quest;
 
 import com.gitsunjaeab.mapick.domain.member.Member;
+import feign.Param;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -27,4 +28,9 @@ public interface QuestRepository extends JpaRepository<Quest, Long> {
     List<Quest> findAllWithMember();
 
     Long countByMemberId(Long memberId);
+
+    @EntityGraph(attributePaths = "member")
+    @Query("SELECT q FROM Quest q JOIN FETCH q.member WHERE q.id = :id")
+    Optional<Quest> findIncludingDeletedById(@Param("id") Long id);
+
 }

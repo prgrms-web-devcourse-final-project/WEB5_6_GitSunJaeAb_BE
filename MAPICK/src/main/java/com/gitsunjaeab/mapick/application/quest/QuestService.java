@@ -159,15 +159,20 @@ public class QuestService {
 
 //  if문을 써서 작성자랑 관리자가 삭제할 수 있게 hasroll() -> 바이크
     public void delete(final Long id, final Member currentMember) {
-        final Quest quest = questRepository.findWithMemberById(id)
-                .orElseThrow(NotFoundException::new);
+        final Quest quest;
 
         if ("ROLE_ADMIN".equals(currentMember.getRole())) {
-            questRepository.delete(quest);
+            quest = questRepository.findIncludingDeletedById(id)
+                .orElseThrow(NotFoundException::new);
+            questRepository.delete(quest); // 하드 삭제
             return;
         }
 
-        if (!quest.getMember().getEmail().equals(currentMember.getEmail())) {
+        // 일반 작성자는 soft delete만 가능
+        quest = questRepository.findWithMemberById(id)
+            .orElseThrow(NotFoundException::new);
+
+        if (!quest.getMember().getId().equals(currentMember.getId())) {
             throw new RuntimeException("작성자만 퀘스트를 삭제할 수 있습니다.");
         }
 
