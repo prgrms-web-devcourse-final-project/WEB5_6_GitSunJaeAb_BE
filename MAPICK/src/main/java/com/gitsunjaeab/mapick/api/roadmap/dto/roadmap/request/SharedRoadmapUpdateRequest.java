@@ -1,14 +1,12 @@
-package com.gitsunjaeab.mapick.api.roadmap.dto.roadmap;
+package com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.gitsunjaeab.mapick.api.roadmap.dto.hashtag.HashtagRequest;
-import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;

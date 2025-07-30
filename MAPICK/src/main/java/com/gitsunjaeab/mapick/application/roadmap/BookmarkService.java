@@ -1,53 +1,41 @@
 package com.gitsunjaeab.mapick.application.roadmap;
 
 import com.gitsunjaeab.mapick.api.roadmap.dto.bookmark.BookmarkDTO;
-import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.RoadmapListResponse;
+import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.response.RoadmapListResponse;
 import com.gitsunjaeab.mapick.application.notification.NotificationService;
+import com.gitsunjaeab.mapick.common.EntityFinder;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.member.Member;
-import com.gitsunjaeab.mapick.domain.member.MemberRepository;
 import com.gitsunjaeab.mapick.domain.notification.NotificationType;
 import com.gitsunjaeab.mapick.domain.roadmap.Bookmark;
 import com.gitsunjaeab.mapick.domain.roadmap.BookmarkRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
-import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
 import com.gitsunjaeab.mapick.infra.error.exceptions.DuplicatedBookmarkException;
 import com.gitsunjaeab.mapick.infra.error.exceptions.ForbiddenException;
-import com.gitsunjaeab.mapick.util.NotFoundException;
 import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
+@RequiredArgsConstructor
 public class BookmarkService {
 
     private final BookmarkRepository bookmarkRepository;
-    private final RoadmapRepository roadmapRepository;
-    private final MemberRepository memberRepository;
     private final NotificationService notificationService;
-
-    public BookmarkService(final BookmarkRepository bookmarkRepository,
-        final RoadmapRepository roadmapRepository, final MemberRepository memberRepository,
-        NotificationService notificationService) {
-        this.bookmarkRepository = bookmarkRepository;
-        this.roadmapRepository = roadmapRepository;
-        this.memberRepository = memberRepository;
-        this.notificationService = notificationService;
-    }
+    private final EntityFinder entityFinder;
 
     @Transactional
     public Long create(Long roadmapId, Long memberId) {
-        Roadmap roadmap = roadmapRepository.findById(roadmapId)
-            .orElseThrow(() -> new NotFoundException("로드맵을 찾을 수 없습니다."));
-        Member member = memberRepository.findById(memberId)
-            .orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다."));
+        Roadmap roadmap = entityFinder.findRoadmapById(roadmapId);
+        Member member = entityFinder.findMemberById(memberId);
 
         if (bookmarkRepository.existsByMemberIdAndRoadmapId(member.getId(), roadmap.getId())) {
             throw new DuplicatedBookmarkException(ResponseCode.BOOKMARK_DUPLICATED);
@@ -80,9 +68,7 @@ public class BookmarkService {
 
     @Transactional
     public void delete(Long bookmarkId, Long memberId) {
-        Bookmark bookmark = bookmarkRepository.findById(bookmarkId)
-                .orElseThrow(() -> new NotFoundException("북마크가 존재하지 않습니다."));
-
+        Bookmark bookmark = entityFinder.findBookmarkById(bookmarkId);
 
         if (!bookmark.getMember().getId().equals(memberId)) {
             throw new ForbiddenException(ResponseCode.FORBIDDEN);

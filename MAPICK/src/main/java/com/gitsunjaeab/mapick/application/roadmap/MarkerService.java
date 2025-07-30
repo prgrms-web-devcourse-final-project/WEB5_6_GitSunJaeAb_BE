@@ -169,7 +169,6 @@ public class MarkerService {
         applyUpdateRequestToMarker(marker, request, newCustomImage);
     }
 
-
     @Transactional
     public void delete(final Long id) {
         markerRepository.deleteById(id);
@@ -202,21 +201,8 @@ public class MarkerService {
         marker.setUpdatedAt(OffsetDateTime.now());
     }
 
-    public Long findRoadmapIdByLayerId(Long layerId) {
-        Layer layer = layerRepository.findById(layerId)
-                .orElseThrow(() -> new RuntimeException("💥 해당 Layer를 찾을 수 없습니다. layerId: " + layerId));
-
-        return layer.getRoadmap().getId();
-    }
-
     public Marker findById(Long markerId) {
         return markerRepository.findById(markerId)
                 .orElseThrow(() -> new RuntimeException("💥 해당 Marker를 찾을 수 없습니다. markerId: " + markerId));
-    }
-
-    @Transactional
-    public Marker findByIdWithLayerAndRoadmap(Long markerId) {
-        return markerRepository.findByIdWithLayerAndRoadmap(markerId)
-                .orElseThrow(() -> new NotFoundException("마커 조회 실패"));
     }
 }

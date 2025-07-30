@@ -1,7 +1,6 @@
 package com.gitsunjaeab.mapick.application.roadmap;
 
 import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.RoadmapEditorSimpleDTO;
-import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.RoadmapListResponse;
 import com.gitsunjaeab.mapick.domain.roadmap.*;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
@@ -10,27 +9,20 @@ import com.gitsunjaeab.mapick.util.NotFoundException;
 
 import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 // 공유지도
 @Service
+@RequiredArgsConstructor
 public class RoadmapEditorService {
 
     private final RoadmapEditorRepository roadmapEditorRepository;
     private final RoadmapRepository roadmapRepository;
     private final MemberRepository memberRepository;
-
-    public RoadmapEditorService(final RoadmapEditorRepository roadmapEditorRepository,
-            final RoadmapRepository roadmapRepository, final MemberRepository memberRepository) {
-        this.roadmapEditorRepository = roadmapEditorRepository;
-        this.roadmapRepository = roadmapRepository;
-        this.memberRepository = memberRepository;
-    }
 
     public List<RoadmapEditorDTO> findAll() {
         final List<RoadmapEditor> roadmapEditors = roadmapEditorRepository.findAll(Sort.by("id"));
