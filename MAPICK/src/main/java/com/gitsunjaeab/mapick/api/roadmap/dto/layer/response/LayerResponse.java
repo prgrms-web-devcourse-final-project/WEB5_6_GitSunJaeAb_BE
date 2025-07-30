@@ -20,7 +20,7 @@ public class LayerResponse implements BaseApiResponse {
     private LayerDetailDTO layer;
 
 
-    public static LayerResponse of(Layer layer, boolean isZzim, String message) {
+    public static LayerResponse create(Layer layer, boolean isZzim, String message) {
         return new LayerResponse(
             ResponseCode.OK.getCode(),
             message,
@@ -29,12 +29,30 @@ public class LayerResponse implements BaseApiResponse {
         );
     }
 
-    public static LayerResponse of(LayerDetailDTO layerDetailDTO, String message) {
+    public static LayerResponse get(LayerDetailDTO layerDetailDTO, String message) {
         return new LayerResponse(
             ResponseCode.OK.getCode(),
             message,
             OffsetDateTime.now(),
             layerDetailDTO
+        );
+    }
+
+    public static LayerResponse update(Layer layer, boolean isZzim, String message) {
+        return new LayerResponse(
+            ResponseCode.OK.getCode(),
+            message,
+            OffsetDateTime.now(),
+            LayerDetailDTO.from(layer, isZzim)
+        );
+    }
+
+    public static LayerResponse delete(Layer layer, boolean isZzim, String message) {
+        return new LayerResponse(
+            ResponseCode.OK.getCode(),
+            message,
+            OffsetDateTime.now(),
+            LayerDetailDTO.from(layer, isZzim)
         );
     }
 }

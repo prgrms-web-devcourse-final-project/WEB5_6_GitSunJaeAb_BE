@@ -91,6 +91,9 @@ public class Layer {
     @Column(name = "blocked_by")
     private Long blockedBy; // 블록 처리한 관리자 ID
 
+    @Column(name = "is_zzimed", nullable = false)
+    private boolean isZzimed = false;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
@@ -116,5 +119,17 @@ public class Layer {
         this.roadmap = roadmap;
         
         // updatedAt은 JPA Auditing으로 자동 처리됨
+    }
+
+    // Entity 변환 메서드
+    public static Layer fromRequest(LayerRequest request, Member member, Roadmap roadmap) {
+        Layer layer = new Layer();
+        layer.setName(request.getName());
+        layer.setDescription(request.getDescription());
+        layer.setLayerSeq(request.getLayerSeq());
+        layer.setZzimed(request.isZzimed());
+        layer.setMember(member);
+        layer.setRoadmap(roadmap);
+        return layer;
     }
 }

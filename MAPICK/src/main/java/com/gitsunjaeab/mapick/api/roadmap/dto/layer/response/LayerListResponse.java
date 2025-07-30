@@ -18,15 +18,13 @@ public class LayerListResponse implements BaseApiResponse {
     private String message;
     private OffsetDateTime timestamp;
     private List<LayerListDTO> layers;
-    private List<RoadmapSimpleDTO> roadmaps;
 
-    public static LayerListResponse getList(List<LayerListDTO> layers, List<RoadmapSimpleDTO> roadmaps) {
+    public static LayerListResponse getList(List<LayerListDTO> layers) {
         return new LayerListResponse(
             ResponseCode.OK.getCode(),
             "레이어 목록 조회 성공",
             OffsetDateTime.now(),
-            layers,
-            roadmaps
+            layers
         );
     }
 }
