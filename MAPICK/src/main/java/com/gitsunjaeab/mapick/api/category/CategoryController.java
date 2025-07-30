@@ -83,7 +83,6 @@ public class CategoryController {
         return ResponseEntity.ok(response);
     }
 
-    // 카테고리 삭제
     @Operation(summary = "카테고리 삭제", description = "[관리자] 카테고리 삭제")
     @DeleteMapping("/{categoryId}")
     @PreAuthorize("hasRole('ADMIN')")
