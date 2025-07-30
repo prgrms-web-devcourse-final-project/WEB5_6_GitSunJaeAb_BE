@@ -100,7 +100,7 @@ public class MemberQuestService {
         memberQuest.setSubmitAt(now);
 
         memberQuest.setStatus(true);
-        memberQuest.setIsRecognized("N");
+//        memberQuest.setIsRecognized("N");
 
         MemberQuest savedQuest = memberQuestRepository.save(memberQuest);
 
