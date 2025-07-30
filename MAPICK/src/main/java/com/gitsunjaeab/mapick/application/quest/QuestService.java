@@ -12,59 +12,32 @@ import com.gitsunjaeab.mapick.domain.achievement.MemberAchievement;
 import com.gitsunjaeab.mapick.domain.achievement.MemberAchievementRepository;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
-import com.gitsunjaeab.mapick.domain.quest.MemberQuest;
-import com.gitsunjaeab.mapick.domain.quest.MemberQuestRepository;
 import com.gitsunjaeab.mapick.domain.quest.Quest;
-import com.gitsunjaeab.mapick.domain.quest.QuestRank;
-import com.gitsunjaeab.mapick.domain.quest.QuestRankRepository;
 import com.gitsunjaeab.mapick.domain.quest.QuestRepository;
-import com.gitsunjaeab.mapick.domain.report.Report;
-import com.gitsunjaeab.mapick.domain.report.ReportRepository;
 import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
 import com.gitsunjaeab.mapick.infra.storage.SupabaseStorageService;
 import com.gitsunjaeab.mapick.util.NotFoundException;
-import com.gitsunjaeab.mapick.util.ReferencedWarning;
+import jakarta.transaction.Transactional;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 
 @Service
+@RequiredArgsConstructor
 public class QuestService {
 
     private final QuestRepository questRepository;
-    private final ReportRepository reportRepository;
-    private final MemberQuestRepository memberQuestRepository;
-    private final QuestRankRepository questRankRepository;
     private final MemberRepository memberRepository;
     private final MemberAchievementRepository memberAchievementRepository;
     private final AchievementRepository achievementRepository;
-    //Supabase 사용을 위해 추가
     private final SupabaseStorageService supabaseStorageService;
 
-    public QuestService(final QuestRepository questRepository,
-            final MemberRepository memberRepository,
-            final ReportRepository reportRepository,
-            final MemberQuestRepository memberQuestRepository,
-            final QuestRankRepository questRankRepository,
-            final SupabaseStorageService supabaseStorageService,
-
-        MemberAchievementRepository memberAchievementRepository,
-        AchievementRepository achievementRepository) {
-        //수정예정
-        this.questRepository = questRepository;
-        this.reportRepository = reportRepository;
-        this.memberQuestRepository = memberQuestRepository;
-        this.questRankRepository = questRankRepository;
-        this.memberRepository = memberRepository;
-        this.memberAchievementRepository = memberAchievementRepository;
-        this.achievementRepository = achievementRepository;
-        this.supabaseStorageService = supabaseStorageService;
-    }
-    //전체 퀘스트 조회
+    // 전체 퀘스트 조회
     public List<QuestResponse> findAll(Boolean isActive) {
         final List<Quest> all = questRepository.findAllWithMember();
         final List<Quest> filtered = new ArrayList<>();
@@ -80,7 +53,7 @@ public class QuestService {
             .toList();
     }
 
-    //특정 퀘스트 조회
+    // 특정 퀘스트 조회
     public QuestResponse get(final Long id) {
         return questRepository.findWithMemberById(id)
                 .map(this::questToResponse)
@@ -166,17 +139,33 @@ public class QuestService {
             .toList();
     }
 
-
-    public void delete(final Long id, final String currentMemberEmail) {
+//  if문을 써서 작성자랑 관리자가 삭제할 수 있게 hasroll() -> 바이크
+    public void delete(final Long id, final Member currentMember) {
         final Quest quest = questRepository.findWithMemberById(id)
                 .orElseThrow(NotFoundException::new);
 
-        if (!quest.getMember().getEmail().equals(currentMemberEmail)) {
-            throw new RuntimeException("작성자만 퀘스트를 삭제 할 수 있습니다.");
+        if ("ROLE_ADMIN".equals(currentMember.getRole())) {
+            questRepository.delete(quest);
+            return;
         }
+
+        if (!quest.getMember().getEmail().equals(currentMember.getEmail())) {
+            throw new RuntimeException("작성자만 퀘스트를 삭제할 수 있습니다.");
+        }
+
 
         quest.setDeletedAt(OffsetDateTime.now(ZoneId.of("Asia/Seoul"))); // DeletedAt의 값이 들어있는 것을 통해 판단
         questRepository.save(quest);
+    }
+
+    @Transactional
+    public QuestResponse getWithViews(final Long id) {
+        Quest quest = questRepository.findWithMemberById(id)
+            .orElseThrow(NotFoundException::new);
+        quest.setViewCount(quest.getViewCount() + 1);
+        questRepository.save(quest);
+
+        return questToResponse(quest);
     }
 
     private QuestResponse questToResponse(final Quest quest) {
@@ -185,6 +174,7 @@ public class QuestService {
         questResponse.setTitle(quest.getTitle());
         questResponse.setQuestImage(quest.getQuestImage());
         questResponse.setDescription(quest.getDescription());
+        questResponse.setHint(quest.getHint());
         questResponse.setDeadline(quest.getDeadline());
         questResponse.setIsActive(quest.getIsActive());
         questResponse.setCreatedAt(quest.getCreatedAt());
@@ -192,40 +182,16 @@ public class QuestService {
         questResponse.setUpdatedAt(quest.getUpdatedAt());
         questResponse.setDeletedAt(quest.getDeletedAt());
         questResponse.setMember(MemberSimpleDTO.from(quest.getMember()));
+        questResponse.setViewCount(quest.getViewCount());
         return questResponse;
     }
 
     private Quest requestToEntity(final QuestRequest questRequest, final Quest quest) {
         quest.setTitle(questRequest.getTitle());
         quest.setDescription(questRequest.getDescription());
+        quest.setHint(questRequest.getHint());
         quest.setDeadline(questRequest.getDeadline());
         quest.setIsActive(questRequest.getIsActive() != null ? questRequest.getIsActive() : true);
         return quest;
     }
-
-    public ReferencedWarning getReferencedWarning(final Long id) {
-        final ReferencedWarning referencedWarning = new ReferencedWarning();
-        final Quest quest = questRepository.findById(id)
-                .orElseThrow(NotFoundException::new);
-        final Report questReport = reportRepository.findFirstByQuest(quest);
-        if (questReport != null) {
-            referencedWarning.setKey("quest.report.quest.referenced");
-            referencedWarning.addParam(questReport.getId());
-            return referencedWarning;
-        }
-        final MemberQuest questMemberQuest = memberQuestRepository.findFirstByQuest(quest);
-        if (questMemberQuest != null) {
-            referencedWarning.setKey("quest.memberQuest.quest.referenced");
-            referencedWarning.addParam(questMemberQuest.getId());
-            return referencedWarning;
-        }
-        final QuestRank questQuestRank = questRankRepository.findFirstByQuest(quest);
-        if (questQuestRank != null) {
-            referencedWarning.setKey("quest.questRank.quest.referenced");
-            referencedWarning.addParam(questQuestRank.getId());
-            return referencedWarning;
-        }
-        return null;
-    }
-
 }

@@ -20,7 +20,7 @@ public interface MarkerRepository extends JpaRepository<Marker, Long> {
     @Query("SELECT m FROM Marker m WHERE m.layer = :layer AND m.deletedAt IS NULL")
     Marker findFirstByLayer(@Param("layer") Layer layer);
 
-    @Query("SELECT m FROM Marker m WHERE m.layer.id = :layerId AND m.deletedAt IS NULL")
+    @Query("SELECT m FROM Marker m WHERE m.layer.id = :layerId")
     List<Marker> findAllByLayer_Id(@Param("layerId") Long layerId);
 
     @Query("SELECT m FROM Marker m " +
