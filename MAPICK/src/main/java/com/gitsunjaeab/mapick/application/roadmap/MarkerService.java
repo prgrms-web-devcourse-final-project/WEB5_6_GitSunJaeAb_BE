@@ -35,18 +35,33 @@ public class MarkerService {
     @Transactional
     public Marker createFromSync(MarkerSyncRequest request) {
         Member member = entityFinder.findMemberById(request.getMemberId());
-
-        Layer layer = entityFinder.findLayerById(request.getLayerTempId());
+        Layer layer = entityFinder.findLayerByTempId(request.getLayerTempId());
 
         MarkerCustomImage customImage = null;
         if (request.getCustomImageId() != null) {
             customImage = entityFinder.findByMarkerCustomId(request.getCustomImageId());
         }
 
-        final Marker marker = request.toEntity(layer, member, customImage);
+        Marker marker = new Marker();
+        marker.setName(request.getName());
+        marker.setMarkerTempId(request.getMarkerTempId());
+        marker.setDescription(request.getDescription());
+        marker.setAddress(request.getAddress());
+        marker.setLat(request.getLat());
+        marker.setLng(request.getLng());
+        marker.setColor(request.getColor());
+        marker.setMarkerSeq(request.getMarkerSeq());
+        marker.setLayer(layer);
+        marker.setMember(member);
+        marker.setCustomImage(customImage);
+        marker.setCreatedAt(OffsetDateTime.now());
+
+        Marker saved = markerRepository.save(marker);
+        markerRepository.flush();
 
         roadmapEditorService.registerEditorIfNotExists(layer.getRoadmap().getId(), member.getId());
-        return markerRepository.save(marker);
+
+        return saved;
     }
 
     @Transactional

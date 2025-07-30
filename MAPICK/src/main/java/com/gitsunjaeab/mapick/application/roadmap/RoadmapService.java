@@ -8,6 +8,7 @@ import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.request.SharedRoadmapCreat
 import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.request.SharedRoadmapUpdateRequest;
 import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.response.RoadmapListResponse;
 import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.response.RoadmapResponse;
+import com.gitsunjaeab.mapick.application.roadmap.Layer.LayerService;
 import com.gitsunjaeab.mapick.common.EntityFinder;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.achievement.Achievement;
@@ -357,7 +358,7 @@ public class RoadmapService {
         return RoadmapListResponse.of(roadmaps, citationCountMap, roadmapIdToBookmarkIdMap);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public RoadmapResponse get(final Long id, final Member member) {
         Roadmap roadmap = roadmapRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("해당 로드맵이 존재하지 않습니다. id=" + id));
