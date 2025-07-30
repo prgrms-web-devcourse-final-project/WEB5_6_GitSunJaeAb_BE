@@ -13,13 +13,15 @@ public class MarkerSimpleDTO {
     private String name;
     private Double lat;
     private Double lng;
+    private Long layerId;
 
     public static MarkerSimpleDTO from(Marker marker) {
         return new MarkerSimpleDTO(
             marker.getId(),
             marker.getName(),
             marker.getLat(),
-            marker.getLng()
+            marker.getLng(),
+            marker.getLayer().getId()
         );
     }
 }

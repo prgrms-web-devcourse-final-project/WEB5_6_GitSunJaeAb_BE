@@ -45,4 +45,14 @@ public interface LayerForkHistoryRepository extends JpaRepository<LayerForkHisto
         WHERE fh.originalLayer = :originalLayer AND fh.member = :member
     """)
     List<Long> findForkedLayerIdsByOriginalLayerAndMember(@Param("originalLayer") Layer originalLayer, @Param("member") Member member);
+
+    // 5. LayerId 리스트로 조회할 때 Roadmap과 Category까지 fetch join
+    @Query("""
+    SELECT fh FROM LayerForkHistory fh
+    JOIN FETCH fh.forkedLayer fl
+    JOIN FETCH fl.roadmap r
+    JOIN FETCH r.category
+    WHERE fl.id IN :layerIds
+""")
+    List<LayerForkHistory> findWithRoadmapAndCategory(@Param("layerIds") List<Long> layerIds);
 }

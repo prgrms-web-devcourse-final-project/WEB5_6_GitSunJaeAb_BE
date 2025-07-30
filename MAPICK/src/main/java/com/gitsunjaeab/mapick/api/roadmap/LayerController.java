@@ -5,14 +5,13 @@ import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerListDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerZzimSimpleDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.layer.request.LayerRequest;
 import com.gitsunjaeab.mapick.api.roadmap.dto.layer.request.LayerSyncRequest;
-import com.gitsunjaeab.mapick.api.roadmap.dto.layer.response.LayerForkResponse;
 import com.gitsunjaeab.mapick.api.roadmap.dto.layer.response.LayerListResponse;
 import com.gitsunjaeab.mapick.api.roadmap.dto.layer.response.LayerResponse;
 import com.gitsunjaeab.mapick.api.roadmap.dto.layer.response.LayerZzimListResponse;
 import com.gitsunjaeab.mapick.api.roadmap.dto.layer.response.LayerZzimResponse;
-import com.gitsunjaeab.mapick.application.roadmap.LayerLibraryService;
-import com.gitsunjaeab.mapick.application.roadmap.LayerLibraryService.ForkResult;
-import com.gitsunjaeab.mapick.application.roadmap.LayerService;
+import com.gitsunjaeab.mapick.application.roadmap.Layer.ForkResult;
+import com.gitsunjaeab.mapick.application.roadmap.Layer.LayerLibraryService;
+import com.gitsunjaeab.mapick.application.roadmap.Layer.LayerService;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.auth.Principal;
 import com.gitsunjaeab.mapick.domain.roadmap.layer.Layer;
@@ -65,26 +64,31 @@ public class LayerController {
 
     // ===== 기본 CRUD =====
 
-    // 레이어 생성
+    // 레이어 생성 (포크/일반)
     @PostMapping
-//    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    @Operation(summary = "[사용자]레이어 생성", description = "[사용자용] 지도 위에 레이어를 생성")
+    @Operation(summary = "[사용자]레이어 생성", description = "[사용자용] 지도 위에 레이어를 생성 또는 포크")
     public ResponseEntity<LayerResponse> createLayer(
         @AuthenticationPrincipal Principal principal,
         @RequestBody @Valid final LayerRequest request,
-        @RequestParam Long roadmapId) {
-
-        if (principal == null) { // PreAuthorize 쓰면 예외처리 필요X
+        @RequestParam(required = false) Long targetRoadmapId) {
+        // 인증 체크
+        if (principal == null) {
             throw new CommonException(ResponseCode.UNAUTHORIZED);
         }
-
         Long memberId = principal.getMember().getId();
-
-        final Layer createdLayer = layerService.create(request, memberId, roadmapId);
-
+        // 일반 생성: request.getOriginalLayerId() == null, 포크: originalLayerId != null
+        final ForkResult result = layerService.create(request, memberId, targetRoadmapId);
+        boolean isForked = (request.getOriginalLayerId() != null);
+        String message = isForked ? "레이어 포크 성공" : "레이어 생성 성공";
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(LayerResponse.create(createdLayer, false, "레이어 생성 성공"));
+            .body(LayerResponse.createFork(
+                result.forkedLayer(),
+                result.forkOriginLayer(),
+                result.forkOriginRoadmap(),
+                result.targetRoadmap(),
+                isForked,
+                message));
     }
 
     // 로드맵의 레이어 조회 (쿼리 파라미터 방식-전체/특정 조회)
@@ -202,23 +206,23 @@ public class LayerController {
     }
 
     // 레이어 포크 (찜한 레이어를 내 로드맵에 추가)
-    @PostMapping("/member/fork")
-    @Operation(summary = "[사용자] 레이어 포크", description = "[사용자용] 마이페이지 > 찜한 레이어를 내 로드맵에 추가")
-    public ResponseEntity<LayerForkResponse> forkLayer(
-        @AuthenticationPrincipal Principal principal,
-        @RequestParam Long layerId,
-        @RequestParam Long targetRoadmapId) {
-
-        Long memberId = principal.getMember().getId();
-
-        ForkResult result = layerLibraryService.forkLayer(memberId, layerId, targetRoadmapId);
-
-        return ResponseEntity
-            .status(HttpStatus.OK)
-            .body(LayerForkResponse.fork(result.library(),
-                result.forkedLayer(),
-                result.targetRoadmap(),
-                "레이어 포크 성공")
-            );
-    }
+//    @PostMapping("/member/fork")
+//    @Operation(summary = "[사용자] 레이어 포크", description = "[사용자용] 마이페이지 > 찜한 레이어를 내 로드맵에 추가")
+//    public ResponseEntity<LayerForkResponse> forkLayer(
+//        @AuthenticationPrincipal Principal principal,
+//        @RequestParam Long layerId,
+//        @RequestParam Long targetRoadmapId) {
+//
+//        Long memberId = principal.getMember().getId();
+//
+//        ForkResult result = layerLibraryService.forkLayer(memberId, layerId, targetRoadmapId);
+//
+//        return ResponseEntity
+//            .status(HttpStatus.OK)
+//            .body(LayerForkResponse.fork(result.library(),
+//                result.forkedLayer(),
+//                result.targetRoadmap(),
+//                "레이어 포크 성공")
+//            );
+//    }
 }

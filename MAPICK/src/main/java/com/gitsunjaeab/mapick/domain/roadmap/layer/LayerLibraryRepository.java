@@ -16,20 +16,33 @@ public interface LayerLibraryRepository extends JpaRepository<LayerLibrary, Long
 
     // ===== 마이페이지 =====
 
-    // 찜 등록 - 처음부터 조인해서 멤버 같이 가져옴
-    // '@EntityGraph' : JPA 연관 객체를 LAZY 에서 EAGER 처럼 미리가져오도록 해주는 JPA 기능
-    @EntityGraph(attributePaths = {"member"})
-    @Query("SELECT l FROM LayerLibrary l WHERE l.id = :id AND l.deletedAt IS NULL")
-    Optional<LayerLibrary> findWithMemberById(@Param("id") Long id);
-
     // 찜 등록 - 모든 연관 엔티티 함께 조회 (LazyInitializationException 방지)
     @Query("SELECT ll FROM LayerLibrary ll JOIN FETCH ll.member JOIN FETCH ll.layer l JOIN FETCH l.member JOIN FETCH l.roadmap r JOIN FETCH r.member LEFT JOIN FETCH r.category WHERE ll.id = :id")
     Optional<LayerLibrary> findByIdWithAllAssociations(@Param("id") Long id);
 
 
+
     // 찜 조회 - 삭제되지 않은 것만 조회
-    @Query("SELECT ll.layer.id FROM LayerLibrary ll WHERE ll.member.id = :memberId AND ll.isZzim = true AND ll.deletedAt IS NULL")
+    @Query("""
+    SELECT ll.layer.id
+    FROM LayerLibrary ll
+    WHERE ll.member.id = :memberId
+    AND ll.isZzim = true
+    AND ll.deletedAt IS NULL
+""")
     List<Long> findLayerIdsByMemberId(@Param("memberId") Long memberId);
+    @Query("""
+    SELECT DISTINCT l FROM Layer l
+    JOIN FETCH l.member
+    JOIN FETCH l.roadmap r
+    JOIN FETCH r.member
+    LEFT JOIN FETCH r.category
+    LEFT JOIN FETCH l.layerMarkers m
+    WHERE l.id IN :ids
+    AND l.deletedAt IS NULL
+    AND (l.isBlocked = false OR l.isBlocked IS NULL)
+""")
+    List<Layer> findByIdWithAllAssociations(@Param("ids") List<Long> ids);
 
 
     // 찜 등록 - 찜 중복 방지 (삭제되지 않은 것만 체크)
@@ -55,11 +68,18 @@ public interface LayerLibraryRepository extends JpaRepository<LayerLibrary, Long
     void deleteAllByLayer(Layer layer);
 
 
-    // 레이어 <-> 마커, 찜 - 참조 무결성 검사 (삭제되지 않은 것만 체크)
-    @Query("SELECT ll FROM LayerLibrary ll WHERE ll.layer = :layer AND ll.deletedAt IS NULL")
-    LayerLibrary findFirstByLayer(@Param("layer") Layer layer);
+    Optional<LayerLibrary> findByMemberIdAndLayerId(Long memberId, Long layerId);
+    List<LayerLibrary> findAllByMemberIdAndLayerId(Long memberId, Long layerId);
+    boolean existsByMemberIdAndLayerId(Long memberId, Long layerId);
 
-
+    @Query("""
+    SELECT ll FROM LayerLibrary ll 
+    WHERE ll.member = :member 
+    AND ll.layer = :layer 
+    AND ll.deletedAt IS NULL 
+    AND ll.isZzim = true
+""")
+    Optional<LayerLibrary> findValidZzimByMemberAndLayer(@Param("member") Member member, @Param("layer") Layer layer);
 
 
     // ===== 다른 서비스에서 사용되는 메서드=====

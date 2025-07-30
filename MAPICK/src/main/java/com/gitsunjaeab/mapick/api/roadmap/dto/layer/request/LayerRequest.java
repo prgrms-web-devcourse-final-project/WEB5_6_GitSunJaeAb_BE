@@ -22,6 +22,9 @@ public class LayerRequest {
     private String description;
     private Integer layerSeq;
     private boolean isZzimed = false;
+
+    private Long originalLayerId;
+    private Long roadmapId; // 일반 생성용 로드맵 ID
 }
 
 
