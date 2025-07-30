@@ -16,7 +16,7 @@ public class MemberQuestCreateRequest {
     private String title;    // 증빙 제목
     private String description;    // 증빙 내용/설명
 
-    @NotBlank
+
     private String answer; //사용자가 정답 입력
 
 }
