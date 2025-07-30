@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-
 @Tag(name = "카테고리 관리 API")
 @RestController
 @RequestMapping(value = "/categories", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -50,20 +49,20 @@ public class CategoryController {
     @Operation(summary = "전체 카테고리 조회", description = "[관리자/사용자용] 전체 카테고리 목록을 조회")
     @GetMapping
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
-    public ResponseEntity<CategoryListResponse> getCategoryList() {
-
-        List<CategoryDTO> categoryDTOList  = categoryService.findAll();
-        CategoryListResponse response = CategoryListResponse.get(categoryDTOList);
+    public ResponseEntity<CategoryListResponse> getCategoryList()
+    {
+        final List<CategoryDTO> categoryDTOList  = categoryService.findAll();
+        final CategoryListResponse response = CategoryListResponse.get(categoryDTOList);
 
         return ResponseEntity.ok(response);
     }
 
     @Operation(summary = "인기 카테고리 top5 조회", description = "[모든 사용자] 북마크 된 로드맵들의 카테고리 기준, 최대 상위 5개 조회")
     @GetMapping("/top5")
-    public ResponseEntity<Top5CategoriesResponse> getTop5Categories() {
-
-        List<CategoryDTO> categoryDTOS = categoryService.getTop5List();
-        Top5CategoriesResponse response = Top5CategoriesResponse.get(categoryDTOS);
+    public ResponseEntity<Top5CategoriesResponse> getTop5Categories()
+    {
+        final List<CategoryDTO> categoryDTOS = categoryService.getTop5List();
+        final Top5CategoriesResponse response = Top5CategoriesResponse.get(categoryDTOS);
 
         return ResponseEntity.ok(response);
     }
@@ -88,8 +87,9 @@ public class CategoryController {
     @Operation(summary = "카테고리 삭제", description = "[관리자] 카테고리 삭제")
     @DeleteMapping("/{categoryId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CategoryResponse> deleteCategory(@PathVariable(name = "categoryId") final Long categoryId) {
-
+    public ResponseEntity<CategoryResponse> deleteCategory(
+        @PathVariable(name = "categoryId") final Long categoryId
+    ) {
         categoryService.delete(categoryId);
         final CategoryResponse response = CategoryResponse.delete();
 
