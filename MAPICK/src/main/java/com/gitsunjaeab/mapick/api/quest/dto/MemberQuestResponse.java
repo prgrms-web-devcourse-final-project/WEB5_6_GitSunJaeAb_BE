@@ -3,7 +3,7 @@ package com.gitsunjaeab.mapick.api.quest.dto;
 
 import com.gitsunjaeab.mapick.api.member.dto.internal.MemberSimpleDTO;
 
-import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
+//import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
 
 import com.gitsunjaeab.mapick.domain.quest.MemberQuest;
 import jakarta.validation.constraints.NotNull;
