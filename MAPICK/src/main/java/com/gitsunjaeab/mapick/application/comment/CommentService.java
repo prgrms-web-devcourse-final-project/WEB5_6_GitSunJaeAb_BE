@@ -36,7 +36,7 @@ public class CommentService {
     private final EntityFinder entityFinder;
 
     @Transactional
-    public CommentAchievementDTO create( @Valid final CommentRequest request, final Long memberId) {
+    public CommentAchievementDTO create(final CommentRequest request, final Long memberId) {
         final Comment comment = new Comment();
         DtoToEntity(request, comment, memberId);
 
@@ -80,7 +80,7 @@ public class CommentService {
 
     @Transactional
 
-    public CommentDTO update(final Long commentId, final Long memberId, @Valid final CommentRequest request) {
+    public CommentDTO update(final Long commentId, final Long memberId, final CommentRequest request) {
         final Comment comment = entityFinder.findCommentById(commentId);
 
         if (!comment.getMember().getId().equals(memberId)) {

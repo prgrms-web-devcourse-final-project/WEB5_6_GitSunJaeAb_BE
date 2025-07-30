@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class LayerService {
 
+    private final MarkerService markerService;
     private final RoadmapEditorService roadmapEditorService;
     private final LayerRepository layerRepository;
     private final MemberRepository memberRepository;
@@ -83,7 +84,11 @@ public class LayerService {
         if (layer.getDeletedAt() != null) {
             throw new CommonException(ResponseCode.ALREADY_PROCESSED);
         }
-        markerRepository.deleteAllByLayerId(layer.getId());
+        List<Marker> markers = markerRepository.findAllByLayer_Id(layer.getId());
+
+        for (Marker marker : markers) {
+            markerService.delete(marker.getId());
+        }
 
         layer.setRoadmap(null);
 
@@ -204,16 +209,17 @@ public class LayerService {
             throw new CommonException(ResponseCode.ALREADY_PROCESSED);
         }
 
-        // 소유자 검증 및 관리자 권한 체크
-        if (!layer.getMember().getId().equals(memberId)) {
-            // 관리자 권한 확인
-            if (isAdmin(memberId)) {
-                blockLayer(layer, memberId, "부적절한 콘텐츠로 인한 관리자 블록 처리");
-                return layer; // 블록 처리된 엔티티 반환
-            }
+        boolean isOwner = layer.getMember().getId().equals(memberId);
+        boolean isAdmin = isAdmin(memberId);
+
+        if (!(isOwner || isAdmin)) {
             throw new CommonException(ResponseCode.FORBIDDEN);
         }
-        markerRepository.deleteAllByLayerId(layer.getId());
+
+        List<Marker> markers = markerRepository.findAllByLayer_Id(layer.getId());
+        for (Marker marker : markers) {
+            markerService.delete(marker.getId());
+        }
 
         layer.setRoadmap(null);
 

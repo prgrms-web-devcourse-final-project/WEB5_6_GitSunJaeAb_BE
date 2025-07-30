@@ -145,7 +145,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 .grantType(at.getGrantType())
                 .build();
 
-        ApiResponse<TokenDTO> apiResponse = ApiResponse.of(ResponseCode.INTERNAL_ERROR, tokenResponseDto);
+        ApiResponse<TokenDTO> apiResponse = ApiResponse.of(ResponseCode.TOKEN_REISSUED, tokenResponseDto);
         try {
             String json = objectMapper.writeValueAsString(apiResponse);
             response.getWriter().write(json);
