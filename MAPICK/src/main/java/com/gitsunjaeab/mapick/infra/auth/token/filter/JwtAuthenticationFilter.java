@@ -1,7 +1,10 @@
 package com.gitsunjaeab.mapick.infra.auth.token.filter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gitsunjaeab.mapick.api.auth.dto.internal.TokenDTO;
 import com.gitsunjaeab.mapick.application.auth.RefreshTokenService;
+import com.gitsunjaeab.mapick.common.response.ApiResponse;
+import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.auth.AccessTokenBlacklistRepository;
 import com.gitsunjaeab.mapick.domain.auth.Principal;
 import com.gitsunjaeab.mapick.domain.auth.RefreshToken;
@@ -34,12 +37,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtProvider jwtProvider;
     private final RefreshTokenService refreshTokenService;
-    private final AccessTokenBlacklistRepository  accessTokenBlacklistRepository;
+    private final AccessTokenBlacklistRepository accessTokenBlacklistRepository;
+    private final ObjectMapper objectMapper;
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         List<String> excludePaths = List.of(
-            "/error", "/favicon.ico", "/css", "/img", "/js", "/download",
+                "/error", "/favicon.ico", "/css", "/img", "/js", "/download",
                 "/swagger-ui", "/swagger-ui/", "/swagger-ui/index.html",
                 "/v3/api-docs",
                 "/v3/api-docs/",
@@ -54,7 +58,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-        FilterChain filterChain) throws ServletException, IOException {
+                                    FilterChain filterChain) throws ServletException, IOException {
 
         String requestAccessToken = jwtProvider.resolveToken(request, TokenType.ACCESS_TOKEN); // access token 추출
 
@@ -82,7 +86,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             responseToken(response, newAccessToken, newRefreshToken);
 
-        }  catch (Exception ex) {
+            return;
+
+        } catch (Exception ex) {
             throw ex;
         }
 
@@ -98,9 +104,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         log.info("🔍 요청 토큰 JTI: {}", jti);
         log.info("👀 email : {}", ((Principal) authentication.getPrincipal()).getMember().getEmail());
 
-        try{
+        try {
             refreshTokenService.findByAccessTokenId(jti); // jti 로 refresh token 확인
-        }catch (JwtException e){
+        } catch (JwtException e) {
             throw new JwtException("❌ 저장된 Refresh Token이 없습니다. 재로그인 필요.");
         }
 
@@ -115,16 +121,41 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return refreshTokenService.renewingToken(oldAccessTokenId, newAccessTokenId);
     }
 
-    // 응답 쿠키 생성
+    // 응답 쿠키 생성 + json 응답
     private void responseToken(HttpServletResponse response, TokenDTO at, RefreshToken rt) {
         ResponseCookie accessTokenCookie = TokenCookieFactory.create(
-            TokenType.ACCESS_TOKEN.name(), at.getAccessToken(), at.getAtExpiresIn()
+                TokenType.ACCESS_TOKEN.name(), at.getAccessToken(), at.getAtExpiresIn()
         );
         ResponseCookie refreshTokenCookie = TokenCookieFactory.create(
-            TokenType.REFRESH_TOKEN.name(), rt.getRefreshToken(), jwtProvider.getRtExpiration()
+                TokenType.REFRESH_TOKEN.name(), rt.getRefreshToken(), jwtProvider.getRtExpiration()
         );
 
         response.addHeader("Set-Cookie", accessTokenCookie.toString());
         response.addHeader("Set-Cookie", refreshTokenCookie.toString());
+
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        TokenDTO tokenResponseDto = TokenDTO.builder()
+                .accessToken(at.getAccessToken())
+                .refreshToken(rt.getRefreshToken())
+                .atExpiresIn(at.getAtExpiresIn())
+                .rtExpiresIn(jwtProvider.getRtExpiration())
+                .grantType(at.getGrantType())
+                .build();
+
+        ApiResponse<TokenDTO> apiResponse = ApiResponse.of(ResponseCode.TOKEN_REISSUED, tokenResponseDto);
+        try {
+            String json = objectMapper.writeValueAsString(apiResponse);
+            response.getWriter().write(json);
+        } catch (IOException e) {
+            log.error("❌ JSON 직렬화 또는 응답 write 실패", e);
+            throw new RuntimeException(e);
+        }
     }
+
+
 }
+
+

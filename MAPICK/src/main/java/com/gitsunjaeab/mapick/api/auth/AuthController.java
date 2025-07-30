@@ -41,9 +41,12 @@ public class AuthController {
 
     // 소셜 로그인
     // complete
+    // todo 경로 명칭 socailLogin -> social-login 으로 수정 예정
     @PostMapping("/socialLogin")
     @Operation(summary = "소셜 로그인", description = "첫 소셜 로그인 > 회원가입")
-    public ResponseEntity<SigninResponse> socialLogin(@RequestBody SocialLoginRequest request, HttpServletResponse response) {
+    public ResponseEntity<SigninResponse> socialLogin(
+            @RequestBody SocialLoginRequest request,
+            HttpServletResponse response) {
 
         TokenDTO dto = authService.socialLogin(request); // 인증 정보로 로그인 처리 후, access/refresh 토큰 생성
 
@@ -76,7 +79,9 @@ public class AuthController {
     // complete
     @PostMapping("/signin")
     @Operation(summary = "자체 로그인")
-    public ResponseEntity<SigninResponse> signin(@RequestBody SigninRequest request, HttpServletResponse response) {
+    public ResponseEntity<SigninResponse> signin(
+            @RequestBody @Valid SigninRequest request,
+            HttpServletResponse response) {
 
         TokenDTO dto = authService.signin(request.getEmail(), request.getPassword()); // 인증 정보로 로그인 처리 후, access/refresh 토큰 생성
 
@@ -116,7 +121,8 @@ public class AuthController {
     // complete
     @PostMapping("/signup")
     @Operation(summary = "자체 회원가입", description = "[회원가입] 자체 회원가입을 진행합니다.\n\n" + "**검증 조건:**\n" + "- 비밀번호는 8자 이상, 12자 이하 영문+숫자를 포함해야 합니다.\n" + "- 이메일은 중복 불가입니다.\n" + "- 닉네임은 중복 불가입니다.")
-    public ResponseEntity<SignupResponse> signup(@RequestBody @Valid SignupRequest request) {
+    public ResponseEntity<SignupResponse> signup(
+            @RequestBody @Valid SignupRequest request) {
 
         memberService.signup(request);
 
@@ -127,12 +133,14 @@ public class AuthController {
     }
 
     // 로그아웃
-    // todo 로그아웃 하지 않으면 refresh token 값이 삭제 되지 않음, 추후 어떻게 기존 db의 refresh 값을 삭제 할 것인지 고민
+    // todo 로그아웃 하지 않으면 refresh token 값이 삭제 되지 않음, 추후 어떻게 기존 db의 refresh 값을 삭제 할 것인지 고민, redis 사용 고려
     // complete
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @PostMapping("/logout")
     @Operation(summary = "로그 아웃")
-    public ResponseEntity<LogoutResponse> logout(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<LogoutResponse> logout(
+            HttpServletRequest request,
+            HttpServletResponse response) {
 
        authService.logout(request);
 
@@ -152,8 +160,9 @@ public class AuthController {
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @PutMapping("/password")
     @Operation(summary = "비밀번호 수정", description = "[사용자 전용] 본인만 접근 가능한 비밀번호 변경")
-    public ResponseEntity<PasswordChangeResponse> updatePassword(@Valid @RequestBody PasswordRequest passwordRequest,
-                                                                 HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<PasswordChangeResponse> updatePassword(
+            @Valid @RequestBody PasswordRequest passwordRequest,
+            HttpServletRequest request, HttpServletResponse response) {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Long memberId = Long.parseLong(auth.getName());

@@ -43,7 +43,7 @@ public class BookmarkService {
     }
 
     @Transactional
-    public void create(Long roadmapId, Long memberId) {
+    public Long create(Long roadmapId, Long memberId) {
         Roadmap roadmap = roadmapRepository.findById(roadmapId)
             .orElseThrow(() -> new NotFoundException("로드맵을 찾을 수 없습니다."));
         Member member = memberRepository.findById(memberId)
@@ -74,7 +74,8 @@ public class BookmarkService {
                 bookmark                // 북마크
             );
         }
-        bookmarkRepository.save(bookmark);
+        Bookmark saved = bookmarkRepository.save(bookmark);
+        return saved.getId();
     }
 
     @Transactional

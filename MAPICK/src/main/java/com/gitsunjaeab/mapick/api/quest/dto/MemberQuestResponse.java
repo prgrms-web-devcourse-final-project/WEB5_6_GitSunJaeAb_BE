@@ -1,8 +1,10 @@
 package com.gitsunjaeab.mapick.api.quest.dto;
 
+
+import com.gitsunjaeab.mapick.api.member.dto.internal.MemberSimpleDTO;
+
 import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
-import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
-import com.gitsunjaeab.mapick.common.response.ResponseCode;
+
 import com.gitsunjaeab.mapick.domain.quest.MemberQuest;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -10,7 +12,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 
 @Getter
@@ -51,7 +52,6 @@ public class MemberQuestResponse {
 
     private Long quest;
 
-   //private QuestDTO quest;
 
 
     // 퀘스트 참여 생성 응답

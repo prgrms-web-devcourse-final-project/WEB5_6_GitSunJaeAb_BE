@@ -167,17 +167,12 @@ VALUES ('2025-07-13 17:19:57.332000 +00:00', 1, 1, 2, true),
        ('2025-07-13 17:20:10.760000 +00:00', 2, 2, 2, true);
 
 -- Quest 데이터
-INSERT INTO quests (is_active, completed_at, created_at, deleted_at, id, member_id, updated_at,
-                    description, quest_image, title,deadline)
-VALUES (true, null, '2025-07-13 19:00:00+00:00', null, 1, 1, null,
-        '여기 어디게~? 2탄 장소에 대한 퀘스트입니다. 사진을 보고 맞혀보세요!', 'https://example.com/q2.jpg', '여기 어디게~? 2탄','2025-07-20 19:03:00+00:00'),
-       (true, null, '2025-07-13 19:01:00+00:00', null, 2, 3, null,
-        '여기 어디게~? 3탄 장소에 대한 퀘스트입니다. 사진을 보고 맞혀보세요!', 'https://example.com/q3.jpg', '여기 어디게~? 3탄','2025-07-21 19:03:00+00:00'),
-       (true, null, '2025-07-13 19:02:00+00:00', null, 3, 2, null,
-        '여기 어디게~? 4탄 장소에 대한 퀘스트입니다. 사진을 보고 맞혀보세요!', 'https://example.com/q4.jpg', '여기 어디게~? 4탄','2025-07-22 19:03:00+00:00'),
-       (false, null, '2025-07-13 19:03:00+00:00', null, 4, 4, null,
-        '여기 어디게~? 5탄 장소에 대한 퀘스트입니다. 사진을 보고 맞혀보세요!', 'https://example.com/q4.jpg', '여기 어디게~? 5탄','2025-07-23 19:03:00+00:00')
-;
+INSERT INTO "public"."quests" ("is_active", "completed_at", "created_at", "deadline", "deleted_at", "id", "member_id", "updated_at", "view_count", "description", "quest_image", "title", "hint")
+VALUES
+    ('true', null, '2025-07-13 19:00:00', '2025-07-20 19:03:00', null, '1', '1', null, '27', '여기 어디게~? 2탄 장소에 대한 퀘스트입니다. 사진을 보고 맞혀보세요!', 'https://lyrvpfgoxwppqtuuolav.supabase.co/storage/v1/object/public/mapick/bc44b520-5659-4781-9a3a-d44d56577e2f', '여기 어디게~? 2탄', null),
+    ('true', null, '2025-07-13 19:01:00', '2025-07-21 19:03:00', null, '2', '3', null, '13', '여기 어디게~? 3탄 장소에 대한 퀘스트입니다. 사진을 보고 맞혀보세요!', 'https://lyrvpfgoxwppqtuuolav.supabase.co/storage/v1/object/public/mapick/bc44b520-5659-4781-9a3a-d44d56577e2f', '여기 어디게~? 3탄', null),
+    ('true', null, '2025-07-13 19:02:00', '2025-07-22 19:03:00', null, '3', '2', null, '15', '여기 어디게~? 4탄 장소에 대한 퀘스트입니다. 사진을 보고 맞혀보세요!', 'https://lyrvpfgoxwppqtuuolav.supabase.co/storage/v1/object/public/mapick/bc44b520-5659-4781-9a3a-d44d56577e2f', '여기 어디게~? 4탄', null),
+    ('false', null, '2025-07-13 19:03:00', '2025-07-23 19:03:00', null, '4', '4', null, '10', '여기 어디게~? 5탄 장소에 대한 퀘스트입니다. 사진을 보고 맞혀보세요!', 'https://lyrvpfgoxwppqtuuolav.supabase.co/storage/v1/object/public/mapick/bc44b520-5659-4781-9a3a-d44d56577e2f', '여기 어디게~? 5탄', null);
 
 -- MemberQuest 데이터
 INSERT INTO member_quests (completed_at, created_at, deleted_at, id, member_id, quest_id,

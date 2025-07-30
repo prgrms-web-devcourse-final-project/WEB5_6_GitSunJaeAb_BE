@@ -1,6 +1,6 @@
 package com.gitsunjaeab.mapick.application.quest;
 
-import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
+import com.gitsunjaeab.mapick.api.member.dto.internal.MemberSimpleDTO;
 import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestCreateRequest;
 import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestCreateResponse;
 import com.gitsunjaeab.mapick.api.quest.dto.MemberQuestJudgeRequest;

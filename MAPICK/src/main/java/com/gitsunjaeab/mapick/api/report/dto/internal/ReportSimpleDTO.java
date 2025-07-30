@@ -1,6 +1,6 @@
-package com.gitsunjaeab.mapick.api.report.dto;
+package com.gitsunjaeab.mapick.api.report.dto.internal;
 
-import com.gitsunjaeab.mapick.api.member.dto.MemberSimpleDTO;
+import com.gitsunjaeab.mapick.api.member.dto.internal.MemberSimpleDTO;
 import com.gitsunjaeab.mapick.domain.report.Report;
 import com.gitsunjaeab.mapick.domain.report.ReportStatus;
 import jakarta.persistence.EnumType;
@@ -46,6 +46,7 @@ public class ReportSimpleDTO {
                 .id(report.getId())
                 .reporter(MemberSimpleDTO.of(report.getReporter()))
                 .reportedMember(MemberSimpleDTO.of(report.getReportedMember()))
+                .description(report.getDescription())
                 .roadmap(report.getRoadmap() != null ? report.getRoadmap().getId() : null)
                 .marker(report.getMarker() != null ? report.getMarker().getId() : null)
                 .quest(report.getQuest() != null ? report.getQuest().getId() : null)

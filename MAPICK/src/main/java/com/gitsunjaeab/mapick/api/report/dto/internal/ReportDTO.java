@@ -1,6 +1,6 @@
-package com.gitsunjaeab.mapick.api.report.dto;
+package com.gitsunjaeab.mapick.api.report.dto.internal;
 
-import com.gitsunjaeab.mapick.api.member.dto.MemberDTO;
+import com.gitsunjaeab.mapick.api.member.dto.internal.MemberSimpleDTO;
 import com.gitsunjaeab.mapick.api.quest.dto.QuestReportDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.marker.MarkerReportDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.RoadmapReportDTO;
@@ -19,16 +19,16 @@ import java.time.OffsetDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReportDetailDTO {
+public class ReportDTO {
 
     private Long id;
 
 //    @Size(max = 255)
 //    private String reportType;
 
-    private MemberDTO reporter;  // 신고자
+    private MemberSimpleDTO reporter;  // 신고자
 
-    private MemberDTO reportedMember;  // 피신고자
+    private MemberSimpleDTO reportedMember;  // 피신고자
 
     private String description;
 
@@ -46,19 +46,17 @@ public class ReportDetailDTO {
 
     private OffsetDateTime resolvedAt;
 
-    public static ReportDetailDTO of(Report report ) {
-        return ReportDetailDTO.builder()
+    public static ReportDTO of(Report report) {
+        return ReportDTO.builder()
                 .id(report.getId())
-                .description(report.getDescription())
+                .reporter(MemberSimpleDTO.of(report.getReporter()))
+                .reportedMember(MemberSimpleDTO.of(report.getReportedMember()))
+                .roadmap(report.getRoadmap() != null ? RoadmapReportDTO.of(report.getRoadmap()) : null)
+                .marker(report.getMarker() != null ? MarkerReportDTO.of(report.getMarker()) : null)
+                .quest(report.getQuest() != null ? QuestReportDTO.of(report.getQuest()) : null)
                 .status(report.getStatus())
-                .resolvedAt(report.getResolvedAt())
                 .createdAt(report.getCreatedAt())
                 .resolvedAt(report.getResolvedAt())
-                .reporter(MemberDTO.of(report.getReporter()))
-                .reportedMember(MemberDTO.of(report.getReportedMember()))
-                .quest(report.getQuest() != null ? QuestReportDTO.of(report.getQuest()) : null)
-                .marker(report.getMarker() != null ? MarkerReportDTO.of(report.getMarker()) : null)
-                .roadmap(report.getRoadmap() != null ? RoadmapReportDTO.of(report.getRoadmap()) : null)
                 .build();
     }
 }

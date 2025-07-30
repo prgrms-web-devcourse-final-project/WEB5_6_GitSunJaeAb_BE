@@ -17,11 +17,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class MapReportRequest {
 
-    @NotNull(message = "신고자 ID는 필수입니다")
-    private Long reporterId;  // 신고자 ID
-
     @NotBlank(message = "신고 내용은 필수입니다")
     private String description;  // 신고 내용
 
-    // mapId는 URL path에서 받으므로 DTO에 포함하지 않음
+
 } 
