@@ -15,4 +15,8 @@ public class MemberQuestSubmissionDTO {
     private boolean isRecognized;
     private String nickname;
     private OffsetDateTime submittedAt;
+    private String title;
+    private String description;
+    private String profileImage;
+
 }

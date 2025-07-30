@@ -48,8 +48,8 @@ spring:
       secretmanager:
         enabled: true
 
-  config:
-    import: sm://
+#  config:
+#    import: sm://
 
   jpa:
     hibernate:

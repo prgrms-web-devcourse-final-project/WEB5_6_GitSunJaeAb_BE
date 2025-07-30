@@ -94,7 +94,7 @@ dependencies {
     implementation 'org.webjars:sockjs-client:1.5.1'
     implementation 'org.webjars:stomp-websocket:2.3.4'
 
-//    // Google Secret Manager
+    // Google Secret Manager
     implementation 'com.google.cloud:spring-cloud-gcp-starter-secretmanager:3.5.2'
 
     implementation("org.jetbrains:annotations:26.0.2")

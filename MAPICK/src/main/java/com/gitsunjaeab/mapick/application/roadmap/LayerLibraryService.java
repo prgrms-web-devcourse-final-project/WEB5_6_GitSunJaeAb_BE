@@ -7,14 +7,14 @@ import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
 import com.gitsunjaeab.mapick.domain.notification.NotificationType;
+import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
+import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.layer.Layer;
 import com.gitsunjaeab.mapick.domain.roadmap.layer.LayerForkHistory;
 import com.gitsunjaeab.mapick.domain.roadmap.layer.LayerForkHistoryRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.layer.LayerLibrary;
 import com.gitsunjaeab.mapick.domain.roadmap.layer.LayerLibraryRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.layer.LayerRepository;
-import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
-import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
 import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -137,7 +137,7 @@ public class LayerLibraryService {
 
     // 찜한 레이어를 내 로드맵에 포크
     @Transactional
-    public LayerLibrary forkLayer(Long memberId, Long layerId, Long targetRoadmapId) {
+    public ForkResult forkLayer(Long memberId, Long layerId, Long targetRoadmapId) {
         Member member = memberRepository.findById(memberId)
             .orElseThrow(() -> new CommonException(ResponseCode.MEMBER_NOT_FOUND));
 
@@ -207,8 +207,34 @@ public class LayerLibraryService {
         );
 
         // 찜 기록 조회해서 반환
-        return layerLibraryRepository.findByMemberAndLayer(member, originalLayer)
-            .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND));
+//        return layerLibraryRepository.findByMemberAndLayer(member, originalLayer)
+//            .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND));
+        return new ForkResult(layerLibrary, savedForkedLayer, targetRoadmap);
+    }
+
+    public class ForkResult {
+
+        private final LayerLibrary library;
+        private final Layer forkedLayer;
+        private final Roadmap targetRoadmap;
+
+        public ForkResult(LayerLibrary library, Layer forkedLayer, Roadmap targetRoadmap) {
+            this.library = library;
+            this.forkedLayer = forkedLayer;
+            this.targetRoadmap = targetRoadmap;
+        }
+
+        public LayerLibrary library() {
+            return library;
+        }
+
+        public Layer forkedLayer() {
+            return forkedLayer;
+        }
+
+        public Roadmap targetRoadmap() {
+            return targetRoadmap;
+        }
     }
 
 }

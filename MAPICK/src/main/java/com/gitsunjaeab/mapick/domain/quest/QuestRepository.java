@@ -1,6 +1,7 @@
 package com.gitsunjaeab.mapick.domain.quest;
 
 import com.gitsunjaeab.mapick.domain.member.Member;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -11,6 +12,8 @@ import org.springframework.data.jpa.repository.Query;
 public interface QuestRepository extends JpaRepository<Quest, Long> {
 
     Quest findFirstByMember(Member member);
+
+    List<Quest> findAllByDeadlineBeforeAndIsActiveTrue(OffsetDateTime now);
 
 
     @EntityGraph(attributePaths = "member")

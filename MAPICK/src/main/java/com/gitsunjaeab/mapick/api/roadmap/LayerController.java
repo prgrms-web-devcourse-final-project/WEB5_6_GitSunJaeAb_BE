@@ -2,15 +2,16 @@ package com.gitsunjaeab.mapick.api.roadmap;
 
 import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerDetailDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerListDTO;
-import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerZzimListResponse;
-import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerZzimResponse;
 import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerZzimSimpleDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.layer.request.LayerRequest;
 import com.gitsunjaeab.mapick.api.roadmap.dto.layer.request.LayerSyncRequest;
+import com.gitsunjaeab.mapick.api.roadmap.dto.layer.response.LayerForkResponse;
 import com.gitsunjaeab.mapick.api.roadmap.dto.layer.response.LayerListResponse;
 import com.gitsunjaeab.mapick.api.roadmap.dto.layer.response.LayerResponse;
-import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.RoadmapSimpleDTO;
+import com.gitsunjaeab.mapick.api.roadmap.dto.layer.response.LayerZzimListResponse;
+import com.gitsunjaeab.mapick.api.roadmap.dto.layer.response.LayerZzimResponse;
 import com.gitsunjaeab.mapick.application.roadmap.LayerLibraryService;
+import com.gitsunjaeab.mapick.application.roadmap.LayerLibraryService.ForkResult;
 import com.gitsunjaeab.mapick.application.roadmap.LayerService;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.auth.Principal;
@@ -83,24 +84,17 @@ public class LayerController {
 
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(LayerResponse.of(createdLayer, false, "레이어 생성 성공"));
+            .body(LayerResponse.create(createdLayer, false, "레이어 생성 성공"));
     }
 
     // 로드맵의 레이어 조회 (쿼리 파라미터 방식-전체/특정 조회)
     @GetMapping("/roadmap")
     @Operation(summary = "[사용자] 로드맵의 레이어 조회", description = "[사용자용] 특정 지도에 있는 레이어 전체 조회")
-    public ResponseEntity<LayerListResponse> getAllLayersOnRoadmap(
+    public ResponseEntity<LayerListResponse> findAllLayersOnRoadmap(
         @RequestParam(required = false) Long roadmapId) {
 
         List<LayerListDTO> layers = layerService.findAllLayersOnRoadmap(roadmapId);
-
-        // 레이어에서 로드맵만 추출해서 중복 제거 후 DTO 리스트로 변환
-        List<RoadmapSimpleDTO> roadmaps = layers.stream()
-            .map(LayerListDTO::getRoadmap)
-            .distinct()
-            .toList();
-
-        LayerListResponse response = LayerListResponse.getList(layers, roadmaps);
+        LayerListResponse response = LayerListResponse.getList(layers);
 
         return ResponseEntity
             .status(HttpStatus.OK)
@@ -110,7 +104,7 @@ public class LayerController {
     // 레이어 상세 조회
     @GetMapping("/{layerId}")
     @Operation(summary = "[사용자] 레이어 상세 조회", description = "[사용자용] 특정 레이어를 조회")
-    public ResponseEntity<LayerResponse> getLayer(
+    public ResponseEntity<LayerResponse> findLayer(
         @AuthenticationPrincipal Principal principal,
         @PathVariable(name = "layerId") final Long layerId) {
 
@@ -120,7 +114,7 @@ public class LayerController {
 
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(LayerResponse.of(layerDetailDTO, "레이어 상세 조회 성공"));
+            .body(LayerResponse.get(layerDetailDTO, "레이어 상세 조회 성공"));
     }
 
     // 레이어 수정
@@ -140,7 +134,7 @@ public class LayerController {
 
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(LayerResponse.of(updatedLayer, false, "레이어 수정 성공"));
+            .body(LayerResponse.update(updatedLayer, false, "레이어 수정 성공"));
     }
 
     // 레이어 삭제
@@ -156,7 +150,7 @@ public class LayerController {
 
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(LayerResponse.of(deletedLayer, false, "레이어 삭제 성공"));
+            .body(LayerResponse.delete(deletedLayer, false, "레이어 삭제 성공"));
     }
 
     // ===== 마이페이지 : 레이어 찜 관리  =====
@@ -164,7 +158,7 @@ public class LayerController {
     // 특정 회원의 레이어 찜 목록 조회
     @GetMapping("/member")
     @Operation(summary = "[사용자] 회원 찜 레이어 조회", description = "[사용자용] 마이페이지 > 본인이 찜한 레이어 목록 조회")
-    public ResponseEntity<LayerZzimListResponse> getMemberLayers(
+    public ResponseEntity<LayerZzimListResponse> findMemberLayers(
         @AuthenticationPrincipal Principal principal) {
 
         LayerZzimSimpleDTO layerZzimSimpleDTO = layerLibraryService.findAllMemberLayers(
@@ -178,7 +172,7 @@ public class LayerController {
     // 레이어 찜 추가
     @PostMapping("/member")
     @Operation(summary = "[사용자] 레이어 찜 추가", description = "[사용자용] 마이페이지 > 레이어 찜 추가")
-    public ResponseEntity<LayerZzimResponse> addLayerToLibrary(
+    public ResponseEntity<LayerZzimResponse> zzimLayer(
         @AuthenticationPrincipal Principal principal,
         @RequestParam Long layerId) {
 
@@ -188,13 +182,13 @@ public class LayerController {
 
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(LayerZzimResponse.of(library, "레이어 찜 추가 성공"));
+            .body(LayerZzimResponse.zzim(library, "레이어 찜 추가 성공"));
     }
 
     // 레이어 찜 해제
     @DeleteMapping("/member")
     @Operation(summary = "[사용자] 레이어 찜 해제", description = "[사용자용] 마이페이지 > 레이어 찜 취소")
-    public ResponseEntity<LayerZzimResponse> removeLayerFromLibrary(
+    public ResponseEntity<LayerZzimResponse> removeZzimLayer(
         @AuthenticationPrincipal Principal principal,
         @RequestParam Long layerId) {
 
@@ -204,23 +198,27 @@ public class LayerController {
 
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(LayerZzimResponse.of(library, "레이어 찜 해제 성공"));
+            .body(LayerZzimResponse.removeZzim(library, "레이어 찜 해제 성공"));
     }
 
     // 레이어 포크 (찜한 레이어를 내 로드맵에 추가)
     @PostMapping("/member/fork")
     @Operation(summary = "[사용자] 레이어 포크", description = "[사용자용] 마이페이지 > 찜한 레이어를 내 로드맵에 추가")
-    public ResponseEntity<LayerZzimResponse> forkLayer(
+    public ResponseEntity<LayerForkResponse> forkLayer(
         @AuthenticationPrincipal Principal principal,
         @RequestParam Long layerId,
         @RequestParam Long targetRoadmapId) {
 
         Long memberId = principal.getMember().getId();
 
-        LayerLibrary library = layerLibraryService.forkLayer(memberId, layerId, targetRoadmapId);
+        ForkResult result = layerLibraryService.forkLayer(memberId, layerId, targetRoadmapId);
 
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(LayerZzimResponse.of(library, "레이어 포크 성공"));
+            .body(LayerForkResponse.fork(result.library(),
+                result.forkedLayer(),
+                result.targetRoadmap(),
+                "레이어 포크 성공")
+            );
     }
 }
