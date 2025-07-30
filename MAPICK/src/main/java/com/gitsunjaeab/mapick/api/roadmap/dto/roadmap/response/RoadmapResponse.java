@@ -1,4 +1,4 @@
-package com.gitsunjaeab.mapick.api.roadmap.dto.roadmap;
+package com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.gitsunjaeab.mapick.api.category.dto.CategorySimpleDTO;
@@ -19,10 +19,10 @@ import lombok.Setter;
 @Getter
 public class RoadmapResponse implements BaseApiResponse {
 
-    private String code;
-    private String message;
-    private OffsetDateTime timestamp;
-    private RoadmapInfo roadmap;
+    private final String code;
+    private final String message;
+    private final OffsetDateTime timestamp;
+    private final RoadmapInfo roadmap;
 
     public RoadmapResponse(String code, String message, OffsetDateTime timestamp, RoadmapInfo roadmap){
         this.code = code;

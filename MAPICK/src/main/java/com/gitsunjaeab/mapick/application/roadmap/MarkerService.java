@@ -185,4 +185,8 @@ public class MarkerService {
         marker.setUpdatedAt(OffsetDateTime.now());
     }
 
+    public Marker findById(Long markerId) {
+        return markerRepository.findById(markerId)
+                .orElseThrow(() -> new RuntimeException("💥 해당 Marker를 찾을 수 없습니다. markerId: " + markerId));
+    }
 }

@@ -1,4 +1,4 @@
-package com.gitsunjaeab.mapick.api.roadmap.dto.roadmap;
+package com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.gitsunjaeab.mapick.api.roadmap.dto.hashtag.HashtagRequest;
