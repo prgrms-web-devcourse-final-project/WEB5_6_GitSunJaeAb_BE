@@ -1,11 +1,15 @@
 package com.gitsunjaeab.mapick.application.auth;
 
-import com.gitsunjaeab.mapick.api.auth.dto.request.SocialLoginRequest;
 import com.gitsunjaeab.mapick.api.auth.dto.internal.SocialUserInfo;
-import com.gitsunjaeab.mapick.application.member.MemberService;
-import com.gitsunjaeab.mapick.common.response.ResponseCode;
-import com.gitsunjaeab.mapick.domain.auth.*;
 import com.gitsunjaeab.mapick.api.auth.dto.internal.TokenDTO;
+import com.gitsunjaeab.mapick.api.auth.dto.request.SocialLoginRequest;
+import com.gitsunjaeab.mapick.application.member.MemberService;
+import com.gitsunjaeab.mapick.domain.auth.AccessTokenBlacklist;
+import com.gitsunjaeab.mapick.domain.auth.AccessTokenBlacklistRepository;
+import com.gitsunjaeab.mapick.domain.auth.LoginType;
+import com.gitsunjaeab.mapick.domain.auth.Principal;
+import com.gitsunjaeab.mapick.domain.auth.RefreshToken;
+import com.gitsunjaeab.mapick.domain.auth.RefreshTokenRepository;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
 import com.gitsunjaeab.mapick.domain.member.code.MemberStatus;
@@ -13,15 +17,13 @@ import com.gitsunjaeab.mapick.infra.auth.UserDetailsServiceImpl;
 import com.gitsunjaeab.mapick.infra.auth.token.JwtProvider;
 import com.gitsunjaeab.mapick.infra.auth.token.code.GrantType;
 import com.gitsunjaeab.mapick.infra.auth.token.code.TokenType;
+import com.gitsunjaeab.mapick.infra.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
-
+import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.HttpServletRequest;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
-
-import com.gitsunjaeab.mapick.util.NotFoundException;
-import io.jsonwebtoken.Claims;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -167,7 +169,7 @@ public class AuthService {
     public TokenDTO updatePassword(HttpServletRequest request, Long memberId, String password) {
 
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
+            .orElseThrow(() -> new CommonException(ResponseCode.MEMBER_NOT_FOUND));
 
         // 계정에 존재하는 기존 refresh token 삭제
         String accessToken = jwtProvider.resolveToken(request, TokenType.ACCESS_TOKEN);

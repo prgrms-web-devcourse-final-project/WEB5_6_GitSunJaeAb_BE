@@ -2,11 +2,11 @@ package com.gitsunjaeab.mapick.api.search.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.gitsunjaeab.mapick.api.search.dto.internal.SearchHistoryDTO;
-import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
+import com.gitsunjaeab.mapick.infra.common.response.BaseApiResponse;
 import java.time.OffsetDateTime;
 import java.util.List;
 
-import com.gitsunjaeab.mapick.common.response.ResponseCode;
+import com.gitsunjaeab.mapick.infra.common.response.ResponseCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

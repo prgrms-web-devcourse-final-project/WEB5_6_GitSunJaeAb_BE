@@ -4,7 +4,7 @@ import com.gitsunjaeab.mapick.api.notification.dto.NotificationListDTO;
 import com.gitsunjaeab.mapick.api.notification.dto.response.NotificationListResponse;
 import com.gitsunjaeab.mapick.api.notification.dto.response.NotificationReadResponse;
 import com.gitsunjaeab.mapick.application.notification.NotificationService;
-import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
+import com.gitsunjaeab.mapick.infra.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.domain.auth.Principal;
 import com.gitsunjaeab.mapick.domain.notification.Notification;
 import com.gitsunjaeab.mapick.domain.notification.NotificationType;

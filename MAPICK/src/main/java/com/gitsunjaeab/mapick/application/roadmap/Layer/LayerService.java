@@ -8,7 +8,8 @@ import com.gitsunjaeab.mapick.api.roadmap.dto.layer.response.LayerResponse;
 import com.gitsunjaeab.mapick.application.notification.NotificationService;
 import com.gitsunjaeab.mapick.application.roadmap.MarkerService;
 import com.gitsunjaeab.mapick.application.roadmap.RoadmapEditorService;
-import com.gitsunjaeab.mapick.common.response.ResponseCode;
+import com.gitsunjaeab.mapick.infra.common.EntityFinder;
+import com.gitsunjaeab.mapick.infra.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.auth.Role;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
@@ -24,8 +25,7 @@ import com.gitsunjaeab.mapick.domain.roadmap.layer.LayerLibrary;
 import com.gitsunjaeab.mapick.domain.roadmap.layer.LayerLibraryRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.layer.LayerRepository;
 import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
-import com.gitsunjaeab.mapick.util.NotFoundException;
-import com.gitsunjaeab.mapick.util.ReferencedWarning;
+import com.gitsunjaeab.mapick.infra.error.ReferencedWarning;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -46,6 +46,7 @@ public class LayerService {
     private final LayerLibraryRepository layerLibraryRepository;
     private final LayerForkHistoryRepository layerForkHistoryRepository;
     private final NotificationService notificationService;
+    private final EntityFinder entityFinder;
 
     // ===== 실시간 공유지도 상 CRUD =====
 
@@ -257,10 +258,10 @@ public class LayerService {
 
     // 레이어 수정
     @Transactional
-    public Layer update(Long id, LayerRequest request, Long memberId) {
+    public Layer update(Long layerId, LayerRequest request, Long memberId) {
 
         // 기존 레이어 조회 (Member와 함께 조회하여 LazyInitializationException 방지)
-        Layer layer = layerRepository.findByIdWithMember(id)
+        Layer layer = layerRepository.findByIdWithMember(layerId)
             .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND));
 
         // 본인만 수정 가능
@@ -361,8 +362,7 @@ public class LayerService {
         final ReferencedWarning referencedWarning = new ReferencedWarning();
 
         // 삭제할 내 레이어 조회
-        final Layer layer = layerRepository.findById(id)
-            .orElseThrow(NotFoundException::new);
+        final Layer layer = entityFinder.findLayerById(id);
 
         // 해당 레이어를 참조 중인 마커가 하나라도 존재하는지 확인
         final Marker layerMarker = markerRepository.findFirstByLayer(layer);

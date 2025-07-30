@@ -2,8 +2,8 @@ package com.gitsunjaeab.mapick.api.roadmap.dto.layer.response;
 
 import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerDetailDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.RoadmapSimpleDTO;
-import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
-import com.gitsunjaeab.mapick.common.response.ResponseCode;
+import com.gitsunjaeab.mapick.infra.common.response.BaseApiResponse;
+import com.gitsunjaeab.mapick.infra.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.roadmap.layer.Layer;
 import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
 import java.time.OffsetDateTime;

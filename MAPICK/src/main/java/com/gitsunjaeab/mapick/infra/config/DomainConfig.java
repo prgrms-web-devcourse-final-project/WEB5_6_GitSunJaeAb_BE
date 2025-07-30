@@ -1,4 +1,4 @@
-package com.gitsunjaeab.mapick.config;
+package com.gitsunjaeab.mapick.infra.config;
 
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Configuration;

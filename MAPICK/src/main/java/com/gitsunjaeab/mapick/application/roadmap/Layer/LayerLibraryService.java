@@ -4,7 +4,7 @@ import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerSimpleDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.layer.LayerZzimSimpleDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.marker.MarkerSimpleDTO;
 import com.gitsunjaeab.mapick.application.notification.NotificationService;
-import com.gitsunjaeab.mapick.common.response.ResponseCode;
+import com.gitsunjaeab.mapick.infra.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
 import com.gitsunjaeab.mapick.domain.notification.NotificationType;

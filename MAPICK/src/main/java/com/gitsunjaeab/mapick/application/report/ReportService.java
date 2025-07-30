@@ -6,7 +6,7 @@ import com.gitsunjaeab.mapick.api.report.dto.internal.ReportSimpleDTO;
 import com.gitsunjaeab.mapick.api.report.dto.request.MapReportRequest;
 import com.gitsunjaeab.mapick.api.report.dto.request.MarkerReportRequest;
 import com.gitsunjaeab.mapick.api.report.dto.request.QuestReportRequest;
-import com.gitsunjaeab.mapick.common.response.ResponseCode;
+import com.gitsunjaeab.mapick.infra.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
 import com.gitsunjaeab.mapick.domain.quest.Quest;

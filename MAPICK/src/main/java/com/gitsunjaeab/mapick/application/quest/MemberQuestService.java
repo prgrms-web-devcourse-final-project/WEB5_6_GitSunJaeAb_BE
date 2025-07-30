@@ -17,9 +17,10 @@ import com.gitsunjaeab.mapick.domain.notification.NotificationType;
 import com.gitsunjaeab.mapick.domain.quest.MemberQuest;
 import com.gitsunjaeab.mapick.domain.quest.MemberQuestRepository;
 import com.gitsunjaeab.mapick.domain.quest.Quest;
-import com.gitsunjaeab.mapick.domain.quest.QuestRepository;
+import com.gitsunjaeab.mapick.infra.common.EntityFinder;
+import com.gitsunjaeab.mapick.infra.common.response.ResponseCode;
+import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
 import com.gitsunjaeab.mapick.infra.storage.SupabaseStorageService;
-import com.gitsunjaeab.mapick.util.NotFoundException;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
@@ -37,10 +38,9 @@ import org.springframework.web.multipart.MultipartFile;
 public class MemberQuestService {
 
     private final MemberQuestRepository memberQuestRepository;
-    private final QuestRepository questRepository;
     private final NotificationService notificationService;
     private final SupabaseStorageService supabaseStorageService;
-    private final QuestRankService questRankService;
+    private final EntityFinder entityFinder;
 
 
     // 전체 참여 목록 조회 //확인
@@ -62,9 +62,8 @@ public class MemberQuestService {
 
     // 단일 참여 정보 조회 //확인
     public MemberQuestResponse get(final Long id) {
-        return memberQuestRepository.findById(id)
-                .map(this::toResponse)
-                .orElseThrow(NotFoundException::new);
+        MemberQuest memberQuest = entityFinder.findByMemberQuestId(id);
+        return toResponse(memberQuest);
     }
 
     //(참여자) 내가 여태 참여한 퀘스트 조회
@@ -83,8 +82,7 @@ public class MemberQuestService {
         final Member member,
         final MultipartFile imageFile
     ) {
-        final Quest quest = questRepository.findById(request.getQuestId())
-            .orElseThrow(() -> new NotFoundException("퀘스트를 찾을 수 없습니다."));
+        final Quest quest = entityFinder.findQuestById(request.getQuestId());
 
 
         final MemberQuest memberQuest = new MemberQuest();
@@ -124,7 +122,6 @@ public class MemberQuestService {
         return MemberQuestCreateResponse.of(savedQuest);
     }
 
-
     // 퀘스트 마감 알림발송 로직
     @Transactional
     public void sendDeadlineNotification() {
@@ -153,21 +150,8 @@ public class MemberQuestService {
                     null, null               // 댓글, 북마크
                 );
             }
-
-            // 마감 D-1일이면 알림 전송 (배포용)
-//            if (diffSec >= 0 && diffSec <= 60) {
-//                notificationService.createNotification(
-//                    mq.getMember(),               // 참여자 본인
-//                    NotificationType.QUEST_DEADLINE,       // 알림 타입
-//                    null, null, null,             // 로드맵, 레이어, 레이어라이브러리
-//                    quest,                        // 퀘스트
-//                    mq,                           // 멤버퀘스트
-//                    null, null                     // 댓글, 북마크
-//                );
-//            }
         }
     }
-
 
     // (참여자)퀘스트 참여 정보 수정(= 증빙자료나 내용 수정)
     public MemberQuestUpdateResponse updateMemberQuest(
@@ -176,13 +160,11 @@ public class MemberQuestService {
         final Member member,
         final MultipartFile imageFile
     ) {
-        final MemberQuest memberQuest = memberQuestRepository.findById(id)
-            .orElseThrow(() -> new NotFoundException("참여 내역을 찾을 수 없습니다."));
-
+        final MemberQuest memberQuest = entityFinder.findByMemberQuestId(id);
 
         // 권한 확인 : 본인것만 수정 가능하게끔
         if (!memberQuest.getMember().getId().equals(member.getId())) {
-            throw new NotFoundException("본인의 참여 정보만 수정할 수 있습니다.");
+            throw new CommonException(ResponseCode.INVALID_ACCESS, "본인의 참여 정보만 수정할 수 있습니다.");
         }
         memberQuest.setTitle(request.getTitle());
         memberQuest.setAnswer(request.getAnswer());
@@ -203,12 +185,11 @@ public class MemberQuestService {
         final MemberQuestJudgeRequest request,
         final Member judgeMember
     ) {
-        final MemberQuest memberQuest = memberQuestRepository
-            .findWithQuestAndMemberById(request.getMemberQuestId())
-            .orElseThrow(() -> new NotFoundException("참여 내역을 찾을 수 없습니다."));
+        final MemberQuest memberQuest = entityFinder.findWithQuestAndMemberById(request.getMemberQuestId());
         // 권한 확인: judgeMember = 제출자 (제출자인지 확인)
         if (!memberQuest.getQuest().getMember().getId().equals(judgeMember.getId())) {
-            throw new NotFoundException("퀘스트 판정 권한이 없습니다.");
+            // 퀘스트 판정 권한이 없음
+            throw new CommonException(ResponseCode.FORBIDDEN_USER, "퀘스트 판정 권한이 없습니다.");
         }
         //Null값 확인
         Boolean recognized = request.getIsRecognized();

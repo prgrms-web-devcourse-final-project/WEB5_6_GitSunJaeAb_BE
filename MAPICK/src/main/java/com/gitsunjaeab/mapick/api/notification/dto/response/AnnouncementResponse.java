@@ -1,8 +1,8 @@
 package com.gitsunjaeab.mapick.api.notification.dto.response;
 
 import com.gitsunjaeab.mapick.api.notification.dto.AnnouncementSimpleDTO;
-import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
-import com.gitsunjaeab.mapick.common.response.ResponseCode;
+import com.gitsunjaeab.mapick.infra.common.response.BaseApiResponse;
+import com.gitsunjaeab.mapick.infra.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.notification.Announcement;
 import java.time.OffsetDateTime;
 import java.util.List;

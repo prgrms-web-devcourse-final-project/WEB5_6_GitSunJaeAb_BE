@@ -1,7 +1,7 @@
 package com.gitsunjaeab.mapick.application.member;
 
 import com.gitsunjaeab.mapick.api.member.dto.request.MemberInterestRequest;
-import com.gitsunjaeab.mapick.common.response.ResponseCode;
+import com.gitsunjaeab.mapick.infra.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.category.Category;
 import com.gitsunjaeab.mapick.domain.category.CategoryRepository;
 import com.gitsunjaeab.mapick.domain.member.Member;

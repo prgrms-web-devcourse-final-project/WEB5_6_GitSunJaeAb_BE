@@ -5,7 +5,7 @@ import com.gitsunjaeab.mapick.api.notification.dto.response.AnnouncementResponse
 import com.gitsunjaeab.mapick.api.notification.dto.response.AnnouncementDeleteResponse;
 import com.gitsunjaeab.mapick.api.notification.dto.response.AnnouncementListResponse;
 import com.gitsunjaeab.mapick.application.notification.AdminAnnouncementService;
-import com.gitsunjaeab.mapick.common.response.ResponseCode;
+import com.gitsunjaeab.mapick.infra.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.auth.Principal;
 import com.gitsunjaeab.mapick.domain.notification.Announcement;
 import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;

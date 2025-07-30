@@ -1,8 +1,8 @@
 package com.gitsunjaeab.mapick.api.report.dto.response;
 
 import com.gitsunjaeab.mapick.api.report.dto.internal.ReportDTO;
-import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
-import com.gitsunjaeab.mapick.common.response.ResponseCode;
+import com.gitsunjaeab.mapick.infra.common.response.BaseApiResponse;
+import com.gitsunjaeab.mapick.infra.common.response.ResponseCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

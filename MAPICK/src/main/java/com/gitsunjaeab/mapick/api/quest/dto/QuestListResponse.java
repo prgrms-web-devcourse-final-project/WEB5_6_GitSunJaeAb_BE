@@ -1,8 +1,8 @@
 package com.gitsunjaeab.mapick.api.quest.dto;
 
 import com.gitsunjaeab.mapick.api.member.dto.internal.MemberSimpleDTO;
-import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
-import com.gitsunjaeab.mapick.common.response.ResponseCode;
+import com.gitsunjaeab.mapick.infra.common.response.BaseApiResponse;
+import com.gitsunjaeab.mapick.infra.common.response.ResponseCode;
 import jakarta.validation.constraints.Size;
 import java.time.OffsetDateTime;
 import java.util.Collections;

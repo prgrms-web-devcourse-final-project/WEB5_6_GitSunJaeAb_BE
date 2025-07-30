@@ -2,8 +2,8 @@ package com.gitsunjaeab.mapick.api.member.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.gitsunjaeab.mapick.api.member.dto.internal.MemberDTO;
-import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
-import com.gitsunjaeab.mapick.common.response.ResponseCode;
+import com.gitsunjaeab.mapick.infra.common.response.BaseApiResponse;
+import com.gitsunjaeab.mapick.infra.common.response.ResponseCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

@@ -1,6 +1,5 @@
-package com.gitsunjaeab.mapick.common;
+package com.gitsunjaeab.mapick.infra.common;
 
-import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.achievement.Achievement;
 import com.gitsunjaeab.mapick.domain.achievement.AchievementRepository;
 import com.gitsunjaeab.mapick.domain.category.Category;
@@ -9,23 +8,28 @@ import com.gitsunjaeab.mapick.domain.comment.Comment;
 import com.gitsunjaeab.mapick.domain.comment.CommentRepository;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
+import com.gitsunjaeab.mapick.domain.quest.MemberQuest;
+import com.gitsunjaeab.mapick.domain.quest.MemberQuestRepository;
 import com.gitsunjaeab.mapick.domain.quest.Quest;
+import com.gitsunjaeab.mapick.domain.quest.QuestRank;
+import com.gitsunjaeab.mapick.domain.quest.QuestRankRepository;
 import com.gitsunjaeab.mapick.domain.quest.QuestRepository;
+import com.gitsunjaeab.mapick.domain.roadmap.Bookmark;
+import com.gitsunjaeab.mapick.domain.roadmap.BookmarkRepository;
+import com.gitsunjaeab.mapick.domain.roadmap.Hashtag;
+import com.gitsunjaeab.mapick.domain.roadmap.HashtagRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.Marker;
 import com.gitsunjaeab.mapick.domain.roadmap.MarkerCustomImage;
 import com.gitsunjaeab.mapick.domain.roadmap.MarkerCustomImageRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.MarkerRepository;
-import com.gitsunjaeab.mapick.domain.roadmap.Bookmark;
-import com.gitsunjaeab.mapick.domain.roadmap.BookmarkRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.layer.Layer;
 import com.gitsunjaeab.mapick.domain.roadmap.layer.LayerRepository;
+import com.gitsunjaeab.mapick.infra.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
-import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -41,6 +45,9 @@ public class EntityFinder {
     private final MarkerRepository markerRepository;
     private final LayerRepository layerRepository;
     private final BookmarkRepository bookmarkRepository;
+    private final MemberQuestRepository memberQuestRepository;
+    private final HashtagRepository hashtagRepository;
+    private final QuestRankRepository questRankRepository;
 
     public Member findMemberById(Long memberId) {
         return memberRepository.findById(memberId)
@@ -57,6 +64,11 @@ public class EntityFinder {
             .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND, "해당하는 로드맵이 없습니다."));
     }
 
+    public Hashtag findByHashId(Long hashtagId) {
+        return hashtagRepository.findById(hashtagId)
+            .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND, "해당하는 해시태그가 없습니다."));
+    }
+
     public Layer findLayerById(Long layerId) {
         return layerRepository.findById(layerId)
             .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND, "해당하는 레이어가 없습니다."));
@@ -69,6 +81,29 @@ public class EntityFinder {
     public Quest findQuestById(Long questId) {
         return questRepository.findById(questId)
             .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND, "해당하는 퀘스트가 없습니다."));
+    }
+
+    public Quest findWithMemberById(Long questId) {
+        return questRepository.findWithMemberById(questId)
+            .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND, "해당하는 퀘스트가 없습니다."));
+    }
+
+    public MemberQuest findWithQuestAndMemberById(Long memberQuestId) {
+        return memberQuestRepository
+            .findWithQuestAndMemberById(memberQuestId)
+            .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND, "참여 내역을 찾을 수 없습니다."));
+    }
+
+    public MemberQuest findByMemberQuestId(Long memberQuestId) {
+        return memberQuestRepository
+            .findById(memberQuestId)
+            .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND, "참여 내역을 찾을 수 없습니다."));
+    }
+
+    public QuestRank findByQuestRankId(Long questRankId) {
+        return questRankRepository
+            .findById(questRankId)
+            .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND, "참여 내역을 찾을 수 없습니다."));
     }
 
     public Comment findCommentById(Long commentId) {
@@ -85,7 +120,6 @@ public class EntityFinder {
         return bookmarkRepository.findById(bookmarkId)
                 .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND, "해당하는 북마크가 없습니다."));
     }
-
 
     public Category findByCategoryId(Long categoryId) {
         return categoryRepository.findById(categoryId)

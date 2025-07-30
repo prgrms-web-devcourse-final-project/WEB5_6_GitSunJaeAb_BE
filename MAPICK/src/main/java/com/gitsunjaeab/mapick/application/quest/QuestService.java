@@ -5,18 +5,16 @@ import com.gitsunjaeab.mapick.api.member.dto.internal.MemberSimpleDTO;
 import com.gitsunjaeab.mapick.api.quest.dto.QuestAchievementResponse;
 import com.gitsunjaeab.mapick.api.quest.dto.QuestRequest;
 import com.gitsunjaeab.mapick.api.quest.dto.QuestResponse;
-import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.achievement.Achievement;
-import com.gitsunjaeab.mapick.domain.achievement.AchievementRepository;
 import com.gitsunjaeab.mapick.domain.achievement.MemberAchievement;
 import com.gitsunjaeab.mapick.domain.achievement.MemberAchievementRepository;
 import com.gitsunjaeab.mapick.domain.member.Member;
-import com.gitsunjaeab.mapick.domain.member.MemberRepository;
 import com.gitsunjaeab.mapick.domain.quest.Quest;
 import com.gitsunjaeab.mapick.domain.quest.QuestRepository;
+import com.gitsunjaeab.mapick.infra.common.EntityFinder;
+import com.gitsunjaeab.mapick.infra.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
 import com.gitsunjaeab.mapick.infra.storage.SupabaseStorageService;
-import com.gitsunjaeab.mapick.util.NotFoundException;
 import jakarta.transaction.Transactional;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
@@ -33,10 +31,9 @@ import org.springframework.web.multipart.MultipartFile;
 public class QuestService {
 
     private final QuestRepository questRepository;
-    private final MemberRepository memberRepository;
     private final MemberAchievementRepository memberAchievementRepository;
-    private final AchievementRepository achievementRepository;
     private final SupabaseStorageService supabaseStorageService;
+    private final EntityFinder entityFinder;
 
     // 만료 퀘스트 자동 비활성화
     @Scheduled(cron = "0 */1 * * * *") // 1분마다 확인
@@ -72,10 +69,10 @@ public class QuestService {
     }
 
     // 특정 퀘스트 조회
-    public QuestResponse get(final Long id) {
-        return questRepository.findWithMemberById(id)
-                .map(this::questToResponse)
-                .orElseThrow(NotFoundException::new);
+    public QuestResponse get(final Long questId) {
+        Quest quest = entityFinder.findWithMemberById(questId);
+
+        return questToResponse(quest);
     }
 
     public QuestAchievementResponse create (
@@ -104,10 +101,8 @@ public class QuestService {
         if (questCount == 1) {
             boolean alreadyHas = memberAchievementRepository.existsByMemberIdAndAchievementId(memberId, ACHIEVEMENT_ID);
             if (!alreadyHas) {
-                Member user = memberRepository.findById(memberId)
-                    .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND, "해당하는 회원이 없습니다."));
-                Achievement achievement = achievementRepository.findById(ACHIEVEMENT_ID)
-                    .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND, "해당하는 업적이 없습니다."));
+                Member user = entityFinder.findMemberById(memberId);
+                Achievement achievement = entityFinder.findAchievementById(ACHIEVEMENT_ID);
 
                 memberAchievementRepository.save(
                     MemberAchievement.builder()
@@ -125,14 +120,13 @@ public class QuestService {
 
     //퀘스트 수정
     public void update(
-        final Long id,
+        final Long questId,
         final QuestRequest questRequest,
         final String currentMemberEmail,
         final MultipartFile imageFile
     ) {
 
-        final Quest quest = questRepository.findWithMemberById(id)
-                .orElseThrow(NotFoundException::new);
+        final Quest quest = entityFinder.findWithMemberById(questId);
 
         if (!quest.getMember().getEmail().equals(currentMemberEmail)) {
             throw new RuntimeException("작성자만 퀘스트를 수정할 수 있습니다.");
@@ -158,19 +152,18 @@ public class QuestService {
     }
 
 //  if문을 써서 작성자랑 관리자가 삭제할 수 있게 hasroll() -> 바이크
-    public void delete(final Long id, final Member currentMember) {
+    public void delete(final Long questId, final Member currentMember) {
         final Quest quest;
 
         if ("ROLE_ADMIN".equals(currentMember.getRole())) {
-            quest = questRepository.findIncludingDeletedById(id)
-                .orElseThrow(NotFoundException::new);
+            quest = questRepository.findIncludingDeletedById(questId)
+                .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND, "해당하는 퀘스트가 없습니다."));
             questRepository.delete(quest); // 하드 삭제
             return;
         }
 
         // 일반 작성자는 soft delete만 가능
-        quest = questRepository.findWithMemberById(id)
-            .orElseThrow(NotFoundException::new);
+        quest = entityFinder.findWithMemberById(questId);
 
         if (!quest.getMember().getId().equals(currentMember.getId())) {
             throw new RuntimeException("작성자만 퀘스트를 삭제할 수 있습니다.");
@@ -182,9 +175,8 @@ public class QuestService {
     }
 
     @Transactional
-    public QuestResponse getWithViews(final Long id) {
-        Quest quest = questRepository.findWithMemberById(id)
-            .orElseThrow(NotFoundException::new);
+    public QuestResponse getWithViews(final Long questId) {
+        Quest quest = entityFinder.findWithMemberById(questId);
         quest.setViewCount(quest.getViewCount() + 1);
         questRepository.save(quest);
 

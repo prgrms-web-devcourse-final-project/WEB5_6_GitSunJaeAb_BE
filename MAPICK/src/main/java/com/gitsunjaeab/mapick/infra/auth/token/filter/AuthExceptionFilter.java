@@ -1,8 +1,8 @@
 package com.gitsunjaeab.mapick.infra.auth.token.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gitsunjaeab.mapick.common.response.ApiResponse;
-import com.gitsunjaeab.mapick.common.response.ResponseCode;
+import com.gitsunjaeab.mapick.infra.common.response.ApiResponse;
+import com.gitsunjaeab.mapick.infra.common.response.ResponseCode;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -12,8 +12,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-
-import java.io.IOException;
 
 import java.io.IOException;
 

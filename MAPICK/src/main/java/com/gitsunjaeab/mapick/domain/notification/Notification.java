@@ -1,6 +1,6 @@
 package com.gitsunjaeab.mapick.domain.notification;
 
-import com.gitsunjaeab.mapick.common.response.ResponseCode;
+import com.gitsunjaeab.mapick.infra.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.comment.Comment;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.quest.MemberQuest;

@@ -1,7 +1,7 @@
 package com.gitsunjaeab.mapick.application.notification;
 
 import com.gitsunjaeab.mapick.api.notification.dto.request.AnnouncementCreateRequest;
-import com.gitsunjaeab.mapick.common.response.ResponseCode;
+import com.gitsunjaeab.mapick.infra.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.auth.Role;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;

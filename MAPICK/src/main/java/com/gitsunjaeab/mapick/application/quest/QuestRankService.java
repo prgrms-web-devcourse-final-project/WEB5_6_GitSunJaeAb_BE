@@ -1,10 +1,10 @@
 package com.gitsunjaeab.mapick.application.quest;
 
 
-import com.gitsunjaeab.mapick.domain.quest.QuestRankRepository;
 import com.gitsunjaeab.mapick.api.quest.dto.QuestRankResponse;
 import com.gitsunjaeab.mapick.domain.quest.QuestRank;
-import com.gitsunjaeab.mapick.util.NotFoundException;
+import com.gitsunjaeab.mapick.domain.quest.QuestRankRepository;
+import com.gitsunjaeab.mapick.infra.common.EntityFinder;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 public class QuestRankService {
 
     private final QuestRankRepository questRankRepository;
+    private final EntityFinder entityFinder;
 
 
     // 전체 랭킹 조회
@@ -34,10 +35,9 @@ public class QuestRankService {
     }
 
     // 단일 랭킹 조회
-    public QuestRankResponse get(final Long id) {
-        return questRankRepository.findById(id)
-            .map(this::toResponse)
-            .orElseThrow(NotFoundException::new);
+    public QuestRankResponse get(final Long questRankId) {
+        QuestRank questRank = entityFinder.findByQuestRankId(questRankId);
+        return toResponse(questRank);
     }
 
     // 랭킹 삭제

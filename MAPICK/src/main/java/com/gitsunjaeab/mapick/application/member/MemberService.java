@@ -7,27 +7,25 @@ import com.gitsunjaeab.mapick.api.member.dto.internal.MemberDetailDTO;
 import com.gitsunjaeab.mapick.api.member.dto.internal.MemberInterestDTO;
 import com.gitsunjaeab.mapick.api.member.dto.internal.MemberListDTO;
 import com.gitsunjaeab.mapick.api.member.dto.request.MemberProfileUpdateRequest;
-import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.auth.LoginType;
 import com.gitsunjaeab.mapick.domain.auth.Role;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.member.MemberInterest;
 import com.gitsunjaeab.mapick.domain.member.MemberInterestRepository;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
+import com.gitsunjaeab.mapick.infra.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
 import com.gitsunjaeab.mapick.infra.storage.SupabaseStorageService;
-import com.gitsunjaeab.mapick.util.NotFoundException;
 import jakarta.transaction.Transactional;
+import java.time.OffsetDateTime;
+import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.time.OffsetDateTime;
-import java.util.List;
-import java.util.UUID;
 
 
 @Service
@@ -278,7 +276,7 @@ public class MemberService {
     public boolean verifyPassword(Long memberId, String password) {
 
         Member member = memberRepository.findByIdAndDeletedAtIsNull(memberId)
-                .orElseThrow(() -> new NotFoundException("회원을 찾을 수 없습니다."));
+            .orElseThrow(() -> new CommonException(ResponseCode.MEMBER_NOT_FOUND));
 
         if (!passwordEncoder.matches(password, member.getPassword())) {
             throw new CommonException(ResponseCode.INVALID_PASSWORD);

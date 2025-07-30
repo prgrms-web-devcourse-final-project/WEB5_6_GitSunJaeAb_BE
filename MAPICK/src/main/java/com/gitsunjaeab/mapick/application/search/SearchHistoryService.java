@@ -2,7 +2,7 @@ package com.gitsunjaeab.mapick.application.search;
 
 import com.gitsunjaeab.mapick.api.search.dto.internal.SearchHistoryDTO;
 import com.gitsunjaeab.mapick.api.search.dto.request.SearchRequest;
-import com.gitsunjaeab.mapick.common.response.ResponseCode;
+import com.gitsunjaeab.mapick.infra.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
 import com.gitsunjaeab.mapick.domain.search.Search;

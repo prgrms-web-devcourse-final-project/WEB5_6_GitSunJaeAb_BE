@@ -12,7 +12,7 @@ import com.gitsunjaeab.mapick.api.roadmap.dto.layer.response.LayerZzimResponse;
 import com.gitsunjaeab.mapick.application.roadmap.Layer.ForkResult;
 import com.gitsunjaeab.mapick.application.roadmap.Layer.LayerLibraryService;
 import com.gitsunjaeab.mapick.application.roadmap.Layer.LayerService;
-import com.gitsunjaeab.mapick.common.response.ResponseCode;
+import com.gitsunjaeab.mapick.infra.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.auth.Principal;
 import com.gitsunjaeab.mapick.domain.roadmap.layer.Layer;
 import com.gitsunjaeab.mapick.domain.roadmap.layer.LayerLibrary;

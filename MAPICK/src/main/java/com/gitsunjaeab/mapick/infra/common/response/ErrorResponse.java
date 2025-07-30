@@ -1,4 +1,4 @@
-package com.gitsunjaeab.mapick.common.response;
+package com.gitsunjaeab.mapick.infra.common.response;
 
 import java.time.OffsetDateTime;
 import lombok.AllArgsConstructor;

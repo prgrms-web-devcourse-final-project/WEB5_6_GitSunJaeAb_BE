@@ -1,7 +1,7 @@
 package com.gitsunjaeab.mapick.api.roadmap.dto.hashtag;
 
-import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
-import com.gitsunjaeab.mapick.common.response.ResponseCode;
+import com.gitsunjaeab.mapick.infra.common.response.BaseApiResponse;
+import com.gitsunjaeab.mapick.infra.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.roadmap.Hashtag;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

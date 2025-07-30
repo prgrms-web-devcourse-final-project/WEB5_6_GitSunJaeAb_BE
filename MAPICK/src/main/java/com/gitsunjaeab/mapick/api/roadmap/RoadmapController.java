@@ -7,12 +7,10 @@ import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.request.SharedRoadmapUpdat
 import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.response.*;
 import com.gitsunjaeab.mapick.application.roadmap.RoadmapEditorService;
 import com.gitsunjaeab.mapick.application.roadmap.RoadmapService;
-import com.gitsunjaeab.mapick.common.response.ApiResponse;
-import com.gitsunjaeab.mapick.common.response.ResponseCode;
-import com.gitsunjaeab.mapick.common.util.AuthUtil;
+import com.gitsunjaeab.mapick.infra.common.response.ResponseCode;
+import com.gitsunjaeab.mapick.infra.common.util.AuthUtil;
 import com.gitsunjaeab.mapick.domain.auth.Principal;
 import com.gitsunjaeab.mapick.domain.member.Member;
-import com.gitsunjaeab.mapick.infra.error.exceptions.UnauthenticatedException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

@@ -2,11 +2,11 @@ package com.gitsunjaeab.mapick.api.roadmap;
 
 import com.gitsunjaeab.mapick.api.roadmap.dto.bookmark.BookmarkCreateResponse;
 import com.gitsunjaeab.mapick.api.roadmap.dto.bookmark.BookmarkDeleteResponse;
-import com.gitsunjaeab.mapick.common.response.ResponseCode;
+import com.gitsunjaeab.mapick.infra.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.response.RoadmapListResponse;
 import com.gitsunjaeab.mapick.api.roadmap.dto.bookmark.BookmarkDTO;
 import com.gitsunjaeab.mapick.application.roadmap.BookmarkService;
-import com.gitsunjaeab.mapick.common.util.AuthUtil;
+import com.gitsunjaeab.mapick.infra.common.util.AuthUtil;
 import com.gitsunjaeab.mapick.domain.auth.Principal;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import io.swagger.v3.oas.annotations.Operation;

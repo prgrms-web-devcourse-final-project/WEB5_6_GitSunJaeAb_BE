@@ -6,7 +6,7 @@ import com.gitsunjaeab.mapick.api.roadmap.dto.marker.MarkerDTO;
 import com.gitsunjaeab.mapick.api.roadmap.dto.marker.MarkerRequest;
 import com.gitsunjaeab.mapick.api.roadmap.dto.marker.MarkerSyncRequest;
 import com.gitsunjaeab.mapick.api.roadmap.dto.marker.MarkerUpdateRequest;
-import com.gitsunjaeab.mapick.common.EntityFinder;
+import com.gitsunjaeab.mapick.infra.common.EntityFinder;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.roadmap.Marker;
 import com.gitsunjaeab.mapick.domain.roadmap.MarkerCustomImage;

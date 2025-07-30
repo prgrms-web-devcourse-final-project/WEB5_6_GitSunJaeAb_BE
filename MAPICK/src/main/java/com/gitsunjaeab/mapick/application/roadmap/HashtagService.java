@@ -1,21 +1,12 @@
 package com.gitsunjaeab.mapick.application.roadmap;
 
-
 import com.gitsunjaeab.mapick.api.roadmap.dto.hashtag.HashtagDTO;
-import com.gitsunjaeab.mapick.api.roadmap.dto.hashtag.HashtagListResponse;
 import com.gitsunjaeab.mapick.api.roadmap.dto.hashtag.HashtagRequest;
-import com.gitsunjaeab.mapick.domain.member.MemberRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.Hashtag;
 import com.gitsunjaeab.mapick.domain.roadmap.HashtagRepository;
-import com.gitsunjaeab.mapick.domain.roadmap.RoadmapHashtagRelationRepository;
-import com.gitsunjaeab.mapick.domain.roadmap.RoadmapHashtagRelation;
-import com.gitsunjaeab.mapick.util.NotFoundException;
-import com.gitsunjaeab.mapick.util.ReferencedWarning;
-
+import com.gitsunjaeab.mapick.infra.common.EntityFinder;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,66 +16,40 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class HashtagService {
 
-    private final MemberRepository memberRepository;
     private final HashtagRepository hashtagRepository;
-    private final RoadmapHashtagRelationRepository roadmapHashtagRelationRepository;
+    private final EntityFinder entityFinder;
 
-    public HashtagListResponse findAllHashtagsOnRoadmap(Long roadmapId) {
-        final List<Long> hashtagsId = roadmapHashtagRelationRepository.findAllByRoadmap_Id(roadmapId);
-
-        if (hashtagsId.isEmpty()) {
-            return HashtagListResponse.of(Collections.emptyList());
-        }
-
-        List<Hashtag> hashtags = hashtagRepository.findAllById(hashtagsId);
-        return HashtagListResponse.of(hashtags);
+    // 해쉬태그 조회
+    public HashtagDTO get(final Long hashtagId) {
+        Hashtag hashtag = entityFinder.findByHashId(hashtagId);
+        return entityToDTO(hashtag, new HashtagDTO());
     }
 
-    public HashtagDTO get(final Long id) {
-        return hashtagRepository.findById(id)
-                .map(hashtag -> roadmapToDTO(hashtag, new HashtagDTO()))
-                .orElseThrow(NotFoundException::new);
-    }
+    // 해쉬태그 수정
+    public void update(final Long hashtagId, final HashtagDTO hashtagDTO) {
+        final Hashtag hashtag = entityFinder.findByHashId(hashtagId);
 
-//    public Long create(final HashtagRequest hashtagDTO) {
-//        final Hashtag hashtag = new Hashtag();
-//        roadmapToEntity(hashtagDTO, hashtag);
-//        return hashtagRepository.save(hashtag).getId();
-//    }
+        dtoToEntity(hashtagDTO, hashtag);
 
-    public void update(final Long id, final HashtagDTO hashtagDTO) {
-        final Hashtag hashtag = hashtagRepository.findById(id)
-                .orElseThrow(NotFoundException::new);
-        roadmapToEntity(hashtagDTO, hashtag);
         hashtagRepository.save(hashtag);
     }
 
-    public void delete(final Long id) {
-        hashtagRepository.deleteById(id);
+    // 해쉬태그 삭제
+    public void delete(final Long hashtagId) {
+        hashtagRepository.deleteById(hashtagId);
     }
 
-    private HashtagDTO roadmapToDTO(final Hashtag hashtag, final HashtagDTO hashtagDTO) {
+    // entity -> dto
+    private HashtagDTO entityToDTO(final Hashtag hashtag, final HashtagDTO hashtagDTO) {
         hashtagDTO.setId(hashtag.getId());
         hashtagDTO.setName(hashtag.getName());
         return hashtagDTO;
     }
 
-    private Hashtag roadmapToEntity(final HashtagDTO hashtagDTO, final Hashtag hashtag) {
+    // dto -> entity
+    private Hashtag dtoToEntity(final HashtagDTO hashtagDTO, final Hashtag hashtag) {
         hashtag.setName(hashtagDTO.getName());
         return hashtag;
-    }
-
-    public ReferencedWarning getReferencedWarning(final Long id) {
-        final ReferencedWarning referencedWarning = new ReferencedWarning();
-        final Hashtag hashtag = hashtagRepository.findById(id)
-                .orElseThrow(NotFoundException::new);
-        final RoadmapHashtagRelation hashtagMapHashtagRelation = roadmapHashtagRelationRepository.findFirstByHashtag(hashtag);
-        if (hashtagMapHashtagRelation != null) {
-            referencedWarning.setKey("hashtag.mapHashtagRelation.hashtag.referenced");
-            referencedWarning.addParam(hashtagMapHashtagRelation.getId());
-            return referencedWarning;
-        }
-        return null;
     }
 
     @Transactional

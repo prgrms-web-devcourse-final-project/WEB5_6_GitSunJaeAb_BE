@@ -9,8 +9,8 @@ import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.request.SharedRoadmapUpdat
 import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.response.RoadmapListResponse;
 import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.response.RoadmapResponse;
 import com.gitsunjaeab.mapick.application.roadmap.Layer.LayerService;
-import com.gitsunjaeab.mapick.common.EntityFinder;
-import com.gitsunjaeab.mapick.common.response.ResponseCode;
+import com.gitsunjaeab.mapick.infra.common.EntityFinder;
+import com.gitsunjaeab.mapick.infra.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.achievement.Achievement;
 import com.gitsunjaeab.mapick.domain.achievement.AchievementRepository;
 import com.gitsunjaeab.mapick.domain.achievement.MemberAchievement;

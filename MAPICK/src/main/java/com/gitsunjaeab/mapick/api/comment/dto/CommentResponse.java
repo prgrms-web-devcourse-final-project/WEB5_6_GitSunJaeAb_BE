@@ -1,8 +1,8 @@
 package com.gitsunjaeab.mapick.api.comment.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
-import com.gitsunjaeab.mapick.common.response.ResponseCode;
+import com.gitsunjaeab.mapick.infra.common.response.BaseApiResponse;
+import com.gitsunjaeab.mapick.infra.common.response.ResponseCode;
 import java.time.OffsetDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

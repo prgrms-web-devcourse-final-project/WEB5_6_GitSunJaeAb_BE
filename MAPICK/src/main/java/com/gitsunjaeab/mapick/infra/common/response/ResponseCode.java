@@ -1,4 +1,4 @@
-package com.gitsunjaeab.mapick.common.response;
+package com.gitsunjaeab.mapick.infra.common.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -33,12 +33,15 @@ public enum ResponseCode {
     INVALID_TOKEN("4011", HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다."),
     SECURITY_INCIDENT("4012", HttpStatus.UNAUTHORIZED, "비정상적인 접근이 감지되었습니다."),
     INVALID_PASSWORD("4013", HttpStatus.UNAUTHORIZED, "비밀번호가 일치하지 않습니다."),
+    INVALID_ACCESS("4014", HttpStatus.UNAUTHORIZED, "본인만 접근 가능 합니다."),
 
 
     FORBIDDEN("4030", HttpStatus.FORBIDDEN, "접근 권한이 없습니다."),
     FORBIDDEN_DELETE_BOOKMARK("4031", HttpStatus.FORBIDDEN, "북마크 해제 권한이 없습니다."),
     BLACKLISTED_USER("4032", HttpStatus.FORBIDDEN, "블랙리스트 처리된 회원입니다."),
     WITHDRAWN_USER("4033", HttpStatus.FORBIDDEN, "탈퇴한 회원입니다."),
+    FORBIDDEN_USER("4034", HttpStatus.FORBIDDEN, "권한이 없는 회원입니다."),
+
 
     NOT_FOUND("4040", HttpStatus.NOT_FOUND, "존재하지 않는 리소스 입니다."),
     EMAIL_NOT_FOUND("4041", HttpStatus.NOT_FOUND, "존재하지 않는 이메일입니다."),

@@ -1,6 +1,6 @@
 package com.gitsunjaeab.mapick.api.report.dto.request;
 
-import com.gitsunjaeab.mapick.common.response.BaseApiResponse;
+import com.gitsunjaeab.mapick.infra.common.response.BaseApiResponse;
 import jakarta.validation.constraints.NotNull;
 import java.time.OffsetDateTime;
 import lombok.AllArgsConstructor;

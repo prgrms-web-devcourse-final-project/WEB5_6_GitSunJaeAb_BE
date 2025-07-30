@@ -2,7 +2,7 @@ package com.gitsunjaeab.mapick.application.category;
 
 import com.gitsunjaeab.mapick.api.category.dto.CategoryDTO;
 import com.gitsunjaeab.mapick.api.category.dto.CategoryRequest;
-import com.gitsunjaeab.mapick.common.EntityFinder;
+import com.gitsunjaeab.mapick.infra.common.EntityFinder;
 import com.gitsunjaeab.mapick.domain.category.Category;
 import com.gitsunjaeab.mapick.domain.category.CategoryRepository;
 import com.gitsunjaeab.mapick.infra.storage.SupabaseStorageService;

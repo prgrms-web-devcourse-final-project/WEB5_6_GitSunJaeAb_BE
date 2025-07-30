@@ -1,4 +1,4 @@
-package com.gitsunjaeab.mapick.config;
+package com.gitsunjaeab.mapick.infra.config;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.SerializationFeature;

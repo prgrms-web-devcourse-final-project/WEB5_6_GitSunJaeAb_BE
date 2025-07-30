@@ -1,4 +1,4 @@
-package com.gitsunjaeab.mapick.config;
+package com.gitsunjaeab.mapick.infra.config;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
