@@ -18,7 +18,7 @@ public enum ResponseCode {
     VERITY_PASSWORD_SUCCESS("2004", HttpStatus.OK, "비밀번호 검증 성공 입니다."),
     CHANGE_PASSWORD_SUCCESS("2005", HttpStatus.OK, "비밀번호 변경 성공 입니다."),
     LOGOUT_SUCCESS("2006", HttpStatus.OK, "로그아웃 되었습니다."),
-
+    TOKEN_REISSUED("2199", HttpStatus.OK, "AccessToken 만료로 인해 새 토큰을 재발급했습니다."),
 
     // 클라이언트 에러
     /**
