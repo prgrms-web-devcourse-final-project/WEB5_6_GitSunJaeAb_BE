@@ -6,6 +6,7 @@ import com.gitsunjaeab.mapick.application.api.roadmap.dto.layer.request.LayerUpd
 import com.gitsunjaeab.mapick.application.api.roadmap.dto.marker.request.RoadmapMarkerUpdateRequest;
 import com.gitsunjaeab.mapick.application.api.roadmap.dto.roadmap.internal.RoadmapAchievementDTO;
 import com.gitsunjaeab.mapick.application.api.roadmap.dto.roadmap.request.RoadmapRequest;
+import com.gitsunjaeab.mapick.application.api.roadmap.dto.roadmap.request.RoadmapSyncRequest;
 import com.gitsunjaeab.mapick.application.api.roadmap.dto.roadmap.request.SharedRoadmapCreateRequest;
 import com.gitsunjaeab.mapick.application.api.roadmap.dto.roadmap.request.SharedRoadmapUpdateRequest;
 import com.gitsunjaeab.mapick.application.api.roadmap.dto.roadmap.response.RoadmapListResponse;
