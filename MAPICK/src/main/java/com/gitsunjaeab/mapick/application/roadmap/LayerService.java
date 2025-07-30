@@ -9,14 +9,14 @@ import com.gitsunjaeab.mapick.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.domain.auth.Role;
 import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
-import com.gitsunjaeab.mapick.domain.roadmap.layer.Layer;
-import com.gitsunjaeab.mapick.domain.roadmap.layer.LayerLibrary;
-import com.gitsunjaeab.mapick.domain.roadmap.layer.LayerLibraryRepository;
-import com.gitsunjaeab.mapick.domain.roadmap.layer.LayerRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.Marker;
 import com.gitsunjaeab.mapick.domain.roadmap.MarkerRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
+import com.gitsunjaeab.mapick.domain.roadmap.layer.Layer;
+import com.gitsunjaeab.mapick.domain.roadmap.layer.LayerLibrary;
+import com.gitsunjaeab.mapick.domain.roadmap.layer.LayerLibraryRepository;
+import com.gitsunjaeab.mapick.domain.roadmap.layer.LayerRepository;
 import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
 import com.gitsunjaeab.mapick.util.NotFoundException;
 import com.gitsunjaeab.mapick.util.ReferencedWarning;
@@ -38,16 +38,15 @@ public class LayerService {
     private final MarkerRepository markerRepository;
     private final LayerLibraryRepository layerLibraryRepository;
 
-
     // ===== 실시간 공유지도 상 CRUD =====
 
     @Transactional
     public LayerResponse createFromSync(LayerSyncRequest request) {
         Member member = memberRepository.findById(request.getMemberId())
-                .orElseThrow(() -> new IllegalArgumentException("사용자 없음"));
+            .orElseThrow(() -> new IllegalArgumentException("사용자 없음"));
 
         Roadmap roadmap = roadmapRepository.findById(request.getRoadmapId())
-                .orElseThrow(() -> new IllegalArgumentException("로드맵 없음"));
+            .orElseThrow(() -> new IllegalArgumentException("로드맵 없음"));
 
         Layer layer = new Layer();
         layer.setName(request.getName());
@@ -61,25 +60,25 @@ public class LayerService {
 
         roadmapEditorService.registerEditorIfNotExists(roadmap.getId(), member.getId());
 
-        return LayerResponse.of(saved, false, "레이어 생성 성공");
+        return LayerResponse.create(saved, false, "레이어 생성 성공");
     }
 
     @Transactional
-    public LayerResponse   updateFromSync(LayerSyncRequest request) {
+    public LayerResponse updateFromSync(LayerSyncRequest request) {
         Layer layer = layerRepository.findByLayerTempId(request.getLayerTempId())
-                .orElseThrow(() -> new IllegalArgumentException("레이어를 찾을 수 없음"));
+            .orElseThrow(() -> new IllegalArgumentException("레이어를 찾을 수 없음"));
 
         layer.setName(request.getName());
         layer.setDescription(request.getDescription());
         layer.setLayerSeq(request.getLayerSeq());
 
-        return LayerResponse.of(layerRepository.save(layer), false, "레이어 수정 성공");
+        return LayerResponse.update(layerRepository.save(layer), false, "레이어 수정 성공");
     }
 
     @Transactional
-    public LayerResponse  deleteByTempId(Long layerTempId) {
+    public LayerResponse deleteByTempId(Long layerTempId) {
         Layer layer = layerRepository.findByLayerTempId(layerTempId)
-                .orElseThrow(() -> new IllegalArgumentException("레이어를 찾을 수 없음"));
+            .orElseThrow(() -> new IllegalArgumentException("레이어를 찾을 수 없음"));
 
         if (layer.getDeletedAt() != null) {
             throw new CommonException(ResponseCode.ALREADY_PROCESSED);
@@ -100,7 +99,7 @@ public class LayerService {
         layerLibraryRepository.softDeleteAllByLayer(layer.getId());
         layer.setDeletedAt(OffsetDateTime.now());
 
-        return LayerResponse.of(layerRepository.save(layer), false, "레이어 삭제 성공");
+        return LayerResponse.delete(layerRepository.save(layer), false, "레이어 삭제 성공");
     }
 
     // ===== 기본 CRUD =====
@@ -168,8 +167,7 @@ public class LayerService {
         Roadmap roadmap = roadmapRepository.findById(roadmapId)
             .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND));
 
-        // 요청 DTO -> Entity 변환
-        Layer layer = request.toEntity(member, roadmap);
+        Layer layer = Layer.fromRequest(request, member, roadmap);
 
         // 저장 & 생성된 레이어 반환
         return layerRepository.save(layer);
@@ -244,7 +242,7 @@ public class LayerService {
     public Layer findById(Long id) {
 
         return layerRepository.findById(id)
-                .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND));
+            .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND));
     }
 
 
@@ -305,4 +303,6 @@ public class LayerService {
         // 참조 없으면 null 반환 → 삭제 가능
         return null;
     }
+
+
 }

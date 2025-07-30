@@ -1,8 +1,5 @@
 package com.gitsunjaeab.mapick.api.roadmap.dto.layer.request;
 
-import com.gitsunjaeab.mapick.domain.member.Member;
-import com.gitsunjaeab.mapick.domain.roadmap.layer.Layer;
-import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -24,19 +21,7 @@ public class LayerRequest {
 
     private String description;
     private Integer layerSeq;
-
-
-    // Entity 변환 메서드
-    public Layer toEntity(Member member, Roadmap roadmap) {
-        Layer layer = new Layer();
-        layer.setName(this.name);
-        layer.setDescription(this.description);
-        layer.setLayerSeq(this.layerSeq);
-
-        layer.setMember(member);
-        layer.setRoadmap(roadmap);
-        return layer;
-    }
+    private boolean isZzimed = false;
 }
 
 
