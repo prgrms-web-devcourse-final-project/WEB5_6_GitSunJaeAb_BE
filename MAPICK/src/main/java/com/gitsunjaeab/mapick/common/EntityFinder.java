@@ -25,6 +25,8 @@ import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 @Component
 @RequiredArgsConstructor
 public class EntityFinder {
@@ -60,6 +62,10 @@ public class EntityFinder {
             .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND, "해당하는 레이어가 없습니다."));
     }
 
+    public Layer findLayerByTempId(Long layerTempId) {
+        return layerRepository.findByLayerTempId(layerTempId)
+                .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND, "해당하는 레이어가 없습니다."));
+    }
     public Quest findQuestById(Long questId) {
         return questRepository.findById(questId)
             .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND, "해당하는 퀘스트가 없습니다."));
