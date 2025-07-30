@@ -7,6 +7,9 @@ import com.gitsunjaeab.mapick.infra.converter.OffsetDateTimeConverter;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Convert;
 import jakarta.persistence.EntityListeners;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -35,6 +38,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @EntityListeners(AuditingEntityListener.class) // 생성,수정,삭제 시간 서버 자동처리용
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Layer {
 
     @Id

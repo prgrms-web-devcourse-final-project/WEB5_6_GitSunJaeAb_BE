@@ -2,6 +2,8 @@ package com.gitsunjaeab.mapick.application.domain.roadmap.roadmap;
 
 import com.gitsunjaeab.mapick.application.api.achievement.dto.internal.AchievementDTO;
 import com.gitsunjaeab.mapick.application.api.roadmap.dto.hashtag.request.HashtagRequest;
+import com.gitsunjaeab.mapick.application.api.roadmap.dto.layer.request.LayerUpdateRequest;
+import com.gitsunjaeab.mapick.application.api.roadmap.dto.marker.request.RoadmapMarkerUpdateRequest;
 import com.gitsunjaeab.mapick.application.api.roadmap.dto.roadmap.internal.RoadmapAchievementDTO;
 import com.gitsunjaeab.mapick.application.api.roadmap.dto.roadmap.request.RoadmapRequest;
 import com.gitsunjaeab.mapick.application.api.roadmap.dto.roadmap.request.RoadmapSyncRequest;
@@ -18,6 +20,7 @@ import com.gitsunjaeab.mapick.application.domain.roadmap.hashtag.HashtagReposito
 import com.gitsunjaeab.mapick.application.domain.roadmap.hashtag.HashtagService;
 import com.gitsunjaeab.mapick.application.domain.roadmap.layer.LayerService;
 import com.gitsunjaeab.mapick.application.domain.roadmap.marker.Marker;
+import com.gitsunjaeab.mapick.application.domain.roadmap.marker.MarkerRepository;
 import com.gitsunjaeab.mapick.application.domain.roadmap.roadmapeditor.RoadmapEditorRepository;
 import com.gitsunjaeab.mapick.infra.common.EntityFinder;
 import com.gitsunjaeab.mapick.infra.common.response.ResponseCode;
@@ -40,6 +43,7 @@ import jakarta.validation.Valid;
 
 import java.time.OffsetDateTime;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
@@ -69,6 +73,7 @@ public class RoadmapService {
     private final LayerLibraryRepository layerLibraryRepository;
     private final MemberAchievementRepository memberAchievementRepository;
     private final AchievementRepository achievementRepository;
+    private final MarkerRepository markerRepository;
 
     // 공유 지도 생성
     @Transactional
@@ -215,31 +220,135 @@ public class RoadmapService {
 
     // 개인 로드맵 수정
     @Transactional
-    public void updateRoadmap(@Valid RoadmapRequest request, Long roadmapId, Long memberId, MultipartFile imageFile) {
+    public void updateRoadmap(
+        Long roadmapId,
+        Member member,
+        @Valid RoadmapRequest request,
+        MultipartFile imageFile,
+        @Valid List<LayerUpdateRequest> layerRequests
+    ) {
+        // 1. 로드맵 & 카테고리 조회
         Roadmap roadmap = entityFinder.findRoadmapById(roadmapId);
         Category category = entityFinder.findCategoryById(request.getCategoryId());
 
-        // 본인 소유인지 검증
-        if (!roadmap.getMember().getId().equals(memberId)) {
+        // 2. 권한 및 타입 검증
+        if (!roadmap.getMember().getId().equals(member.getId())) {
             throw new AccessDeniedException("이 로드맵을 수정할 권한이 없습니다.");
         }
-
         if (roadmap.getRoadmapType() != RoadmapType.PERSONAL) {
             throw new InvalidRoadmapTypeException("개인 로드맵이 아닙니다.");
         }
 
+        // 3. 로드맵 정보 수정
         roadmap.setTitle(request.getTitle());
         roadmap.setDescription(request.getDescription());
         roadmap.setIsPublic(request.getIsPublic());
         roadmap.setCategory(category);
         roadmap.setUpdatedAt(OffsetDateTime.now());
+
         if (imageFile != null && !imageFile.isEmpty()) {
             roadmap.setThumbnail(uploadImage(imageFile));
         }
 
-        // 해시태그 수정: null이 아닐 때만 처리
         if (request.getHashtags() != null) {
             updateHashtags(roadmap, request.getHashtags());
+        }
+
+        // 4. 기존 레이어 조회 및 매핑
+        List<Layer> existingLayers = layerRepository.findByRoadmapIdAndDeletedAtIsNull(roadmapId);
+        Map<Long, Layer> existingLayerMap = existingLayers.stream()
+            .collect(Collectors.toMap(Layer::getId, Function.identity()));
+
+        Set<Long> requestedLayerIds = layerRequests.stream()
+            .map(LayerUpdateRequest::getLayerId)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toSet());
+
+        // 5. 삭제 대상 레이어 soft delete
+        for (Layer layer : existingLayers) {
+            if (!requestedLayerIds.contains(layer.getId())) {
+                layer.setDeletedAt(OffsetDateTime.now());
+            }
+        }
+
+        // 6. 레이어 처리
+        for (LayerUpdateRequest layerReq : layerRequests) {
+            Layer layer;
+
+            Long layerId = layerReq.getLayerId();
+            if (layerId == null) {
+                // 새 레이어
+                layer = Layer.builder()
+                    .name(layerReq.getName())
+                    .description(layerReq.getDescription())
+                    .layerSeq(layerReq.getLayerSeq())
+                    .roadmap(roadmap)
+                    .build();
+                layerRepository.save(layer);
+            } else {
+                // 기존 레이어 수정
+                layer = existingLayerMap.get(layerId);
+                if (layer == null) {
+                    throw new CommonException(ResponseCode.NOT_FOUND, "존재하지 않는 레이어입니다. ID: " + layerId);
+                }
+
+                layer.setName(layerReq.getName());
+                layer.setDescription(layerReq.getDescription());
+                layer.setLayerSeq(layerReq.getLayerSeq());
+            }
+
+            // === 마커 처리 ===
+            List<RoadmapMarkerUpdateRequest> markerRequests = layerReq.getMarkers();
+            List<Marker> existingMarkers = markerRepository.findAllByLayer_Id(layer.getId());
+            Map<Long, Marker> existingMarkerMap = existingMarkers.stream()
+                .collect(Collectors.toMap(Marker::getId, Function.identity()));
+
+            Set<Long> requestedMarkerIds = markerRequests.stream()
+                .map(RoadmapMarkerUpdateRequest::getMarkerId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+
+            // 기존 마커 중 요청에 없는 건 삭제
+            for (Marker marker : existingMarkers) {
+                if (!requestedMarkerIds.contains(marker.getId())) {
+                    markerRepository.deleteById(marker.getId());
+                }
+            }
+
+            // 마커 생성/수정
+            for (RoadmapMarkerUpdateRequest markerReq : markerRequests) {
+                Long markerId = markerReq.getMarkerId();
+                if (markerId == null) {
+                    // 새 마커
+                    Marker newMarker = Marker.builder()
+                        .name(markerReq.getName())
+                        .description(markerReq.getDescription())
+                        .address(markerReq.getAddress())
+                        .lat(markerReq.getLat())
+                        .lng(markerReq.getLng())
+                        .color(markerReq.getColor())
+                        .markerSeq(markerReq.getMarkerSeq())
+                        .createdAt(OffsetDateTime.now())
+                        .member(member)
+                        .layer(layer)
+                        .build();
+                    markerRepository.save(newMarker);
+                } else {
+                    // 기존 마커 수정
+                    Marker marker = existingMarkerMap.get(markerId);
+                    if (marker == null) {
+                        throw new CommonException(ResponseCode.NOT_FOUND, "존재하지 않는 마커입니다. ID: " + markerId);
+                    }
+
+                    marker.setName(markerReq.getName());
+                    marker.setDescription(markerReq.getDescription());
+                    marker.setAddress(markerReq.getAddress());
+                    marker.setLat(markerReq.getLat());
+                    marker.setLng(markerReq.getLng());
+                    marker.setColor(markerReq.getColor());
+                    marker.setMarkerSeq(markerReq.getMarkerSeq());
+                }
+            }
         }
     }
 
@@ -409,5 +518,4 @@ public class RoadmapService {
 
         roadmapHashtagRelationRepository.saveAll(newRelations);
     }
-
 }
