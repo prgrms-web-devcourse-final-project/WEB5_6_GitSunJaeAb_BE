@@ -15,7 +15,7 @@ import java.time.OffsetDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MarkerSyncRequest {
+public class MarkerSyncRequest implements MarkerRequest{
     private String action;            // "create", "update", "delete"
     private Long markerTempId;           // 클라이언트에서 발급한 임시 ID
     private Long memberId;

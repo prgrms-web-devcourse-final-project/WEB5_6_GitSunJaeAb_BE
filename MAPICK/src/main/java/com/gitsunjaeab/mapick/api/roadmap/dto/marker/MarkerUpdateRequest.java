@@ -1,19 +1,17 @@
 package com.gitsunjaeab.mapick.api.roadmap.dto.marker;
 
-import jakarta.validation.constraints.Null;
 import jakarta.validation.constraints.Size;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
 @NoArgsConstructor
 @Getter
 @Setter
 @AllArgsConstructor
-public class MarkerUpdateRequest {
+public class MarkerUpdateRequest implements MarkerRequest{
 
     @Size(max = 255)
     private String name;

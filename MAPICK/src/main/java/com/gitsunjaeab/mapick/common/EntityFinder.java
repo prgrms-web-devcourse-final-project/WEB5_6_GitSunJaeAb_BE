@@ -11,8 +11,14 @@ import com.gitsunjaeab.mapick.domain.member.Member;
 import com.gitsunjaeab.mapick.domain.member.MemberRepository;
 import com.gitsunjaeab.mapick.domain.quest.Quest;
 import com.gitsunjaeab.mapick.domain.quest.QuestRepository;
+import com.gitsunjaeab.mapick.domain.roadmap.Marker;
+import com.gitsunjaeab.mapick.domain.roadmap.MarkerCustomImage;
+import com.gitsunjaeab.mapick.domain.roadmap.MarkerCustomImageRepository;
+import com.gitsunjaeab.mapick.domain.roadmap.MarkerRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
+import com.gitsunjaeab.mapick.domain.roadmap.layer.Layer;
+import com.gitsunjaeab.mapick.domain.roadmap.layer.LayerRepository;
 import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -27,6 +33,9 @@ public class EntityFinder {
     private final QuestRepository questRepository;
     private final CommentRepository commentRepository;
     private final CategoryRepository categoryRepository;
+    private final MarkerCustomImageRepository markerCustomImageRepository;
+    private final MarkerRepository markerRepository;
+    private final LayerRepository layerRepository;
 
     public Member findMemberById(Long memberId) {
         return memberRepository.findById(memberId)
@@ -43,6 +52,11 @@ public class EntityFinder {
             .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND, "해당하는 로드맵이 없습니다."));
     }
 
+    public Layer findLayerById(Long layerId) {
+        return layerRepository.findById(layerId)
+            .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND, "해당하는 레이어가 없습니다."));
+    }
+
     public Quest findQuestById(Long questId) {
         return questRepository.findById(questId)
             .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND, "해당하는 퀘스트가 없습니다."));
@@ -56,6 +70,21 @@ public class EntityFinder {
     public Category findByCategoryId(Long categoryId) {
         return categoryRepository.findById(categoryId)
             .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND, "해당하는 카테고리가 없습니다."));
+    }
+
+    public Marker findByMarkerId(Long markerId) {
+        return  markerRepository.findById(markerId)
+            .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND, "해당하는 마커가 없습니다."));
+    }
+
+    public Marker findByMarkerTempId(Long markerTempId) {
+        return markerRepository.findByMarkerTempId(markerTempId)
+            .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND, "해당하는 마커가 없습니다."));
+    }
+
+    public MarkerCustomImage findByMarkerCustomId(Long customImageId) {
+        return markerCustomImageRepository.findById(customImageId)
+            .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND, "해당하는 커스텀 이미지가 없습니다."));
     }
 }
 
