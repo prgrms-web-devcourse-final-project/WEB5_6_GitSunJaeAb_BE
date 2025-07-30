@@ -1,10 +1,10 @@
 package com.gitsunjaeab.mapick.infra.auth.token;
 
 import com.gitsunjaeab.mapick.infra.common.response.ResponseCode;
-import com.gitsunjaeab.mapick.domain.auth.Principal;
-import com.gitsunjaeab.mapick.api.auth.dto.internal.TokenDTO;
-import com.gitsunjaeab.mapick.domain.member.Member;
-import com.gitsunjaeab.mapick.domain.member.MemberRepository;
+import com.gitsunjaeab.mapick.application.domain.auth.Principal;
+import com.gitsunjaeab.mapick.application.api.auth.dto.internal.TokenDTO;
+import com.gitsunjaeab.mapick.application.domain.member.Member;
+import com.gitsunjaeab.mapick.application.domain.member.MemberRepository;
 import com.gitsunjaeab.mapick.infra.auth.token.code.TokenType;
 import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
 import io.jsonwebtoken.Claims;

@@ -1,8 +1,8 @@
 package com.gitsunjaeab.mapick.infra.auth;
 
 import com.gitsunjaeab.mapick.infra.common.response.ResponseCode;
-import com.gitsunjaeab.mapick.domain.auth.Principal;
-import com.gitsunjaeab.mapick.domain.member.Member;
+import com.gitsunjaeab.mapick.application.domain.auth.Principal;
+import com.gitsunjaeab.mapick.application.domain.member.Member;
 import com.gitsunjaeab.mapick.infra.error.exceptions.UnauthenticatedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;

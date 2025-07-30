@@ -5,7 +5,7 @@
 //import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 //import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 //
-//import com.gitsunjaeab.mapick.application.roadmap.BookmarkService;
+//import com.gitsunjaeab.mapick.application2.domain.roadmap.BookmarkService;
 //import com.gitsunjaeab.mapick.domain.category.Category;
 //import com.gitsunjaeab.mapick.domain.roadmap.layer.LayerLibraryRepository;
 //import com.gitsunjaeab.mapick.domain.roadmap.layer.LayerLibraryRepository.RoadmapCitationProjection;

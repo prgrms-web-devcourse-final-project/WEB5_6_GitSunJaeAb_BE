@@ -1,8 +1,8 @@
 package com.gitsunjaeab.mapick.infra.scheduler;
 
-import com.gitsunjaeab.mapick.application.quest.MemberQuestService;
-import com.gitsunjaeab.mapick.domain.notification.Notification;
-import com.gitsunjaeab.mapick.domain.notification.NotificationRepository;
+import com.gitsunjaeab.mapick.application.domain.quest.MemberQuestService;
+import com.gitsunjaeab.mapick.application.domain.notification.Notification;
+import com.gitsunjaeab.mapick.application.domain.notification.NotificationRepository;
 import java.time.OffsetDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

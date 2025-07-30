@@ -1,8 +1,8 @@
 package com.gitsunjaeab.mapick.infra.auth;
 
-import com.gitsunjaeab.mapick.domain.auth.Principal;
-import com.gitsunjaeab.mapick.domain.member.Member;
-import com.gitsunjaeab.mapick.domain.member.MemberRepository;
+import com.gitsunjaeab.mapick.application.domain.auth.Principal;
+import com.gitsunjaeab.mapick.application.domain.member.Member;
+import com.gitsunjaeab.mapick.application.domain.member.MemberRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
