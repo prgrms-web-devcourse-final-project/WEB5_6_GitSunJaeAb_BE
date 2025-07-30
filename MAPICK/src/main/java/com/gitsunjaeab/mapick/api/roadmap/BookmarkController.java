@@ -2,15 +2,18 @@ package com.gitsunjaeab.mapick.api.roadmap;
 
 import com.gitsunjaeab.mapick.api.roadmap.dto.bookmark.BookmarkCreateResponse;
 import com.gitsunjaeab.mapick.api.roadmap.dto.bookmark.BookmarkDeleteResponse;
-import com.gitsunjaeab.mapick.common.response.ApiResponse;
 import com.gitsunjaeab.mapick.common.response.ResponseCode;
-import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.RoadmapListResponse;
+import com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.response.RoadmapListResponse;
 import com.gitsunjaeab.mapick.api.roadmap.dto.bookmark.BookmarkDTO;
 import com.gitsunjaeab.mapick.application.roadmap.BookmarkService;
+import com.gitsunjaeab.mapick.common.util.AuthUtil;
 import com.gitsunjaeab.mapick.domain.auth.Principal;
+import com.gitsunjaeab.mapick.domain.member.Member;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -24,13 +27,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/bookmarks", produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "북마크 관리 API", description = "로드맵 북마크 및 마이페이지 북마크 목록 관련 API")
+@RequiredArgsConstructor
 public class BookmarkController {
 
     private final BookmarkService bookmarkService;
-
-    public BookmarkController(final BookmarkService bookmarkService){
-        this.bookmarkService = bookmarkService;
-    }
 
     // 북마크 전체 조회 >> NOTE 프론트 데이터 확인용 (추후 삭제예정)
     @GetMapping
@@ -47,8 +47,8 @@ public class BookmarkController {
             @PathVariable(name = "roadmapId") final Long roadmapId,
             @AuthenticationPrincipal Principal principal) {
 
-        Long memberId = principal.getMember().getId();
-
+        Member member = AuthUtil.getAuthenticatedMember(principal);
+        Long memberId = member.getId();
         Long bookmarkId = bookmarkService.create(roadmapId, memberId);
 
         return ResponseEntity.ok(BookmarkCreateResponse.of(ResponseCode.OK, "북마크 등록 완료", bookmarkId));
@@ -60,7 +60,8 @@ public class BookmarkController {
     public ResponseEntity<BookmarkDeleteResponse> deleteBookmark(
             @PathVariable(name = "likeId") final Long likeId
             ,@AuthenticationPrincipal Principal principal) {
-        Long memberId = principal.getMember().getId();
+        Member member = AuthUtil.getAuthenticatedMember(principal);
+        Long memberId = member.getId();
         bookmarkService.delete(likeId, memberId);
 
         return ResponseEntity.ok(BookmarkDeleteResponse.of(ResponseCode.OK, "북마크 해제 완료"));
@@ -72,7 +73,8 @@ public class BookmarkController {
     public ResponseEntity<RoadmapListResponse> getMyBookmarkedRoadmaps(
             @AuthenticationPrincipal Principal principal
     ) {
-        Long memberId = principal.getMember().getId();
+        Member member = AuthUtil.getAuthenticatedMember(principal);
+        Long memberId = member.getId();
 
         return ResponseEntity.ok(bookmarkService.getBookmarkedRoadmaps(memberId));
     }

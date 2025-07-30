@@ -290,15 +290,15 @@ public class LayerService {
             return referencedWarning;
         }
 
-        // 해당 레이어를 찜한 기록이 하나라도 있는지 확인
-        final List<LayerLibrary> layerLibraries = layerLibraryRepository.findValidZzim(
-            layer.getId());
-        if (!layerLibraries.isEmpty()) {
-            LayerLibrary layerLibrary = layerLibraries.get(0);
-            referencedWarning.setKey("layer.layerLibrary.layer.referenced");
-            referencedWarning.addParam(layerLibrary.getId());
-            return referencedWarning;
-        }
+//        // 해당 레이어를 찜한 기록이 하나라도 있는지 확인
+//        final List<LayerLibrary> layerLibraries = layerLibraryRepository.findValidZzim(
+//            layer.getId());
+//        if (!layerLibraries.isEmpty()) {
+//            LayerLibrary layerLibrary = layerLibraries.get(0);
+//            referencedWarning.setKey("layer.layerLibrary.layer.referenced");
+//            referencedWarning.addParam(layerLibrary.getId());
+//            return referencedWarning;
+//        }
 
         // 참조 없으면 null 반환 → 삭제 가능
         return null;

@@ -15,6 +15,8 @@ import com.gitsunjaeab.mapick.domain.roadmap.Marker;
 import com.gitsunjaeab.mapick.domain.roadmap.MarkerCustomImage;
 import com.gitsunjaeab.mapick.domain.roadmap.MarkerCustomImageRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.MarkerRepository;
+import com.gitsunjaeab.mapick.domain.roadmap.Bookmark;
+import com.gitsunjaeab.mapick.domain.roadmap.BookmarkRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.Roadmap;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.layer.Layer;
@@ -36,6 +38,7 @@ public class EntityFinder {
     private final MarkerCustomImageRepository markerCustomImageRepository;
     private final MarkerRepository markerRepository;
     private final LayerRepository layerRepository;
+    private final BookmarkRepository bookmarkRepository;
 
     public Member findMemberById(Long memberId) {
         return memberRepository.findById(memberId)
@@ -66,6 +69,17 @@ public class EntityFinder {
         return commentRepository.findById(commentId)
             .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND, "해당하는 댓글이 없습니다."));
     }
+
+    public Category findCategoryById(Long categoryId) {
+        return categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND, "해당하는 카테고리가 없습니다."));
+    }
+
+    public Bookmark findBookmarkById(Long bookmarkId){
+        return bookmarkRepository.findById(bookmarkId)
+                .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND, "해당하는 북마크가 없습니다."));
+    }
+
 
     public Category findByCategoryId(Long categoryId) {
         return categoryRepository.findById(categoryId)
