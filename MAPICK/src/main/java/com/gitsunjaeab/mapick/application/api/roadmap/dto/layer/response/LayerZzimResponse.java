@@ -1,7 +1,7 @@
 package com.gitsunjaeab.mapick.application.api.roadmap.dto.layer.response;
 
 import com.gitsunjaeab.mapick.application.api.member.dto.internal.MemberSimpleDTO;
-import com.gitsunjaeab.mapick.application.api.roadmap.dto.layer.LayerDTO;
+import com.gitsunjaeab.mapick.application.api.roadmap.dto.layer.internal.LayerDTO;
 import com.gitsunjaeab.mapick.infra.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.infra.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.application.domain.roadmap.layer.LayerLibrary;

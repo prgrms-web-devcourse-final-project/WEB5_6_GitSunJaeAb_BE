@@ -1,7 +1,7 @@
 package com.gitsunjaeab.mapick.application.domain.achievement;
 
-import com.gitsunjaeab.mapick.application.api.achievement.dto.AchievementDTO;
-import com.gitsunjaeab.mapick.application.api.achievement.dto.MemberAchievementDTO;
+import com.gitsunjaeab.mapick.application.api.achievement.dto.internal.AchievementDTO;
+import com.gitsunjaeab.mapick.application.api.achievement.dto.internal.MemberAchievementDTO;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;

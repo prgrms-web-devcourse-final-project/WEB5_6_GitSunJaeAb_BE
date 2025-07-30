@@ -1,10 +1,10 @@
 package com.gitsunjaeab.mapick.application.api.roadmap;
 
-import com.gitsunjaeab.mapick.application.api.roadmap.dto.bookmark.BookmarkCreateResponse;
-import com.gitsunjaeab.mapick.application.api.roadmap.dto.bookmark.BookmarkDeleteResponse;
+import com.gitsunjaeab.mapick.application.api.roadmap.dto.bookmark.response.BookmarkCreateResponse;
+import com.gitsunjaeab.mapick.application.api.roadmap.dto.bookmark.response.BookmarkDeleteResponse;
 import com.gitsunjaeab.mapick.infra.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.application.api.roadmap.dto.roadmap.response.RoadmapListResponse;
-import com.gitsunjaeab.mapick.application.api.roadmap.dto.bookmark.BookmarkDTO;
+import com.gitsunjaeab.mapick.application.api.roadmap.dto.bookmark.internal.BookmarkDTO;
 import com.gitsunjaeab.mapick.application.domain.roadmap.bookmark.BookmarkService;
 import com.gitsunjaeab.mapick.infra.common.util.AuthUtil;
 import com.gitsunjaeab.mapick.application.domain.auth.Principal;

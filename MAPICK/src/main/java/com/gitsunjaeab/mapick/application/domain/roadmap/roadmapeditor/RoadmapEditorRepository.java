@@ -1,6 +1,6 @@
 package com.gitsunjaeab.mapick.application.domain.roadmap.roadmapeditor;
 
-import com.gitsunjaeab.mapick.application.api.roadmap.dto.roadmap.RoadmapEditorSimpleDTO;
+import com.gitsunjaeab.mapick.application.api.roadmap.dto.roadmap.internal.RoadmapEditorSimpleDTO;
 import com.gitsunjaeab.mapick.application.domain.member.Member;
 import com.gitsunjaeab.mapick.application.domain.roadmap.roadmap.Roadmap;
 import org.springframework.data.jpa.repository.JpaRepository;

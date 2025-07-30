@@ -1,13 +1,13 @@
 package com.gitsunjaeab.mapick.application.api.roadmap;
 
 import com.gitsunjaeab.mapick.application.domain.roadmap.marker.MarkerService;
-import com.gitsunjaeab.mapick.application.api.roadmap.dto.marker.MarkerCreateRequest;
-import com.gitsunjaeab.mapick.application.api.roadmap.dto.marker.MarkerCustomImageDTO;
-import com.gitsunjaeab.mapick.application.api.roadmap.dto.marker.MarkerCustomImageResponse;
-import com.gitsunjaeab.mapick.application.api.roadmap.dto.marker.MarkerDTO;
-import com.gitsunjaeab.mapick.application.api.roadmap.dto.marker.MarkerResponse;
-import com.gitsunjaeab.mapick.application.api.roadmap.dto.marker.MarkerSyncRequest;
-import com.gitsunjaeab.mapick.application.api.roadmap.dto.marker.MarkerUpdateRequest;
+import com.gitsunjaeab.mapick.application.api.roadmap.dto.marker.request.MarkerCreateRequest;
+import com.gitsunjaeab.mapick.application.api.roadmap.dto.marker.internal.MarkerCustomImageDTO;
+import com.gitsunjaeab.mapick.application.api.roadmap.dto.marker.response.MarkerCustomImageResponse;
+import com.gitsunjaeab.mapick.application.api.roadmap.dto.marker.internal.MarkerDTO;
+import com.gitsunjaeab.mapick.application.api.roadmap.dto.marker.response.MarkerResponse;
+import com.gitsunjaeab.mapick.application.api.roadmap.dto.marker.request.MarkerSyncRequest;
+import com.gitsunjaeab.mapick.application.api.roadmap.dto.marker.request.MarkerUpdateRequest;
 import com.gitsunjaeab.mapick.application.domain.auth.Principal;
 import com.gitsunjaeab.mapick.application.domain.roadmap.marker.Marker;
 import io.swagger.v3.oas.annotations.Operation;

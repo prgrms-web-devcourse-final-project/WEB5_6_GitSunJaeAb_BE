@@ -1,7 +1,7 @@
 package com.gitsunjaeab.mapick.infra.error;
 
-import com.gitsunjaeab.mapick.application.api.roadmap.dto.bookmark.BookmarkCreateResponse;
-import com.gitsunjaeab.mapick.application.api.roadmap.dto.bookmark.BookmarkDeleteResponse;
+import com.gitsunjaeab.mapick.application.api.roadmap.dto.bookmark.response.BookmarkCreateResponse;
+import com.gitsunjaeab.mapick.application.api.roadmap.dto.bookmark.response.BookmarkDeleteResponse;
 import com.gitsunjaeab.mapick.infra.common.response.ApiResponse;
 import com.gitsunjaeab.mapick.infra.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.infra.common.response.ErrorResponse;

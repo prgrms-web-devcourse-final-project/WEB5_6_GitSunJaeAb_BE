@@ -1,16 +1,16 @@
 package com.gitsunjaeab.mapick.application.domain.quest;
 
 import com.gitsunjaeab.mapick.application.api.member.dto.internal.MemberSimpleDTO;
-import com.gitsunjaeab.mapick.application.api.quest.dto.MemberQuestCreateRequest;
-import com.gitsunjaeab.mapick.application.api.quest.dto.MemberQuestCreateResponse;
-import com.gitsunjaeab.mapick.application.api.quest.dto.MemberQuestJudgeRequest;
-import com.gitsunjaeab.mapick.application.api.quest.dto.MemberQuestJudgeResponse;
-import com.gitsunjaeab.mapick.application.api.quest.dto.MemberQuestRankResponse;
-import com.gitsunjaeab.mapick.application.api.quest.dto.MemberQuestResponse;
-import com.gitsunjaeab.mapick.application.api.quest.dto.MemberQuestSubmissionDTO;
-import com.gitsunjaeab.mapick.application.api.quest.dto.MemberQuestUpdateRequest;
-import com.gitsunjaeab.mapick.application.api.quest.dto.MemberQuestUpdateResponse;
-import com.gitsunjaeab.mapick.application.api.quest.dto.MemberRankingDTO;
+import com.gitsunjaeab.mapick.application.api.quest.dto.request.MemberQuestCreateRequest;
+import com.gitsunjaeab.mapick.application.api.quest.dto.response.MemberQuestCreateResponse;
+import com.gitsunjaeab.mapick.application.api.quest.dto.request.MemberQuestJudgeRequest;
+import com.gitsunjaeab.mapick.application.api.quest.dto.response.MemberQuestJudgeResponse;
+import com.gitsunjaeab.mapick.application.api.quest.dto.response.MemberQuestRankResponse;
+import com.gitsunjaeab.mapick.application.api.quest.dto.response.MemberQuestResponse;
+import com.gitsunjaeab.mapick.application.api.quest.dto.internal.MemberQuestSubmissionDTO;
+import com.gitsunjaeab.mapick.application.api.quest.dto.request.MemberQuestUpdateRequest;
+import com.gitsunjaeab.mapick.application.api.quest.dto.response.MemberQuestUpdateResponse;
+import com.gitsunjaeab.mapick.application.api.quest.dto.internal.MemberRankingDTO;
 import com.gitsunjaeab.mapick.application.domain.notification.NotificationService;
 import com.gitsunjaeab.mapick.application.domain.member.Member;
 import com.gitsunjaeab.mapick.application.domain.notification.code.NotificationType;

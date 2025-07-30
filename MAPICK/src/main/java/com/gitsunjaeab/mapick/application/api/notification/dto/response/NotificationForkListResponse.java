@@ -1,8 +1,8 @@
 package com.gitsunjaeab.mapick.application.api.notification.dto.response;
 
 import com.gitsunjaeab.mapick.application.api.member.dto.internal.MemberSimpleDTO;
-import com.gitsunjaeab.mapick.application.api.notification.dto.NotificationForkListDTO;
-import com.gitsunjaeab.mapick.application.api.roadmap.dto.roadmap.RoadmapSimpleDTO;
+import com.gitsunjaeab.mapick.application.api.notification.dto.internal.NotificationForkListDTO;
+import com.gitsunjaeab.mapick.application.api.roadmap.dto.roadmap.internal.RoadmapSimpleDTO;
 import com.gitsunjaeab.mapick.infra.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.infra.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.application.domain.notification.Notification;

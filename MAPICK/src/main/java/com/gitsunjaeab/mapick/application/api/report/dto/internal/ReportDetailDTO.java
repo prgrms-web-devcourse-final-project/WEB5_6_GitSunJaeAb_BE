@@ -1,9 +1,9 @@
 package com.gitsunjaeab.mapick.application.api.report.dto.internal;
 
 import com.gitsunjaeab.mapick.application.api.member.dto.internal.MemberDTO;
-import com.gitsunjaeab.mapick.application.api.quest.dto.QuestReportDTO;
-import com.gitsunjaeab.mapick.application.api.roadmap.dto.marker.MarkerReportDTO;
-import com.gitsunjaeab.mapick.application.api.roadmap.dto.roadmap.RoadmapReportDTO;
+import com.gitsunjaeab.mapick.application.api.quest.dto.internal.QuestReportDTO;
+import com.gitsunjaeab.mapick.application.api.roadmap.dto.marker.internal.MarkerReportDTO;
+import com.gitsunjaeab.mapick.application.api.roadmap.dto.roadmap.internal.RoadmapReportDTO;
 import com.gitsunjaeab.mapick.application.domain.report.Report;
 import com.gitsunjaeab.mapick.application.domain.report.code.ReportStatus;
 import jakarta.persistence.EnumType;

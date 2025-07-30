@@ -1,7 +1,7 @@
 package com.gitsunjaeab.mapick.application.api.notification.dto.response;
 
 import com.gitsunjaeab.mapick.application.api.member.dto.internal.MemberSimpleDTO;
-import com.gitsunjaeab.mapick.application.api.notification.dto.NotificationAnnouncementsListDTO;
+import com.gitsunjaeab.mapick.application.api.notification.dto.internal.NotificationAnnouncementsListDTO;
 import com.gitsunjaeab.mapick.infra.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.infra.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.application.domain.notification.Notification;

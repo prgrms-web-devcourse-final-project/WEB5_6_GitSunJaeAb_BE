@@ -1,10 +1,10 @@
 package com.gitsunjaeab.mapick.application.api.category;
 
-import com.gitsunjaeab.mapick.application.api.category.dto.CategoryDTO;
-import com.gitsunjaeab.mapick.application.api.category.dto.CategoryListResponse;
-import com.gitsunjaeab.mapick.application.api.category.dto.CategoryRequest;
-import com.gitsunjaeab.mapick.application.api.category.dto.CategoryResponse;
-import com.gitsunjaeab.mapick.application.api.category.dto.Top5CategoriesResponse;
+import com.gitsunjaeab.mapick.application.api.category.dto.internal.CategoryDTO;
+import com.gitsunjaeab.mapick.application.api.category.dto.response.CategoryListResponse;
+import com.gitsunjaeab.mapick.application.api.category.dto.request.CategoryRequest;
+import com.gitsunjaeab.mapick.application.api.category.dto.response.CategoryResponse;
+import com.gitsunjaeab.mapick.application.api.category.dto.response.Top5CategoriesResponse;
 import com.gitsunjaeab.mapick.application.domain.category.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

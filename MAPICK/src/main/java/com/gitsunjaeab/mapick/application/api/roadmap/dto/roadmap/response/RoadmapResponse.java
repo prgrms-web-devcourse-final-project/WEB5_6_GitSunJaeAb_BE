@@ -1,10 +1,10 @@
 package com.gitsunjaeab.mapick.application.api.roadmap.dto.roadmap.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.gitsunjaeab.mapick.application.api.category.dto.CategorySimpleDTO;
+import com.gitsunjaeab.mapick.application.api.category.dto.internal.CategorySimpleDTO;
 import com.gitsunjaeab.mapick.application.api.member.dto.internal.MemberSimpleDTO;
-import com.gitsunjaeab.mapick.application.api.roadmap.dto.hashtag.HashtagDTO;
-import com.gitsunjaeab.mapick.application.api.roadmap.dto.layer.LayerWithMarkerDTO;
+import com.gitsunjaeab.mapick.application.api.roadmap.dto.hashtag.internal.HashtagDTO;
+import com.gitsunjaeab.mapick.application.api.roadmap.dto.layer.internal.LayerWithMarkerDTO;
 import com.gitsunjaeab.mapick.infra.common.response.BaseApiResponse;
 import com.gitsunjaeab.mapick.infra.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.application.domain.roadmap.roadmap.Roadmap;

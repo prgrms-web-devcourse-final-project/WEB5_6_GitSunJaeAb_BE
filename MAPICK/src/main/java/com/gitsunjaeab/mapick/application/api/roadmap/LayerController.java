@@ -1,8 +1,8 @@
 package com.gitsunjaeab.mapick.application.api.roadmap;
 
-import com.gitsunjaeab.mapick.application.api.roadmap.dto.layer.LayerDetailDTO;
-import com.gitsunjaeab.mapick.application.api.roadmap.dto.layer.LayerListDTO;
-import com.gitsunjaeab.mapick.application.api.roadmap.dto.layer.LayerZzimSimpleDTO;
+import com.gitsunjaeab.mapick.application.api.roadmap.dto.layer.internal.LayerDetailDTO;
+import com.gitsunjaeab.mapick.application.api.roadmap.dto.layer.internal.LayerListDTO;
+import com.gitsunjaeab.mapick.application.api.roadmap.dto.layer.internal.LayerZzimSimpleDTO;
 import com.gitsunjaeab.mapick.application.api.roadmap.dto.layer.request.LayerRequest;
 import com.gitsunjaeab.mapick.application.api.roadmap.dto.layer.request.LayerSyncRequest;
 import com.gitsunjaeab.mapick.application.api.roadmap.dto.layer.response.LayerListResponse;

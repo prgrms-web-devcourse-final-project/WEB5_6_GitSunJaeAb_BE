@@ -1,7 +1,7 @@
 package com.gitsunjaeab.mapick.application.api.roadmap.dto.roadmap.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.gitsunjaeab.mapick.application.api.roadmap.dto.hashtag.HashtagRequest;
+import com.gitsunjaeab.mapick.application.api.roadmap.dto.hashtag.request.HashtagRequest;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
