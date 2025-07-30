@@ -4,6 +4,7 @@ import com.gitsunjaeab.mapick.application.api.achievement.dto.internal.Achieveme
 import com.gitsunjaeab.mapick.application.api.roadmap.dto.hashtag.request.HashtagRequest;
 import com.gitsunjaeab.mapick.application.api.roadmap.dto.roadmap.internal.RoadmapAchievementDTO;
 import com.gitsunjaeab.mapick.application.api.roadmap.dto.roadmap.request.RoadmapRequest;
+import com.gitsunjaeab.mapick.application.api.roadmap.dto.roadmap.request.RoadmapSyncRequest;
 import com.gitsunjaeab.mapick.application.api.roadmap.dto.roadmap.request.SharedRoadmapCreateRequest;
 import com.gitsunjaeab.mapick.application.api.roadmap.dto.roadmap.request.SharedRoadmapUpdateRequest;
 import com.gitsunjaeab.mapick.application.api.roadmap.dto.roadmap.response.RoadmapListResponse;
@@ -16,6 +17,7 @@ import com.gitsunjaeab.mapick.application.domain.roadmap.hashtag.Hashtag;
 import com.gitsunjaeab.mapick.application.domain.roadmap.hashtag.HashtagRepository;
 import com.gitsunjaeab.mapick.application.domain.roadmap.hashtag.HashtagService;
 import com.gitsunjaeab.mapick.application.domain.roadmap.layer.LayerService;
+import com.gitsunjaeab.mapick.application.domain.roadmap.marker.Marker;
 import com.gitsunjaeab.mapick.application.domain.roadmap.roadmapeditor.RoadmapEditorRepository;
 import com.gitsunjaeab.mapick.infra.common.EntityFinder;
 import com.gitsunjaeab.mapick.infra.common.response.ResponseCode;

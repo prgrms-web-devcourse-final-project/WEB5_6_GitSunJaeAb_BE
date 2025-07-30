@@ -19,6 +19,13 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
     // 마이페이지 - 회원별 북마크 조회용
     List<Bookmark> findByMemberId(Long memberId);
 
+    @Query("""
+    SELECT b
+    FROM Bookmark b
+    JOIN FETCH b.roadmap r
+    WHERE b.member.id = :memberId
+    AND r.deletedAt IS NULL
+""")
     List<Bookmark> findAllWithAllRoadmapRelationsByMemberId(Long memberId);
 
     boolean existsByMemberIdAndRoadmapId(Long memberId, Long roadmapId);
