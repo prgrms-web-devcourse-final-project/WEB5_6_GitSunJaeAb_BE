@@ -23,6 +23,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -36,6 +37,23 @@ public class QuestService {
     private final MemberAchievementRepository memberAchievementRepository;
     private final AchievementRepository achievementRepository;
     private final SupabaseStorageService supabaseStorageService;
+
+    // 만료 퀘스트 자동 비활성화
+    @Scheduled(cron = "0 */1 * * * *") // 1분마다 확인
+    @Transactional
+    public void deactivateExpiredQuests() {
+        OffsetDateTime now = OffsetDateTime.now();
+        List<Quest> expiredQuests = questRepository.findAllByDeadlineBeforeAndIsActiveTrue(now);
+
+        for (Quest quest : expiredQuests) {
+            quest.setIsActive(false);
+        }
+
+        if (!expiredQuests.isEmpty()) {
+            questRepository.saveAll(expiredQuests);
+            System.out.println("[스케줄러] 만료 퀘스트 " + expiredQuests.size() + "건 비활성화 완료!");
+        }
+    }
 
     // 전체 퀘스트 조회
     public List<QuestResponse> findAll(Boolean isActive) {

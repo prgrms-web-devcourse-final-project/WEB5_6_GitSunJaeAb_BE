@@ -251,11 +251,12 @@ public class MemberQuestService {
 
 
     // 참여 취소 이건 추후 상황봐서
-    public void deleteMemberQuest(final Long id) {
-        memberQuestRepository.deleteById(id);
-    }
+//    public void deleteMemberQuest(final Long id) {
+//        memberQuestRepository.deleteById(id);
+//    }
 
     public List<MemberQuestSubmissionDTO> getSubmissions(Long questId) {
+
         final List<MemberQuest> memberQuests = memberQuestRepository.findWithMemberByQuestId(questId);
 
         return memberQuests.stream()
@@ -263,7 +264,10 @@ public class MemberQuestService {
                 memberQuest.getImageUrl(),
                 "Y".equalsIgnoreCase(memberQuest.getIsRecognized()),
                 memberQuest.getMember().getNickname(),
-                memberQuest.getUpdatedAt() != null ? memberQuest.getUpdatedAt() : memberQuest.getCreatedAt()
+                memberQuest.getUpdatedAt() != null ? memberQuest.getUpdatedAt() : memberQuest.getCreatedAt(),
+                memberQuest.getTitle(),
+                memberQuest.getDescription(),
+                memberQuest.getMember().getProfileImage()
             ))
             .toList();
     }
