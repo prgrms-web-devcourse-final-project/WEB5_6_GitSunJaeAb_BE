@@ -21,9 +21,11 @@ public class MemberQuestDTO {
     @Size(max = 255)
     private String answer;
 
-    @NotNull
-    @Size(max = 255)
-    private String isRecognized;
+//    @NotNull
+//    @Size(max = 255)
+//    private String isRecognized;
+
+    private Boolean isRecognized;
 
     private OffsetDateTime createdAt;
 

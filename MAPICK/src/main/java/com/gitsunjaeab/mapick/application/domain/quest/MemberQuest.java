@@ -47,8 +47,11 @@ public class MemberQuest {
     private Boolean status;
 
     //정답여부
+//    @Column(name = "is_recognized")
+//    private String isRecognized;
+
     @Column(name = "is_recognized")
-    private String isRecognized;
+    private Boolean isRecognized;
 
     //
     @Column
@@ -92,7 +95,6 @@ public class MemberQuest {
 
     @OneToMany(mappedBy = "memberQuest", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<Notification> notifications = new HashSet<>();
-
 
 
 }

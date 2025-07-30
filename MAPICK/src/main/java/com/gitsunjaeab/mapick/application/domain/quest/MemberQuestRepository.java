@@ -18,7 +18,7 @@ public interface MemberQuestRepository extends JpaRepository<MemberQuest, Long> 
     List<MemberQuest> findByMember(Member member);
 
 
-    @Query("SELECT mq FROM MemberQuest mq JOIN FETCH mq.member WHERE mq.quest.id = :questId AND mq.isRecognized = 'Y'")
+    @Query("SELECT mq FROM MemberQuest mq JOIN FETCH mq.member WHERE mq.quest.id = :questId AND mq.isRecognized = true")
     List<MemberQuest> findByQuestIdAndRecognizedTrue(@Param("questId") Long questId);
 
 

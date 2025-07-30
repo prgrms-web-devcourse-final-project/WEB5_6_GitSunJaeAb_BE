@@ -52,9 +52,8 @@ public class MemberQuestService {
     public List<MemberQuestResponse> findByQuestId(final Long questId) {
         final List<MemberQuest> memberQuests = memberQuestRepository.findWithMemberByQuestId(questId);
         return memberQuests.stream()
-                .map(this::toResponse)
-                .map(MemberQuestResponse::ofGetList)
-                .toList();
+            .map(this::toResponse)
+            .toList();
     }
 
     // 단일 참여 정보 조회 //확인
@@ -98,8 +97,8 @@ public class MemberQuestService {
         OffsetDateTime now = OffsetDateTime.now(ZoneId.of("Asia/Seoul"));
         memberQuest.setCreatedAt(now);
         memberQuest.setSubmitAt(now);
-
         memberQuest.setStatus(true);
+
 //        memberQuest.setIsRecognized("N");
 
         MemberQuest savedQuest = memberQuestRepository.save(memberQuest);
@@ -195,7 +194,7 @@ public class MemberQuestService {
         }
 
         // 정답 여부 설정
-        memberQuest.setIsRecognized(recognized ? "Y" : "N");
+        memberQuest.setIsRecognized(request.getIsRecognized());
         memberQuest.setUpdatedAt(OffsetDateTime.now(ZoneId.of("Asia/Seoul")));
 
         // 저장 후 DTO로 반환
@@ -227,10 +226,14 @@ public class MemberQuestService {
     }
 
     //top3 선별
+//    public List<MemberQuestRankResponse> getTop3RankedMembersByQuest(Long questId) {
+//        List<MemberQuestRankResponse> fullRanking = getRankedMembersByQuest(questId);
+//        return fullRanking.stream().limit(3).toList();
+//    }
     public List<MemberQuestRankResponse> getTop3RankedMembersByQuest(Long questId) {
-        List<MemberQuestRankResponse> fullRanking = getRankedMembersByQuest(questId);
-        return fullRanking.stream().limit(3).toList();
+        return getRankedMembersByQuest(questId).stream().limit(3).toList();
     }
+
 
 
     // 참여 취소 이건 추후 상황봐서
@@ -238,53 +241,50 @@ public class MemberQuestService {
 //        memberQuestRepository.deleteById(id);
 //    }
 
+    // 퀘스트 제출물 조회
     public List<MemberQuestSubmissionDTO> getSubmissions(Long questId) {
-
         final List<MemberQuest> memberQuests = memberQuestRepository.findWithMemberByQuestId(questId);
-
         return memberQuests.stream()
-            .map(memberQuest -> new MemberQuestSubmissionDTO(
-                memberQuest.getImageUrl(),
-                "Y".equalsIgnoreCase(memberQuest.getIsRecognized()),
-                memberQuest.getMember().getNickname(),
-                memberQuest.getUpdatedAt() != null ? memberQuest.getUpdatedAt() : memberQuest.getCreatedAt(),
-                memberQuest.getTitle(),
-                memberQuest.getDescription(),
-                memberQuest.getMember().getProfileImage()
+            .map(mq -> new MemberQuestSubmissionDTO(
+                mq.getImageUrl(),
+                mq.getIsRecognized(),
+                mq.getMember().getNickname(),
+                mq.getUpdatedAt() != null ? mq.getUpdatedAt() : mq.getCreatedAt(),
+                mq.getTitle(),
+                mq.getDescription(),
+                mq.getMember().getProfileImage()
             ))
             .toList();
     }
 
-    //
+    // 랭킹 리스트 반환
     public List<MemberRankingDTO> getRanking(Long questId) {
         final List<MemberQuest> recognized = memberQuestRepository.findByQuestIdAndRecognizedTrue(questId);
 
         final List<MemberQuest> sorted = recognized.stream()
-            .sorted(Comparator.comparing(memberQuest ->
-                memberQuest.getCreatedAt() != null ? memberQuest.getCreatedAt() : memberQuest.getUpdatedAt()
-            ))
+            .sorted(Comparator.comparing(mq ->
+                mq.getCreatedAt() != null ? mq.getCreatedAt() : mq.getUpdatedAt()))
             .toList();
 
         AtomicInteger rankCounter = new AtomicInteger(1);
         return sorted.stream()
-            .map(memberQuest -> new MemberRankingDTO(
+            .map(mq -> new MemberRankingDTO(
                 rankCounter.getAndIncrement(),
-                memberQuest.getMember().getNickname(),
-                memberQuest.getMember().getProfileImage()
+                mq.getMember().getNickname(),
+                mq.getMember().getProfileImage()
             ))
             .toList();
     }
 
 
 
-    // Entity → Response 변환
     private MemberQuestResponse toResponse(final MemberQuest memberQuest) {
         MemberQuestResponse response = new MemberQuestResponse();
         response.setId(memberQuest.getId());
         response.setStatus(memberQuest.getStatus());
         response.setTitle(memberQuest.getTitle());
         response.setAnswer(memberQuest.getAnswer());
-        response.setIsRecognized(memberQuest.getIsRecognized());
+        response.setIsRecognized(memberQuest.getIsRecognized()); // Boolean 그대로
         response.setImageUrl(memberQuest.getImageUrl());
         response.setDescription(memberQuest.getDescription());
         response.setSubmitAt(memberQuest.getSubmitAt());
@@ -296,5 +296,4 @@ public class MemberQuestService {
         response.setQuest(memberQuest.getQuest() == null ? null : memberQuest.getQuest().getId());
         return response;
     }
-
 }
