@@ -1,5 +1,8 @@
 package com.gitsunjaeab.mapick.application.api.roadmap;
 
+import com.gitsunjaeab.mapick.application.api.roadmap.dto.layer.request.LayerRequest;
+import com.gitsunjaeab.mapick.application.api.roadmap.dto.layer.request.LayerUpdateRequest;
+import com.gitsunjaeab.mapick.application.api.roadmap.dto.marker.request.RoadmapMarkerUpdateRequest;
 import com.gitsunjaeab.mapick.application.api.roadmap.dto.roadmap.internal.RoadmapAchievementDTO;
 import com.gitsunjaeab.mapick.application.api.roadmap.dto.roadmap.internal.RoadmapEditorSimpleDTO;
 import com.gitsunjaeab.mapick.application.api.roadmap.dto.roadmap.request.RoadmapRequest;
@@ -147,16 +150,18 @@ public class RoadmapController {
 
     // 개인 로드맵 수정 NOTE 완
     @PutMapping(value = "/personal/{roadmapId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "로드맵 수정", description = "[사용자용] 레이어, 마커 제외 지도 관련 속성만 수정")
+    @Operation(summary = "로드맵 수정", description = "[사용자용] 레이어, 마커 포함 로드맵 전체 수정")
     public ResponseEntity<RoadmapUpdateResponse> updateRoadmap(
-        @PathVariable(name = "roadmapId") final Long roadmapId,
-        @RequestPart @Valid final RoadmapRequest request,
+        @PathVariable("roadmapId") Long roadmapId,
+        @RequestPart @Valid RoadmapRequest roadmapRequest,
+        @RequestPart @Valid List<LayerUpdateRequest> layerRequests,
         @RequestPart(required = false) MultipartFile imageFile,
-        @AuthenticationPrincipal final Principal principal) {
-
+        @AuthenticationPrincipal Principal principal
+    ) {
         Member member = AuthUtil.getAuthenticatedMember(principal);
-        Long memberId = member.getId();
-        roadmapService.updateRoadmap(request, roadmapId, memberId, imageFile);
+//        Long memberId = member.getId();
+
+        roadmapService.updateRoadmap(roadmapId, member, roadmapRequest, imageFile, layerRequests);
 
         return ResponseEntity.ok(RoadmapUpdateResponse.updateRoadmap(ResponseCode.OK, "로드맵 수정 완료"));
     }
