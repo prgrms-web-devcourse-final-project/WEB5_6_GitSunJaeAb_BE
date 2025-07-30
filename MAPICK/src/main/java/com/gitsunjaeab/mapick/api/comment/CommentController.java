@@ -115,7 +115,7 @@ public class CommentController {
     }
 
 
-    @Operation(summary = "댓글 삭제", description = "[작성자] 댓글 삭제")
+    @Operation(summary = "댓글 삭제", description = "[작성자/게시글 작성자] 댓글을 작성한 본인이나 퀘스트/로드맵 작성자는 본인 게시물의 댓글 삭제 가능")
     @DeleteMapping("/{commentId}")
     public ResponseEntity<CommentResponse> deleteComment(
         @AuthenticationPrincipal Principal principal,

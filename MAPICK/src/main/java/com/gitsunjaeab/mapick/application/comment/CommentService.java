@@ -97,9 +97,18 @@ public class CommentService {
     @Transactional
     public void delete(final Long commentId, final Long memberId) {
         final Comment comment = entityFinder.findCommentById(commentId);
+        final Long commentAuthorId = comment.getMember().getId();
 
-        if (!comment.getMember().getId().equals(memberId)) {
-            throw new UnauthorizedAccessException("댓글 삭제는 해당 댓글의 작성자만 가능합니다.");
+        boolean isCommentAuthor = commentAuthorId.equals(memberId);
+
+        boolean isQuestAuthor = comment.getQuest() != null &&
+            comment.getQuest().getMember().getId().equals(memberId);
+
+        boolean isRoadmapAuthor = comment.getRoadmap() != null &&
+            comment.getRoadmap().getMember().getId().equals(memberId);
+
+        if (!(isCommentAuthor || isQuestAuthor || isRoadmapAuthor)) {
+            throw new UnauthorizedAccessException("댓글 삭제는 댓글 작성자 또는 게시글 작성자만 가능합니다.");
         }
 
         commentRepository.deleteById(commentId);
