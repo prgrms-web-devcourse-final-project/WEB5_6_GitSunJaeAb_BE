@@ -12,7 +12,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class MemberQuestSubmissionDTO {
     private String imageUrl;
-    private boolean isRecognized;
+    private Boolean isRecognized;
     private String nickname;
     private OffsetDateTime submittedAt;
     private String title;

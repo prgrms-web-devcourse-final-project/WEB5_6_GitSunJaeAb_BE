@@ -11,48 +11,35 @@ import lombok.Setter;
 
 import java.time.OffsetDateTime;
 
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class MemberQuestResponse {
 
-
-
-    // 퀘스트 참여 데이터 필드들
     private Long id;
 
     @NotNull
     private Boolean status;
 
-    private String isRecognized;
+    // Boolean 타입 유지
+    private Boolean isRecognized;
 
     private String title;
-
     private String answer;
-
     private OffsetDateTime createdAt;
-
     private OffsetDateTime completedAt;
-
     private OffsetDateTime updatedAt;
-
     private OffsetDateTime deletedAt;
-
     private OffsetDateTime submitAt;
-
     private String imageUrl;
-
     private String description;
-
     private MemberSimpleDTO member;
-
     private Long quest;
 
-
-
-    // 퀘스트 참여 생성 응답
-    public static MemberQuestResponse ofCreate(MemberQuest memberQuest) {
+    // 공통 변환 메서드
+    public static MemberQuestResponse from(MemberQuest memberQuest) {
         return new MemberQuestResponse(
             memberQuest.getId(),
             memberQuest.getStatus(),
@@ -68,51 +55,19 @@ public class MemberQuestResponse {
             memberQuest.getDescription(),
             memberQuest.getMember() != null ? new MemberSimpleDTO(memberQuest.getMember()) : null,
             memberQuest.getQuest() != null ? memberQuest.getQuest().getId() : null
-
-            //향후 프론트 요청에 따라 수정 할 예정
-            //memberQuest.getQuest() != null ? new QuestDTO(memberQuest.getQuest()) : null
-
         );
     }
 
-    // 퀘스트 참여 조회 응답 (커스텀 응답 + 데이터)
-    public static MemberQuestResponse ofGetDetail(MemberQuestResponse memberQuestResponse) {
-        return new MemberQuestResponse(
-            memberQuestResponse.getId(),
-            memberQuestResponse.getStatus(),
-            memberQuestResponse.getIsRecognized(),
-            memberQuestResponse.getTitle(),
-            memberQuestResponse.getAnswer(),
-            memberQuestResponse.getCreatedAt(),
-            memberQuestResponse.getCompletedAt(),
-            memberQuestResponse.getUpdatedAt(),
-            memberQuestResponse.getDeletedAt(),
-            memberQuestResponse.getSubmitAt(),
-            memberQuestResponse.getImageUrl(),
-            memberQuestResponse.getDescription(),
-            memberQuestResponse.getMember(),
-            memberQuestResponse.getQuest()
-        );
-    }
+    // 이름만 다른 중복 메서드는 제거 가능하지만, 필요하다면 유지
+//    public static MemberQuestResponse ofCreate(MemberQuest memberQuest) {
+//        return from(memberQuest);
+//    }
+//
+//    public static MemberQuestResponse ofGetDetail(MemberQuest memberQuest) {
+//        return from(memberQuest);
+//    }
 
-    // 퀘스트 참여 목록 조회 응답 (커스텀 응답 + 데이터)
-    public static MemberQuestResponse ofGetList(MemberQuestResponse memberQuestResponse) {
-        return new MemberQuestResponse(
-            memberQuestResponse.getId(),
-            memberQuestResponse.getStatus(),
-            memberQuestResponse.getIsRecognized(),
-            memberQuestResponse.getTitle(),
-            memberQuestResponse.getAnswer(),
-            memberQuestResponse.getCreatedAt(),
-            memberQuestResponse.getCompletedAt(),
-            memberQuestResponse.getUpdatedAt(),
-            memberQuestResponse.getDeletedAt(),
-            memberQuestResponse.getSubmitAt(),
-            memberQuestResponse.getImageUrl(),
-            memberQuestResponse.getDescription(),
-            memberQuestResponse.getMember(),
-            memberQuestResponse.getQuest()
-        );
+    public static MemberQuestResponse ofGetList(MemberQuest memberQuest) {
+        return from(memberQuest);
     }
-
 }

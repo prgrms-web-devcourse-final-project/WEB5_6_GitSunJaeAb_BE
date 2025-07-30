@@ -12,6 +12,6 @@ public class MemberQuestJudgeRequest {
     @NotNull
     private Long memberQuestId;
 
-    @NotNull
+
     private Boolean isRecognized;
 }
