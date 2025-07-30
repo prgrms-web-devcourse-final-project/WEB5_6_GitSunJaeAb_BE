@@ -2,7 +2,6 @@ plugins {
     id 'org.springframework.boot' version '3.5.3'
     id 'io.spring.dependency-management' version '1.1.7'
     id 'java'
-//    id 'com.github.node-gradle.node' version '7.1.0'
 }
 
 group = 'com.gitsunjaeab'
@@ -83,7 +82,6 @@ dependencies {
     testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
 
-    // https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-starter-webmvc-ui
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9")
 
     // 구글 OAuth
@@ -96,34 +94,11 @@ dependencies {
     implementation 'org.webjars:sockjs-client:1.5.1'
     implementation 'org.webjars:stomp-websocket:2.3.4'
 
+    // Google Secret Manager
+    implementation 'com.google.cloud:spring-cloud-gcp-starter-secretmanager:3.5.2'
 
-
-//    // Google Secret Manager
-//    implementation 'com.google.cloud:spring-cloud-gcp-starter-secretmanager:3.5.2'
-//
-
-
-
+    implementation("org.jetbrains:annotations:26.0.2")
 }
-
-
-//node {
-//    download.set(true)
-//    version.set('22.16.0')
-//}
-
-//tasks.register('npmRunBuild', NpmTask) {
-////    args = ['run', 'build']
-////    dependsOn npmInstall
-//
-////    inputs.files(fileTree('node_modules'))
-////    inputs.files(fileTree('src/main/webapp'))
-//    inputs.file('.env')
-////    inputs.file('package.json')
-////    inputs.file('tsconfig.json')
-////    inputs.file('webpack.config.js')
-//    outputs.dir(layout.buildDirectory.dir('resources/main/static'))
-//}
 
 tasks.register('npmRunBuild', DefaultTask) {
     inputs.file('.env')

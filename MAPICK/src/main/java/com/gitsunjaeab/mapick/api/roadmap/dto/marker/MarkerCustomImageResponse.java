@@ -15,7 +15,6 @@ public class MarkerCustomImageResponse implements BaseApiResponse {
     private String code;
     private String message;
     private OffsetDateTime timestamp;
-
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<MarkerCustomImageDTO> markerCustomImages;
 
