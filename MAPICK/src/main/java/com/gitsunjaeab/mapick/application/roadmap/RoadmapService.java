@@ -32,7 +32,6 @@ import com.gitsunjaeab.mapick.domain.roadmap.RoadmapHashtagRelation;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapHashtagRelationRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapRepository;
 import com.gitsunjaeab.mapick.domain.roadmap.RoadmapType;
-import com.gitsunjaeab.mapick.domain.roadmap.*;
 import com.gitsunjaeab.mapick.infra.auth.AuthHelper;
 import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
 import com.gitsunjaeab.mapick.infra.error.exceptions.InvalidRoadmapTypeException;
@@ -67,7 +66,6 @@ public class RoadmapService {
     private final BookmarkRepository bookmarkRepository;
     private final RoadmapHashtagRelationRepository roadmapHashtagRelationRepository;
     private final ReportRepository reportRepository;
-    private final MarkerRepository markerRepository;
     private final LayerService layerService;
     @Autowired
     private LayerLibraryRepository layerLibraryRepository;
@@ -336,9 +334,10 @@ public class RoadmapService {
 
         boolean isOwner = roadmap.getMember().getId().equals(member.getId());
         boolean isAdmin = member.getRole().equals("ROLE_ADMIN");
-        boolean isReported = reportRepository.existsByRoadmapId(roadmapId);
 
-        if (!(isOwner || (isAdmin && isReported))) {
+        log.debug("삭제 요청 - 요청자 ID: {}, 요청자 ROLE: {}, 로드맵 소유자 ID: {}",
+                member.getId(), member.getRole(), roadmap.getMember().getId());
+        if (!(isOwner || (isAdmin))) {
             throw new AccessDeniedException("삭제 권한이 없습니다.");
         }
 
