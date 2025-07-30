@@ -98,7 +98,12 @@ public class MemberQuestService {
         }
 
         memberQuest.setDescription(request.getDescription());
-        memberQuest.setSubmitAt(OffsetDateTime.now(ZoneId.of("Asia/Seoul")));
+
+
+        OffsetDateTime now = OffsetDateTime.now(ZoneId.of("Asia/Seoul"));
+        memberQuest.setCreatedAt(now);
+        memberQuest.setSubmitAt(now);
+
         memberQuest.setStatus(true);
         memberQuest.setIsRecognized("N");
 

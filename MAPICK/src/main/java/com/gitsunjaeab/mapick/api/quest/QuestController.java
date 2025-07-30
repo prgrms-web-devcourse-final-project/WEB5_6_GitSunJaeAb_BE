@@ -83,7 +83,7 @@ public class QuestController {
     public ResponseEntity<ApiResponse> updateQuest(
         @AuthenticationPrincipal Principal principal,
         @PathVariable(name = "questsId") Long questsId,
-        @RequestPart(name = "questRequest") @Valid QuestRequest questRequest,
+        @RequestPart(name = "request") @Valid QuestRequest questRequest,
         @RequestPart(name = "imageFile", required = false) MultipartFile imageFile) {
 
         questService.update(questsId, questRequest, principal.getMember().getEmail(), imageFile);

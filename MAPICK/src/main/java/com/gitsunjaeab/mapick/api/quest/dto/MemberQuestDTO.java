@@ -17,7 +17,7 @@ public class MemberQuestDTO {
     @Size(max = 255)
     private Boolean status;
 
-    @NotNull
+
     @Size(max = 255)
     private String answer;
 
