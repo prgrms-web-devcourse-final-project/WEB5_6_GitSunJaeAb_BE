@@ -15,7 +15,7 @@ public interface RoadmapEditorRepository extends JpaRepository<RoadmapEditor, Lo
     RoadmapEditor findFirstByMember(Member member);
     boolean existsByRoadmapIdAndMemberId(Long roadmapId, Long memberId);
     long countByRoadmapIdAndDeletedAtIsNull(Long roadmapId);
-    @Query("SELECT new com.gitsunjaeab.mapick.api.roadmap.dto.roadmap.RoadmapEditorSimpleDTO(" +
+    @Query("SELECT new com.gitsunjaeab.mapick.application.api.roadmap.dto.roadmap.RoadmapEditorSimpleDTO(" +
             "m.id, m.name, m.nickname, m.profileImage) " +
             "FROM RoadmapEditor re " +
             "JOIN re.member m " +
