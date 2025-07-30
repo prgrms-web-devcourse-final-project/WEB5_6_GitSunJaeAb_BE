@@ -64,7 +64,7 @@ public class MemberQuestService {
 
     //(참여자) 내가 여태 참여한 퀘스트 조회
     public List<MemberQuestResponse> findByMember(Member member) {
-        return memberQuestRepository.findByMember(member).stream()
+        return memberQuestRepository.findByMemberAndActiveQuest(member).stream()
             .map(this::toResponse)
             .toList();
     }
