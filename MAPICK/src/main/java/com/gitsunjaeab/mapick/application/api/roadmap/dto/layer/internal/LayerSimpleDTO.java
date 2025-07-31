@@ -27,6 +27,7 @@ public class LayerSimpleDTO {
 
     @NotNull
     private OffsetDateTime createdAt;
+    private Long roadmapId;
 
     // 생성자
     public LayerSimpleDTO(Layer layer) {
@@ -35,6 +36,7 @@ public class LayerSimpleDTO {
         this.description = layer.getDescription();
         this.layerSeq = layer.getLayerSeq();
         this.createdAt = layer.getCreatedAt();
+        this.roadmapId = layer.getRoadmap() != null ? layer.getRoadmap().getId() : null;
     }
 
     // 정적 팩토리 메서드

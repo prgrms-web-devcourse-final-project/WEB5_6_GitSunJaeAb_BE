@@ -163,7 +163,7 @@ public class LayerService {
 
     // 레이어 생성
     @Transactional
-    public com.gitsunjaeab.mapick.application.roadmap.Layer.ForkResult create(final LayerRequest request, Long memberId, Long targetRoadmapId) {
+    public ForkResult create(final LayerRequest request, Long memberId, Long targetRoadmapId) {
 
         // 연관 Entity 조회
         Member member = memberRepository.findById(memberId)
@@ -238,7 +238,7 @@ public class LayerService {
                 null                   // 북마크
             );
             // 포크된 레이어 반환
-            return new com.gitsunjaeab.mapick.application.roadmap.Layer.ForkResult(originalLayer, originRoadmap, savedForkedLayer, targetRoadmap);
+            return new ForkResult(originalLayer, originRoadmap, savedForkedLayer, targetRoadmap);
         }
         
         // 일반 생성 - roadmapId 사용
@@ -246,7 +246,7 @@ public class LayerService {
             .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND));
         Layer layer = Layer.fromRequest(request, member, roadmap);
         Layer createdLayer = layerRepository.save(layer);
-        return new com.gitsunjaeab.mapick.application.roadmap.Layer.ForkResult(null, null, createdLayer, roadmap);
+        return new ForkResult(null, null, createdLayer, roadmap);
 
     }
 

@@ -1,25 +1,21 @@
-package com.gitsunjaeab.mapick.application.roadmap.Layer;
+package com.gitsunjaeab.mapick.application.domain.roadmap.layer;
 
 import com.gitsunjaeab.mapick.application.api.roadmap.dto.layer.internal.LayerSimpleDTO;
 import com.gitsunjaeab.mapick.application.api.roadmap.dto.layer.internal.LayerZzimSimpleDTO;
 import com.gitsunjaeab.mapick.application.api.roadmap.dto.marker.internal.MarkerSimpleDTO;
-import com.gitsunjaeab.mapick.application.domain.notification.NotificationService;
-import com.gitsunjaeab.mapick.infra.common.response.ResponseCode;
+import com.gitsunjaeab.mapick.application.api.roadmap.dto.roadmap.internal.RoadmapSimpleDTO;
 import com.gitsunjaeab.mapick.application.domain.member.Member;
 import com.gitsunjaeab.mapick.application.domain.member.MemberRepository;
+import com.gitsunjaeab.mapick.application.domain.notification.NotificationService;
 import com.gitsunjaeab.mapick.application.domain.notification.code.NotificationType;
 import com.gitsunjaeab.mapick.application.domain.roadmap.roadmap.Roadmap;
 import com.gitsunjaeab.mapick.application.domain.roadmap.roadmap.RoadmapRepository;
-import com.gitsunjaeab.mapick.application.domain.roadmap.layer.Layer;
-import com.gitsunjaeab.mapick.application.domain.roadmap.layer.LayerForkHistory;
-import com.gitsunjaeab.mapick.application.domain.roadmap.layer.LayerForkHistoryRepository;
-import com.gitsunjaeab.mapick.application.domain.roadmap.layer.LayerLibrary;
-import com.gitsunjaeab.mapick.application.domain.roadmap.layer.LayerLibraryRepository;
-import com.gitsunjaeab.mapick.application.domain.roadmap.layer.LayerRepository;
+import com.gitsunjaeab.mapick.infra.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,7 +44,7 @@ public class LayerLibraryService {
         List<Long> layerIds = layerLibraryRepository.findLayerIdsByMemberId(member.getId());
 
         if (layerIds.isEmpty()) {
-            return new LayerZzimSimpleDTO(member, List.of(), Map.of(), List.of());
+            return new LayerZzimSimpleDTO(member, List.of(), Map.of(), List.of(), List.of());
         }
 
         final List<Layer> layers = layerRepository.findByIdWithAllAssociations(layerIds);
@@ -76,7 +72,14 @@ public class LayerLibraryService {
             .map(MarkerSimpleDTO::from)
             .collect(Collectors.toList());
 
-        return new LayerZzimSimpleDTO(member, layerDtos, forkHistoriesMap, markers);
+        List<RoadmapSimpleDTO> roadmaps = layers.stream()
+            .map(Layer::getRoadmap)
+            .filter(Objects::nonNull)
+            .map(RoadmapSimpleDTO::from)
+            .distinct() // 같은 로드맵 중복 제거 (필요 시)
+            .collect(Collectors.toList());
+
+        return new LayerZzimSimpleDTO(member, layerDtos, forkHistoriesMap, markers, roadmaps);
     }
 
 
@@ -221,6 +224,7 @@ public class LayerLibraryService {
         // 찜 기록 조회해서 반환
 //        return layerLibraryRepository.findByMemberAndLayer(member, originalLayer)
 //            .orElseThrow(() -> new CommonException(ResponseCode.NOT_FOUND));
-        return new ForkResult(originalLayer, originalLayer.getRoadmap(), savedForkedLayer, targetRoadmap);
+        return new ForkResult(originalLayer, originalLayer.getRoadmap(), savedForkedLayer,
+            targetRoadmap);
     }
 }
