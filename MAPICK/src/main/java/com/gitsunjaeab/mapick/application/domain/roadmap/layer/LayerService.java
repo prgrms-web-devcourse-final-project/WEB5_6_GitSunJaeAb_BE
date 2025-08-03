@@ -296,6 +296,8 @@ public class LayerService {
             markerService.delete(marker.getId());
         }
 
+        markerRepository.flush();
+
         layer.setRoadmap(null);
 
         // 참조 무결성 검사
