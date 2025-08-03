@@ -26,6 +26,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,6 +47,8 @@ public class LayerService {
     private final LayerForkHistoryRepository layerForkHistoryRepository;
     private final NotificationService notificationService;
     private final EntityFinder entityFinder;
+    @PersistenceContext
+    private final EntityManager entityManager;
 
     // ===== 실시간 공유지도 상 CRUD =====
 
@@ -319,6 +324,7 @@ public class LayerService {
         }
 
         markerRepository.flush();
+        entityManager.clear();
 
         layer.setRoadmap(null);
 

@@ -38,7 +38,9 @@ import com.gitsunjaeab.mapick.application.domain.roadmap.layer.LayerRepository;
 import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
 import com.gitsunjaeab.mapick.infra.error.exceptions.InvalidRoadmapTypeException;
 import com.gitsunjaeab.mapick.infra.storage.SupabaseStorageService;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.PersistenceContext;
 import jakarta.validation.Valid;
 
 import java.time.OffsetDateTime;
@@ -74,6 +76,8 @@ public class RoadmapService {
     private final MemberAchievementRepository memberAchievementRepository;
     private final AchievementRepository achievementRepository;
     private final MarkerRepository markerRepository;
+    @PersistenceContext
+    private final EntityManager entityManager;
 
     // 공유 지도 생성
     @Transactional
@@ -282,6 +286,7 @@ public class RoadmapService {
                     .name(layerReq.getName())
                     .description(layerReq.getDescription())
                     .layerSeq(layerReq.getLayerSeq())
+                        .member(member)
                     .roadmap(roadmap)
                     .build();
                 layerRepository.save(layer);
@@ -368,7 +373,12 @@ public class RoadmapService {
         for (Layer layer : layers) {
             layerService.delete(layer.getId(), member.getId());
         }
+
+        layerRepository.flush();
+        entityManager.clear();
         roadmap.setDeletedAt(OffsetDateTime.now());
+        roadmapRepository.save(roadmap);       // 명시적 save
+        roadmapRepository.flush();             // 즉시 반영
     }
 
     @Transactional(readOnly = true)
