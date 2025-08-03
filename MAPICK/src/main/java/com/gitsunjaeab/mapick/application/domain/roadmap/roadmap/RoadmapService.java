@@ -389,7 +389,7 @@ public class RoadmapService {
             roadmaps = roadmapRepository.findAllByIsPublicTrueAndRoadmapTypeAndDeletedAtIsNull(RoadmapType.PERSONAL);
         } else {
             Category category = entityFinder.findCategoryById(categoryId);
-            roadmaps = roadmapRepository.findAllByIsPublicTrueAndRoadmapTypeAndCategoryId(RoadmapType.PERSONAL, category.getId());
+            roadmaps = roadmapRepository.findAllByIsPublicTrueAndRoadmapTypeAndCategoryIdAndDeletedAtIsNull(RoadmapType.PERSONAL, category.getId());
         }
 
         return buildRoadmapListResponse(roadmaps, member);
@@ -403,7 +403,7 @@ public class RoadmapService {
             roadmaps = roadmapRepository.findAllByIsPublicTrueAndRoadmapTypeAndDeletedAtIsNull(RoadmapType.SHARED);
         } else {
             Category category = entityFinder.findCategoryById(categoryId);
-            roadmaps = roadmapRepository.findAllByIsPublicTrueAndRoadmapTypeAndCategoryId(RoadmapType.SHARED, category.getId());
+            roadmaps = roadmapRepository.findAllByIsPublicTrueAndRoadmapTypeAndCategoryIdAndDeletedAtIsNull(RoadmapType.SHARED, category.getId());
         }
 
         return buildRoadmapListResponse(roadmaps, member);

@@ -13,7 +13,7 @@ public interface RoadmapRepository extends JpaRepository<Roadmap, Long> {
 
     Roadmap findFirstByMember(Member member);
 
-    List<Roadmap> findAllByIsPublicTrueAndRoadmapTypeAndCategoryId(RoadmapType roadmapType, Long categoryId);
+    List<Roadmap> findAllByIsPublicTrueAndRoadmapTypeAndCategoryIdAndDeletedAtIsNull(RoadmapType roadmapType, Long categoryId);
 
     List<Roadmap> findAllByMember_IdAndDeletedAtIsNull(Long memberId);
 
