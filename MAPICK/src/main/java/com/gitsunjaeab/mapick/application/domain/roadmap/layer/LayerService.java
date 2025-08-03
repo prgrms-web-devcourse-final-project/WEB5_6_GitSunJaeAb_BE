@@ -20,8 +20,11 @@ import com.gitsunjaeab.mapick.infra.common.EntityFinder;
 import com.gitsunjaeab.mapick.infra.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.infra.error.ReferencedWarning;
 import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
+import com.gitsunjaeab.mapick.infra.error.exceptions.DuplicatedLayerSeqException;
 import java.time.OffsetDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -127,6 +130,25 @@ public class LayerService {
         } else { // 특정 로드맵 레이어 조회 - 모든 연관 엔티티 함께 조회
 
             List<Layer> layers = layerRepository.findAllByRoadmap_IdWithAssociations(roadmapId);
+
+            // 레이어 시퀀스 중복 체크
+            Map<Integer, Long> seqCount = new HashMap<>();
+            for (Layer layer : layers) {
+                if (layer.getLayerSeq() != null) {
+                    seqCount.put(layer.getLayerSeq(), seqCount.getOrDefault(layer.getLayerSeq(), 0L) + 1);
+                }
+            }
+            
+            // 중복된 시퀀스 찾기
+            List<Integer> duplicatedSeqs = seqCount.entrySet().stream()
+                .filter(e -> e.getValue() > 1)
+                .map(Map.Entry::getKey)
+                .toList();
+
+            // 중복된 시퀀스가 있으면 예외 발생
+            if (!duplicatedSeqs.isEmpty()) {
+                throw new DuplicatedLayerSeqException(duplicatedSeqs);
+            }
 
             // 엔티티 리스트 -> DTO 리스트 변환
             List<LayerListDTO> layerDTOs = layers.stream()

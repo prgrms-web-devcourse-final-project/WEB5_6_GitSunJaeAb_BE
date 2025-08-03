@@ -8,6 +8,7 @@ import com.gitsunjaeab.mapick.infra.common.response.ErrorResponse;
 import com.gitsunjaeab.mapick.infra.common.response.ResponseCode;
 import com.gitsunjaeab.mapick.infra.error.exceptions.CommonException;
 import com.gitsunjaeab.mapick.infra.error.exceptions.DuplicatedBookmarkException;
+import com.gitsunjaeab.mapick.infra.error.exceptions.DuplicatedLayerSeqException;
 import com.gitsunjaeab.mapick.infra.error.exceptions.ForbiddenException;
 import com.gitsunjaeab.mapick.infra.error.exceptions.InvalidRoadmapTypeException;
 import com.gitsunjaeab.mapick.infra.error.exceptions.UnauthenticatedException;
@@ -140,6 +141,16 @@ public class RestExceptionAdvice {
                 ex.getMessage(),
                 OffsetDateTime.now()
             )
+        );
+    }
+
+    // 중복된 layerSeq 예외 처리
+    @ExceptionHandler(DuplicatedLayerSeqException.class)
+    public ResponseEntity<BaseApiResponse> handleDuplicatedLayerSeq(DuplicatedLayerSeqException ex) {
+        log.error("중복된 layerSeq 오류: {}", ex.getMessage());
+        String message = "중복된 layerSeq가 존재합니다: " + ex.getDuplicatedSeqs() + ". 레이어 시퀀스를 확인해주세요.";
+        return ResponseEntity.badRequest().body(
+            new ErrorResponse("4001", message, OffsetDateTime.now())
         );
     }
 
