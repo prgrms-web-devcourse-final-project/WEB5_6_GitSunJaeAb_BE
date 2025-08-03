@@ -2,9 +2,9 @@ package com.gitsunjaeab.mapick.application.domain.notification;
 
 import com.gitsunjaeab.mapick.application.api.member.dto.internal.MemberSimpleDTO;
 import com.gitsunjaeab.mapick.application.api.notification.dto.internal.NotificationListDTO;
-import com.gitsunjaeab.mapick.application.api.roadmap.dto.roadmap.internal.RoadmapSimpleDTO;
 import com.gitsunjaeab.mapick.application.api.roadmap.dto.layer.internal.LayerSimpleDTO;
 import com.gitsunjaeab.mapick.application.api.roadmap.dto.marker.internal.MarkerSimpleDTO;
+import com.gitsunjaeab.mapick.application.api.roadmap.dto.roadmap.internal.RoadmapSimpleDTO;
 import com.gitsunjaeab.mapick.application.domain.comment.Comment;
 import com.gitsunjaeab.mapick.application.domain.member.Member;
 import com.gitsunjaeab.mapick.application.domain.notification.code.NotificationType;
@@ -66,12 +66,8 @@ public class NotificationService {
         switch (type) {
             case FORK:
                 title = "🍴포크 발생!";
-                // layerLibrary가 null이거나 member가 null인 경우 안전하게 처리
-                String forkerNickname = (layerLibrary != null && layerLibrary.getMember() != null) 
-                    ? layerLibrary.getMember().getNickname() 
-                    : "누군가";
-                String layerName = (layer != null) ? layer.getName() : "레이어";
-                content = forkerNickname + "님이 " + layerName + "을(를) 인용했어요!";
+                content = layerLibrary.getMember().getNickname()
+                    + "님이 " + layer.getName() + "을(를) 인용했어요!";
                 break;
             case BOOKMARK:
                 if (roadmap != null) {
@@ -171,8 +167,16 @@ public class NotificationService {
                 dto.setRelatedRoadmap(n.getRoadmap() != null ? new RoadmapSimpleDTO(n.getRoadmap()) : null);
                 dto.setRelatedLayer(n.getLayerLibrary() != null && n.getLayerLibrary().getLayer() != null
                     ? new LayerSimpleDTO(n.getLayerLibrary().getLayer()) : null);
-                dto.setRelatedQuestId(n.getMemberQuest() != null ? n.getMemberQuest().getQuest().getId() : null);
-                dto.setRelatedCommentId(null); // TODO: 댓글 알림 있으면 추후 세팅
+                // 퀘스트 ID 설정 - MemberQuest 또는 Quest에서 가져오기
+                Long questId = null;
+                if (n.getMemberQuest() != null) {
+                    questId = n.getMemberQuest().getQuest().getId();
+                } else if (n.getQuest() != null) {
+                    questId = n.getQuest().getId();
+                }
+                dto.setRelatedQuestId(questId);
+                // 댓글 ID 설정 - 댓글 알림인 경우 해당 댓글 ID 설정
+                dto.setRelatedCommentId(n.getComment() != null ? n.getComment().getId() : null);
 
                 if (n.getLayerLibrary() != null && n.getLayerLibrary().getLayer() != null) {
                     List<MarkerSimpleDTO> markers = n.getLayerLibrary().getLayer().getLayerMarkers().stream()
