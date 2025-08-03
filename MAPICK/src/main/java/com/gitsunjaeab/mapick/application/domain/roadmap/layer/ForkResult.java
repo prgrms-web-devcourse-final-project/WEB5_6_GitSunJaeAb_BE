@@ -1,4 +1,4 @@
-package com.gitsunjaeab.mapick.application.roadmap.Layer;
+package com.gitsunjaeab.mapick.application.domain.roadmap.layer;
 
 import com.gitsunjaeab.mapick.application.domain.roadmap.roadmap.Roadmap;
 import com.gitsunjaeab.mapick.application.domain.roadmap.layer.Layer;

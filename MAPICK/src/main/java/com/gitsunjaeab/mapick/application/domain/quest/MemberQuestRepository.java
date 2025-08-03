@@ -17,6 +17,8 @@ public interface MemberQuestRepository extends JpaRepository<MemberQuest, Long> 
     @Query("SELECT mq FROM MemberQuest mq JOIN FETCH mq.member WHERE mq.member = :member")
     List<MemberQuest> findByMember(Member member);
 
+    @Query("SELECT mq FROM MemberQuest mq JOIN FETCH mq.member JOIN FETCH mq.quest q WHERE mq.member = :member AND q.deletedAt IS NULL")
+    List<MemberQuest> findByMemberAndActiveQuest(@Param("member") Member member);
 
     @Query("SELECT mq FROM MemberQuest mq JOIN FETCH mq.member WHERE mq.quest.id = :questId AND mq.isRecognized = true")
     List<MemberQuest> findByQuestIdAndRecognizedTrue(@Param("questId") Long questId);
@@ -28,4 +30,6 @@ public interface MemberQuestRepository extends JpaRepository<MemberQuest, Long> 
     //mypage 확인용
     @Query("SELECT mq FROM MemberQuest mq JOIN FETCH mq.member WHERE mq.quest.id = :questId")
     List<MemberQuest> findWithMemberByQuestId(@Param("questId") Long questId);
+
+
 }

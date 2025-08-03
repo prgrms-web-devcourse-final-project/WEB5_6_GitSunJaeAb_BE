@@ -85,8 +85,18 @@ public class RoadmapResponse implements BaseApiResponse {
         roadmapInfo.setLikeCount(r.getLikeCount());
         roadmapInfo.setViewCount(r.getViewCount());
 
+        // 레이어를 시퀀스 순으로 정렬해서 가져오기 (Set은 순서가 보장되지 않아서 아래처럼 변경)
         List<LayerWithMarkerDTO> layers = r.getRoadmapLayers().stream()
                 .filter(layer -> layer.getDeletedAt() == null)
+                .sorted((l1, l2) -> {
+                    // layerSeq가 같으면 createdAt으로 정렬
+                    if (l1.getLayerSeq() != null && l2.getLayerSeq() != null) {
+                        int seqCompare = Integer.compare(l1.getLayerSeq(), l2.getLayerSeq());
+                        if (seqCompare != 0) return seqCompare;
+                    }
+                    // layerSeq가 null이거나 같으면 createdAt으로 정렬
+                    return l1.getCreatedAt().compareTo(l2.getCreatedAt());
+                })
                 .map(LayerWithMarkerDTO::new)
                 .collect(Collectors.toList());
         roadmapInfo.setLayers(layers);

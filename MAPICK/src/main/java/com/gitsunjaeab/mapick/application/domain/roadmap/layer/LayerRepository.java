@@ -19,7 +19,7 @@ public interface LayerRepository extends JpaRepository<Layer, Long> {
     // ===== 기본 CRUD =====
 
     // 레이어 조회 - 모든 연관 엔티티 함께 조회 (LazyInitializationException 방지)
-    @Query("SELECT l FROM Layer l JOIN FETCH l.member JOIN FETCH l.roadmap r JOIN FETCH r.member LEFT JOIN FETCH r.category WHERE l.roadmap.id = :roadmapId AND l.deletedAt IS NULL AND (l.isBlocked = false OR l.isBlocked IS NULL)")
+    @Query("SELECT l FROM Layer l JOIN FETCH l.member JOIN FETCH l.roadmap r JOIN FETCH r.member LEFT JOIN FETCH r.category WHERE l.roadmap.id = :roadmapId AND l.deletedAt IS NULL AND (l.isBlocked = false OR l.isBlocked IS NULL) ORDER BY l.layerSeq ASC, l.createdAt ASC")
     List<Layer> findAllByRoadmap_IdWithAssociations(@Param("roadmapId") Long roadmapId);
 
 
@@ -80,4 +80,27 @@ public interface LayerRepository extends JpaRepository<Layer, Long> {
         "JOIN FETCH l.roadmap " +
         "WHERE l.id = :id")
     Optional<Layer> findByIdWithMemberAndRoadmap(@Param("id") Long id);
+
+    // ===== 시퀀스 순 조회 =====
+    
+    // 로드맵의 레이어들을 시퀀스 순으로 조회 (모든 연관 엔티티 포함)
+    @Query("SELECT l FROM Layer l " +
+        "JOIN FETCH l.member " +
+        "JOIN FETCH l.roadmap r " +
+        "JOIN FETCH r.member " +
+        "LEFT JOIN FETCH r.category " +
+        "LEFT JOIN FETCH l.layerMarkers " +
+        "WHERE l.roadmap.id = :roadmapId " +
+        "AND l.deletedAt IS NULL " +
+        "AND (l.isBlocked = false OR l.isBlocked IS NULL) " +
+        "ORDER BY l.layerSeq ASC, l.createdAt ASC")
+    List<Layer> findAllByRoadmapIdOrderByLayerSeqAsc(@Param("roadmapId") Long roadmapId);
+
+    // 로드맵의 레이어들을 시퀀스 순으로 조회 (기본 정보만)
+    @Query("SELECT l FROM Layer l " +
+        "WHERE l.roadmap.id = :roadmapId " +
+        "AND l.deletedAt IS NULL " +
+        "AND (l.isBlocked = false OR l.isBlocked IS NULL) " +
+        "ORDER BY l.layerSeq ASC, l.createdAt ASC")
+    List<Layer> findSimpleByRoadmapIdOrderByLayerSeqAsc(@Param("roadmapId") Long roadmapId);
 }

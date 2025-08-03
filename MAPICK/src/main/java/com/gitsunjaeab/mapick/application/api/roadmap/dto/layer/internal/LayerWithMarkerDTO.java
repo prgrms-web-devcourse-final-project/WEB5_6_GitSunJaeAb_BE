@@ -2,6 +2,8 @@ package com.gitsunjaeab.mapick.application.api.roadmap.dto.layer.internal;
 
 import com.gitsunjaeab.mapick.application.api.roadmap.dto.marker.internal.MarkerDTO;
 import com.gitsunjaeab.mapick.application.domain.roadmap.layer.Layer;
+import com.gitsunjaeab.mapick.application.domain.roadmap.marker.Marker;
+import java.util.Comparator;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,7 +20,8 @@ public class LayerWithMarkerDTO {
     public LayerWithMarkerDTO(Layer layer) {
         this.layer = new LayerSimpleDTO(layer);
         this.markers = layer.getLayerMarkers().stream()
-                .map(MarkerDTO::new)
-                .collect(Collectors.toList());
+            .sorted(Comparator.comparing(Marker::getMarkerSeq))
+            .map(MarkerDTO::new)
+            .collect(Collectors.toList());
     }
 }
