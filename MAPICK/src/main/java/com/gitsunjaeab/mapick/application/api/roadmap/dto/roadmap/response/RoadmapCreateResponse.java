@@ -35,13 +35,23 @@ public class RoadmapCreateResponse implements BaseApiResponse {
         );
     }
 
-    public static RoadmapCreateResponse createWithAchievement(
+        public static RoadmapCreateResponse createWithSharedAchievement(
         RoadmapAchievementDTO roadmapAchievementDTO) {
         return new RoadmapCreateResponse(
             ResponseCode.OK.getCode(),
             "공유지도 생성 완료! 업적 '" + roadmapAchievementDTO.getAchievement().getName() + "' 을(를) 획득했습니다.",
             OffsetDateTime.now(),
             roadmapAchievementDTO.getRoadmapId()
+        );
+    }
+
+    public static RoadmapCreateResponse createWithRoadmapAchievement(
+            RoadmapAchievementDTO roadmapAchievementDTO) {
+        return new RoadmapCreateResponse(
+                ResponseCode.OK.getCode(),
+                "로드맵 생성 완료! 업적 '" + roadmapAchievementDTO.getAchievement().getName() + "' 을(를) 획득했습니다.",
+                OffsetDateTime.now(),
+                roadmapAchievementDTO.getRoadmapId()
         );
     }
 }

@@ -85,7 +85,7 @@ public class RoadmapController {
         Long memberId = member.getId();
 
         final RoadmapAchievementDTO dto = roadmapService.createSharedRoadmap(request, memberId, imageFile);
-        RoadmapCreateResponse response = dto.isAchievementUnlocked() ? RoadmapCreateResponse.createWithAchievement(dto) : RoadmapCreateResponse.createShared(dto.getRoadmapId());
+        RoadmapCreateResponse response = dto.isAchievementUnlocked() ? RoadmapCreateResponse.createWithSharedAchievement(dto) : RoadmapCreateResponse.createShared(dto.getRoadmapId());
 
         return ResponseEntity.ok(response);
     }
@@ -143,7 +143,7 @@ public class RoadmapController {
 
         RoadmapAchievementDTO dto = roadmapService.createRoadmap(request, memberId, imageFile);
         RoadmapCreateResponse response = dto.isAchievementUnlocked() ?
-                RoadmapCreateResponse.createWithAchievement(dto) : RoadmapCreateResponse.createPersonal(dto.getRoadmapId());
+                RoadmapCreateResponse.createWithRoadmapAchievement(dto) : RoadmapCreateResponse.createPersonal(dto.getRoadmapId());
 
         return ResponseEntity.ok(response);
     }
